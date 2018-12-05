@@ -1,7 +1,7 @@
 This is currently a work in progress.
 
-Configuration library for [Scala](https://www.scala-lang.org/) with the goal to support JVM, 
-[Scala Native](https://scala-native.readthedocs.io/), and [Scala.js](https://www.scala-js.org/). 
+Configuration library for [Scala](https://www.scala-lang.org/) with the goal to support JVM,
+[Scala Native](https://scala-native.readthedocs.io/), and [Scala.js](https://www.scala-js.org/).
 If you are looking for a battle tested library for pure Java or Scala please consider the following:
 [lightbend/config](https://github.com/lightbend/config)
 
