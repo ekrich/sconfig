@@ -1,15 +1,23 @@
-Configuration library for JVM languages.
+This is currently a work in progress.
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.typesafe/config/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.typesafe/config)
-[![Build Status](https://travis-ci.org/lightbend/config.svg?branch=master)](https://travis-ci.org/lightbend/config)
+Configuration library for [Scala](https://www.scala-lang.org/) with the goal to support JVM,
+[Scala Native](https://scala-native.readthedocs.io/), and [Scala.js](https://www.scala-js.org/).
+If you are looking for a battle tested library for pure Java or Scala please consider the following:
+[lightbend/config](https://github.com/lightbend/config)
+
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig)
+[![Build Status](https://travis-ci.org/ekrich/sconfig.svg?branch=master)](https://travis-ci.org/ekrich/sconfig)
 
 If you have questions or are working on a pull request or just
 curious, please feel welcome to join the chat room:
-[![Join chat https://gitter.im/lightbend/config](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lightbend/config?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join chat https://gitter.im/ekrich/sconfig](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ekrich/sconfig?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Overview
 
- - implemented in plain Java with no dependencies
+ - implemented in plain Scala with no dependencies
+ - port in Scala of [lightbend/config](https://github.com/lightbend/config) 
+   maintaining the same API as much as possible. 
  - supports files in three formats: Java properties, JSON, and a
    human-friendly JSON superset
  - merges multiple files across all formats
