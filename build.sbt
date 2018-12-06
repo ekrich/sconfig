@@ -106,10 +106,6 @@ lazy val configLib =  Project("config", file("config"))
     scalariformPreferences                 := scalariformPreferences.value
       .setPreference(IndentSpaces, 4)
       .setPreference(FirstArgumentOnNewline, Preserve)
-    findbugsReportType                     := Some(FindbugsReport.Html)
-    findbugsReportPath                     := Some(crossTarget.value / "findbugs.html")
-    findbugsEffort                         := FindbugsEffort.Maximum
-    findbugsMaxMemory                      := 2000
   })
 
 lazy val commonSettings: Seq[Setting[_]] = Def.settings(
