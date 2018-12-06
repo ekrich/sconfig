@@ -4,34 +4,40 @@
 // Release tags should follow: http://semver.org/
 import scalariform.formatter.preferences._
 
+addCommandAlias(
+  "run-examples",
+  Seq(
+    "config-simple-app-scala/run",
+    "config-complex-app-scala/run",
+    "config-simple-app-java/run",
+    "config-complex-app-java/run"
+  ).mkString(";", ";", "")
+)
+
 ThisBuild / git.baseVersion         := "1.3.0"
-ThisBuild / organization            := "com.typesafe"
 ThisBuild / Compile / scalacOptions := List("-unchecked", "-deprecation", "-feature")
 ThisBuild / Test / scalacOptions    := List("-unchecked", "-deprecation", "-feature")
-ThisBuild / scalaVersion            := "2.10.7" // Seq("2.10.7", "2.11.12", "2.12.7")
-ThisBuild / scalacOptions           ++= Seq("-deprecation") // more recommended
+ThisBuild / crossScalaVersions      := Seq("2.12.8", "2.11.12", "2.10.7")
 
 ThisBuild / scmInfo                 := Option(
-  ScmInfo(url("https://github.com/lightbend/config"), "scm:git@github.com:lightbend/config.git")
+  ScmInfo(url("https://github.com/ekrich/sconfig"), "scm:git@github.com:ekrich/sconfig.git")
 )
-ThisBuild / developers              := List(
-  Developer(
-    id    = "havocp",
-    name  = "Havoc Pennington",
-    email = "@havocp",
-    url   = url("http://ometer.com/")
+inThisBuild(List(
+  description := "Configuration library for Scala using HOCON files",
+  organization := "org.ekrich",
+  homepage := Some(url("https://github.com/ekrich/sconfig")),
+  licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+  developers := List(
+    Developer(
+      id    = "ekrich",
+      name  = "Eric K Richardson",
+      email = "ekrichardson@gmail.com",
+      url   = url("http://github.ekrich.org/")
+    )
   )
-)
-ThisBuild / description             := "configuration library for JVM languages using HOCON files"
-ThisBuild / licenses                := List("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / homepage                := Option(url("https://github.com/lightbend/config"))
+))
+
 ThisBuild / pomIncludeRepository    := { _ => false }
-ThisBuild / publishTo               := {
-  val nexus = "https://oss.sonatype.org/"
-  if ((ThisBuild / isSnapshot).value) Option("Sonatype OSS Snapshots" at nexus + "content/repositories/snapshots")
-  else Option("Sonatype OSS Staging" at nexus + "service/local/staging/deploy/maven2")
-}
-ThisBuild / publishMavenStyle       := true
 
 lazy val root = (project in file("."))
   .enablePlugins(GitVersioning)
