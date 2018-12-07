@@ -119,7 +119,8 @@ lazy val configLib = Project("config", file("config"))
     publishLocal := sys.error(
       "use publishLocalSigned instead of plain publishLocal"),
     Compile / packageBin / packageOptions +=
-      Package.ManifestAttributes("Automatic-Module-Name" -> "typesafe.config")
+      Package.ManifestAttributes("Automatic-Module-Name" -> "typesafe.config"),
+    mimaPreviousArtifacts := Set("com.typesafe" % "config" % "1.3.3") // replace with your old artifact id
   )
 
 lazy val commonSettings: Seq[Setting[_]] = Def.settings(
