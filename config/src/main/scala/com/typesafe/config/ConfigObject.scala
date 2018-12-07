@@ -3,7 +3,7 @@
  */
 package com.typesafe.config
 
-import java.{ util => ju }
+import java.{util => ju}
 
 /**
  * Subtype of {@link ConfigValue} representing an object (AKA dictionary or map)
@@ -62,68 +62,68 @@ import java.{ util => ju }
  */
 trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
 
-    /**
-     * Converts this object to a {@link Config} instance, enabling you to use
-     * path expressions to find values in the object. This is a constant-time
-     * operation (it is not proportional to the size of the object).
-     *
-     * @return a {@link Config} with this object as its root
-     */
-    def toConfig: Config
+  /**
+   * Converts this object to a {@link Config} instance, enabling you to use
+   * path expressions to find values in the object. This is a constant-time
+   * operation (it is not proportional to the size of the object).
+   *
+   * @return a {@link Config} with this object as its root
+   */
+  def toConfig: Config
 
-    /**
-     * Recursively unwraps the object, returning a map from String to whatever
-     * plain Java values are unwrapped from the object's values.
-     *
-     * @return a {@link java.util.Map} containing plain Java objects
-     */
-    override def unwrapped: ju.Map[String, AnyRef]
-    override def withFallback(other: ConfigMergeable): ConfigObject
+  /**
+   * Recursively unwraps the object, returning a map from String to whatever
+   * plain Java values are unwrapped from the object's values.
+   *
+   * @return a {@link java.util.Map} containing plain Java objects
+   */
+  override def unwrapped: ju.Map[String, AnyRef]
+  override def withFallback(other: ConfigMergeable): ConfigObject
 
-    /**
-     * Gets a {@link ConfigValue} at the given key, or returns null if there is
-     * no value. The returned {@link ConfigValue} may have
-     * {@link ConfigValueType#NULL} or any other type, and the passed-in key
-     * must be a key in this object (rather than a path expression).
-     *
-     * @param key
-     *            key to look up
-     * @return the value at the key or null if none
-     */
-    // will not compile with override which is allowed in Java
-    override def get(key: Any): ConfigValue
+  /**
+   * Gets a {@link ConfigValue} at the given key, or returns null if there is
+   * no value. The returned {@link ConfigValue} may have
+   * {@link ConfigValueType#NULL} or any other type, and the passed-in key
+   * must be a key in this object (rather than a path expression).
+   *
+   * @param key
+   *            key to look up
+   * @return the value at the key or null if none
+   */
+  // will not compile with override which is allowed in Java
+  override def get(key: Any): ConfigValue
 
-    /**
-     * Clone the object with only the given key (and its children) retained; all
-     * sibling keys are removed.
-     *
-     * @param key
-     *            key to keep
-     * @return a copy of the object minus all keys except the one specified
-     */
-    def withOnlyKey(key: String): ConfigObject
+  /**
+   * Clone the object with only the given key (and its children) retained; all
+   * sibling keys are removed.
+   *
+   * @param key
+   *            key to keep
+   * @return a copy of the object minus all keys except the one specified
+   */
+  def withOnlyKey(key: String): ConfigObject
 
-    /**
-     * Clone the object with the given key removed.
-     *
-     * @param key
-     *            key to remove
-     * @return a copy of the object minus the specified key
-     */
-    def withoutKey(key: String): ConfigObject
+  /**
+   * Clone the object with the given key removed.
+   *
+   * @param key
+   *            key to remove
+   * @return a copy of the object minus the specified key
+   */
+  def withoutKey(key: String): ConfigObject
 
-    /**
-     * Returns a {@code ConfigObject} based on this one, but with the given key
-     * set to the given value. Does not modify this instance (since it's
-     * immutable). If the key already has a value, that value is replaced. To
-     * remove a value, use {@link ConfigObject#withoutKey(String)}.
-     *
-     * @param key
-     *            key to add
-     * @param value
-     *            value at the new key
-     * @return the new instance with the new map entry
-     */
-    def withValue(key: String, value: ConfigValue): ConfigObject
-    override def withOrigin(origin: ConfigOrigin): ConfigObject
+  /**
+   * Returns a {@code ConfigObject} based on this one, but with the given key
+   * set to the given value. Does not modify this instance (since it's
+   * immutable). If the key already has a value, that value is replaced. To
+   * remove a value, use {@link ConfigObject#withoutKey(String)}.
+   *
+   * @param key
+   *            key to add
+   * @param value
+   *            value at the new key
+   * @return the new instance with the new map entry
+   */
+  def withValue(key: String, value: ConfigValue): ConfigObject
+  override def withOrigin(origin: ConfigOrigin): ConfigObject
 }

@@ -11,11 +11,11 @@ package com.typesafe.config
  */
 trait ConfigLoadingStrategy {
 
-    /**
-     * This method must load and parse application config.
-     *
-     * @param parseOptions {@link ConfigParseOptions} to use
-     * @return loaded config
-     */
-    def parseApplicationConfig(parseOptions: ConfigParseOptions): Config
+  /**
+   * This method must load and parse application config.
+   *
+   * @param parseOptions {@link ConfigParseOptions} to use
+   * @return loaded config
+   */
+  def parseApplicationConfig(parseOptions: ConfigParseOptions): Config
 }

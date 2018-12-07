@@ -13,16 +13,16 @@ import java.net.URL
  */
 trait ConfigIncluderURL {
 
-    /**
-     * Parses another item to be included. The returned object typically would
-     * not have substitutions resolved. You can throw a ConfigException here to
-     * abort parsing, or return an empty object, but may not return null.
-     *
-     * @param context
-     *            some info about the include context
-     * @param what
-     *            the include statement's argument
-     * @return a non-null ConfigObject
-     */
-    def includeURL(context: ConfigIncludeContext, what: URL): ConfigObject
+  /**
+   * Parses another item to be included. The returned object typically would
+   * not have substitutions resolved. You can throw a ConfigException here to
+   * abort parsing, or return an empty object, but may not return null.
+   *
+   * @param context
+   *            some info about the include context
+   * @param what
+   *            the include statement's argument
+   * @return a non-null ConfigObject
+   */
+  def includeURL(context: ConfigIncludeContext, what: URL): ConfigObject
 }

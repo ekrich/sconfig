@@ -26,11 +26,11 @@ package com.typesafe.config.parser
  */
 trait ConfigNode {
 
-    /**
-     * The original text of the input which was used to form this particular
-     * node.
-     *
-     * @return the original text used to form this node as a String
-     */
-    def render(): String
+  /**
+   * The original text of the input which was used to form this particular
+   * node.
+   *
+   * @return the original text used to form this node as a String
+   */
+  def render(): String
 }

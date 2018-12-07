@@ -16,32 +16,32 @@ package com.typesafe.config
  */
 trait ConfigParseable {
 
-    /**
-     * Parse whatever it is. The options should come from
-     * {@link ConfigParseable#options options()} but you could tweak them if you
-     * like.
-     *
-     * @param options
-     *            parse options, should be based on the ones from
-     *            {@link ConfigParseable#options options()}
-     * @return the parsed object
-     */
-    def parse(options: ConfigParseOptions): ConfigObject
+  /**
+   * Parse whatever it is. The options should come from
+   * {@link ConfigParseable#options options()} but you could tweak them if you
+   * like.
+   *
+   * @param options
+   *            parse options, should be based on the ones from
+   *            {@link ConfigParseable#options options()}
+   * @return the parsed object
+   */
+  def parse(options: ConfigParseOptions): ConfigObject
 
-    /**
-     * Returns a {@link ConfigOrigin} describing the origin of the parseable
-     * item.
-     *
-     * @return the origin of the parseable item
-     */
-    def origin: ConfigOrigin
+  /**
+   * Returns a {@link ConfigOrigin} describing the origin of the parseable
+   * item.
+   *
+   * @return the origin of the parseable item
+   */
+  def origin: ConfigOrigin
 
-    /**
-     * Get the initial options, which can be modified then passed to parse().
-     * These options will have the right description, includer, and other
-     * parameters already set up.
-     *
-     * @return the initial options
-     */
-    def options: ConfigParseOptions
+  /**
+   * Get the initial options, which can be modified then passed to parse().
+   * These options will have the right description, includer, and other
+   * parameters already set up.
+   *
+   * @return the initial options
+   */
+  def options: ConfigParseOptions
 }

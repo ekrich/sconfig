@@ -3,7 +3,7 @@
  */
 package com.typesafe.config.impl
 
-import java.{ util => ju }
+import java.{util => ju}
 
 /**
  * Interface that tags a ConfigValue that is not mergeable until after
@@ -12,5 +12,5 @@ import java.{ util => ju }
  * {@link ConfigDelayedMerge}.
  */
 trait Unmergeable {
-    def unmergedValues: ju.Collection[_ <: AbstractConfigValue]
+  def unmergedValues: ju.Collection[_ <: AbstractConfigValue]
 }

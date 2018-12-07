@@ -8,7 +8,8 @@ import com.typesafe.config.ConfigIncluderClasspath
 import com.typesafe.config.ConfigIncluderFile
 import com.typesafe.config.ConfigIncluderURL
 
-trait FullIncluder extends ConfigIncluder
+trait FullIncluder
+    extends ConfigIncluder
     with ConfigIncluderFile
     with ConfigIncluderURL
     with ConfigIncluderClasspath {}

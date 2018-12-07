@@ -3,10 +3,10 @@
  */
 package com.typesafe.config.impl
 
-import java.{ util => ju }
+import java.{util => ju}
 
-class ConfigNodeSingleToken(val token: Token)
-    extends AbstractConfigNode {
+class ConfigNodeSingleToken(val token: Token) extends AbstractConfigNode {
 
-    override def tokens: ju.Collection[Token] = ju.Collections.singletonList(token)
+  override def tokens: ju.Collection[Token] =
+    ju.Collections.singletonList(token)
 }
