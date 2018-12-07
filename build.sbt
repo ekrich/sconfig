@@ -19,9 +19,6 @@ ThisBuild / Compile / scalacOptions := List("-unchecked", "-deprecation", "-feat
 ThisBuild / Test / scalacOptions    := List("-unchecked", "-deprecation", "-feature")
 ThisBuild / crossScalaVersions      := Seq("2.12.8", "2.11.12", "2.10.7")
 
-ThisBuild / scmInfo                 := Option(
-  ScmInfo(url("https://github.com/ekrich/sconfig"), "scm:git@github.com:ekrich/sconfig.git")
-)
 inThisBuild(List(
   description := "Configuration library for Scala using HOCON files",
   organization := "org.ekrich",
