@@ -2,7 +2,6 @@
 // update NEWS, update version in README.md, tag, then
 // publishSigned.
 // Release tags should follow: http://semver.org/
-import scalariform.formatter.preferences._
 
 addCommandAlias(
   "run-examples",
@@ -44,72 +43,65 @@ lazy val root = (project in file("."))
     simpleLibJava, simpleAppJava, complexAppJava
   )
   .settings(commonSettings)
-  .settings(nocomma {
-    name                                   := "config-root"
-    git.baseVersion                        := (ThisBuild / git.baseVersion).value
-    doc / aggregate                        := false
-    doc                                    := (configLib / Compile / doc).value
-    packageDoc / aggregate                 := false
-    packageDoc                             := (configLib / Compile / packageDoc).value
-    useGpg                                 := true
-    PgpKeys.publishSigned / aggregate      := false
-    PgpKeys.publishSigned                  := (PgpKeys.publishSigned in configLib).value
-    PgpKeys.publishLocalSigned / aggregate := false
+  .settings(
+    name                                   := "config-root",
+    git.baseVersion                        := (ThisBuild / git.baseVersion).value,
+    doc / aggregate                        := false,
+    doc                                    := (configLib / Compile / doc).value,
+    packageDoc / aggregate                 := false,
+    packageDoc                             := (configLib / Compile / packageDoc).value,
+    useGpg                                 := true,
+    PgpKeys.publishSigned / aggregate      := false,
+    PgpKeys.publishSigned                  := (PgpKeys.publishSigned in configLib).value,
+    PgpKeys.publishLocalSigned / aggregate := false,
     PgpKeys.publishLocalSigned             := (PgpKeys.publishLocalSigned in configLib).value
-  })
+  )
 
 lazy val configLib =  Project("config", file("config"))
   .enablePlugins(SbtOsgi)
   .dependsOn(testLib % "test->test")
   .settings(osgiSettings)
-  .settings(nocomma {
-    autoScalaLibrary                       := true
-    crossPaths                             := false
+  .settings(
+    autoScalaLibrary                       := true,
+    crossPaths                             := false,
     libraryDependencies                    += {
       val liftVersion = scalaBinaryVersion.value match {
         case "2.10" => "2.6.3" // last version that supports 2.10
         case _      => "3.3.0" // latest version for 2.11 and 2.12
       }
       "net.liftweb" %% "lift-json" % liftVersion % Test
-    }
-    libraryDependencies                    += "com.novocode" % "junit-interface" % "0.11" % Test
+    },
+    libraryDependencies                    += "com.novocode" % "junit-interface" % "0.11" % Test,
 
     Compile / compile / javacOptions       ++= Seq("-source", "1.8", "-target", "1.8",
-                                                   "-g", "-Xlint:unchecked")
+                                                   "-g", "-Xlint:unchecked"),
 
     Compile / doc / javacOptions           ++= Seq("-group", s"Public API (version ${version.value})", "com.typesafe.config:com.typesafe.config.parser",
-                                                   "-group", "Internal Implementation - Not ABI Stable", "com.typesafe.config.impl")
+                                                   "-group", "Internal Implementation - Not ABI Stable", "com.typesafe.config.impl"),
     javadocSourceBaseUrl := {
       for (gitHead <- com.typesafe.sbt.SbtGit.GitKeys.gitHeadCommit.value)
         yield s"https://github.com/lightbend/config/blob/$gitHead/config/src/main/java"
-    }
+    },
     // because we test some global state such as singleton caches,
     // we have to run tests in serial.
-    Test / parallelExecution               := false
-
-    test / fork                            := true
-    Test / fork                            := true
-    run / fork                             := true
-    Test/ run / fork                       := true
+    Test / parallelExecution               := false,
+    test / fork                            := true,
+    Test / fork                            := true,
+    run / fork                             := true,
+    Test/ run / fork                       := true,
 
     //env vars for tests
-    Test / envVars                         ++= Map("testList.0" -> "0", "testList.1" -> "1")
+    Test / envVars                         ++= Map("testList.0" -> "0", "testList.1" -> "1"),
 
-    OsgiKeys.exportPackage                 := Seq("com.typesafe.config", "com.typesafe.config.impl")
-    publish                                := sys.error("use publishSigned instead of plain publish")
-    publishLocal                           := sys.error("use publishLocalSigned instead of plain publishLocal")
+    OsgiKeys.exportPackage                 := Seq("com.typesafe.config", "com.typesafe.config.impl"),
+    publish                                := sys.error("use publishSigned instead of plain publish"),
+    publishLocal                           := sys.error("use publishLocalSigned instead of plain publishLocal"),
     Compile / packageBin / packageOptions  +=
       Package.ManifestAttributes("Automatic-Module-Name" -> "typesafe.config" )
-    scalariformPreferences                 := scalariformPreferences.value
-      .setPreference(IndentSpaces, 4)
-      .setPreference(FirstArgumentOnNewline, Preserve)
-  })
+  )
 
 lazy val commonSettings: Seq[Setting[_]] = Def.settings(
-  unpublished,
-  scalariformPreferences := scalariformPreferences.value
-    .setPreference(IndentSpaces, 4)
-    .setPreference(FirstArgumentOnNewline, Preserve)
+  unpublished
 )
 
 def proj(id: String, base: File) = Project(id, base) settings commonSettings
