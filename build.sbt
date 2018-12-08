@@ -120,8 +120,18 @@ lazy val configLib = Project("config", file("config"))
       "use publishLocalSigned instead of plain publishLocal"),
     Compile / packageBin / packageOptions +=
       Package.ManifestAttributes("Automatic-Module-Name" -> "typesafe.config"),
-    mimaPreviousArtifacts := Set("com.typesafe" % "config" % "1.3.3") // replace with your old artifact id
+    // replace with your old artifact id
+    mimaPreviousArtifacts := Set("com.typesafe" % "config" % "1.3.3"),
+    mimaBinaryIssueFilters ++= ignoredABIProblems
   )
+
+lazy val ignoredABIProblems = {
+  import com.typesafe.tools.mima.core._
+  import com.typesafe.tools.mima.core.ProblemFilters._
+  Seq(
+    exclude[Problem]("com.typesafe.config.impl.*")
+  )
+}
 
 lazy val commonSettings: Seq[Setting[_]] = Def.settings(
   unpublished
