@@ -16,9 +16,9 @@ jobs:
   - env: TEST="scalafmt"
     script: ./scripts/scalafmt --test
   - env: TEST="test"
-    script: sbt test doc
+    script: sbt +test doc
   - stage: release
-    script: sbt ci-release
+    script: sbt +ci-release
 
 cache:
   directories:
