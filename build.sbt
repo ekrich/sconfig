@@ -20,7 +20,7 @@ ThisBuild / version := configVersion
 ThisBuild / Compile / scalacOptions := scalacOpts
 ThisBuild / Test / scalacOptions := scalacOpts
 
-ThisBuild / crossScalaVersions := Seq("2.12.8", "2.11.12", "2.10.7")
+ThisBuild / crossScalaVersions := Seq("2.12.8", "2.11.12")
 
 inThisBuild(
   List(
