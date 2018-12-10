@@ -13,19 +13,19 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-ThisBuild / git.baseVersion := "0.7.0"
-ThisBuild / Compile / scalacOptions := List("-unchecked",
-                                            "-deprecation",
-                                            "-feature")
-ThisBuild / Test / scalacOptions := List("-unchecked",
-                                         "-deprecation",
-                                         "-feature")
+val configVersion = "0.7.0"
+val scalacOpts    = List("-unchecked", "-deprecation", "-feature")
+
+ThisBuild / version := configVersion
+ThisBuild / Compile / scalacOptions := scalacOpts
+ThisBuild / Test / scalacOptions := scalacOpts
+
 ThisBuild / crossScalaVersions := Seq("2.12.8", "2.11.12", "2.10.7")
 
 inThisBuild(
   List(
     description := "Configuration library for Scala using HOCON files",
-    organization := "org.ekrich",
+    organization := "org.ekrich", // causes package error not being com.typesafe
     homepage := Some(url("https://github.com/ekrich/sconfig")),
     licenses := List(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
@@ -44,7 +44,6 @@ ThisBuild / pomIncludeRepository := { _ =>
 }
 
 lazy val root = (project in file("."))
-  .enablePlugins(GitVersioning)
   .aggregate(
     testLib,
     configLib,
@@ -58,16 +57,10 @@ lazy val root = (project in file("."))
   .settings(commonSettings)
   .settings(
     name := "config-root",
-    git.baseVersion := (ThisBuild / git.baseVersion).value,
     doc / aggregate := false,
     doc := (configLib / Compile / doc).value,
     packageDoc / aggregate := false,
     packageDoc := (configLib / Compile / packageDoc).value,
-    useGpg := true,
-    PgpKeys.publishSigned / aggregate := false,
-    PgpKeys.publishSigned := (PgpKeys.publishSigned in configLib).value,
-    PgpKeys.publishLocalSigned / aggregate := false,
-    PgpKeys.publishLocalSigned := (PgpKeys.publishLocalSigned in configLib).value
   )
 
 lazy val configLib = Project("config", file("config"))
@@ -99,11 +92,6 @@ lazy val configLib = Project("config", file("config"))
       "Internal Implementation - Not ABI Stable",
       "com.typesafe.config.impl"
     ),
-    javadocSourceBaseUrl := {
-      for (gitHead <- com.typesafe.sbt.SbtGit.GitKeys.gitHeadCommit.value)
-        yield
-          s"https://github.com/lightbend/config/blob/$gitHead/config/src/main/java"
-    },
     // because we test some global state such as singleton caches,
     // we have to run tests in serial.
     Test / parallelExecution := false,
@@ -115,9 +103,6 @@ lazy val configLib = Project("config", file("config"))
     Test / envVars ++= Map("testList.0" -> "0", "testList.1" -> "1"),
     OsgiKeys.exportPackage := Seq("com.typesafe.config",
                                   "com.typesafe.config.impl"),
-    publish := sys.error("use publishSigned instead of plain publish"),
-    publishLocal := sys.error(
-      "use publishLocalSigned instead of plain publishLocal"),
     Compile / packageBin / packageOptions +=
       Package.ManifestAttributes("Automatic-Module-Name" -> "typesafe.config"),
     // replace with your old artifact id
