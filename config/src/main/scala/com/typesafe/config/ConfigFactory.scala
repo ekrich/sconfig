@@ -1016,7 +1016,7 @@ object ConfigFactory {
       System.getProperties.getProperty(STRATEGY_PROPERTY_NAME)
     if (className != null)
       try classOf[ConfigLoadingStrategy].cast(
-        Class.forName(className).newInstance)
+        Class.forName(className).getConstructor().newInstance())
       catch {
         case e: Throwable =>
           throw new ConfigException.BugOrBroken(

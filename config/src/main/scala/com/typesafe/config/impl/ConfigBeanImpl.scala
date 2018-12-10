@@ -103,7 +103,7 @@ object ConfigBeanImpl {
       if (!problems.isEmpty)
         throw new ConfigException.ValidationFailed(problems)
       // Fill in the bean instance
-      val bean = clazz.newInstance
+      val bean = clazz.getConstructor().newInstance()
       import scala.collection.JavaConverters._
       for (beanProp <- beanProps.asScala) {
         breakable {
