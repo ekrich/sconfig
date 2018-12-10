@@ -13,18 +13,17 @@ import com.typesafe.config.ConfigValue
  */
 trait Container extends ConfigValue {
 
-    /**
-     * Replace a child of this value. CAUTION if replacement is null, delete the
-     * child, which may also delete the parent, or make the parent into a
-     * non-container.
-     */
-    def replaceChild(
-        child: AbstractConfigValue,
-        replacement: AbstractConfigValue): AbstractConfigValue
+  /**
+   * Replace a child of this value. CAUTION if replacement is null, delete the
+   * child, which may also delete the parent, or make the parent into a
+   * non-container.
+   */
+  def replaceChild(child: AbstractConfigValue,
+                   replacement: AbstractConfigValue): AbstractConfigValue
 
-    /**
-     * Super-expensive full traversal to see if descendant is anywhere
-     * underneath this container.
-     */
-    def hasDescendant(descendant: AbstractConfigValue): Boolean
+  /**
+   * Super-expensive full traversal to see if descendant is anywhere
+   * underneath this container.
+   */
+  def hasDescendant(descendant: AbstractConfigValue): Boolean
 }

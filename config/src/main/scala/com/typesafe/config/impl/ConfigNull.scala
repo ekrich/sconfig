@@ -3,7 +3,7 @@
  */
 package com.typesafe.config.impl
 
-import java.{ lang => jl }
+import java.{lang => jl}
 import java.io.ObjectStreamException
 import java.io.Serializable
 import com.typesafe.config.ConfigOrigin
@@ -23,23 +23,22 @@ final class ConfigNull(origin: ConfigOrigin)
     extends AbstractConfigValue(origin)
     with Serializable {
 
-    override def valueType: ConfigValueType = ConfigValueType.NULL
+  override def valueType: ConfigValueType = ConfigValueType.NULL
 
-    override def unwrapped: AnyRef = null
+  override def unwrapped: AnyRef = null
 
-    override def transformToString = "null"
+  override def transformToString = "null"
 
-    override def render(
-        sb: jl.StringBuilder,
-        indent: Int,
-        atRoot: Boolean,
-        options: ConfigRenderOptions): Unit = {
-        sb.append("null")
-    }
+  override def render(sb: jl.StringBuilder,
+                      indent: Int,
+                      atRoot: Boolean,
+                      options: ConfigRenderOptions): Unit = {
+    sb.append("null")
+  }
 
-    override def newCopy(origin: ConfigOrigin) = new ConfigNull(origin)
+  override def newCopy(origin: ConfigOrigin) = new ConfigNull(origin)
 
-    // serialization all goes through SerializedConfigValue
-    @throws[ObjectStreamException]
-    private def writeReplace(): jl.Object = new SerializedConfigValue(this)
+  // serialization all goes through SerializedConfigValue
+  @throws[ObjectStreamException]
+  private def writeReplace(): jl.Object = new SerializedConfigValue(this)
 }

@@ -3,7 +3,7 @@
  */
 package com.typesafe.config
 
-import java.{ util => ju }
+import java.{util => ju}
 
 /**
  * Subtype of {@link ConfigValue} representing a list value, as in JSON's
@@ -34,12 +34,12 @@ import java.{ util => ju }
  */
 trait ConfigList extends ju.List[ConfigValue] with ConfigValue {
 
-    /**
-     * Recursively unwraps the list, returning a list of plain Java values such
-     * as Integer or String or whatever is in the list.
-     *
-     * @return a {@link java.util.List} containing plain Java objects
-     */
-    override def unwrapped: ju.List[AnyRef]
-    override def withOrigin(origin: ConfigOrigin): ConfigList
+  /**
+   * Recursively unwraps the list, returning a list of plain Java values such
+   * as Integer or String or whatever is in the list.
+   *
+   * @return a {@link java.util.List} containing plain Java objects
+   */
+  override def unwrapped: ju.List[AnyRef]
+  override def withOrigin(origin: ConfigOrigin): ConfigList
 }
