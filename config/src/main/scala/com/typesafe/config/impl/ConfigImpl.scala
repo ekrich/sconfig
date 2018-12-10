@@ -254,7 +254,7 @@ object ConfigImpl {
   private def getSystemProperties: ju.Properties = {
     // Avoid ConcurrentModificationException due to parallel setting of system properties by copying properties
     val systemProperties     = System.getProperties
-    val systemPropertiesCopy = new ju.Properties
+    val systemPropertiesCopy: ju.Properties = new ju.Properties
     systemProperties.synchronized {
       systemPropertiesCopy.putAll(systemProperties)
     }
