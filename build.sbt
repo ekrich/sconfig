@@ -64,9 +64,7 @@ lazy val root = (project in file("."))
   )
 
 lazy val configLib = Project("config", file("config"))
-  .enablePlugins(SbtOsgi)
   .dependsOn(testLib % "test->test")
-  .settings(osgiSettings)
   .settings(
     autoScalaLibrary := true,
     crossPaths := false,
@@ -84,14 +82,7 @@ lazy val configLib = Project("config", file("config"))
                                              "1.8",
                                              "-g",
                                              "-Xlint:unchecked"),
-    Compile / doc / javacOptions ++= Seq(
-      "-group",
-      s"Public API (version ${version.value})",
-      "com.typesafe.config:com.typesafe.config.parser",
-      "-group",
-      "Internal Implementation - Not ABI Stable",
-      "com.typesafe.config.impl"
-    ),
+   
     // because we test some global state such as singleton caches,
     // we have to run tests in serial.
     Test / parallelExecution := false,
@@ -101,10 +92,6 @@ lazy val configLib = Project("config", file("config"))
     Test / run / fork := true,
     //env vars for tests
     Test / envVars ++= Map("testList.0" -> "0", "testList.1" -> "1"),
-    OsgiKeys.exportPackage := Seq("com.typesafe.config",
-                                  "com.typesafe.config.impl"),
-    Compile / packageBin / packageOptions +=
-      Package.ManifestAttributes("Automatic-Module-Name" -> "typesafe.config"),
     // replace with your old artifact id
     mimaPreviousArtifacts := Set("com.typesafe" % "config" % "1.3.3"),
     mimaBinaryIssueFilters ++= ignoredABIProblems
