@@ -5,9 +5,8 @@ package com.typesafe.config
 
 /**
  * A set of options related to resolving substitutions. Substitutions use the
- * <code>${foo.bar}</code> syntax and are documented in the <a
- * href="https://github.com/lightbend/config/blob/master/HOCON.md">HOCON</a>
- * spec.
+ * `\${foo.bar` syntax and are documented in the
+ * [[https://github.com/ekrich/sconfig/blob/master/HOCON.md">HOCON spec]].
  * <p>
  * Typically this class would be used with the method
  * {@link Config#resolve(ConfigResolveOptions)}.

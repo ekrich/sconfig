@@ -82,7 +82,6 @@ lazy val configLib = Project("config", file("config"))
                                              "1.8",
                                              "-g",
                                              "-Xlint:unchecked"),
-   
     // because we test some global state such as singleton caches,
     // we have to run tests in serial.
     Test / parallelExecution := false,

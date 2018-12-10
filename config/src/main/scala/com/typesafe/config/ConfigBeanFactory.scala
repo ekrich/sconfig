@@ -3,44 +3,44 @@ package com.typesafe.config
 import com.typesafe.config.impl.ConfigBeanImpl
 
 /**
- * Factory for automatically creating a Java class from a {@link Config}.
- * See {@link #create(Config,Class)}.
+ * Factory for automatically creating a Java class from a [[Config]].
+ * See [[ConfigBeanFactory.create(Config,Class)]].
  *
  * @since 1.3.0
  */
 object ConfigBeanFactory {
 
   /**
-   * Creates an instance of a class, initializing its fields from a {@link Config}.
+   * Creates an instance of a class, initializing its fields from a [[Config]].
    *
    * Example usage:
    *
-   * <pre>
-   * Config configSource = ConfigFactory.load().getConfig("foo");
-   * FooConfig config = ConfigBeanFactory.create(configSource, FooConfig.class);
-   * </pre>
+   * {{{
+   * val configSource: Config = ConfigFactory.load().getConfig("foo");
+   * val config: FooConfig = ConfigBeanFactory.create(configSource, classOf[FooConfig]);
+   * }}}
    *
    * The Java class should follow JavaBean conventions. Field types
-   * can be any of the types you can normally get from a {@link
-   * Config}, including <code>java.time.Duration</code> or {@link
-   * ConfigMemorySize}. Fields may also be another JavaBean-style
+   * can be any of the types you can normally get from a [[Config]],
+   * including `java.time.Duration` or [[ConfigMemorySize]].
+   * Fields may also be another JavaBean-style
    * class.
    *
    * Fields are mapped to config by converting the config key to
-   * camel case.  So the key <code>foo-bar</code> becomes JavaBean
-   * setter <code>setFooBar</code>.
+   * camel case.  So the key `foo-bar` becomes JavaBean
+   * setter `setFooBar`.
    *
    * @since 1.3.0
    * @param config source of config information
    * @param clazz class to be instantiated
    * @param <T> the type of the class to be instantiated
    * @return an instance of the class populated with data from the config
-   * @throws ConfigException.BadBean
+   * @throws [[ConfigException#BadBean]]
    *     If something is wrong with the JavaBean
-   * @throws ConfigException.ValidationFailed
+   * @throws [[ConfigException#ValidationFailed]]
    *     If the config doesn't conform to the bean's implied schema
    * @throws ConfigException
-   *     Can throw the same exceptions as the getters on <code>Config</code>
+   *     Can throw the same exceptions as the getters on `Config`
    */
   def create[T](config: Config, clazz: Class[T]): T =
     ConfigBeanImpl.createInternal(config, clazz)

@@ -144,9 +144,9 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
   /**
    * This is used when including one file in another; the included file is
    * relativized to the path it's included into in the parent file. The point
-   * is that if you include a file at foo.bar in the parent, and the included
-   * file as a substitution ${a.b.c}, the included substitution now needs to
-   * be ${foo.bar.a.b.c} because we resolve substitutions globally only after
+   * is that if you include a file at `foo.bar` in the parent, and the included
+   * file as a substitution `\${a.b.c}`, the included substitution now needs to
+   * be `\${foo.bar.a.b.c}` because we resolve substitutions globally only after
    * parsing everything.
    *
    * @param prefix

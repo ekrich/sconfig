@@ -4,11 +4,11 @@ import java.net.URL
 import com.typesafe.config.impl.ConfigImpl
 
 /**
- * This class contains some static factory methods for building a {@link
- * ConfigOrigin}. {@code ConfigOrigin}s are automatically created when you
- * call other API methods to get a {@code ConfigValue} or {@code Config}.
- * But you can also set the origin of an existing {@code ConfigValue}, using
- * {@link ConfigValue#withOrigin(ConfigOrigin)}.
+ * This class contains some static factory methods for building a [[ConfigOrigin]].
+ * [[ConfigOrigin]]s are automatically created when you
+ * call other API methods to get a [[ConfigValue]] or [[Config]].
+ * But you can also set the origin of an existing [[ConfigValue]], using
+ * [[ConfigValue.withOrigin(ConfigOrigin)]].
  *
  * @since 1.3.0
  */
@@ -16,8 +16,8 @@ object ConfigOriginFactory {
 
   /**
    * Returns the default origin for values when no other information is
-   * provided. This is the origin used in {@link ConfigValueFactory
-   * #fromAnyRef(Object)}.
+   * provided. This is the origin used in
+   * [[ConfigValueFactory.fromAnyRef(Object)]].
    *
    * @since 1.3.0
    * @return the default origin
@@ -27,7 +27,7 @@ object ConfigOriginFactory {
   /**
    * Returns an origin with the given description.
    *
-   *  @since 1.3.0
+   * @since 1.3.0
    * @param description brief description of what the origin is
    * @return a new origin
    */
