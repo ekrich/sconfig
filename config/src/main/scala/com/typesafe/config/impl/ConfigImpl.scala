@@ -253,10 +253,11 @@ object ConfigImpl {
     }
   private def getSystemProperties: ju.Properties = {
     // Avoid ConcurrentModificationException due to parallel setting of system properties by copying properties
-    val systemProperties                             = System.getProperties
-    val systemPropertiesCopy: ju.Map[AnyRef, AnyRef] = new ju.Properties
+    val systemProperties     = System.getProperties
+    val systemPropertiesCopy = new ju.Properties
     systemProperties.synchronized {
-      systemPropertiesCopy.putAll(systemProperties)
+      // type ascription, see https://github.com/scala/bug/issues/10418
+      (systemPropertiesCopy: ju.Map[AnyRef, AnyRef]).putAll(systemProperties)
     }
     systemPropertiesCopy
   }
