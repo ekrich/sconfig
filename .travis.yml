@@ -7,6 +7,10 @@ jdk:
   - openjdk8
   - openjdk11
 
+scala:
+  - 2.11.12
+  - 2.12.8
+
 stages:
 - name: test
 - name: release
@@ -17,9 +21,9 @@ jobs:
   - env: TEST="scalafmt"
     script: ./scripts/scalafmt --test
   - env: TEST="test"
-    script: sbt +test doc
+    script: sbt ++$TRAVIS_SCALA_VERSION test doc
   - stage: release
-    script: sbt +ci-release
+    script: sbt ++$TRAVIS_SCALA_VERSION ci-release
 
 cache:
   directories:
