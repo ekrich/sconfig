@@ -489,8 +489,7 @@ class PublicApiTest extends TestUtils {
     val includer = new RecordingIncluder(null, included)
 
     val conf = parser(
-      ConfigParseOptions
-        .defaults
+      ConfigParseOptions.defaults
         .setIncluder(includer)
         .setAllowMissing(false))
 
@@ -503,8 +502,7 @@ class PublicApiTest extends TestUtils {
     val includer = new RecordingFullIncluder(null, included)
 
     val conf = parser(
-      ConfigParseOptions
-        .defaults
+      ConfigParseOptions.defaults
         .setIncluder(includer)
         .setAllowMissing(false))
 
@@ -988,9 +986,8 @@ class PublicApiTest extends TestUtils {
              ConfigFactory.parseResourcesAnySyntax("reference"),
              ConfigFactory.parseResources("reference.conf",
                                           ConfigParseOptions.defaults),
-             ConfigFactory.parseResourcesAnySyntax(
-               "reference",
-               ConfigParseOptions.defaults),
+             ConfigFactory.parseResourcesAnySyntax("reference",
+                                                   ConfigParseOptions.defaults),
              ConfigFactory.load("application"),
              ConfigFactory.load("application",
                                 ConfigParseOptions.defaults,
@@ -1089,9 +1086,8 @@ class PublicApiTest extends TestUtils {
              ConfigFactory.parseResourcesAnySyntax("application"),
              ConfigFactory.parseResources("application.conf",
                                           ConfigParseOptions.defaults),
-             ConfigFactory.parseResourcesAnySyntax(
-               "application",
-               ConfigParseOptions.defaults),
+             ConfigFactory.parseResourcesAnySyntax("application",
+                                                   ConfigParseOptions.defaults),
              ConfigFactory.load("application"),
              ConfigFactory.defaultApplication(),
              ConfigFactory.load("application",

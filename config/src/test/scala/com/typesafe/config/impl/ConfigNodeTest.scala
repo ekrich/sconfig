@@ -29,8 +29,7 @@ class ConfigNodeTest extends TestUtils {
     assertEquals(value.render, keyValNode.value.render)
 
     val newKeyValNode = keyValNode.replaceValue(newValue)
-    assertEquals(key.render + " : " + newValue.render,
-                 newKeyValNode.render)
+    assertEquals(key.render + " : " + newValue.render, newKeyValNode.render)
     assertEquals(newValue.render, newKeyValNode.value.render)
   }
 
@@ -58,8 +57,7 @@ class ConfigNodeTest extends TestUtils {
     val keyValPair3 = nodeKeyValuePair(key, value3)
     val complexNode = configNodeObject(
       List(keyValPair1, keyValPair2, keyValPair3))
-    val origText = keyValPair1.render + keyValPair2.render + keyValPair3
-      .render
+    val origText  = keyValPair1.render + keyValPair2.render + keyValPair3.render
     val finalText = key.render + " : 15"
 
     assertEquals(origText, complexNode.render)

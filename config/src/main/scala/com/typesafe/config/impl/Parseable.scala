@@ -470,8 +470,8 @@ abstract class Parseable protected (
   protected def reader(): Reader
   @throws[IOException]
   protected def reader(options: ConfigParseOptions): Reader = reader()
-  private[impl] def guessSyntax: ConfigSyntax             = null
-  private[impl] def contentType: ConfigSyntax             = null
+  private[impl] def guessSyntax: ConfigSyntax               = null
+  private[impl] def contentType: ConfigSyntax               = null
   private[impl] def relativeTo(filename: String): ConfigParseable = {
     // fall back to classpath; we treat the "filename" as absolute
     // (don't add a package name in front),

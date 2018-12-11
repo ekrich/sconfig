@@ -26,7 +26,7 @@ trait ConfigMergeable {
    *
    * The semantics of merging are described in the
    * [[https://github.com/ekrich/sconfig/blob/master/HOCON.md spec for HOCON]].
-    * Merging typically occurs when either the same object is
+   * Merging typically occurs when either the same object is
    * created twice in the same file, or two config files are both loaded. For
    * example:
    *

@@ -16,8 +16,7 @@ import java.util.Properties
 class ConfParserTest extends TestUtils {
 
   def parseWithoutResolving(s: String) = {
-    val options = ConfigParseOptions
-      .defaults
+    val options = ConfigParseOptions.defaults
       .setOriginDescription("test conf string")
       .setSyntax(ConfigSyntax.CONF)
     Parseable

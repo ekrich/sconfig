@@ -426,8 +426,7 @@ class ConfigDocumentTest extends TestUtils {
   def configDocumentIndentationEmptyObject {
     var origText       = "a { }"
     var configDocument = ConfigDocumentFactory.parseString(origText)
-    assertEquals("a { b : c }",
-                 configDocument.withValueText("a.b", "c").render)
+    assertEquals("a { b : c }", configDocument.withValueText("a.b", "c").render)
 
     origText = "a {\n  b {\n  }\n}"
     configDocument = ConfigDocumentFactory.parseString(origText)

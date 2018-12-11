@@ -1189,8 +1189,7 @@ class ConfigTest extends TestUtils {
            comments       <- allBooleans;
            json           <- allBooleans)
         yield
-          ConfigRenderOptions
-            .defaults
+          ConfigRenderOptions.defaults
             .setFormatted(formatted)
             .setOriginComments(originComments)
             .setComments(comments)
@@ -1211,9 +1210,8 @@ class ConfigTest extends TestUtils {
         val unresolvedParsed = ConfigFactory.parseString(
           unresolvedRender,
           ConfigParseOptions.defaults)
-        val resolvedParsed = ConfigFactory.parseString(
-          resolvedRender,
-          ConfigParseOptions.defaults)
+        val resolvedParsed =
+          ConfigFactory.parseString(resolvedRender, ConfigParseOptions.defaults)
         try {
           assertEquals("unresolved options=" + renderOptions,
                        conf.root,
@@ -1229,8 +1227,7 @@ class ConfigTest extends TestUtils {
             showDiff(resolved.root, resolvedParsed.root)
             throw e
         }
-        if (renderOptions.getJson && !(renderOptions
-              .getComments || renderOptions.getOriginComments)) {
+        if (renderOptions.getJson && !(renderOptions.getComments || renderOptions.getOriginComments)) {
           // should get valid JSON if we don't have comments and are resolved
           val json = try {
             ConfigFactory.parseString(
@@ -1312,8 +1309,8 @@ class ConfigTest extends TestUtils {
     intercept[ConfigException.NotResolved] {
       unresolved.getInt("alwaysResolveable")
     }
-    val allowedUnresolved = unresolved.resolve(
-      ConfigResolveOptions.defaults.setAllowUnresolved(true))
+    val allowedUnresolved =
+      unresolved.resolve(ConfigResolveOptions.defaults.setAllowUnresolved(true))
     // when we partially-resolve we should still resolve what we can
     assertEquals("we resolved the resolveable",
                  42,

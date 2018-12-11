@@ -68,8 +68,7 @@ object ConfigException {
       f = clazz.getDeclaredField("origin");
     } catch {
       case e: NoSuchFieldException =>
-        throw new IOException(clazz.getSimpleName + " has no origin field?",
-                              e)
+        throw new IOException(clazz.getSimpleName + " has no origin field?", e)
       case e: SecurityException =>
         throw new IOException(
           "unable to fill out origin field in " + clazz.getSimpleName,

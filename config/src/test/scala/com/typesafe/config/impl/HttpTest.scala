@@ -52,9 +52,8 @@ class HttpTest extends TestUtils {
   @Test
   def notFoundThrowsIO(): Unit = {
     val e = intercept[ConfigException.IO] {
-      ConfigFactory.parseURL(
-        url("notfound"),
-        ConfigParseOptions.defaults.setAllowMissing(false))
+      ConfigFactory.parseURL(url("notfound"),
+                             ConfigParseOptions.defaults.setAllowMissing(false))
     }
     assertTrue(s"expected different exception for notfound, got $e",
                e.getMessage.contains("/notfound"))
@@ -63,9 +62,8 @@ class HttpTest extends TestUtils {
   @Test
   def internalErrorThrowsBroken(): Unit = {
     val e = intercept[ConfigException.BugOrBroken] {
-      ConfigFactory.parseURL(
-        url("error"),
-        ConfigParseOptions.defaults.setAllowMissing(false))
+      ConfigFactory.parseURL(url("error"),
+                             ConfigParseOptions.defaults.setAllowMissing(false))
     }
     assertTrue(s"expected different exception for error url, got $e",
                e.getMessage.contains("/error"))
@@ -82,9 +80,8 @@ class HttpTest extends TestUtils {
   @Test
   def internalErrorThrowsEvenIfAllowingMissing(): Unit = {
     val e = intercept[ConfigException.BugOrBroken] {
-      ConfigFactory.parseURL(
-        url("error"),
-        ConfigParseOptions.defaults.setAllowMissing(true))
+      ConfigFactory.parseURL(url("error"),
+                             ConfigParseOptions.defaults.setAllowMissing(true))
     }
     assertTrue(
       s"expected different exception for error url when allowing missing, got $e",

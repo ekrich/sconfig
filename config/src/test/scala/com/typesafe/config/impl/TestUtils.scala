@@ -628,8 +628,7 @@ abstract trait TestUtils {
   }
 
   protected def parseConfig(s: String) = {
-    val options = ConfigParseOptions
-      .defaults
+    val options = ConfigParseOptions.defaults
       .setOriginDescription("test string")
       .setSyntax(ConfigSyntax.CONF)
     ConfigFactory.parseString(s, options).asInstanceOf[SimpleConfig]
