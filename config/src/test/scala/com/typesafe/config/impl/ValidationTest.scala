@@ -17,9 +17,9 @@ class ValidationTest extends TestUtils {
   def validation() {
     val reference = ConfigFactory.parseFile(
       resourceFile("validate-reference.conf"),
-      ConfigParseOptions.defaults())
+      ConfigParseOptions.defaults)
     val conf = ConfigFactory.parseFile(resourceFile("validate-invalid.conf"),
-                                       ConfigParseOptions.defaults())
+                                       ConfigParseOptions.defaults)
     val e = intercept[ConfigException.ValidationFailed] {
       conf.checkValid(reference)
     }
@@ -50,10 +50,10 @@ class ValidationTest extends TestUtils {
     val objectWithB = parseObject("""{ b : c }""")
     val reference = ConfigFactory
       .parseFile(resourceFile("validate-reference.conf"),
-                 ConfigParseOptions.defaults())
+                 ConfigParseOptions.defaults)
       .withFallback(objectWithB)
     val conf = ConfigFactory.parseFile(resourceFile("validate-invalid.conf"),
-                                       ConfigParseOptions.defaults())
+                                       ConfigParseOptions.defaults)
     val e = intercept[ConfigException.ValidationFailed] {
       conf.checkValid(reference, "a", "b")
     }

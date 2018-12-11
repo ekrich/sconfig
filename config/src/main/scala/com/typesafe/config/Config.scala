@@ -25,7 +25,7 @@ import scala.annotation.varargs
  *
  * <p>
  * Fundamental operations on a {@code Config} include getting configuration
- * values, <em>resolving</em> substitutions with {@link Config#resolve()}, and
+ * values, <em>resolving</em> substitutions with {@link Config#resolve}, and
  * merging configs using {@link Config#withFallback(ConfigMergeable)}.
  *
  * <p>
@@ -47,7 +47,7 @@ import scala.annotation.varargs
  *
  * <p>
  * <code>Config</code> is a view onto a tree of {@link ConfigObject}; the
- * corresponding object tree can be found through {@link Config#root()}.
+ * corresponding object tree can be found through {@link Config#root}.
  * <code>ConfigObject</code> is a map from config <em>keys</em>, rather than
  * paths, to config values. Think of <code>ConfigObject</code> as a JSON object
  * and <code>Config</code> as a configuration API.
@@ -75,8 +75,8 @@ import scala.annotation.varargs
  *
  * <p>
  * Another difference between {@code Config} and {@code ConfigObject} is that
- * conceptually, {@code ConfigValue}s with a {@link ConfigValue#valueType()
- * valueType()} of {@link ConfigValueType#NULL NULL} exist in a
+ * conceptually, {@code ConfigValue}s with a {@link ConfigValue#valueType
+ * valueType} of {@link ConfigValueType#NULL NULL} exist in a
  * {@code ConfigObject}, while a {@code Config} treats null values as if they
  * were missing. (With the exception of two methods: {@link Config#hasPathOrNull}
  * and {@link Config#getIsNull} let you detect <code>null</code> values.)
@@ -87,7 +87,7 @@ import scala.annotation.varargs
  * <p>
  * The "getters" on a {@code Config} all work in the same way. They never return
  * null, nor do they return a {@code ConfigValue} with
- * {@link ConfigValue#valueType() valueType()} of {@link ConfigValueType#NULL
+ * {@link ConfigValue#valueType valueType} of {@link ConfigValueType#NULL
  * NULL}. Instead, they throw {@link ConfigException.Missing} if the value is
  * completely absent or set to null. If the value is set to null, a subtype of
  * {@code ConfigException.Missing} called {@link ConfigException.Null} will be
@@ -100,9 +100,9 @@ import scala.annotation.varargs
  *
  * <p>
  * If you want to iterate over the contents of a {@code Config}, you can get its
- * {@code ConfigObject} with {@link #root()}, and then iterate over the
+ * {@code ConfigObject} with {@link #root}, and then iterate over the
  * {@code ConfigObject} (which implements <code>java.util.Map</code>). Or, you
- * can use {@link #entrySet()} which recurses the object tree for you and builds
+ * can use {@link #entrySet} which recurses the object tree for you and builds
  * up a <code>Set</code> of all path-value pairs where the value is not null.
  *
  * <p>
@@ -116,8 +116,8 @@ import scala.annotation.varargs
  * values.
  *
  * <p>
- * Before using a {@code Config} it's necessary to call {@link Config#resolve()}
- * to handle substitutions (though {@link ConfigFactory#load()} and similar
+ * Before using a {@code Config} it's necessary to call {@link Config#resolve}
+ * to handle substitutions (though {@link ConfigFactory#load} and similar
  * methods will do the resolve for you already).
  *
  * <p>
@@ -126,7 +126,7 @@ import scala.annotation.varargs
  * <p>
  * The full <code>Config</code> for your application can be constructed using
  * the associative operation {@link Config#withFallback(ConfigMergeable)}. If
- * you use {@link ConfigFactory#load()} (recommended), it merges system
+ * you use {@link ConfigFactory#load} (recommended), it merges system
  * properties over the top of <code>application.conf</code> over the top of
  * <code>reference.conf</code>, using <code>withFallback</code>. You can add in
  * additional sources of configuration in the same way (usually, custom layers
@@ -139,8 +139,8 @@ import scala.annotation.varargs
  *
  * <p>
  * Convert a <code>Config</code> to a JSON or HOCON string by calling
- * {@link ConfigObject#render()} on the root object,
- * <code>myConfig.root().render()</code>. There's also a variant
+ * {@link ConfigObject#render} on the root object,
+ * <code>myConfig.root.render</code>. There's also a variant
  * {@link ConfigObject#render(ConfigRenderOptions)} which allows you to control
  * the format of the rendered string. (See {@link ConfigRenderOptions}.) Note
  * that <code>Config</code> does not remember the formatting of the original
@@ -148,8 +148,8 @@ import scala.annotation.varargs
  * substantially reformatted.
  *
  * <p>
- * As an alternative to {@link ConfigObject#render()}, the
- * <code>toString()</code> method produces a debug-output-oriented
+ * As an alternative to {@link ConfigObject#render}, the
+ * <code>toString</code> method produces a debug-output-oriented
  * representation (which is not valid JSON).
  *
  * <p>
@@ -197,7 +197,7 @@ trait Config extends ConfigMergeable {
    * <code>getValue("foo.bar")</code>.
    *
    * <p>
-   * This method uses {@link ConfigResolveOptions#defaults()}, there is
+   * This method uses {@link ConfigResolveOptions#defaults}, there is
    * another variant {@link Config#resolve(ConfigResolveOptions)} which lets
    * you specify non-default options.
    *
@@ -210,13 +210,13 @@ trait Config extends ConfigMergeable {
    * users.
    *
    * <p>
-   * <code>resolve()</code> should be invoked on root config objects, rather
+   * <code>resolve</code> should be invoked on root config objects, rather
    * than on a subtree (a subtree is the result of something like
    * <code>config.getConfig("foo")</code>). The problem with
-   * <code>resolve()</code> on a subtree is that substitutions are relative to
+   * <code>resolve</code> on a subtree is that substitutions are relative to
    * the root of the config and the subtree will have no way to get values
    * from the root. For example, if you did
-   * <code>config.getConfig("foo").resolve()</code> on the below config file,
+   * <code>config.getConfig("foo").resolve</code> on the below config file,
    * it would not work:
    *
    * <pre>
@@ -228,7 +228,7 @@ trait Config extends ConfigMergeable {
    *
    * <p>
    * Many methods on {@link ConfigFactory} such as
-   * {@link ConfigFactory#load()} automatically resolve the loaded
+   * {@link ConfigFactory#load} automatically resolve the loaded
    * <code>Config</code> on the loaded stack of config files.
    *
    * <p>
@@ -245,7 +245,7 @@ trait Config extends ConfigMergeable {
   def resolve: Config
 
   /**
-   * Like {@link Config#resolve()} but allows you to specify non-default
+   * Like {@link Config#resolve} but allows you to specify non-default
    * options.
    *
    * @param options
@@ -256,7 +256,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Checks whether the config is completely resolved. After a successful call
-   * to {@link Config#resolve()} it will be completely resolved, but after
+   * to {@link Config#resolve} it will be completely resolved, but after
    * calling {@link Config#resolve(ConfigResolveOptions)} with
    * <code>allowUnresolved</code> set in the options, it may or may not be
    * completely resolved. A newly-loaded config may or may not be completely
@@ -270,7 +270,7 @@ trait Config extends ConfigMergeable {
   def isResolved: Boolean
 
   /**
-   * Like {@link Config#resolve()} except that substitution values are looked
+   * Like {@link Config#resolve} except that substitution values are looked
    * up in the given source, rather than in this instance. This is a
    * special-purpose method which doesn't make sense to use in most cases;
    * it's only needed if you're constructing some sort of app-specific custom
@@ -330,7 +330,7 @@ trait Config extends ConfigMergeable {
    * isn't as much redundant work being done.
    *
    * <p>
-   * If no paths are specified in <code>checkValid()</code>'s parameter list,
+   * If no paths are specified in <code>checkValid</code>'s parameter list,
    * validation is for the entire config.
    *
    * <p>
@@ -370,13 +370,13 @@ trait Config extends ConfigMergeable {
    * <p>
    * If validation fails, the thrown exception contains a list of all problems
    * found. See {@link ConfigException.ValidationFailed#problems}. The
-   * exception's <code>getMessage()</code> will have all the problems
+   * exception's <code>getMessage</code> will have all the problems
    * concatenated into one huge string, as well.
    *
    * <p>
-   * Again, <code>checkValid()</code> can't guess every domain-specific way a
+   * Again, <code>checkValid</code> can't guess every domain-specific way a
    * setting can be invalid, so some problems may arise later when attempting
-   * to use the config. <code>checkValid()</code> is limited to reporting
+   * to use the config. <code>checkValid</code> is limited to reporting
    * generic, but common, problems such as missing settings and blatant type
    * incompatibilities.
    *
@@ -397,9 +397,9 @@ trait Config extends ConfigMergeable {
 
   /**
    * Checks whether a value is present and non-null at the given path. This
-   * differs in two ways from {@code Map.containsKey()} as implemented by
+   * differs in two ways from {@code Map.containsKey} as implemented by
    * {@link ConfigObject}: it looks for a path expression, not a key; and it
-   * returns false for null values, while {@code containsKey()} returns true
+   * returns false for null values, while {@code containsKey} returns true
    * indicating that the object contains a null value for the key.
    *
    * <p>
@@ -471,8 +471,8 @@ trait Config extends ConfigMergeable {
 
   /**
    * Returns the set of path-value pairs, excluding any null values, found by
-   * recursing {@link #root() the root object}. Note that this is very
-   * different from <code>root().entrySet()</code> which returns the set of
+   * recursing {@link #root the root object}. Note that this is very
+   * different from <code>root.entrySet</code> which returns the set of
    * immediate-child keys in the root object and includes null values.
    * <p>
    * Entries contain <em>path expressions</em> meaning there may be quoting
@@ -499,7 +499,7 @@ trait Config extends ConfigMergeable {
    * unset. This method will not throw if {@link
    * #hasPathOrNull(String)} returned true for the same path, so
    * to avoid any possible exception check
-   * <code>hasPathOrNull()</code> first.  However, an exception
+   * <code>hasPathOrNull</code> first.  However, an exception
    * for unset paths will usually be the right thing (because a
    * <code>reference.conf</code> should exist that has the path
    * set, the path should never be unset unless something is
@@ -641,7 +641,7 @@ trait Config extends ConfigMergeable {
   /**
    * Gets the value at the path as an unwrapped Java boxed value (
    * {@link java.lang.Boolean Boolean}, {@link java.lang.Integer Integer}, and
-   * so on - see {@link ConfigValue#unwrapped()}).
+   * so on - see {@link ConfigValue#unwrapped}).
    *
    * @param path
    * path expression
@@ -654,8 +654,8 @@ trait Config extends ConfigMergeable {
   /**
    * Gets the value at the given path, unless the value is a
    * null value or missing, in which case it throws just like
-   * the other getters. Use {@code get()} on the {@link
-   * Config#root()} object (or other object in the tree) if you
+   * the other getters. Use {@code get} on the {@link
+   * Config#root} object (or other object in the tree) if you
    * want an unprocessed value.
    *
    * @param path
@@ -986,7 +986,7 @@ trait Config extends ConfigMergeable {
   /**
    * Gets a list value with any kind of elements.  Throws if the
    * path is unset or null or not a list. Each element is
-   * "unwrapped" (see {@link ConfigValue#unwrapped()}).
+   * "unwrapped" (see {@link ConfigValue#unwrapped}).
    *
    * @param path
    * the path to the list value.
@@ -1106,7 +1106,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Places the config inside a {@code Config} at the given key. See also
-   * atPath(). Note that a key is NOT a path expression (see
+   * atPath. Note that a key is NOT a path expression (see
    * {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).
    *
    * @param key
@@ -1120,7 +1120,7 @@ trait Config extends ConfigMergeable {
    * Returns a {@code Config} based on this one, but with the given path set
    * to the given value. Does not modify this instance (since it's immutable).
    * If the path already has a value, that value is replaced. To remove a
-   * value, use withoutPath().
+   * value, use withoutPath.
    * <p>
    * Note that path expressions have a syntax and sometimes require quoting
    * (see {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).

@@ -81,5 +81,5 @@ trait ConfigDocument {
    *
    * @return the modified original text
    */
-  def render(): String
+  def render: String
 }

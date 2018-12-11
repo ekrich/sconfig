@@ -11,10 +11,10 @@ object OriginType {
   final val URL      = new OriginType("URL", 2)
   final val RESOURCE = new OriginType("RESOURCE", 3)
 
-  private[this] val _values: Array[OriginType] =
+  private[this] final val _values: Array[OriginType] =
     Array(GENERIC, FILE, URL, RESOURCE)
 
-  def values(): Array[OriginType] = _values.clone()
+  def values: Array[OriginType] = _values.clone()
 
   def valueOf(name: String): OriginType =
     _values.find(_.name == name).getOrElse {

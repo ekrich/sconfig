@@ -38,9 +38,8 @@ final class PathBuilder private[impl] () {
     }
   }
 
-  private[impl] def result
-    : Path = { // note: if keys is empty, we want to return null, which is a valid
-    // empty path
+  private[impl] def result: Path = {
+    // note: if keys is empty, we want to return null, which is a valid empty path
     if (resultPath == null) {
       var remainder: Path = null
       while (!keys.isEmpty) {

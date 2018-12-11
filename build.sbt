@@ -13,7 +13,7 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val configVersion = "0.7.0"
+val configVersion = "0.7.0-SNAPSHOT"
 val scalacOpts    = List("-unchecked", "-deprecation", "-feature")
 
 ThisBuild / version := configVersion

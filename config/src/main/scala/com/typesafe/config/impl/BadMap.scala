@@ -29,7 +29,8 @@ object BadMap {
   private def store(entries: Array[Entry], e: Entry): Unit = {
     val i   = e.hash % entries.length
     val old = entries(i)
-    if (old == null && e.next == null) { // share the entry since it has no "next"
+    if (old == null && e.next == null) {
+      // share the entry since it has no "next"
       entries(i) = e
     } else { // bah, have to copy it
       entries(i) = new Entry(e.hash, e.key, e.value, old)
@@ -82,13 +83,13 @@ object BadMap {
 
 final class BadMap[K, V] private (val size: Int,
                                   val entries: Array[BadMap.Entry]) {
-  def this() {
-    this(0, BadMap.emptyEntries)
-  }
+  def this() = this(0, BadMap.emptyEntries)
+
   private[impl] def copyingPut(k: K, v: V) = {
     val newSize                         = size + 1
     var newEntries: Array[BadMap.Entry] = null
-    if (newSize > entries.length) { // nextPrime doesn't always return a prime larger than
+    if (newSize > entries.length) {
+      // nextPrime doesn't always return a prime larger than
       // we passed in, so this block may not actually change
       // the entries size. the "-1" is to ensure we use
       // array length 2 when going from 0 to 1.

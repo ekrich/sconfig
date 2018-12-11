@@ -226,7 +226,7 @@ object Parseable {
       }
     override private[impl] def guessSyntax: ConfigSyntax =
       ConfigImplUtil.syntaxFromExtension(input.getPath)
-    override private[impl] def contentType(): ConfigSyntax =
+    override private[impl] def contentType: ConfigSyntax =
       if (contentTypeStr != null)
         if (contentTypeStr == jsonContentType) ConfigSyntax.JSON
         else if (contentTypeStr == propertiesContentType)
@@ -470,8 +470,8 @@ abstract class Parseable protected (
   protected def reader(): Reader
   @throws[IOException]
   protected def reader(options: ConfigParseOptions): Reader = reader()
-  private[impl] def guessSyntax(): ConfigSyntax             = null
-  private[impl] def contentType(): ConfigSyntax             = null
+  private[impl] def guessSyntax: ConfigSyntax               = null
+  private[impl] def contentType: ConfigSyntax               = null
   private[impl] def relativeTo(filename: String): ConfigParseable = {
     // fall back to classpath; we treat the "filename" as absolute
     // (don't add a package name in front),
@@ -562,7 +562,7 @@ abstract class Parseable protected (
       finalOptions: ConfigParseOptions): AbstractConfigValue = {
     val readerVal: Reader = reader(finalOptions)
     // after reader() we will have loaded the Content-Type.
-    val contentTypeVal: ConfigSyntax = contentType()
+    val contentTypeVal: ConfigSyntax = contentType
     val optionsWithContentType =
       if (contentType != null) {
         if (ConfigImpl.traceLoadsEnabled && finalOptions.getSyntax != null)
@@ -592,7 +592,7 @@ abstract class Parseable protected (
       origin: ConfigOrigin,
       finalOptions: ConfigParseOptions): ConfigDocument = {
     val readerVal: Reader            = reader(finalOptions)
-    val contentTypeVal: ConfigSyntax = contentType()
+    val contentTypeVal: ConfigSyntax = contentType
     val optionsWithContentType =
       if (contentType != null) {
         if (ConfigImpl.traceLoadsEnabled && finalOptions.getSyntax != null)

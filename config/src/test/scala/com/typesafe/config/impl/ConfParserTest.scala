@@ -16,8 +16,7 @@ import java.util.Properties
 class ConfParserTest extends TestUtils {
 
   def parseWithoutResolving(s: String) = {
-    val options = ConfigParseOptions
-      .defaults()
+    val options = ConfigParseOptions.defaults
       .setOriginDescription("test conf string")
       .setSyntax(ConfigSyntax.CONF)
     Parseable
@@ -33,7 +32,7 @@ class ConfParserTest extends TestUtils {
     // interpolating arrays into strings
     tree match {
       case obj: AbstractConfigObject =>
-        ResolveContext.resolve(tree, obj, ConfigResolveOptions.noSystem())
+        ResolveContext.resolve(tree, obj, ConfigResolveOptions.noSystem)
       case _ =>
         tree
     }
@@ -391,7 +390,7 @@ class ConfParserTest extends TestUtils {
   @Test
   def toStringForParseables() {
     // just be sure the toString don't throw, to get test coverage
-    val options = ConfigParseOptions.defaults()
+    val options = ConfigParseOptions.defaults
     Parseable.newFile(new File("foo"), options).toString
     Parseable.newResources(classOf[ConfParserTest], "foo", options).toString
     Parseable.newURL(new URL("file:///foo"), options).toString
@@ -852,7 +851,7 @@ class ConfParserTest extends TestUtils {
   @Test
   def includeRequiredMissing() {
     // set this to allowMissing=true to demonstrate that the missing inclusion causes failure despite this setting
-    val missing = ConfigParseOptions.defaults().setAllowMissing(true)
+    val missing = ConfigParseOptions.defaults.setAllowMissing(true)
 
     val ex = intercept[Exception] {
       ConfigFactory.parseString(
@@ -869,7 +868,7 @@ class ConfParserTest extends TestUtils {
   @Test
   def includeRequiredFoundButNestedIncludeMissing() {
     // set this to allowMissing=true to demonstrate that the missing nested inclusion is permitted despite this setting
-    val missing = ConfigParseOptions.defaults().setAllowMissing(false)
+    val missing = ConfigParseOptions.defaults.setAllowMissing(false)
 
     // test03 has a missing include
     val conf = ConfigFactory.parseString(

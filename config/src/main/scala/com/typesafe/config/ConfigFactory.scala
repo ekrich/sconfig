@@ -45,7 +45,7 @@ object ConfigFactory {
    *
    * <p>
    * Resources are loaded from the current thread's
-   * {@link Thread#getContextClassLoader()}. In general, a library needs its
+   * {@link Thread#getContextClassLoader}. In general, a library needs its
    * configuration to come from the class loader used to load that library, so
    * the proper "reference.conf" are present.
    *
@@ -59,8 +59,8 @@ object ConfigFactory {
    * <p>
    * To load a standalone resource (without the default reference and default
    * overrides), use {@link #parseResourcesAnySyntax(String)} rather than this
-   * method. To load only the reference config use {@link #defaultReference()}
-   * and to load only the overrides use {@link #defaultOverrides()}.
+   * method. To load only the reference config use {@link #defaultReference}
+   * and to load only the overrides use {@link #defaultOverrides}.
    *
    * @param resourceBasename
    *            name (optionally without extension) of a resource on classpath
@@ -138,7 +138,7 @@ object ConfigFactory {
     val loader = Thread.currentThread.getContextClassLoader
     if (loader == null)
       throw new ConfigException.BugOrBroken(
-        "Context class loader is not set for the current thread; " + "if Thread.currentThread().getContextClassLoader() returns null, you must pass a ClassLoader " + "explicitly to ConfigFactory." + methodName)
+        "Context class loader is not set for the current thread; " + "if Thread.currentThread.getContextClassLoader returns null, you must pass a ClassLoader " + "explicitly to ConfigFactory." + methodName)
     else loader
   }
   private def ensureClassLoader(options: ConfigParseOptions,
@@ -687,7 +687,7 @@ object ConfigFactory {
    * files with an extension matching that syntax.
    *
    * <p>
-   * If {@link ConfigParseOptions#getAllowMissing options.getAllowMissing()}
+   * If {@link ConfigParseOptions#getAllowMissing options.getAllowMissing}
    * is true, then no files have to exist; if false, then at least one file
    * has to exist.
    *
@@ -731,7 +731,7 @@ object ConfigFactory {
    * to avoid assuming too much.
    *
    * @param klass
-   *            <code>klass.getClassLoader()</code> will be used to load
+   *            <code>klass.getClassLoader</code> will be used to load
    *            resources, and non-absolute resource names will have this
    *            class's package added
    * @param resource
@@ -751,7 +751,7 @@ object ConfigFactory {
    * default parse options.
    *
    * @param klass
-   *            <code>klass.getClassLoader()</code> will be used to load
+   *            <code>klass.getClassLoader</code> will be used to load
    *            resources, and non-absolute resource names will have this
    *            class's package added
    * @param resource
@@ -804,7 +804,7 @@ object ConfigFactory {
    * but always uses default parse options.
    *
    * @param klass
-   *            <code>klass.getClassLoader()</code> will be used to load
+   *            <code>klass.getClassLoader</code> will be used to load
    *            resources, and non-absolute resource names will have this
    *            class's package added
    * @param resourceBasename

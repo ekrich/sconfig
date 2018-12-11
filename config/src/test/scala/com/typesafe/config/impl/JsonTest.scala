@@ -13,16 +13,14 @@ import java.util.HashMap
 class JsonTest extends TestUtils {
 
   def parse(s: String): ConfigValue = {
-    val options = ConfigParseOptions
-      .defaults()
+    val options = ConfigParseOptions.defaults
       .setOriginDescription("test json string")
       .setSyntax(ConfigSyntax.JSON)
     Parseable.newString(s, options).parseValue()
   }
 
   def parseAsConf(s: String): ConfigValue = {
-    val options = ConfigParseOptions
-      .defaults()
+    val options = ConfigParseOptions.defaults
       .setOriginDescription("test conf string")
       .setSyntax(ConfigSyntax.CONF)
     Parseable.newString(s, options).parseValue()

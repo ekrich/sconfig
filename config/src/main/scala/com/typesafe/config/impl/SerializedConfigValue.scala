@@ -61,10 +61,10 @@ object SerializedConfigValue {
     final val OBJECT =
       new SerializedValueType("OBJECT", 7, ConfigValueType.OBJECT)
 
-    private[this] val _values: Array[SerializedValueType] =
+    private[this] final val _values: Array[SerializedValueType] =
       Array(NULL, BOOLEAN, INT, LONG, DOUBLE, STRING, LIST, OBJECT)
 
-    def values(): Array[SerializedValueType] = _values.clone()
+    def values: Array[SerializedValueType] = _values.clone()
 
     def valueOf(name: String): SerializedValueType = {
       _values.find(_.name == name).getOrElse {
@@ -74,7 +74,7 @@ object SerializedConfigValue {
     }
 
     private[impl] def forInt(b: Int): SerializedValueType =
-      if (b < values.length) values()(b)
+      if (b < values.length) values(b)
       else null // really?
 
     private[impl] def forValue(value: ConfigValue): SerializedValueType = {
@@ -365,7 +365,8 @@ object SerializedConfigValue {
     val len = in.readInt
     // skipBytes doesn't have to block
     val skipped = in.skipBytes(len)
-    if (skipped < len) { // wastefully use readFully() if skipBytes didn't work
+    if (skipped < len) {
+      // wastefully use readFully() if skipBytes didn't work
       val bytes = new Array[Byte](len - skipped)
       in.readFully(bytes)
     }
@@ -393,8 +394,7 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
     this(conf.root)
     this.wasConfig = true
   }
-  // when Java deserializer reads this object, return the contained
-  // object instead.
+  // when Java deserializer reads this object, return the contained object instead.
   @throws[ObjectStreamException]
   private def readResolve(): jl.Object =
     if (wasConfig) value.asInstanceOf[ConfigObject].toConfig else value
@@ -494,7 +494,7 @@ object SerializedField {
   final val ORIGIN_NULL_RESOURCE =
     new SerializedField("ORIGIN_NULL_RESOURCE", 15)
 
-  private[this] val _values: Array[SerializedField] =
+  private[this] final val _values: Array[SerializedField] =
     Array(
       UNKNOWN,
       END_MARKER,
@@ -514,7 +514,7 @@ object SerializedField {
       ORIGIN_NULL_RESOURCE
     )
 
-  def values(): Array[SerializedField] = _values.clone()
+  def values: Array[SerializedField] = _values.clone()
 
   def valueOf(name: String): SerializedField = {
     _values.find(_.name == name).getOrElse {
@@ -524,6 +524,6 @@ object SerializedField {
   }
 
   private[impl] def forInt(b: Int): SerializedField =
-    if (b < values.length) values()(b)
+    if (b < values.length) values(b)
     else UNKNOWN
 }

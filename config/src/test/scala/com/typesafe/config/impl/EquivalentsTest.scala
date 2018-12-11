@@ -38,19 +38,19 @@ class EquivalentsTest extends TestUtils {
         // for purposes of these tests, substitutions are only
         // against the same file's root, and without looking at
         // system prop or env variable fallbacks.
-        ResolveContext.resolve(v, v, ConfigResolveOptions.noSystem())
+        ResolveContext.resolve(v, v, ConfigResolveOptions.noSystem)
       case v =>
         v
     }
   }
 
   private def parse(flavor: ConfigSyntax, f: File) = {
-    val options = ConfigParseOptions.defaults().setSyntax(flavor)
+    val options = ConfigParseOptions.defaults.setSyntax(flavor)
     postParse(ConfigFactory.parseFile(f, options).root)
   }
 
   private def parse(f: File) = {
-    val options = ConfigParseOptions.defaults()
+    val options = ConfigParseOptions.defaults
     postParse(ConfigFactory.parseFile(f, options).root)
   }
 

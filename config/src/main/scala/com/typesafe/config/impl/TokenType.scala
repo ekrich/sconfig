@@ -26,7 +26,7 @@ object TokenType {
   final val COMMENT            = new TokenType("COMMENT", 15)
   final val PLUS_EQUALS        = new TokenType("PLUS_EQUALS", 16)
 
-  private[this] val _values: Array[TokenType] =
+  private[this] final val _values: Array[TokenType] =
     Array(
       START,
       END,
@@ -47,7 +47,7 @@ object TokenType {
       PLUS_EQUALS
     )
 
-  def values(): Array[TokenType] = _values.clone()
+  def values: Array[TokenType] = _values.clone()
 
   def valueOf(name: String): TokenType =
     _values.find(_.name == name).getOrElse {

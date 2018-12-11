@@ -57,7 +57,7 @@ class PropertiesTest extends TestUtils {
       props.setProperty(propsPath, propsPath)
 
       val conf =
-        ConfigFactory.parseProperties(props, ConfigParseOptions.defaults())
+        ConfigFactory.parseProperties(props, ConfigParseOptions.defaults)
 
       assertEquals(propsPath, conf.getString(confPath))
     }
@@ -90,7 +90,7 @@ class PropertiesTest extends TestUtils {
     props.setProperty("x.y.z", "foo")
 
     val conf =
-      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults())
+      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults)
 
     assertEquals(2, conf.root.size())
     assertEquals("foo", conf.getString("a.b"))
@@ -109,7 +109,7 @@ class PropertiesTest extends TestUtils {
     props.setProperty("a.4", "4")
 
     val conf =
-      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults())
+      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults)
     val reference = ConfigFactory.parseString("{ a : [0,1,2,3,4] }")
     assertEquals(Seq(0, 1, 2, 3, 4), conf.getIntList("a").asScala.toSeq)
     conf.checkValid(reference)
@@ -125,7 +125,7 @@ class PropertiesTest extends TestUtils {
     props.setProperty("a.4", "2")
 
     val conf =
-      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults())
+      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults)
     val reference = ConfigFactory.parseString("{ a : [0,1,2] }")
     assertEquals(Seq(0, 1, 2), conf.getIntList("a").asScala.toSeq)
     conf.checkValid(reference)
@@ -145,7 +145,7 @@ class PropertiesTest extends TestUtils {
     props.setProperty("a.4", "4")
 
     val conf =
-      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults())
+      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults)
     val reference = ConfigFactory.parseString("{ a : [0,1,2,3,4] }")
     assertEquals(Seq(0, 1, 2, 3, 4), conf.getIntList("a").asScala.toSeq)
     conf.checkValid(reference)
@@ -159,7 +159,7 @@ class PropertiesTest extends TestUtils {
     props.setProperty("a.bar", "0")
 
     val conf =
-      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults())
+      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults)
     val e = intercept[ConfigException.WrongType] {
       conf.getList("a")
     }
@@ -176,7 +176,7 @@ class PropertiesTest extends TestUtils {
     props.setProperty("a.2", "2")
 
     val conf1 =
-      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults())
+      ConfigFactory.parseProperties(props, ConfigParseOptions.defaults)
     assertEquals(Seq(0, 1, 2), conf1.getIntList("a").asScala.toSeq)
 
     val conf2     = ConfigFactory.parseString("""

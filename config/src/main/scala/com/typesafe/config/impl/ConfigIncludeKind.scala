@@ -10,10 +10,10 @@ object ConfigIncludeKind {
   final val CLASSPATH = new ConfigIncludeKind("CLASSPATH", 2)
   final val HEURISTIC = new ConfigIncludeKind("HEURISTIC", 3)
 
-  private[this] val _values: Array[ConfigIncludeKind] =
+  private[this] final val _values: Array[ConfigIncludeKind] =
     Array(URL, FILE, CLASSPATH, HEURISTIC)
 
-  def values(): Array[ConfigIncludeKind] = _values.clone()
+  def values: Array[ConfigIncludeKind] = _values.clone()
 
   def valueOf(name: String): ConfigIncludeKind =
     _values.find(_.name == name).getOrElse {

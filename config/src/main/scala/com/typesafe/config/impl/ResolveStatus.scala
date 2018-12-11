@@ -13,10 +13,10 @@ object ResolveStatus {
   final val UNRESOLVED = new ResolveStatus("UNRESOLVED", 0)
   final val RESOLVED   = new ResolveStatus("RESOLVED", 1)
 
-  private[this] val _values: Array[ResolveStatus] =
+  private[this] final val _values: Array[ResolveStatus] =
     Array(UNRESOLVED, RESOLVED)
 
-  def values(): Array[ResolveStatus] = _values.clone()
+  def values: Array[ResolveStatus] = _values.clone()
 
   def valueOf(name: String): ResolveStatus =
     _values.find(_.name == name).getOrElse {

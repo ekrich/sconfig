@@ -34,7 +34,7 @@ object ConfigResolveOptions {
    *
    * @return the default resolve options
    */
-  def defaults() = new ConfigResolveOptions(true, false, NULL_RESOLVER)
+  def defaults = new ConfigResolveOptions(true, false, NULL_RESOLVER)
 
   /**
    * Returns resolve options that disable any reference to "system" data
@@ -42,7 +42,7 @@ object ConfigResolveOptions {
    *
    * @return the resolve options with env variables disabled
    */
-  def noSystem(): ConfigResolveOptions = defaults.setUseSystemEnvironment(false)
+  def noSystem: ConfigResolveOptions = defaults.setUseSystemEnvironment(false)
 
   /**
    * Singleton resolver that never resolves paths.
@@ -76,7 +76,7 @@ final class ConfigResolveOptions private (val useSystemEnvironment: Boolean,
    *
    * @return true if environment variables should be used
    */
-  def getUseSystemEnvironment(): Boolean = useSystemEnvironment
+  def getUseSystemEnvironment: Boolean = useSystemEnvironment
 
   /**
    * Returns options with "allow unresolved" set to the given value. By
@@ -138,7 +138,7 @@ final class ConfigResolveOptions private (val useSystemEnvironment: Boolean,
    * @return the non-null fallback resolver
    * @since 1.3.2
    */
-  def getResolver(): ConfigResolver = this.resolver
+  def getResolver: ConfigResolver = this.resolver
 
   /**
    * Returns whether the options allow unresolved substitutions. This method
@@ -147,5 +147,5 @@ final class ConfigResolveOptions private (val useSystemEnvironment: Boolean,
    * @return true if unresolved substitutions are allowed
    * @since 1.2.0
    */
-  def getAllowUnresolved(): Boolean = allowUnresolved
+  def getAllowUnresolved: Boolean = allowUnresolved
 }

@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
 class ConfigSubstitutionTest extends TestUtils {
 
   private def resolveWithoutFallbacks(v: AbstractConfigObject) = {
-    val options = ConfigResolveOptions.noSystem()
+    val options = ConfigResolveOptions.noSystem
     ResolveContext
       .resolve(v, v, options)
       .asInstanceOf[AbstractConfigObject]
@@ -23,19 +23,19 @@ class ConfigSubstitutionTest extends TestUtils {
   }
   private def resolveWithoutFallbacks(s: AbstractConfigValue,
                                       root: AbstractConfigObject) = {
-    val options = ConfigResolveOptions.noSystem()
+    val options = ConfigResolveOptions.noSystem
     ResolveContext.resolve(s, root, options)
   }
 
   private def resolve(v: AbstractConfigObject) = {
-    val options = ConfigResolveOptions.defaults()
+    val options = ConfigResolveOptions.defaults
     ResolveContext
       .resolve(v, v, options)
       .asInstanceOf[AbstractConfigObject]
       .toConfig
   }
   private def resolve(s: AbstractConfigValue, root: AbstractConfigObject) = {
-    val options = ConfigResolveOptions.defaults()
+    val options = ConfigResolveOptions.defaults
     ResolveContext.resolve(s, root, options)
   }
 

@@ -4,8 +4,8 @@
 package com.typesafe.config
 
 /**
- * The type of a configuration value (following the <a
- * href="http://json.org">JSON</a> type schema).
+ * The type of a configuration value (following the
+ * [[http://json.org JSON]] type schema).
  */
 final class ConfigValueType private (name: String, ordinal: Int)
     extends Enum[ConfigValueType](name, ordinal)
@@ -19,10 +19,10 @@ object ConfigValueType {
   final val NULL    = new ConfigValueType("NULL", 4)
   final val STRING  = new ConfigValueType("STRING", 5)
 
-  private[this] val _values: Array[ConfigValueType] =
+  private[this] final val _values: Array[ConfigValueType] =
     Array(OBJECT, LIST, NUMBER, BOOLEAN, NULL, STRING)
 
-  def values(): Array[ConfigValueType] = _values.clone()
+  def values: Array[ConfigValueType] = _values.clone()
 
   def valueOf(name: String): ConfigValueType =
     _values.find(_.name == name).getOrElse {

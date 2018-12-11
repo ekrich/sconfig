@@ -9,8 +9,8 @@ import java.{util => ju}
 final class ConfigNodePath private[impl] (path: Path,
                                           tokensArg: ju.Collection[Token])
     extends AbstractConfigNode {
-  override def tokens(): ju.Collection[Token] = tokensArg
-  private[impl] def value: Path               = path
+  override def tokens: ju.Collection[Token] = tokensArg
+  private[impl] def value: Path             = path
   private[impl] def subPath(toRemove: Int): ConfigNodePath = {
     var periodCount = 0
     val tokensCopy  = new ju.ArrayList[Token](tokensArg)
