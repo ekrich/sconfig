@@ -4,7 +4,7 @@ package com.typesafe.config.impl
 final class MemoKey private[impl] (val value: AbstractConfigValue,
                                    val restrictToChildOrNull: Path) {
 
-  override final def hashCode(): Int = {
+  override final def hashCode: Int = {
     val h = System.identityHashCode(value)
     if (restrictToChildOrNull != null)
       h + 41 * (41 + restrictToChildOrNull.hashCode)
@@ -21,6 +21,6 @@ final class MemoKey private[impl] (val value: AbstractConfigValue,
       else o.restrictToChildOrNull == this.restrictToChildOrNull
     } else false
 
-  override final def toString(): String =
+  override final def toString: String =
     "MemoKey(" + value + "@" + System.identityHashCode(value) + "," + restrictToChildOrNull + ")"
 }

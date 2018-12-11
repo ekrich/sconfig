@@ -318,7 +318,7 @@ abstract trait TestUtils {
     SimpleConfigOrigin.newSimple("fake origin")
   }
 
-  def includer() = {
+  def includer = {
     ConfigImpl.defaultIncluder
   }
 
@@ -629,7 +629,7 @@ abstract trait TestUtils {
 
   protected def parseConfig(s: String) = {
     val options = ConfigParseOptions
-      .defaults()
+      .defaults
       .setOriginDescription("test string")
       .setSyntax(ConfigSyntax.CONF)
     ConfigFactory.parseString(s, options).asInstanceOf[SimpleConfig]

@@ -116,6 +116,7 @@ object AbstractConfigValue {
   }
 }
 
+// TODO: this whole origin thing could use cleaning up from the top down
 abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     extends ConfigValue
     with MergeableValue {
@@ -167,7 +168,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     resolveStatus == ResolveStatus.RESOLVED
   }
 
-  protected def withFallbacksIgnored: AbstractConfigValue =
+  protected def withFallbacksIgnored(): AbstractConfigValue =
     if (ignoresFallbacks) this
     else
       throw new ConfigException.BugOrBroken(
@@ -223,7 +224,8 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
       stack: ju.Collection[AbstractConfigValue],
       fallback: AbstractConfigValue): AbstractConfigValue = {
     requireNotIgnoringFallbacks()
-    if (resolveStatus == ResolveStatus.RESOLVED) { // falling back to a non-object doesn't merge anything, and also
+    if (resolveStatus == ResolveStatus.RESOLVED) {
+      // falling back to a non-object doesn't merge anything, and also
       // prohibits merging any objects that we fall back to later.
       // so we have to switch to ignoresFallbacks mode.
       withFallbacksIgnored
@@ -269,7 +271,8 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
 
   protected def canEqual(other: Any): Boolean = other.isInstanceOf[ConfigValue]
 
-  override def equals(other: Any): Boolean = { // note that "origin" is deliberately NOT part of equality
+  override def equals(other: Any): Boolean = {
+    // note that "origin" is deliberately NOT part of equality
     if (other.isInstanceOf[ConfigValue])
       canEqual(other) && this.valueType == (other
         .asInstanceOf[ConfigValue])

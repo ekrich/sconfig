@@ -10,6 +10,7 @@ import java.net.URL
  * {@code config.resource}, {@code config.file} or {@code config.url}
  */
 class DefaultConfigLoadingStrategy extends ConfigLoadingStrategy {
+
   override def parseApplicationConfig(
       parseOptions: ConfigParseOptions): Config = {
     val loader = parseOptions.getClassLoader

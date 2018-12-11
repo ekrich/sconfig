@@ -47,7 +47,7 @@ class PublicApiTest extends TestUtils {
     // should not have used system variables
     val conf = ConfigFactory
       .parseResourcesAnySyntax(classOf[PublicApiTest], "/test01")
-      .resolve(ConfigResolveOptions.noSystem())
+      .resolve(ConfigResolveOptions.noSystem)
 
     intercept[ConfigException.Missing] {
       conf.getString("system.home")
@@ -59,9 +59,9 @@ class PublicApiTest extends TestUtils {
 
   @Test
   def canLimitLoadToJson {
-    val options = ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON)
+    val options = ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON)
     val conf =
-      ConfigFactory.load("test01", options, ConfigResolveOptions.defaults())
+      ConfigFactory.load("test01", options, ConfigResolveOptions.defaults)
 
     assertEquals(1, conf.getInt("fromJson1"))
     intercept[ConfigException.Missing] {
@@ -72,9 +72,9 @@ class PublicApiTest extends TestUtils {
   @Test
   def canLimitLoadToProperties {
     val options =
-      ConfigParseOptions.defaults().setSyntax(ConfigSyntax.PROPERTIES)
+      ConfigParseOptions.defaults.setSyntax(ConfigSyntax.PROPERTIES)
     val conf =
-      ConfigFactory.load("test01", options, ConfigResolveOptions.defaults())
+      ConfigFactory.load("test01", options, ConfigResolveOptions.defaults)
 
     assertEquals(1, conf.getInt("fromProps.one"))
     intercept[ConfigException.Missing] {
@@ -84,9 +84,9 @@ class PublicApiTest extends TestUtils {
 
   @Test
   def canLimitLoadToConf {
-    val options = ConfigParseOptions.defaults().setSyntax(ConfigSyntax.CONF)
+    val options = ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF)
     val conf =
-      ConfigFactory.load("test01", options, ConfigResolveOptions.defaults())
+      ConfigFactory.load("test01", options, ConfigResolveOptions.defaults)
 
     assertEquals(42, conf.getInt("ints.fortyTwo"))
     intercept[ConfigException.Missing] {
@@ -333,11 +333,11 @@ class PublicApiTest extends TestUtils {
 
   @Test
   def defaultParseOptions() {
-    val d = ConfigParseOptions.defaults()
-    assertEquals(true, d.getAllowMissing())
-    assertNull(d.getIncluder())
-    assertNull(d.getOriginDescription())
-    assertNull(d.getSyntax())
+    val d = ConfigParseOptions.defaults
+    assertEquals(true, d.getAllowMissing)
+    assertNull(d.getIncluder)
+    assertNull(d.getOriginDescription)
+    assertNull(d.getSyntax)
   }
 
   private def assertNotFound(e: ConfigException) {
@@ -355,13 +355,13 @@ class PublicApiTest extends TestUtils {
     val e = intercept[ConfigException.IO] {
       ConfigFactory.parseFile(
         resourceFile("nonexistent.conf"),
-        ConfigParseOptions.defaults().setAllowMissing(false))
+        ConfigParseOptions.defaults.setAllowMissing(false))
     }
     assertNotFound(e)
 
     val conf = ConfigFactory.parseFile(
       resourceFile("nonexistent.conf"),
-      ConfigParseOptions.defaults().setAllowMissing(true))
+      ConfigParseOptions.defaults.setAllowMissing(true))
     assertTrue("is empty", conf.isEmpty)
   }
 
@@ -370,13 +370,13 @@ class PublicApiTest extends TestUtils {
     val e = intercept[ConfigException.IO] {
       ConfigFactory.parseFileAnySyntax(
         resourceFile("nonexistent"),
-        ConfigParseOptions.defaults().setAllowMissing(false))
+        ConfigParseOptions.defaults.setAllowMissing(false))
     }
     assertNotFound(e)
 
     val conf = ConfigFactory.parseFileAnySyntax(
       resourceFile("nonexistent"),
-      ConfigParseOptions.defaults().setAllowMissing(true))
+      ConfigParseOptions.defaults.setAllowMissing(true))
     assertTrue("is empty", conf.isEmpty)
   }
 
@@ -386,14 +386,14 @@ class PublicApiTest extends TestUtils {
       ConfigFactory.parseResourcesAnySyntax(
         classOf[PublicApiTest],
         "nonexistent",
-        ConfigParseOptions.defaults().setAllowMissing(false))
+        ConfigParseOptions.defaults.setAllowMissing(false))
     }
     assertNotFound(e)
 
     val conf = ConfigFactory.parseResourcesAnySyntax(
       classOf[PublicApiTest],
       "nonexistent",
-      ConfigParseOptions.defaults().setAllowMissing(true))
+      ConfigParseOptions.defaults.setAllowMissing(true))
     assertTrue("is empty", conf.isEmpty)
   }
 
@@ -406,12 +406,12 @@ class PublicApiTest extends TestUtils {
     // to includes, but we don't want them all to do so.
     val conf = ConfigFactory.parseFile(
       resourceFile("test03.conf"),
-      ConfigParseOptions.defaults().setAllowMissing(false))
+      ConfigParseOptions.defaults.setAllowMissing(false))
     assertEquals(42, conf.getInt("test01.booleans"))
 
     val conf2 = ConfigFactory.parseFile(
       resourceFile("test03.conf"),
-      ConfigParseOptions.defaults().setAllowMissing(true))
+      ConfigParseOptions.defaults.setAllowMissing(true))
     assertEquals(conf, conf2)
   }
 
@@ -490,7 +490,7 @@ class PublicApiTest extends TestUtils {
 
     val conf = parser(
       ConfigParseOptions
-        .defaults()
+        .defaults
         .setIncluder(includer)
         .setAllowMissing(false))
 
@@ -504,7 +504,7 @@ class PublicApiTest extends TestUtils {
 
     val conf = parser(
       ConfigParseOptions
-        .defaults()
+        .defaults
         .setIncluder(includer)
         .setAllowMissing(false))
 
@@ -707,14 +707,14 @@ class PublicApiTest extends TestUtils {
   @Test
   def stringParsing() {
     val conf =
-      ConfigFactory.parseString("{ a : b }", ConfigParseOptions.defaults())
+      ConfigFactory.parseString("{ a : b }", ConfigParseOptions.defaults)
     assertEquals("b", conf.getString("a"))
   }
 
   @Test
   def readerParsing() {
     val conf = ConfigFactory.parseReader(new StringReader("{ a : b }"),
-                                         ConfigParseOptions.defaults())
+                                         ConfigParseOptions.defaults)
     assertEquals("b", conf.getString("a"))
   }
 
@@ -722,7 +722,7 @@ class PublicApiTest extends TestUtils {
   def anySyntax() {
     // test01 has all three syntaxes; first load with basename
     val conf = ConfigFactory.parseFileAnySyntax(resourceFile("test01"),
-                                                ConfigParseOptions.defaults())
+                                                ConfigParseOptions.defaults)
     assertEquals(42, conf.getInt("ints.fortyTwo"))
     assertEquals("A", conf.getString("fromJsonA"))
     assertEquals("true", conf.getString("fromProps.bool"))
@@ -730,7 +730,7 @@ class PublicApiTest extends TestUtils {
     // now include a suffix, should only load one of them
     val onlyProps = ConfigFactory.parseFileAnySyntax(
       resourceFile("test01.properties"),
-      ConfigParseOptions.defaults())
+      ConfigParseOptions.defaults)
     assertFalse(onlyProps.hasPath("ints.fortyTwo"))
     assertFalse(onlyProps.hasPath("fromJsonA"))
     assertEquals("true", onlyProps.getString("fromProps.bool"))
@@ -738,7 +738,7 @@ class PublicApiTest extends TestUtils {
     // force only one syntax via options
     val onlyPropsViaOptions = ConfigFactory.parseFileAnySyntax(
       resourceFile("test01.properties"),
-      ConfigParseOptions.defaults().setSyntax(ConfigSyntax.PROPERTIES))
+      ConfigParseOptions.defaults.setSyntax(ConfigSyntax.PROPERTIES))
     assertFalse(onlyPropsViaOptions.hasPath("ints.fortyTwo"))
     assertFalse(onlyPropsViaOptions.hasPath("fromJsonA"))
     assertEquals("true", onlyPropsViaOptions.getString("fromProps.bool"))
@@ -747,7 +747,7 @@ class PublicApiTest extends TestUtils {
     val fromResources = ConfigFactory.parseResourcesAnySyntax(
       classOf[PublicApiTest],
       "/test01",
-      ConfigParseOptions.defaults())
+      ConfigParseOptions.defaults)
     assertEquals(42, fromResources.getInt("ints.fortyTwo"))
     assertEquals("A", fromResources.getString("fromJsonA"))
     assertEquals("true", fromResources.getString("fromProps.bool"))
@@ -757,7 +757,7 @@ class PublicApiTest extends TestUtils {
   def resourceFromAnotherClasspath() {
     val conf = ConfigFactory.parseResources(classOf[PublicApiTest],
                                             "/test-lib.conf",
-                                            ConfigParseOptions.defaults())
+                                            ConfigParseOptions.defaults)
 
     assertEquals("This is to test classpath searches.",
                  conf.getString("test-lib.description"))
@@ -925,23 +925,23 @@ class PublicApiTest extends TestUtils {
            ConfigFactory.parseResourcesAnySyntax(loaderA1, "reference"),
            ConfigFactory.parseResources(loaderA1,
                                         "reference.conf",
-                                        ConfigParseOptions.defaults()),
+                                        ConfigParseOptions.defaults),
            ConfigFactory.parseResourcesAnySyntax(loaderA1,
                                                  "reference",
-                                                 ConfigParseOptions.defaults()),
+                                                 ConfigParseOptions.defaults),
            ConfigFactory.load(loaderA1, "application"),
            ConfigFactory.load(loaderA1,
                               "application",
-                              ConfigParseOptions.defaults(),
-                              ConfigResolveOptions.defaults()),
+                              ConfigParseOptions.defaults,
+                              ConfigResolveOptions.defaults),
            ConfigFactory.load(loaderA1,
                               "application",
-                              ConfigParseOptions.defaults(),
-                              ConfigResolveOptions.defaults()),
+                              ConfigParseOptions.defaults,
+                              ConfigResolveOptions.defaults),
            ConfigFactory.load(loaderA1, ConfigFactory.parseString("")),
            ConfigFactory.load(loaderA1,
                               ConfigFactory.parseString(""),
-                              ConfigResolveOptions.defaults()),
+                              ConfigResolveOptions.defaults),
            ConfigFactory.defaultReference(loaderA1)
          )) {
       assertEquals(1, c.getInt("a"))
@@ -949,12 +949,12 @@ class PublicApiTest extends TestUtils {
     }
 
     // check providing the loader via ConfigParseOptions
-    val withLoader = ConfigParseOptions.defaults().setClassLoader(loaderA1)
+    val withLoader = ConfigParseOptions.defaults.setClassLoader(loaderA1)
     for (c <- Seq(
            ConfigFactory.parseResources("reference.conf", withLoader),
            ConfigFactory.parseResourcesAnySyntax("reference", withLoader),
            ConfigFactory
-             .load("application", withLoader, ConfigResolveOptions.defaults())
+             .load("application", withLoader, ConfigResolveOptions.defaults)
          )) {
       assertEquals(1, c.getInt("a"))
       assertFalse("no b", c.hasPath("b"))
@@ -965,16 +965,16 @@ class PublicApiTest extends TestUtils {
            ConfigFactory.parseResources("reference.conf"),
            ConfigFactory.parseResourcesAnySyntax("reference"),
            ConfigFactory.parseResources("reference.conf",
-                                        ConfigParseOptions.defaults()),
+                                        ConfigParseOptions.defaults),
            ConfigFactory.parseResourcesAnySyntax("reference",
-                                                 ConfigParseOptions.defaults()),
+                                                 ConfigParseOptions.defaults),
            ConfigFactory.load("application"),
            ConfigFactory.load("application",
-                              ConfigParseOptions.defaults(),
-                              ConfigResolveOptions.defaults()),
+                              ConfigParseOptions.defaults,
+                              ConfigResolveOptions.defaults),
            ConfigFactory.load(ConfigFactory.parseString("")),
            ConfigFactory.load(ConfigFactory.parseString(""),
-                              ConfigResolveOptions.defaults()),
+                              ConfigResolveOptions.defaults),
            ConfigFactory.defaultReference()
          )) {
       assertFalse("no a", c.hasPath("a"))
@@ -987,17 +987,17 @@ class PublicApiTest extends TestUtils {
              ConfigFactory.parseResources("reference.conf"),
              ConfigFactory.parseResourcesAnySyntax("reference"),
              ConfigFactory.parseResources("reference.conf",
-                                          ConfigParseOptions.defaults()),
+                                          ConfigParseOptions.defaults),
              ConfigFactory.parseResourcesAnySyntax(
                "reference",
-               ConfigParseOptions.defaults()),
+               ConfigParseOptions.defaults),
              ConfigFactory.load("application"),
              ConfigFactory.load("application",
-                                ConfigParseOptions.defaults(),
-                                ConfigResolveOptions.defaults()),
+                                ConfigParseOptions.defaults,
+                                ConfigResolveOptions.defaults),
              ConfigFactory.load(ConfigFactory.parseString("")),
              ConfigFactory.load(ConfigFactory.parseString(""),
-                                ConfigResolveOptions.defaults()),
+                                ConfigResolveOptions.defaults),
              ConfigFactory.defaultReference()
            )) {
         assertEquals(1, c.getInt("a"))
@@ -1035,15 +1035,15 @@ class PublicApiTest extends TestUtils {
            ConfigFactory.parseResourcesAnySyntax(loaderA1, "application"),
            ConfigFactory.parseResources(loaderA1,
                                         "application.conf",
-                                        ConfigParseOptions.defaults()),
+                                        ConfigParseOptions.defaults),
            ConfigFactory.parseResourcesAnySyntax(loaderA1,
                                                  "application",
-                                                 ConfigParseOptions.defaults()),
+                                                 ConfigParseOptions.defaults),
            ConfigFactory.load(loaderA1, "application"),
            ConfigFactory.load(loaderA1,
                               "application",
-                              ConfigParseOptions.defaults(),
-                              ConfigResolveOptions.defaults()),
+                              ConfigParseOptions.defaults,
+                              ConfigResolveOptions.defaults),
            ConfigFactory.defaultApplication(loaderA1)
          )) {
       assertEquals(1, c.getInt("a"))
@@ -1051,14 +1051,14 @@ class PublicApiTest extends TestUtils {
     }
 
     // check providing the loader via ConfigParseOptions
-    val withLoader = ConfigParseOptions.defaults().setClassLoader(loaderA1)
+    val withLoader = ConfigParseOptions.defaults.setClassLoader(loaderA1)
     for (c <- Seq(
            ConfigFactory.parseResources("application.conf", withLoader),
            ConfigFactory.parseResourcesAnySyntax("application", withLoader),
            ConfigFactory.defaultApplication(withLoader),
-           ConfigFactory.load(withLoader, ConfigResolveOptions.defaults()),
+           ConfigFactory.load(withLoader, ConfigResolveOptions.defaults),
            ConfigFactory
-             .load("application", withLoader, ConfigResolveOptions.defaults())
+             .load("application", withLoader, ConfigResolveOptions.defaults)
          )) {
       assertEquals(1, c.getInt("a"))
       assertFalse("no b", c.hasPath("b"))
@@ -1069,14 +1069,14 @@ class PublicApiTest extends TestUtils {
            ConfigFactory.parseResources("application.conf"),
            ConfigFactory.parseResourcesAnySyntax("application"),
            ConfigFactory.parseResources("application.conf",
-                                        ConfigParseOptions.defaults()),
+                                        ConfigParseOptions.defaults),
            ConfigFactory.parseResourcesAnySyntax("application",
-                                                 ConfigParseOptions.defaults()),
+                                                 ConfigParseOptions.defaults),
            ConfigFactory.load("application"),
            ConfigFactory.defaultApplication(),
            ConfigFactory.load("application",
-                              ConfigParseOptions.defaults(),
-                              ConfigResolveOptions.defaults())
+                              ConfigParseOptions.defaults,
+                              ConfigResolveOptions.defaults)
          )) {
       assertFalse("no a", c.hasPath("a"))
       assertFalse("no b", c.hasPath("b"))
@@ -1088,15 +1088,15 @@ class PublicApiTest extends TestUtils {
              ConfigFactory.parseResources("application.conf"),
              ConfigFactory.parseResourcesAnySyntax("application"),
              ConfigFactory.parseResources("application.conf",
-                                          ConfigParseOptions.defaults()),
+                                          ConfigParseOptions.defaults),
              ConfigFactory.parseResourcesAnySyntax(
                "application",
-               ConfigParseOptions.defaults()),
+               ConfigParseOptions.defaults),
              ConfigFactory.load("application"),
              ConfigFactory.defaultApplication(),
              ConfigFactory.load("application",
-                                ConfigParseOptions.defaults(),
-                                ConfigResolveOptions.defaults())
+                                ConfigParseOptions.defaults,
+                                ConfigResolveOptions.defaults)
            )) {
         assertEquals(1, c.getInt("a"))
         assertFalse("no b", c.hasPath("b"))

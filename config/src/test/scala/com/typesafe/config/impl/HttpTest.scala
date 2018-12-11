@@ -25,7 +25,7 @@ class HttpTest extends TestUtils {
       val options = syntaxOption map { syntax =>
         ConfigParseOptions.defaults.setSyntax(syntax)
       } getOrElse {
-        ConfigParseOptions.defaults()
+        ConfigParseOptions.defaults
       }
 
       body(options)
@@ -54,7 +54,7 @@ class HttpTest extends TestUtils {
     val e = intercept[ConfigException.IO] {
       ConfigFactory.parseURL(
         url("notfound"),
-        ConfigParseOptions.defaults().setAllowMissing(false))
+        ConfigParseOptions.defaults.setAllowMissing(false))
     }
     assertTrue(s"expected different exception for notfound, got $e",
                e.getMessage.contains("/notfound"))
@@ -65,7 +65,7 @@ class HttpTest extends TestUtils {
     val e = intercept[ConfigException.BugOrBroken] {
       ConfigFactory.parseURL(
         url("error"),
-        ConfigParseOptions.defaults().setAllowMissing(false))
+        ConfigParseOptions.defaults.setAllowMissing(false))
     }
     assertTrue(s"expected different exception for error url, got $e",
                e.getMessage.contains("/error"))
@@ -75,7 +75,7 @@ class HttpTest extends TestUtils {
   def notFoundDoesNotThrowIfAllowingMissing(): Unit = {
     val conf = ConfigFactory.parseURL(
       url("notfound"),
-      ConfigParseOptions.defaults().setAllowMissing(true))
+      ConfigParseOptions.defaults.setAllowMissing(true))
     assertEquals(0, conf.root.size)
   }
 
@@ -84,7 +84,7 @@ class HttpTest extends TestUtils {
     val e = intercept[ConfigException.BugOrBroken] {
       ConfigFactory.parseURL(
         url("error"),
-        ConfigParseOptions.defaults().setAllowMissing(true))
+        ConfigParseOptions.defaults.setAllowMissing(true))
     }
     assertTrue(
       s"expected different exception for error url when allowing missing, got $e",

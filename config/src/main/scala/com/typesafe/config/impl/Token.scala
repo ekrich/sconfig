@@ -32,9 +32,9 @@ class Token private[impl] (tokenType: TokenType,
 
   // this is final because we don't always use the origin() accessor,
   // and we don't because it throws if origin is null
-  final private[impl] def origin()
-    : ConfigOrigin = { // code is only supposed to call origin() on token types that are
-    // expected to have an origin.
+  final private[impl] def origin(): ConfigOrigin = {
+    // code is only supposed to call origin() on token types that
+    // are expected to have an origin.
     if (origin == null)
       throw new ConfigException.BugOrBroken(
         "tried to get origin from token that doesn't have one: " + this)

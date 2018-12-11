@@ -22,7 +22,7 @@ final class ConfigBoolean(origin: ConfigOrigin, val value: Boolean)
 
   override def newCopy(origin: ConfigOrigin) = new ConfigBoolean(origin, value)
 
-  // serialization all goes through SerializedConfigValue
+  // serialization all goes through SerializedConfigValue (signature is critical)
   @throws[ObjectStreamException]
   private def writeReplace(): jl.Object = new SerializedConfigValue(this)
 }

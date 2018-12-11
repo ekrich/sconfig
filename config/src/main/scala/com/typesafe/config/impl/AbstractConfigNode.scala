@@ -8,12 +8,12 @@ import java.{util => ju}
 
 abstract class AbstractConfigNode extends ConfigNode {
 
-  protected[impl] def tokens(): ju.Collection[Token]
+  protected[impl] def tokens: ju.Collection[Token]
 
   override final def render: String = {
     val origText = new StringBuilder
     import scala.collection.JavaConverters._
-    for (t <- tokens().asScala) {
+    for (t <- tokens.asScala) {
       origText.append(t.tokenText)
     }
     origText.toString

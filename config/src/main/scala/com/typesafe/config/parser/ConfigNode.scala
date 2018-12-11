@@ -32,5 +32,5 @@ trait ConfigNode {
    *
    * @return the original text used to form this node as a String
    */
-  def render(): String
+  def render: String
 }

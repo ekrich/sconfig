@@ -25,7 +25,7 @@ object ConfigRenderOptions {
    *
    * @return the default render options
    */
-  def defaults() = new ConfigRenderOptions(true, true, true, true)
+  def defaults = new ConfigRenderOptions(true, true, true, true)
 
   /**
    * Returns concise render options (no whitespace or comments). For a
@@ -33,7 +33,7 @@ object ConfigRenderOptions {
    *
    * @return the concise render options
    */
-  def concise() = new ConfigRenderOptions(false, false, false, true)
+  def concise = new ConfigRenderOptions(false, false, false, true)
 }
 
 final class ConfigRenderOptions private (val originComments: Boolean,
@@ -60,7 +60,7 @@ final class ConfigRenderOptions private (val originComments: Boolean,
    *
    * @return true if comments should be rendered
    */
-  def getComments(): Boolean = comments
+  def getComments: Boolean = comments
 
   /**
    * Returns options with origin comments toggled. If this is enabled, the
@@ -88,7 +88,7 @@ final class ConfigRenderOptions private (val originComments: Boolean,
    *
    * @return true if origin comments should be rendered
    */
-  def getOriginComments(): Boolean = originComments
+  def getOriginComments: Boolean = originComments
 
   /**
    * Returns options with formatting toggled. Formatting means indentation and
@@ -108,7 +108,7 @@ final class ConfigRenderOptions private (val originComments: Boolean,
    *
    * @return true if the options enable formatting
    */
-  def getFormatted(): Boolean = formatted
+  def getFormatted: Boolean = formatted
 
   /**
    * Returns options with JSON toggled. JSON means that HOCON extensions
@@ -131,7 +131,7 @@ final class ConfigRenderOptions private (val originComments: Boolean,
    *
    * @return true if only JSON should be rendered
    */
-  def getJson(): Boolean = json
+  def getJson: Boolean = json
 
   override def toString: String = {
     val sb = new StringBuilder("ConfigRenderOptions(")

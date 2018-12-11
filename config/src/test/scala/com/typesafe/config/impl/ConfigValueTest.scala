@@ -1080,7 +1080,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def renderSorting(): Unit = {
     val config   = parseConfig("""0=a,1=b,2=c,3=d,10=e,20=f,30=g""")
-    val rendered = config.root.render(ConfigRenderOptions.concise())
+    val rendered = config.root.render(ConfigRenderOptions.concise)
     assertEquals(
       """{"0":"a","1":"b","2":"c","3":"d","10":"e","20":"f","30":"g"}""",
       rendered)

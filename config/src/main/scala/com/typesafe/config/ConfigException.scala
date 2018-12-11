@@ -68,7 +68,7 @@ object ConfigException {
       f = clazz.getDeclaredField("origin");
     } catch {
       case e: NoSuchFieldException =>
-        throw new IOException(clazz.getSimpleName() + " has no origin field?",
+        throw new IOException(clazz.getSimpleName + " has no origin field?",
                               e)
       case e: SecurityException =>
         throw new IOException(
@@ -301,7 +301,7 @@ object ConfigException {
   /**
    * Information about a problem that occurred in {@link Config#checkValid}. A
    * {@link ConfigException.ValidationFailed} exception thrown from
-   * <code>checkValid()</code> includes a list of problems encountered.
+   * <code>checkValid</code> includes a list of problems encountered.
    */
   @SerialVersionUID(1L)
   class ValidationProblem(
@@ -332,8 +332,8 @@ object ConfigException {
 
   /**
    * Exception indicating that {@link Config#checkValid} found validity
-   * problems. The problems are available via the {@link #problems()} method.
-   * The <code>getMessage()</code> of this exception is a potentially very
+   * problems. The problems are available via the {@link #problems} method.
+   * The <code>getMessage</code> of this exception is a potentially very
    * long string listing all the problems found.
    */
   @SerialVersionUID(1L)

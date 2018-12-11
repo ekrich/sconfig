@@ -246,6 +246,7 @@ object ConfigImpl {
     private[impl] val defaultIncluder = new SimpleIncluder(null)
   }
   private[impl] def defaultIncluder: ConfigIncluder =
+    // this calls a simple constructor - not sure why we are catching this
     try DefaultIncluderHolder.defaultIncluder
     catch {
       case e: ExceptionInInitializerError =>
@@ -256,7 +257,7 @@ object ConfigImpl {
     val systemProperties     = System.getProperties
     val systemPropertiesCopy = new ju.Properties
     systemProperties.synchronized {
-      // type ascription, see https://github.com/scala/bug/issues/10418
+      // See https://github.com/scala/bug/issues/10418
       (systemPropertiesCopy: ju.Map[AnyRef, AnyRef]).putAll(systemProperties)
     }
     systemPropertiesCopy

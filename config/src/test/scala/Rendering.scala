@@ -7,7 +7,7 @@ object RenderExample extends App {
   val comments       = args.contains("--comments")
   val hocon          = args.contains("--hocon")
   val options = ConfigRenderOptions
-    .defaults()
+    .defaults
     .setFormatted(formatted)
     .setOriginComments(originComments)
     .setComments(comments)
@@ -71,7 +71,7 @@ object RenderOptions extends App {
       val json           = values(3)
 
       val options = ConfigRenderOptions
-        .defaults()
+        .defaults
         .setFormatted(formatted)
         .setOriginComments(originComments)
         .setComments(comments)

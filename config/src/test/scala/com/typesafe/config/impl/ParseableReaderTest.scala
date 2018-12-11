@@ -16,7 +16,7 @@ class ParseableReaderTest extends TestUtils {
       getClass.getResourceAsStream(filename))
     val config = ConfigFactory.parseReader(configInput,
                                            ConfigParseOptions
-                                             .defaults()
+                                             .defaults
                                              .setSyntaxFromFilename(filename))
     assertEquals("hello^^", config.getString("fromProps.specialChars"))
   }

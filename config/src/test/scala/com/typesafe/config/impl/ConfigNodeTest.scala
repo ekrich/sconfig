@@ -7,31 +7,31 @@ class ConfigNodeTest extends TestUtils {
 
   private def singleTokenNodeTest(token: Token) {
     val node = configNodeSingleToken(token)
-    assertEquals(node.render(), token.tokenText())
+    assertEquals(node.render, token.tokenText())
   }
 
   private def keyNodeTest(path: String) {
     val node = configNodeKey(path)
-    assertEquals(path, node.render())
+    assertEquals(path, node.render)
   }
 
   private def simpleValueNodeTest(token: Token) {
     val node = configNodeSimpleValue(token)
-    assertEquals(node.render(), token.tokenText())
+    assertEquals(node.render, token.tokenText())
   }
 
   private def fieldNodeTest(key: ConfigNodePath,
                             value: AbstractConfigNodeValue,
                             newValue: AbstractConfigNodeValue) {
     val keyValNode = nodeKeyValuePair(key, value)
-    assertEquals(key.render() + " : " + value.render(), keyValNode.render())
-    assertEquals(key.render, keyValNode.path.render())
-    assertEquals(value.render, keyValNode.value.render())
+    assertEquals(key.render + " : " + value.render, keyValNode.render)
+    assertEquals(key.render, keyValNode.path.render)
+    assertEquals(value.render, keyValNode.value.render)
 
     val newKeyValNode = keyValNode.replaceValue(newValue)
-    assertEquals(key.render() + " : " + newValue.render(),
-                 newKeyValNode.render())
-    assertEquals(newValue.render(), newKeyValNode.value.render())
+    assertEquals(key.render + " : " + newValue.render,
+                 newKeyValNode.render)
+    assertEquals(newValue.render, newKeyValNode.value.render)
   }
 
   private def topLevelValueReplaceTest(value: AbstractConfigNodeValue,
@@ -42,11 +42,11 @@ class ConfigNodeTest extends TestUtils {
                                    nodeCloseBrace)
     val complexNode = configNodeObject(complexNodeChildren)
     val newNode     = complexNode.setValueOnPath(key, newValue)
-    val origText    = "{" + key + " : " + value.render() + "}"
-    val finalText   = "{" + key + " : " + newValue.render() + "}"
+    val origText    = "{" + key + " : " + value.render + "}"
+    val finalText   = "{" + key + " : " + newValue.render + "}"
 
-    assertEquals(origText, complexNode.render())
-    assertEquals(finalText, newNode.render())
+    assertEquals(origText, complexNode.render)
+    assertEquals(finalText, newNode.render)
   }
 
   private def replaceDuplicatesTest(value1: AbstractConfigNodeValue,
@@ -58,22 +58,22 @@ class ConfigNodeTest extends TestUtils {
     val keyValPair3 = nodeKeyValuePair(key, value3)
     val complexNode = configNodeObject(
       List(keyValPair1, keyValPair2, keyValPair3))
-    val origText = keyValPair1.render() + keyValPair2.render() + keyValPair3
-      .render()
-    val finalText = key.render() + " : 15"
+    val origText = keyValPair1.render + keyValPair2.render + keyValPair3
+      .render
+    val finalText = key.render + " : 15"
 
-    assertEquals(origText, complexNode.render())
+    assertEquals(origText, complexNode.render)
     assertEquals(finalText,
-                 complexNode.setValueOnPath("foo", nodeInt(15)).render())
+                 complexNode.setValueOnPath("foo", nodeInt(15)).render)
   }
 
   private def nonExistentPathTest(value: AbstractConfigNodeValue) {
     val node = configNodeObject(
       List(nodeKeyValuePair(configNodeKey("bar"), nodeInt(15))))
-    assertEquals("bar : 15", node.render())
+    assertEquals("bar : 15", node.render)
     val newNode   = node.setValueOnPath("foo", value)
-    val finalText = "bar : 15, foo : " + value.render()
-    assertEquals(finalText, newNode.render())
+    val finalText = "bar : 15, foo : " + value.render
+    assertEquals(finalText, newNode.render)
   }
 
   @Test
@@ -108,9 +108,9 @@ class ConfigNodeTest extends TestUtils {
   def pathNodeSubpath() {
     val origPath = "a.b.c.\"@$%#@!@#$\".\"\".1234.5678"
     val pathNode = configNodeKey(origPath)
-    assertEquals(origPath, pathNode.render())
-    assertEquals("c.\"@$%#@!@#$\".\"\".1234.5678", pathNode.subPath(2).render())
-    assertEquals("5678", pathNode.subPath(6).render())
+    assertEquals(origPath, pathNode.render)
+    assertEquals("c.\"@$%#@!@#$\".\"\".1234.5678", pathNode.subPath(2).render)
+    assertEquals("5678", pathNode.subPath(6).render)
   }
 
   @Test
@@ -284,7 +284,7 @@ class ConfigNodeTest extends TestUtils {
         nodeLine(12),
         nodeCloseBrace
       ))
-    assertEquals(origText, origNode.render())
+    assertEquals(origText, origNode.render)
     val finalText = "foo : bar\nbaz : {\n\t\"abc.def\" : true\n\t//This is a comment about the below setting\n\n\tabc : {\n\t\t" +
       "def : false\n\t\t\n\t\t\"this.does.not.exist@@@+$#\" : {\n\t\t  end : doesnotexist\n\t\t}\n\t}\n}\n\nbaz.abc.ghi : randomunquotedString\n}"
 
@@ -306,7 +306,7 @@ class ConfigNodeTest extends TestUtils {
       configNodeSimpleValue(tokenUnquoted("doesnotexist")))
 
     // The above operations cause the resultant map to be rendered properly
-    assertEquals(finalText, newNode.render())
+    assertEquals(finalText, newNode.render)
   }
 
 }

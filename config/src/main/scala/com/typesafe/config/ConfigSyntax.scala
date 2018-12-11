@@ -40,10 +40,10 @@ object ConfigSyntax {
    */
   final val PROPERTIES = new ConfigSyntax("PROPERTIES", 2)
 
-  private[this] val _values: Array[ConfigSyntax] =
+  private[this] final val _values: Array[ConfigSyntax] =
     Array(JSON, CONF, PROPERTIES)
 
-  def values(): Array[ConfigSyntax] = _values.clone()
+  def values: Array[ConfigSyntax] = _values.clone()
 
   def valueOf(name: String): ConfigSyntax =
     _values.find(_.name == name).getOrElse {

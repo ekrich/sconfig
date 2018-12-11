@@ -26,12 +26,12 @@ class ConfigTest extends TestUtils {
 
   private def resolveNoSystem(v: AbstractConfigValue,
                               root: AbstractConfigObject) = {
-    ResolveContext.resolve(v, root, ConfigResolveOptions.noSystem())
+    ResolveContext.resolve(v, root, ConfigResolveOptions.noSystem)
   }
 
   private def resolveNoSystem(v: SimpleConfig, root: SimpleConfig) = {
     ResolveContext
-      .resolve(v.root, root.root, ConfigResolveOptions.noSystem())
+      .resolve(v.root, root.root, ConfigResolveOptions.noSystem)
       .asInstanceOf[AbstractConfigObject]
       .toConfig
   }
@@ -1190,7 +1190,7 @@ class ConfigTest extends TestUtils {
            json           <- allBooleans)
         yield
           ConfigRenderOptions
-            .defaults()
+            .defaults
             .setFormatted(formatted)
             .setOriginComments(originComments)
             .setComments(comments)
@@ -1203,17 +1203,17 @@ class ConfigTest extends TestUtils {
       val conf = ConfigFactory.parseResourcesAnySyntax(
         classOf[ConfigTest],
         name,
-        ConfigParseOptions.defaults().setAllowMissing(false))
+        ConfigParseOptions.defaults.setAllowMissing(false))
       for (renderOptions <- optionsCombos) {
         val unresolvedRender = conf.root.render(renderOptions)
         val resolved         = conf.resolve
         val resolvedRender   = resolved.root.render(renderOptions)
         val unresolvedParsed = ConfigFactory.parseString(
           unresolvedRender,
-          ConfigParseOptions.defaults())
+          ConfigParseOptions.defaults)
         val resolvedParsed = ConfigFactory.parseString(
           resolvedRender,
-          ConfigParseOptions.defaults())
+          ConfigParseOptions.defaults)
         try {
           assertEquals("unresolved options=" + renderOptions,
                        conf.root,
@@ -1229,13 +1229,13 @@ class ConfigTest extends TestUtils {
             showDiff(resolved.root, resolvedParsed.root)
             throw e
         }
-        if (renderOptions.getJson() && !(renderOptions
-              .getComments() || renderOptions.getOriginComments())) {
+        if (renderOptions.getJson && !(renderOptions
+              .getComments || renderOptions.getOriginComments)) {
           // should get valid JSON if we don't have comments and are resolved
           val json = try {
             ConfigFactory.parseString(
               resolvedRender,
-              ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON))
+              ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON))
           } catch {
             case e: Exception =>
               System.err.println(
@@ -1245,7 +1245,7 @@ class ConfigTest extends TestUtils {
         }
         // rendering repeatedly should not make the file different (e.g. shouldn't make it longer)
         // unless the debug comments are in there
-        if (!renderOptions.getOriginComments()) {
+        if (!renderOptions.getOriginComments) {
           val renderedAgain = resolvedParsed.root.render(renderOptions)
           // TODO the strings should be THE SAME not just the same length,
           // but there's a bug right now that sometimes object keys seem to
@@ -1266,7 +1266,7 @@ class ConfigTest extends TestUtils {
       val conf = ConfigFactory.parseResourcesAnySyntax(
         classOf[ConfigTest],
         name,
-        ConfigParseOptions.defaults().setAllowMissing(false))
+        ConfigParseOptions.defaults.setAllowMissing(false))
       val resolved = conf.resolve
       checkSerializable(resolved)
     }
@@ -1289,7 +1289,7 @@ class ConfigTest extends TestUtils {
     val values = ConfigFactory.parseString("unknown = [someVal], known = 42")
     val unresolved = ConfigFactory.parseString(
       "concat = [${unknown}[]], sibling = [${unknown}, ${known}]")
-    unresolved.resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
+    unresolved.resolve(ConfigResolveOptions.defaults.setAllowUnresolved(true))
     unresolved.withFallback(values).resolve
     unresolved.resolveWith(values)
   }
@@ -1306,14 +1306,14 @@ class ConfigTest extends TestUtils {
 
     // resolve() by default throws with unresolveable substs
     intercept[ConfigException.UnresolvedSubstitution] {
-      unresolved.resolve(ConfigResolveOptions.defaults())
+      unresolved.resolve(ConfigResolveOptions.defaults)
     }
     // we shouldn't be able to get a value without resolving it
     intercept[ConfigException.NotResolved] {
       unresolved.getInt("alwaysResolveable")
     }
     val allowedUnresolved = unresolved.resolve(
-      ConfigResolveOptions.defaults().setAllowUnresolved(true))
+      ConfigResolveOptions.defaults.setAllowUnresolved(true))
     // when we partially-resolve we should still resolve what we can
     assertEquals("we resolved the resolveable",
                  42,
@@ -1395,12 +1395,12 @@ class ConfigTest extends TestUtils {
                               resolvers: ConfigResolver*) = {
     val unresolved = ConfigFactory.parseString(source)
     var options =
-      ConfigResolveOptions.defaults().setAllowUnresolved(allowUnresolved)
+      ConfigResolveOptions.defaults.setAllowUnresolved(allowUnresolved)
     for (resolver <- resolvers)
       options = options.appendResolver(resolver)
     val obj = unresolved.resolve(options).root
     assertEquals(expected,
-                 obj.render(ConfigRenderOptions.concise().setJson(false)))
+                 obj.render(ConfigRenderOptions.concise.setJson(false)))
   }
 
   @Test

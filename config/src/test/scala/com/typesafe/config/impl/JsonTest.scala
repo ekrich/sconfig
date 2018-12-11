@@ -14,7 +14,7 @@ class JsonTest extends TestUtils {
 
   def parse(s: String): ConfigValue = {
     val options = ConfigParseOptions
-      .defaults()
+      .defaults
       .setOriginDescription("test json string")
       .setSyntax(ConfigSyntax.JSON)
     Parseable.newString(s, options).parseValue()
@@ -22,7 +22,7 @@ class JsonTest extends TestUtils {
 
   def parseAsConf(s: String): ConfigValue = {
     val options = ConfigParseOptions
-      .defaults()
+      .defaults
       .setOriginDescription("test conf string")
       .setSyntax(ConfigSyntax.CONF)
     Parseable.newString(s, options).parseValue()

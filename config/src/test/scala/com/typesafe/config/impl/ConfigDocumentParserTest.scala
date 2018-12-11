@@ -9,8 +9,8 @@ class ConfigDocumentParserTest extends TestUtils {
   private def parseTest(origText: String) {
     val node = ConfigDocumentParser.parse(tokenize(origText),
                                           fakeOrigin(),
-                                          ConfigParseOptions.defaults())
-    assertEquals(origText, node.render())
+                                          ConfigParseOptions.defaults)
+    assertEquals(origText, node.render)
   }
 
   private def parseJSONFailuresTest(origText: String, containsMessage: String) {
@@ -19,7 +19,7 @@ class ConfigDocumentParserTest extends TestUtils {
       ConfigDocumentParser.parse(
         tokenize(origText),
         fakeOrigin(),
-        ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON))
+        ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON))
     }
     assertTrue(e.getMessage.contains(containsMessage))
   }
@@ -28,30 +28,30 @@ class ConfigDocumentParserTest extends TestUtils {
     val expectedRenderedText = if (finalText == null) origText else finalText
     val node = ConfigDocumentParser.parseValue(tokenize(origText),
                                                fakeOrigin(),
-                                               ConfigParseOptions.defaults())
-    assertEquals(expectedRenderedText, node.render())
+                                               ConfigParseOptions.defaults)
+    assertEquals(expectedRenderedText, node.render)
     assertTrue(node.isInstanceOf[ConfigNodeSimpleValue])
 
     val nodeJSON = ConfigDocumentParser.parseValue(
       tokenize(origText),
       fakeOrigin(),
-      ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON))
-    assertEquals(expectedRenderedText, nodeJSON.render())
+      ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON))
+    assertEquals(expectedRenderedText, nodeJSON.render)
     assertTrue(nodeJSON.isInstanceOf[ConfigNodeSimpleValue])
   }
 
   private def parseComplexValueTest(origText: String) {
     val node = ConfigDocumentParser.parseValue(tokenize(origText),
                                                fakeOrigin(),
-                                               ConfigParseOptions.defaults())
-    assertEquals(origText, node.render())
+                                               ConfigParseOptions.defaults)
+    assertEquals(origText, node.render)
     assertTrue(node.isInstanceOf[ConfigNodeComplexValue])
 
     val nodeJSON = ConfigDocumentParser.parseValue(
       tokenize(origText),
       fakeOrigin(),
-      ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON))
-    assertEquals(origText, nodeJSON.render())
+      ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON))
+    assertEquals(origText, nodeJSON.render)
     assertTrue(nodeJSON.isInstanceOf[ConfigNodeComplexValue])
   }
 
@@ -59,14 +59,14 @@ class ConfigDocumentParserTest extends TestUtils {
                                               containsMessage: String) {
     val node = ConfigDocumentParser.parseValue(tokenize(origText),
                                                fakeOrigin(),
-                                               ConfigParseOptions.defaults())
-    assertEquals(origText, node.render())
+                                               ConfigParseOptions.defaults)
+    assertEquals(origText, node.render)
 
     val e = intercept[ConfigException] {
       ConfigDocumentParser.parseValue(
         tokenize(origText),
         fakeOrigin(),
-        ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON))
+        ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON))
     }
     assertTrue(e.getMessage.contains(containsMessage))
   }
@@ -75,7 +75,7 @@ class ConfigDocumentParserTest extends TestUtils {
     val e = intercept[ConfigException] {
       ConfigDocumentParser.parseValue(tokenize(toReplace),
                                       fakeOrigin(),
-                                      ConfigParseOptions.defaults())
+                                      ConfigParseOptions.defaults)
     }
     assertTrue(
       "expected message parsing leading trailing",
@@ -212,8 +212,8 @@ class ConfigDocumentParserTest extends TestUtils {
     val node = ConfigDocumentParser.parse(
       tokenize(origText),
       fakeOrigin(),
-      ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON))
-    assertEquals(origText, node.render())
+      ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON))
+    assertEquals(origText, node.render)
   }
 
   @Test
@@ -278,15 +278,15 @@ class ConfigDocumentParserTest extends TestUtils {
     var origText = "123 456 \"abc\""
     var node = ConfigDocumentParser.parseValue(tokenize(origText),
                                                fakeOrigin(),
-                                               ConfigParseOptions.defaults())
-    assertEquals(origText, node.render())
+                                               ConfigParseOptions.defaults)
+    assertEquals(origText, node.render)
 
     // Check that keys with no separators and object values are handled by CONF parsing
     origText = """{"foo" { "bar" : 12 } }"""
     node = ConfigDocumentParser.parseValue(tokenize(origText),
                                            fakeOrigin(),
-                                           ConfigParseOptions.defaults())
-    assertEquals(origText, node.render())
+                                           ConfigParseOptions.defaults)
+    assertEquals(origText, node.render)
   }
 
   @Test
@@ -315,7 +315,7 @@ class ConfigDocumentParserTest extends TestUtils {
       ConfigDocumentParser.parseValue(
         tokenize(origText),
         fakeOrigin(),
-        ConfigParseOptions.defaults().setSyntax(ConfigSyntax.JSON))
+        ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON))
     }
     assertTrue(
       "expected message for parsing concat as json",
@@ -329,7 +329,7 @@ class ConfigDocumentParserTest extends TestUtils {
       ConfigDocumentParser.parseValue(
         tokenize(origText),
         fakeOrigin(),
-        ConfigParseOptions.defaults().setSyntax((ConfigSyntax.JSON)))
+        ConfigParseOptions.defaults.setSyntax((ConfigSyntax.JSON)))
     }
     assertTrue("expected failure for key foo followed by token",
                e.getMessage.contains(
@@ -340,13 +340,13 @@ class ConfigDocumentParserTest extends TestUtils {
   def parseEmptyDocument {
     val node = ConfigDocumentParser.parse(tokenize(""),
                                           fakeOrigin(),
-                                          ConfigParseOptions.defaults())
+                                          ConfigParseOptions.defaults)
     assertTrue(node.value.isInstanceOf[ConfigNodeObject])
     assertTrue(node.value.children.isEmpty())
 
     val node2 = ConfigDocumentParser.parse(tokenize("#comment\n#comment\n\n"),
                                            fakeOrigin(),
-                                           ConfigParseOptions.defaults())
+                                           ConfigParseOptions.defaults)
     assertTrue(node2.value.isInstanceOf[ConfigNodeObject])
   }
 }

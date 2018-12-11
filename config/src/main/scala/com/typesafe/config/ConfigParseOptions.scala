@@ -30,7 +30,7 @@ object ConfigParseOptions {
    *
    * @return the default parse options
    */
-  def defaults() = new ConfigParseOptions(null, null, true, null, null)
+  def defaults = new ConfigParseOptions(null, null, true, null, null)
 }
 
 final class ConfigParseOptions private (val syntax: ConfigSyntax,
@@ -73,7 +73,7 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
    *
    * @return the current syntax or null
    */
-  def getSyntax(): ConfigSyntax = syntax
+  def getSyntax: ConfigSyntax = syntax
 
   /**
    * Set a description for the thing being parsed. In most cases this will be
@@ -102,7 +102,7 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
    *
    * @return the current origin description or null
    */
-  def getOriginDescription(): String = originDescription
+  def getOriginDescription: String = originDescription
 
   /** this is package-private, not public API */
   private[config] def withFallbackOriginDescription(originDescription: String) =
@@ -132,7 +132,7 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
    *
    * @return whether we allow missing files
    */
-  def getAllowMissing(): Boolean = allowMissing
+  def getAllowMissing: Boolean = allowMissing
 
   /**
    * Set a {@link ConfigIncluder} which customizes how includes are handled.
@@ -190,7 +190,7 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
    *
    * @return current includer or null
    */
-  def getIncluder(): ConfigIncluder = includer
+  def getIncluder: ConfigIncluder = includer
 
   /**
    * Set the class loader. If set to null,
@@ -217,7 +217,7 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
    *
    * @return class loader to use
    */
-  def getClassLoader(): ClassLoader =
+  def getClassLoader: ClassLoader =
     if (this.classLoader == null) Thread.currentThread.getContextClassLoader
     else this.classLoader
 }

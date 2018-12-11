@@ -259,7 +259,7 @@ object SimpleConfigOrigin {
     if (originTypeOrdinal == null)
       throw new IOException("Missing ORIGIN_TYPE field")
     val originType: OriginType =
-      OriginType.values()(originTypeOrdinal.byteValue)
+      OriginType.values(originTypeOrdinal.byteValue)
     val urlOrNull =
       m.get(SerializedField.ORIGIN_URL).asInstanceOf[String]
     var resourceOrNull =
