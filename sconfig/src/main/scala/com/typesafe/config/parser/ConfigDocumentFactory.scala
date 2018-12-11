@@ -6,8 +6,8 @@ import java.io.File
 import java.io.Reader
 
 /**
- * Factory for creating {@link
- * com.typesafe.config.parser.ConfigDocument} instances.
+ * Factory for creating
+ * [[com.typesafe.config.parser.ConfigDocument]] instances.
  */
 object ConfigDocumentFactory {
 
@@ -19,7 +19,7 @@ object ConfigDocumentFactory {
    * @param options
    *       parse options to control how the reader is interpreted
    * @return the parsed configuration
-   * @throws com.typesafe.config.ConfigException on IO or parse errors
+   * @throws [[com.typesafe.config.ConfigException]] on IO or parse errors
    */
   def parseReader(reader: Reader, options: ConfigParseOptions): ConfigDocument =
     Parseable.newReader(reader, options).parseConfigDocument

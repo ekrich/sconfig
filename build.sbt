@@ -6,10 +6,10 @@
 addCommandAlias(
   "run-examples",
   Seq(
-    "config-simple-app-scala/run",
-    "config-complex-app-scala/run",
-    "config-simple-app-java/run",
-    "config-complex-app-java/run"
+    "sconfig-simple-app-scala/run",
+    "sconfig-complex-app-scala/run",
+    "sconfig-simple-app-java/run",
+    "sconfig-complex-app-java/run"
   ).mkString(";", ";", "")
 )
 
@@ -56,20 +56,16 @@ lazy val root = (project in file("."))
   )
   .settings(commonSettings)
   .settings(
-    name := "config-root",
+    name := "sconfig-root",
     doc / aggregate := false,
     doc := (configLib / Compile / doc).value,
     packageDoc / aggregate := false,
     packageDoc := (configLib / Compile / packageDoc).value,
   )
 
-lazy val configLib = Project("config", file("config"))
-  .enablePlugins(SbtOsgi)
+lazy val configLib = Project("sconfig", file("sconfig"))
   .dependsOn(testLib % "test->test")
-  .settings(osgiSettings)
   .settings(
-    autoScalaLibrary := true,
-    crossPaths := false,
     libraryDependencies += {
       val liftVersion = scalaBinaryVersion.value match {
         case "2.10" => "2.6.3" // last version that supports 2.10
@@ -84,14 +80,6 @@ lazy val configLib = Project("config", file("config"))
                                              "1.8",
                                              "-g",
                                              "-Xlint:unchecked"),
-    Compile / doc / javacOptions ++= Seq(
-      "-group",
-      s"Public API (version ${version.value})",
-      "com.typesafe.config:com.typesafe.config.parser",
-      "-group",
-      "Internal Implementation - Not ABI Stable",
-      "com.typesafe.config.impl"
-    ),
     // because we test some global state such as singleton caches,
     // we have to run tests in serial.
     Test / parallelExecution := false,
@@ -101,10 +89,6 @@ lazy val configLib = Project("config", file("config"))
     Test / run / fork := true,
     //env vars for tests
     Test / envVars ++= Map("testList.0" -> "0", "testList.1" -> "1"),
-    OsgiKeys.exportPackage := Seq("com.typesafe.config",
-                                  "com.typesafe.config.impl"),
-    Compile / packageBin / packageOptions +=
-      Package.ManifestAttributes("Automatic-Module-Name" -> "typesafe.config"),
     // replace with your old artifact id
     mimaPreviousArtifacts := Set("com.typesafe" % "config" % "1.3.3"),
     mimaBinaryIssueFilters ++= ignoredABIProblems
@@ -124,26 +108,26 @@ lazy val commonSettings: Seq[Setting[_]] = Def.settings(
 
 def proj(id: String, base: File) = Project(id, base) settings commonSettings
 
-lazy val testLib = proj("config-test-lib", file("test-lib"))
+lazy val testLib = proj("sconfig-test-lib", file("test-lib"))
 
 lazy val simpleLibScala = proj(
-  "config-simple-lib-scala",
+  "sconfig-simple-lib-scala",
   file("examples/scala/simple-lib")) dependsOn configLib
 lazy val simpleAppScala = proj(
-  "config-simple-app-scala",
+  "sconfig-simple-app-scala",
   file("examples/scala/simple-app")) dependsOn simpleLibScala
 lazy val complexAppScala = proj(
-  "config-complex-app-scala",
+  "sconfig-complex-app-scala",
   file("examples/scala/complex-app")) dependsOn simpleLibScala
 
 lazy val simpleLibJava = proj(
-  "config-simple-lib-java",
+  "sconfig-simple-lib-java",
   file("examples/java/simple-lib")) dependsOn configLib
 lazy val simpleAppJava = proj(
-  "config-simple-app-java",
+  "sconfig-simple-app-java",
   file("examples/java/simple-app")) dependsOn simpleLibJava
 lazy val complexAppJava = proj(
-  "config-complex-app-java",
+  "sconfig-complex-app-java",
   file("examples/java/complex-app")) dependsOn simpleLibJava
 
 val unpublished = Seq(

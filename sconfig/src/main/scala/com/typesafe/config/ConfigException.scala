@@ -16,7 +16,7 @@ import com.typesafe.config.impl.ConfigImplUtil
 
 /**
  * All exceptions thrown by the library are subclasses of
- * <code>ConfigException</code>.
+ * `ConfigException`.
  */
 @SerialVersionUID(1L)
 abstract class ConfigException(message: String, cause: Throwable)
@@ -330,9 +330,9 @@ object ConfigException {
   }
 
   /**
-   * Exception indicating that {@link Config#checkValid} found validity
-   * problems. The problems are available via the {@link #problems} method.
-   * The <code>getMessage</code> of this exception is a potentially very
+   * Exception indicating that [[Config#checkValid]] found validity
+   * problems. The problems are available via the [[ValidationFailed#problems]] method.
+   * The `getMessage` of this exception is a potentially very
    * long string listing all the problems found.
    */
   @SerialVersionUID(1L)

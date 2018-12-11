@@ -105,11 +105,9 @@ import scala.annotation.varargs
  * can use {@link #entrySet} which recurses the object tree for you and builds
  * up a <code>Set</code> of all path-value pairs where the value is not null.
  *
- * <p>
- * <strong>Resolving substitutions</strong>
+ * '''Resolving substitutions'''
  *
- * <p>
- * <em>Substitutions</em> are the <code>${foo.bar}</code> syntax in config
+ * ''Substitutions'' are the `\${foo.bar}` syntax in config
  * files, described in the <a href=
  * "https://github.com/lightbend/config/blob/master/HOCON.md#substitutions"
  * >specification</a>. Resolving substitutions replaces these references with real
@@ -189,12 +187,12 @@ trait Config extends ConfigMergeable {
 
   /**
    * Returns a replacement config with all substitutions (the
-   * <code>${foo.bar}</code> syntax, see <a
-   * href="https://github.com/lightbend/config/blob/master/HOCON.md">the
-   * spec</a>) resolved. Substitutions are looked up using this
-   * <code>Config</code> as the root object, that is, a substitution
-   * <code>${foo.bar}</code> will be replaced with the result of
-   * <code>getValue("foo.bar")</code>.
+   * `\${foo.bar}` syntax, see
+   * [[https://github.com/ekrich/sconfig/blob/master/HOCON.md HOCON spec]]
+   * for resolved. Substitutions are looked up using this
+   * `Config` as the root object, that is, a substitution
+   * `\${foo.bar}` will be replaced with the result of
+   * `getValue("foo.bar")`.
    *
    * <p>
    * This method uses {@link ConfigResolveOptions#defaults}, there is
@@ -219,12 +217,12 @@ trait Config extends ConfigMergeable {
    * <code>config.getConfig("foo").resolve</code> on the below config file,
    * it would not work:
    *
-   * <pre>
+   * {{{
    * common-value = 10
    * foo {
-   * whatever = ${common-value}
+   *   whatever = \${common-value}
    * }
-   * </pre>
+   * }}}
    *
    * <p>
    * Many methods on {@link ConfigFactory} such as
@@ -237,7 +235,7 @@ trait Config extends ConfigMergeable {
    * files combined) rather than resolving each one individually.
    *
    * @return an immutable object with substitutions resolved
-   * @throws ConfigException.UnresolvedSubstitution
+   * @throws [[ConfigException.UnresolvedSubstitution]]
    * if any substitutions refer to nonexistent paths
    * @throws ConfigException
    * some other config exception if there are other problems
@@ -431,17 +429,17 @@ trait Config extends ConfigMergeable {
    * <p>
    * To handle all three cases (unset, null, and a non-null value)
    * the code might look like:
-   * <pre><code>
+   * {{{
    * if (config.hasPathOrNull(path)) {
-   * if (config.getIsNull(path)) {
-   * // handle null setting
+   *   if (config.getIsNull(path)) {
+   *     // handle null setting
+   *   } else {
+   *     // get and use non-null setting
+   *   }
    * } else {
-   * // get and use non-null setting
+   *   // handle entirely unset path
    * }
-   * } else {
-   * // handle entirely unset path
-   * }
-   * </code></pre>
+   * }}}
    *
    * <p> However, the usual thing is to allow entirely unset
    * paths to be a bug that throws an exception (because you set
@@ -752,8 +750,7 @@ trait Config extends ConfigMergeable {
    * number, then it's taken as milliseconds and then converted to the
    * requested TimeUnit; if it's a string, it's parsed understanding units
    * suffixes like "10m" or "5ns" as documented in the <a
-   * href="https://github.com/lightbend/config/blob/master/HOCON.md">the
-   * spec</a>.
+   * [[https://github.com/lightbend/config/blob/master/HOCON.md the HOCON spec]].
    *
    * @since 1.2.0
    * @param path
