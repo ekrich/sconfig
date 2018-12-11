@@ -931,7 +931,11 @@ class ConfigTest extends TestUtils {
   @Test
   def test01Origins() {
     val conf = ConfigFactory.load("test01")
-    val path = "/sconfig/target/test-classes"
+    val version = {
+      val verStr = util.Properties.versionNumberString
+      verStr.substring(0, verStr.lastIndexOf('.'))
+    }
+    val path = s"/sconfig/target/scala-$version/test-classes"
 
     val o1 = conf.getValue("ints.fortyTwo").origin
     // the checkout directory would be in between this startsWith and endsWith
