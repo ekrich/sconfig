@@ -66,8 +66,6 @@ lazy val root = (project in file("."))
 lazy val configLib = Project("sconfig", file("sconfig"))
   .dependsOn(testLib % "test->test")
   .settings(
-    autoScalaLibrary := true,
-    crossPaths := false,
     libraryDependencies += {
       val liftVersion = scalaBinaryVersion.value match {
         case "2.10" => "2.6.3" // last version that supports 2.10

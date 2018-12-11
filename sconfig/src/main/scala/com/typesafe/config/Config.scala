@@ -220,7 +220,7 @@ trait Config extends ConfigMergeable {
    * {{{
    * common-value = 10
    * foo {
-   *   whatever = ${common-value}
+   *   whatever = \${common-value}
    * }
    * }}}
    *
@@ -750,8 +750,7 @@ trait Config extends ConfigMergeable {
    * number, then it's taken as milliseconds and then converted to the
    * requested TimeUnit; if it's a string, it's parsed understanding units
    * suffixes like "10m" or "5ns" as documented in the <a
-   * href="https://github.com/lightbend/config/blob/master/HOCON.md">the
-   * spec</a>.
+   * [[https://github.com/lightbend/config/blob/master/HOCON.md the HOCON spec]].
    *
    * @since 1.2.0
    * @param path
