@@ -6,10 +6,10 @@
 addCommandAlias(
   "run-examples",
   Seq(
-    "config-simple-app-scala/run",
-    "config-complex-app-scala/run",
-    "config-simple-app-java/run",
-    "config-complex-app-java/run"
+    "sconfig-simple-app-scala/run",
+    "sconfig-complex-app-scala/run",
+    "sconfig-simple-app-java/run",
+    "sconfig-complex-app-java/run"
   ).mkString(";", ";", "")
 )
 
@@ -56,14 +56,14 @@ lazy val root = (project in file("."))
   )
   .settings(commonSettings)
   .settings(
-    name := "config-root",
+    name := "sconfig-root",
     doc / aggregate := false,
     doc := (configLib / Compile / doc).value,
     packageDoc / aggregate := false,
     packageDoc := (configLib / Compile / packageDoc).value,
   )
 
-lazy val configLib = Project("config", file("config"))
+lazy val configLib = Project("sconfig", file("sconfig"))
   .dependsOn(testLib % "test->test")
   .settings(
     autoScalaLibrary := true,
@@ -110,26 +110,26 @@ lazy val commonSettings: Seq[Setting[_]] = Def.settings(
 
 def proj(id: String, base: File) = Project(id, base) settings commonSettings
 
-lazy val testLib = proj("config-test-lib", file("test-lib"))
+lazy val testLib = proj("sconfig-test-lib", file("test-lib"))
 
 lazy val simpleLibScala = proj(
-  "config-simple-lib-scala",
+  "sconfig-simple-lib-scala",
   file("examples/scala/simple-lib")) dependsOn configLib
 lazy val simpleAppScala = proj(
-  "config-simple-app-scala",
+  "sconfig-simple-app-scala",
   file("examples/scala/simple-app")) dependsOn simpleLibScala
 lazy val complexAppScala = proj(
-  "config-complex-app-scala",
+  "sconfig-complex-app-scala",
   file("examples/scala/complex-app")) dependsOn simpleLibScala
 
 lazy val simpleLibJava = proj(
-  "config-simple-lib-java",
+  "sconfig-simple-lib-java",
   file("examples/java/simple-lib")) dependsOn configLib
 lazy val simpleAppJava = proj(
-  "config-simple-app-java",
+  "sconfig-simple-app-java",
   file("examples/java/simple-app")) dependsOn simpleLibJava
 lazy val complexAppJava = proj(
-  "config-complex-app-java",
+  "sconfig-complex-app-java",
   file("examples/java/complex-app")) dependsOn simpleLibJava
 
 val unpublished = Seq(
