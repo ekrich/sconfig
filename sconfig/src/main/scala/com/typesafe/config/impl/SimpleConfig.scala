@@ -632,7 +632,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     with Serializable {
   override def root: AbstractConfigObject = `object`
   override def origin: ConfigOrigin       = `object`.origin
-  override def resolve: SimpleConfig      = resolve(ConfigResolveOptions.defaults)
+  override def resolve(): SimpleConfig    = resolve(ConfigResolveOptions.defaults)
   override def resolve(options: ConfigResolveOptions): SimpleConfig =
     resolveWith(this, options)
   override def resolveWith(source: Config): SimpleConfig =

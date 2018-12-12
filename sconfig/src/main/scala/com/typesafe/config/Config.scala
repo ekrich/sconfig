@@ -240,7 +240,7 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException
    * some other config exception if there are other problems
    */
-  def resolve: Config
+  def resolve(): Config
 
   /**
    * Like {@link Config#resolve} but allows you to specify non-default
