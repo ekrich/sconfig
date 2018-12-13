@@ -32,11 +32,13 @@ follow the Scala convention which supports the *uniform access principle* [1].
 The following document copies are local to this repository but internal links may refer to the
 original site documents via hyperlink.
 
-[Overview](docs/original/README.md)
+[Overview](docs/original/README.md) - A comprehensive guide to configuration.
 
-[HOCON Specification](docs/original/HOCON.md)
+[HOCON](docs/original/HOCON.md) - The HOCON Specification
 
 ## Versions
+
+Release [0.7.0](https://github.com/ekrich/sconfig/releases/tag/v0.7.0) - (2018-12-14)
 
 ## References
 [1]: Odersky, Spoon, & Venners (2016). *Programming in Scala (3rd Ed)*, (pp. 185-188)
