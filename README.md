@@ -5,7 +5,7 @@ Configuration library for [Scala](https://www.scala-lang.org/) which is a direct
 from the original widely used Java library. 
 
 Care has been taken to keep the API the same but source changes are needed to use this library. 
-Otherwise we recommend the original [lightbend/config](https://github.com/lightbend/config).
+Otherwise we recommend the original at [https://github.com/lightbend/config](https://github.com/lightbend/config).
 
 
 This is a work in progress with the goal to support JVM,
