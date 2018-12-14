@@ -1,9 +1,9 @@
 /**
  *   Copyright (C) 2014 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigValue
+import org.ekrich.config.ConfigValue
 
 /**
  * An AbstractConfigValue which contains other values. Java has no way to

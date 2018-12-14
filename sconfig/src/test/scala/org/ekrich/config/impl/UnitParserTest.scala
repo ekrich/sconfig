@@ -1,14 +1,14 @@
 /**
  *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.time.{LocalDate, Period}
 import java.time.temporal.ChronoUnit
 
 import org.junit.Assert._
 import org.junit._
-import com.typesafe.config._
+import org.ekrich.config._
 import java.util.concurrent.TimeUnit
 
 class UnitParserTest extends TestUtils {

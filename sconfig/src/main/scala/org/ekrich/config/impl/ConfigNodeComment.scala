@@ -1,6 +1,6 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigException
+import org.ekrich.config.ConfigException
 
 final class ConfigNodeComment(val comment: Token)
     extends ConfigNodeSingleToken(comment) {

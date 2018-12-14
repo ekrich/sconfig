@@ -1,4 +1,4 @@
-package com.typesafe.config;
+package org.ekrich.config;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

@@ -1,11 +1,11 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config
+package org.ekrich.config
 
 import java.{util => ju}
 import java.{lang => jl}
-import com.typesafe.config.impl.ConfigImpl
+import org.ekrich.config.impl.ConfigImpl
 
 /**
  * This class holds some static factory methods for building {@link ConfigValue}

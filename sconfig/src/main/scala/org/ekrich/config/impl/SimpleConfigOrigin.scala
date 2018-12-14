@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.File
 import java.io.IOException
@@ -10,8 +10,8 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.{util => ju}
 import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigOrigin
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigOrigin
 
 // it would be cleaner to have a class hierarchy for various origin types,
 // but was hoping this would be enough simpler to be a little messy. eh.

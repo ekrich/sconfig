@@ -1,13 +1,13 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.io.ObjectStreamException
 import java.io.Serializable
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigValueType
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigValueType
 
 @SerialVersionUID(2L)
 final class ConfigBoolean(origin: ConfigOrigin, val value: Boolean)

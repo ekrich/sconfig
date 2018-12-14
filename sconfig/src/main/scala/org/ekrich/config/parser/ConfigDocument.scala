@@ -1,6 +1,6 @@
-package com.typesafe.config.parser
+package org.ekrich.config.parser
 
-import com.typesafe.config.ConfigValue
+import org.ekrich.config.ConfigValue
 
 /**
  * Represents an individual HOCON or JSON file, preserving all

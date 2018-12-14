@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 final class TokenType private (name: String, ordinal: Int)
     extends Enum[TokenType](name, ordinal)

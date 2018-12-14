@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.File
 import java.net.MalformedURLException
@@ -9,17 +9,17 @@ import java.net.URL
 import java.{util => ju}
 import scala.collection.JavaConverters._
 
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigIncludeContext
-import com.typesafe.config.ConfigIncluder
-import com.typesafe.config.ConfigIncluderClasspath
-import com.typesafe.config.ConfigIncluderFile
-import com.typesafe.config.ConfigIncluderURL
-import com.typesafe.config.ConfigObject
-import com.typesafe.config.ConfigParseOptions
-import com.typesafe.config.ConfigParseable
-import com.typesafe.config.ConfigSyntax
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigFactory
+import org.ekrich.config.ConfigIncludeContext
+import org.ekrich.config.ConfigIncluder
+import org.ekrich.config.ConfigIncluderClasspath
+import org.ekrich.config.ConfigIncluderFile
+import org.ekrich.config.ConfigIncluderURL
+import org.ekrich.config.ConfigObject
+import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.ConfigParseable
+import org.ekrich.config.ConfigSyntax
 
 object SimpleIncluder {
   // ConfigIncludeContext does this for us on its options

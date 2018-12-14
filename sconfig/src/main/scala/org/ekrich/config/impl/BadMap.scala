@@ -1,4 +1,4 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 import scala.annotation.tailrec
 
 /**

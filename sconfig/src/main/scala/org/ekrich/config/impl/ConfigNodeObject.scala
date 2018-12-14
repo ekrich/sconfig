@@ -1,6 +1,6 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigSyntax
+import org.ekrich.config.ConfigSyntax
 import java.{util => ju}
 import scala.collection.JavaConverters._
 import scala.util.control.Breaks._

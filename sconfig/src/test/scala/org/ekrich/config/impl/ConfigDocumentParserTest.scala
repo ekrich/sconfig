@@ -1,6 +1,6 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.{ConfigException, ConfigSyntax, ConfigParseOptions}
+import org.ekrich.config.{ConfigException, ConfigSyntax, ConfigParseOptions}
 import org.junit.Assert._
 import org.junit.Test
 

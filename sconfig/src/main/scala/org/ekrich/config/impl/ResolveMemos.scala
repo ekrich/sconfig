@@ -1,4 +1,4 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 /**
  * This exists because we have to memoize resolved substitutions as we go

@@ -1,8 +1,8 @@
-package com.typesafe.config
+package org.ekrich.config
 
 import java.{util => ju}
 
-import com.typesafe.config.impl.ConfigImplUtil
+import org.ekrich.config.impl.ConfigImplUtil
 
 import scala.annotation.varargs
 

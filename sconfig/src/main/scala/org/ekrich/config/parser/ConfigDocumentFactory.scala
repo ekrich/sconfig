@@ -1,7 +1,7 @@
-package com.typesafe.config.parser
+package org.ekrich.config.parser
 
-import com.typesafe.config.ConfigParseOptions
-import com.typesafe.config.impl.Parseable
+import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.impl.Parseable
 import java.io.File
 import java.io.Reader
 

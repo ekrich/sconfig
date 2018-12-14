@@ -1,17 +1,17 @@
 /**
  *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.time.temporal.{ChronoUnit, TemporalUnit}
 
 import org.junit.Assert._
 import org.junit._
-import com.typesafe.config._
+import org.ekrich.config._
 import java.util.concurrent.TimeUnit
 
 import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigResolveOptions
+import org.ekrich.config.ConfigResolveOptions
 import java.util.concurrent.TimeUnit.{
   DAYS,
   HOURS,

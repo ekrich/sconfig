@@ -1,14 +1,14 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.io.ObjectStreamException
 import java.io.Serializable
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigRenderOptions
-import com.typesafe.config.ConfigValueType
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigRenderOptions
+import org.ekrich.config.ConfigValueType
 
 /**
  * This exists because sometimes null is not the same as missing. Specifically,

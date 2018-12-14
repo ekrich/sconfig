@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.ObjectStreamException
 import java.io.Serializable
@@ -9,8 +9,8 @@ import java.{lang => jl}
 import java.{util => ju}
 
 import scala.collection.JavaConverters._
-import com.typesafe.config._
-import com.typesafe.config.impl.AbstractConfigValue._
+import org.ekrich.config._
+import org.ekrich.config.impl.AbstractConfigValue._
 
 @SerialVersionUID(2L)
 object SimpleConfigList {

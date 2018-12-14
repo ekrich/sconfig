@@ -1,4 +1,4 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 // caution: ordinals used in serialization
 final class OriginType private (name: String, ordinal: Int)

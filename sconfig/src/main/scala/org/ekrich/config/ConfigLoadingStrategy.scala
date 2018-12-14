@@ -1,4 +1,4 @@
-package com.typesafe.config
+package org.ekrich.config
 
 /**
  * This method allows you to alter default config loading strategy for all the code which

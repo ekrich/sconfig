@@ -1,7 +1,7 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigException
-import com.typesafe.config.impl.AbstractConfigValue.NotPossibleToResolve
+import org.ekrich.config.ConfigException
+import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
 
 /**
  * This class is the source for values for a substitution like `\${foo}`.

@@ -1,10 +1,10 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config
+package org.ekrich.config
 
-import com.typesafe.config.impl.ConfigImpl
-import com.typesafe.config.impl.Parseable
+import org.ekrich.config.impl.ConfigImpl
+import org.ekrich.config.impl.Parseable
 import java.io.{File, Reader}
 import java.net.URL
 import java.{util => ju}

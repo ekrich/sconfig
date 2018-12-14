@@ -1,7 +1,7 @@
-package com.typesafe.config
+package org.ekrich.config
 
 import java.net.URL
-import com.typesafe.config.impl.ConfigImpl
+import org.ekrich.config.impl.ConfigImpl
 
 /**
  * This class contains some static factory methods for building a [[ConfigOrigin]].

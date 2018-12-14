@@ -1,10 +1,10 @@
 /**
  * Copyright (C) 2013 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import beanconfig.EnumsConfig.{Solution, Problem}
-import com.typesafe.config._
+import org.ekrich.config._
 
 import java.io.{InputStream, InputStreamReader}
 import java.time.Duration

@@ -1,10 +1,10 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigOrigin
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigOrigin
 
 object Token { // this is used for singleton tokens like COMMA or OPEN_CURLY
   def newWithoutOrigin(tokenType: TokenType,

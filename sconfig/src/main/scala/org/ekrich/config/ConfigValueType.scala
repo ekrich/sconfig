@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config
+package org.ekrich.config
 
 /**
  * The type of a configuration value (following the

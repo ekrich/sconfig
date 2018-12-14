@@ -1,4 +1,4 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.beans.BeanInfo
 import java.beans.IntrospectionException
@@ -13,14 +13,14 @@ import java.{util => ju}
 import java.{lang => jl}
 import java.time.Duration
 import scala.util.control.Breaks._
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigObject
-import com.typesafe.config.ConfigList
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigMemorySize
-import com.typesafe.config.ConfigValue
-import com.typesafe.config.ConfigValueType
-import com.typesafe.config.Optional
+import org.ekrich.config.Config
+import org.ekrich.config.ConfigObject
+import org.ekrich.config.ConfigList
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigMemorySize
+import org.ekrich.config.ConfigValue
+import org.ekrich.config.ConfigValueType
+import org.ekrich.config.Optional
 
 /**
  * Internal implementation detail, not ABI stable, do not touch.

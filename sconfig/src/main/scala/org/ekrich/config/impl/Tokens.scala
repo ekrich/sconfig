@@ -1,13 +1,13 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{util => ju}
 
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigValueType
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigValueType
 
 /* FIXME the way the subclasses of Token are private with static isFoo and accessors is kind of ridiculous. */
 object Tokens {

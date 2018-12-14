@@ -1,4 +1,4 @@
-import com.typesafe.config._
+import org.ekrich.config._
 import simplelib._
 
 object ComplexApp extends App {

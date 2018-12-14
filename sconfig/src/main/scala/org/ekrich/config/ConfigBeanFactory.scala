@@ -1,6 +1,6 @@
-package com.typesafe.config
+package org.ekrich.config
 
-import com.typesafe.config.impl.ConfigBeanImpl
+import org.ekrich.config.impl.ConfigBeanImpl
 
 /**
  * Factory for automatically creating a Java class from a [[Config]].

@@ -1,7 +1,7 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigMergeable
-import com.typesafe.config.ConfigValue
+import org.ekrich.config.ConfigMergeable
+import org.ekrich.config.ConfigValue
 
 trait MergeableValue extends ConfigMergeable { // converts a Config to its root object and a ConfigValue to itself
   def toFallbackValue(): ConfigValue

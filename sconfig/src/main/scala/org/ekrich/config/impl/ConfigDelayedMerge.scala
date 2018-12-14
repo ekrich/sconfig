@@ -1,15 +1,15 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
 import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigRenderOptions
-import com.typesafe.config.impl.AbstractConfigValue._
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigRenderOptions
+import org.ekrich.config.impl.AbstractConfigValue._
 
 /**
  * The issue here is that we want to first merge our stack of config files, and

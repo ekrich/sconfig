@@ -1,9 +1,9 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config
+package org.ekrich.config
 
-import com.typesafe.config.impl.ConfigImplUtil
+import org.ekrich.config.impl.ConfigImplUtil
 
 /**
  * A set of options related to parsing.

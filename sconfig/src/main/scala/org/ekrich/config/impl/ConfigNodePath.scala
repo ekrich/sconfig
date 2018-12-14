@@ -1,9 +1,9 @@
 /**
  *   Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigException
+import org.ekrich.config.ConfigException
 import java.{util => ju}
 
 final class ConfigNodePath private[impl] (path: Path,

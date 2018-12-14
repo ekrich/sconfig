@@ -2,10 +2,10 @@ package beanconfig;
 
 import java.util.Map;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigList;
-import com.typesafe.config.ConfigObject;
-import com.typesafe.config.ConfigValue;
+import org.ekrich.config.Config;
+import org.ekrich.config.ConfigList;
+import org.ekrich.config.ConfigObject;
+import org.ekrich.config.ConfigValue;
 
 // test bean for various "uncooked" values
 public class ValuesConfig {

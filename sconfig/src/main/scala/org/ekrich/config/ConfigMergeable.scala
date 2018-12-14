@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config
+package org.ekrich.config
 
 /**
  * Marker for types whose instances can be merged, that is [[Config]] and

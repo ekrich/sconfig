@@ -1,9 +1,9 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{util => ju}
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigResolveOptions
-import com.typesafe.config.impl.AbstractConfigValue.NotPossibleToResolve
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigResolveOptions
+import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
 
 object ResolveContext {
 

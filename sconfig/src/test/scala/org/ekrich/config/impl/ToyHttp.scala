@@ -1,4 +1,4 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.net.ServerSocket
 import java.net.InetSocketAddress

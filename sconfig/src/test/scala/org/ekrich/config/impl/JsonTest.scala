@@ -1,13 +1,13 @@
 /**
  *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import org.junit.Assert._
 import org.junit._
 import net.liftweb.{json => lift}
 import java.io.Reader
-import com.typesafe.config._
+import org.ekrich.config._
 import java.util.HashMap
 
 class JsonTest extends TestUtils {

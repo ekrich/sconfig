@@ -1,12 +1,12 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigIncluder
-import com.typesafe.config.ConfigIncluderClasspath
-import com.typesafe.config.ConfigIncluderFile
-import com.typesafe.config.ConfigIncluderURL
+import org.ekrich.config.ConfigIncluder
+import org.ekrich.config.ConfigIncluderClasspath
+import org.ekrich.config.ConfigIncluderFile
+import org.ekrich.config.ConfigIncluderURL
 
 trait FullIncluder
     extends ConfigIncluder

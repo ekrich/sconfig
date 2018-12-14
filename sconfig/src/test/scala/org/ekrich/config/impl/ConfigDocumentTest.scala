@@ -1,10 +1,10 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.{BufferedReader, FileReader}
 import java.nio.file.{Paths, Files}
 
-import com.typesafe.config._
-import com.typesafe.config.parser._
+import org.ekrich.config._
+import org.ekrich.config.parser._
 import org.junit.Assert._
 import org.junit.Test
 

@@ -1,11 +1,11 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{util => ju}
 import util.control.Breaks._
-import com.typesafe.config.ConfigException
+import org.ekrich.config.ConfigException
 
 final class PathBuilder private[impl] () {
   final private val keys = new ju.Stack[String]

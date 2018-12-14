@@ -1,4 +1,4 @@
-package com.typesafe.config
+package org.ekrich.config
 
 /**
  * Implement this interface and provide an instance to

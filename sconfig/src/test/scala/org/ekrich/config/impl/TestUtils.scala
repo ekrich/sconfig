@@ -1,15 +1,15 @@
 /**
  *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import org.junit.Assert._
-import com.typesafe.config.ConfigOrigin
+import org.ekrich.config.ConfigOrigin
 import java.io.Reader
 import java.io.StringReader
-import com.typesafe.config.ConfigParseOptions
-import com.typesafe.config.ConfigSyntax
-import com.typesafe.config.ConfigFactory
+import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.ConfigSyntax
+import org.ekrich.config.ConfigFactory
 import java.io.File
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
@@ -23,7 +23,7 @@ import java.net.URL
 import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.concurrent.Callable
-import com.typesafe.config._
+import org.ekrich.config._
 import scala.reflect.ClassTag
 import scala.reflect.classTag
 import scala.collection.JavaConverters._

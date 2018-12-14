@@ -1,7 +1,7 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config._
-import com.typesafe.config.parser.ConfigDocument
+import org.ekrich.config._
+import org.ekrich.config.parser.ConfigDocument
 import java.io.StringReader
 
 final class SimpleConfigDocument private[impl] (

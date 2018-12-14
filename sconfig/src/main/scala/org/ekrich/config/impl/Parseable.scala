@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.BufferedReader
 import java.io.File
@@ -20,8 +20,8 @@ import java.net.URISyntaxException
 import java.net.URL
 import java.net.URLConnection
 import java.{util => ju}
-import com.typesafe.config._
-import com.typesafe.config.parser._
+import org.ekrich.config._
+import org.ekrich.config.parser._
 
 /**
  * Internal implementation detail, not ABI stable, do not touch.

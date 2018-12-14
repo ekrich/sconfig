@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.DataOutputStream
 import java.io.File
@@ -13,9 +13,9 @@ import java.net.URL
 import java.{util => ju}
 import scala.collection.JavaConverters._
 import scala.util.control.Breaks._
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigSyntax
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigSyntax
 
 /**
  * Internal implementation detail, not ABI stable, do not touch.

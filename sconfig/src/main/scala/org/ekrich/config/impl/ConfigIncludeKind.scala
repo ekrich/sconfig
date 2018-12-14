@@ -1,4 +1,4 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 final class ConfigIncludeKind private (name: String, ordinal: Int)
     extends Enum[ConfigIncludeKind](name, ordinal)

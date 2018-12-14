@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config
+package org.ekrich.config
 
 import java.io.{
   IOException,
@@ -12,7 +12,7 @@ import java.io.{
 import java.{lang => jl}
 import jl.reflect.Field
 
-import com.typesafe.config.impl.ConfigImplUtil
+import org.ekrich.config.impl.ConfigImplUtil
 
 /**
  * All exceptions thrown by the library are subclasses of

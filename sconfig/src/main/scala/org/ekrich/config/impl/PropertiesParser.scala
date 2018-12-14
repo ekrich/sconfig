@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.IOException
 import java.io.Reader
@@ -10,8 +10,8 @@ import java.util.Collections
 import java.util.Comparator
 import java.util.Properties
 import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigOrigin
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigOrigin
 
 object PropertiesParser {
   @throws[IOException]

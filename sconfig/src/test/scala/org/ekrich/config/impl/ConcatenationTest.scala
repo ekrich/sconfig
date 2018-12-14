@@ -1,15 +1,15 @@
 /**
  *   Copyright (C) 2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import org.junit.Assert._
 import org.junit._
-import com.typesafe.config.ConfigValue
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigResolveOptions
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigFactory
+import org.ekrich.config.ConfigValue
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigResolveOptions
+import org.ekrich.config.Config
+import org.ekrich.config.ConfigFactory
 import scala.collection.JavaConverters._
 
 class ConcatenationTest extends TestUtils {

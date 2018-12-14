@@ -1,8 +1,8 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.InputStreamReader
 
-import com.typesafe.config.{ConfigException, ConfigFactory, ConfigParseOptions}
+import org.ekrich.config.{ConfigException, ConfigFactory, ConfigParseOptions}
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.{assertEquals, assertThat}
 import org.junit.Test

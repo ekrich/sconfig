@@ -1,11 +1,11 @@
 /**
  *   Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import org.junit.Assert._
 import org.junit._
-import com.typesafe.config.ConfigMemorySize
+import org.ekrich.config.ConfigMemorySize
 
 class ConfigMemorySizeTest extends TestUtils {
 

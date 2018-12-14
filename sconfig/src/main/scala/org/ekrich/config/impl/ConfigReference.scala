@@ -1,10 +1,10 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigRenderOptions
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigRenderOptions
 
 /**
  * ConfigReference replaces ConfigReference (the older class kept for back

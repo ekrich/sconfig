@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.File
 import java.net.MalformedURLException
@@ -11,7 +11,7 @@ import java.{util => ju}
 import scala.collection.JavaConverters._
 import scala.util.control.Breaks._
 
-import com.typesafe.config._
+import org.ekrich.config._
 
 object ConfigParser {
   private[impl] def parse(

@@ -1,13 +1,13 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import org.junit.Assert._
 import org.junit._
 import org.junit.BeforeClass
 import java.net.URL
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigParseOptions
-import com.typesafe.config.ConfigSyntax
-import com.typesafe.config.ConfigException
+import org.ekrich.config.ConfigFactory
+import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.ConfigSyntax
+import org.ekrich.config.ConfigException
 
 class HttpTest extends TestUtils {
   import HttpTest._

@@ -1,8 +1,8 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigSyntax
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigSyntax
 import java.{util => ju}
 
 final class ConfigNodeRoot private[impl] (

@@ -1,4 +1,4 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 /**
  * Implemented by a merge stack (ConfigDelayedMerge, ConfigDelayedMergeObject)

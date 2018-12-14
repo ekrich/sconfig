@@ -1,18 +1,18 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
 import scala.collection.JavaConverters._
 import scala.util.control.Breaks._
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigList
-import com.typesafe.config.ConfigMergeable
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigRenderOptions
-import com.typesafe.config.ConfigValue
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigList
+import org.ekrich.config.ConfigMergeable
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigRenderOptions
+import org.ekrich.config.ConfigValue
 
 // This is just like ConfigDelayedMerge except we know statically
 // that it will turn out to be an object.

@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
@@ -9,8 +9,8 @@ import java.util.Collections
 import java.util.Comparator
 import scala.collection.JavaConverters._
 import scala.util.control.Breaks._
-import com.typesafe.config.ConfigValueType
-import com.typesafe.config.ConfigValueType._
+import org.ekrich.config.ConfigValueType
+import org.ekrich.config.ConfigValueType._
 
 /**
  * Default automatic type transformations.

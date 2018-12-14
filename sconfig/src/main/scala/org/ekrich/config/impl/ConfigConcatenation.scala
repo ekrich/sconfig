@@ -1,12 +1,12 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigObject
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigRenderOptions
-import com.typesafe.config.ConfigValueType
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigObject
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigRenderOptions
+import org.ekrich.config.ConfigValueType
 
 /**
  * A ConfigConcatenation represents a list of values to be concatenated (see the

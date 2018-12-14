@@ -25,7 +25,7 @@ ThisBuild / crossScalaVersions := Seq("2.12.8", "2.11.12")
 inThisBuild(
   List(
     description := "Configuration library for Scala using HOCON files",
-    organization := "org.ekrich", // causes package error not being com.typesafe
+    organization := "org.ekrich",
     homepage := Some(url("https://github.com/ekrich/sconfig")),
     licenses := List(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),

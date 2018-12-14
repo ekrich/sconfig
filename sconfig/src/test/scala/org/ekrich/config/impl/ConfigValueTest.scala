@@ -1,21 +1,21 @@
 /**
  *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import org.junit.Assert._
 import org.junit._
-import com.typesafe.config.ConfigValue
+import org.ekrich.config.ConfigValue
 import java.util.Collections
 import java.net.URL
 import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigObject
-import com.typesafe.config.ConfigList
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigValueType
-import com.typesafe.config.ConfigRenderOptions
-import com.typesafe.config.ConfigValueFactory
-import com.typesafe.config.ConfigFactory
+import org.ekrich.config.ConfigObject
+import org.ekrich.config.ConfigList
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigValueType
+import org.ekrich.config.ConfigRenderOptions
+import org.ekrich.config.ConfigValueFactory
+import org.ekrich.config.ConfigFactory
 
 class ConfigValueTest extends TestUtils {
 
@@ -50,7 +50,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def configIntSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_902000000_-050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n090000000100010400000009020000002A0002_4_20103" +
       "000000010001_x"
@@ -73,7 +73,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def configLongSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_E02000000_9050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n090000000100010400000015030000000080000029000A" +
       "_2_1_4_7_4_8_3_6_8_90103000000010001_x"
@@ -110,10 +110,10 @@ class ConfigValueTest extends TestUtils {
   @Test
   def configDoubleSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
-      "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w3F02000000_3050000001906" +
-      "0000000D000B_f_a_k_e_ _o_r_i_g_i_n09000000010001040000000F0440091EB8_QEB851F0004" +
-      "_3_._1_40103000000010001_x"
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i_z_e" +
+      "_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w3F02000000_30500000019060000" +
+      "000D000B_f_a_k_e_ _o_r_i_g_i_n09000000010001040000000F0440091EB8_QEB851F0004_3_." +
+      "_1_40103000000010001_x"
 
     val a = doubleValue(3.14)
     val b = checkSerializable(expectedSerialization, a)
@@ -136,7 +136,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def configNullSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_10200000025050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n090000000100010400000001000103000000010001_x"
 
@@ -148,7 +148,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def configBooleanSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_20200000026050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n09000000010001040000000201010103000000010001_x"
 
@@ -160,7 +160,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def configStringSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_F02000000_:050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n090000000100010400000016050013_T_h_e_ _q_u_i_c" +
       "_k_ _b_r_o_w_n_ _f_o_x0103000000010001_x"
@@ -215,7 +215,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def java6ConfigObjectSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_z02000000_n050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n0900000001000104000000_J07000000030001_a050000" +
       "000101040000000802000000010001_1010001_c050000000101040000000802000000030001_301" +
@@ -232,7 +232,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def java6ConfigConfigSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_z02000000_n050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n0900000001000104000000_J07000000030001_a050000" +
       "000101040000000802000000010001_1010001_c050000000101040000000802000000030001_301" +
@@ -249,7 +249,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def configObjectSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_z02000000_n050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n0900000001000104000000_J07000000030001_a050000" +
       "000101040000000802000000010001_1010001_b050000000101040000000802000000020001_201" +
@@ -266,7 +266,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def configConfigSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_z02000000_n050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n0900000001000104000000_J07000000030001_a050000" +
       "000101040000000802000000010001_1010001_b050000000101040000000802000000020001_201" +
@@ -313,7 +313,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def configListSerializable() {
     val expectedSerialization = "" +
-      "ACED0005_s_r00_._c_o_m_._t_y_p_e_s_a_f_e_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
+      "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_q02000000_e050000001906" +
       "0000000D000B_f_a_k_e_ _o_r_i_g_i_n0900000001000104000000_A0600000003050000000101" +
       "040000000802000000010001_101050000000101040000000802000000020001_201050000000101" +

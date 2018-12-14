@@ -1,13 +1,13 @@
 /**
  *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import org.junit.Assert._
 import org.junit._
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigParseOptions
-import com.typesafe.config.ConfigException
+import org.ekrich.config.ConfigFactory
+import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.ConfigException
 import scala.collection.JavaConverters._
 import scala.io.Source
 

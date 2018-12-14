@@ -1,11 +1,11 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigIncludeContext
-import com.typesafe.config.ConfigParseOptions
-import com.typesafe.config.ConfigParseable
+import org.ekrich.config.ConfigIncludeContext
+import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.ConfigParseable
 
 class SimpleIncludeContext(parseable: Parseable, options: ConfigParseOptions)
     extends ConfigIncludeContext {

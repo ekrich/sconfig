@@ -1,4 +1,4 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 /** The key used to memoize already-traversed nodes when resolving substitutions */
 final class MemoKey private[impl] (val value: AbstractConfigValue,

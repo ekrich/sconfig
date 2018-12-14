@@ -1,4 +1,4 @@
-package com.typesafe.config
+package org.ekrich.config
 
 import java.io.File
 import java.net.MalformedURLException

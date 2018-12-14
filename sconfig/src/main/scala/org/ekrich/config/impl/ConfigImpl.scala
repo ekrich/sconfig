@@ -1,7 +1,7 @@
 /**
  *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.io.File
 import java.{lang => jl}
@@ -11,15 +11,15 @@ import java.time.Duration
 import java.{util => ju}
 import java.util.concurrent.Callable
 import scala.collection.JavaConverters._
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigIncluder
-import com.typesafe.config.ConfigMemorySize
-import com.typesafe.config.ConfigObject
-import com.typesafe.config.ConfigOrigin
-import com.typesafe.config.ConfigParseOptions
-import com.typesafe.config.ConfigParseable
-import com.typesafe.config.ConfigValue
+import org.ekrich.config.Config
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigIncluder
+import org.ekrich.config.ConfigMemorySize
+import org.ekrich.config.ConfigObject
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.ConfigParseable
+import org.ekrich.config.ConfigValue
 
 /**
  * Internal implementation detail, not ABI stable, do not touch.

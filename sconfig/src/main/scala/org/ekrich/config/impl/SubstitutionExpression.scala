@@ -1,4 +1,4 @@
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 final class SubstitutionExpression(val path: Path, val optional: Boolean) {
 

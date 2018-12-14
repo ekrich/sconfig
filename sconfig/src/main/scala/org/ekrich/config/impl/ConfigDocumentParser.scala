@@ -1,12 +1,12 @@
 /**
  *   Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
 import scala.util.control.Breaks._
-import com.typesafe.config._
+import org.ekrich.config._
 
 object ConfigDocumentParser {
   private[impl] def parse(tokens: ju.Iterator[Token],

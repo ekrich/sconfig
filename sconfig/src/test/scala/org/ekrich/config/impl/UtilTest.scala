@@ -1,9 +1,9 @@
 /**
  *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
-package com.typesafe.config.impl
+package org.ekrich.config.impl
 
-import com.typesafe.config.ConfigSyntax
+import org.ekrich.config.ConfigSyntax
 import org.junit.Assert._
 import org.junit._
 
