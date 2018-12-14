@@ -1,4 +1,4 @@
-import com.typesafe.config.*;
+import org.ekrich.config.*;
 import simplelib.*;
 
 class ComplexApp {

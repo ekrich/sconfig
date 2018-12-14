@@ -13,10 +13,18 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val configVersion = "0.7.0-SNAPSHOT"
-val scalacOpts    = List("-unchecked", "-deprecation", "-feature")
+val nextVersion = "0.7.0"
+// stable snapshot is not great for publish local
+def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
+  val snap = "-SNAPSHOT"
+  val tag  = out.ref.dropV.value
+  if (out.isCleanAfterTag) tag
+  // out.ref.value in non git project?
+  else nextVersion + "-" + out.ref.value + snap
+}
 
-ThisBuild / version := configVersion
+val scalacOpts = List("-unchecked", "-deprecation", "-feature")
+
 ThisBuild / Compile / scalacOptions := scalacOpts
 ThisBuild / Test / scalacOptions := scalacOpts
 
@@ -24,8 +32,12 @@ ThisBuild / crossScalaVersions := Seq("2.12.8", "2.11.12")
 
 inThisBuild(
   List(
+    version := dynverGitDescribeOutput.value.mkVersion(versionFmt, ""),
+    dynver := sbtdynver.DynVer
+      .getGitDescribeOutput(new java.util.Date)
+      .mkVersion(versionFmt, ""),
     description := "Configuration library for Scala using HOCON files",
-    organization := "org.ekrich", // causes package error not being com.typesafe
+    organization := "org.ekrich",
     homepage := Some(url("https://github.com/ekrich/sconfig")),
     licenses := List(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),

@@ -1,5 +1,5 @@
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigRenderOptions
+import org.ekrich.config.ConfigFactory
+import org.ekrich.config.ConfigRenderOptions
 
 object RenderExample extends App {
   val formatted      = args.contains("--formatted")

@@ -3,10 +3,10 @@ package beanconfig;
 import java.util.List;
 import java.time.Duration;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigMemorySize;
-import com.typesafe.config.ConfigObject;
-import com.typesafe.config.ConfigValue;
+import org.ekrich.config.Config;
+import org.ekrich.config.ConfigMemorySize;
+import org.ekrich.config.ConfigObject;
+import org.ekrich.config.ConfigValue;
 
 public class ArraysConfig {
 

@@ -28,6 +28,8 @@ The following changes are needed if migrating from the original Java version.
 - Change the package organization name from `com.typesafe` to `org.ekrich`.
 - Other code sites may require removing `()` where the method just returns state. This is to 
 follow the Scala convention which supports the *uniform access principle* [1].
+- The serialization format has changed due to the package name change. This could
+require special consideration.
 
 The following document copies are local to this repository but internal links may refer to the
 original site documents via hyperlink.

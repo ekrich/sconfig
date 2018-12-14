@@ -1,7 +1,7 @@
 package beanconfig;
 
 
-import com.typesafe.config.Optional;
+import org.ekrich.config.Optional;
 
 public class ObjectsConfig {
     public static class ValueObject {

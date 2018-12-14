@@ -1,6 +1,6 @@
 package beanconfig;
 
-import com.typesafe.config.ConfigMemorySize;
+import org.ekrich.config.ConfigMemorySize;
 
 public class BytesConfig {
 

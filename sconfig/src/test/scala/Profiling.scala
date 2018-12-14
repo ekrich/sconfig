@@ -1,9 +1,9 @@
 /**
  *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigException
+import org.ekrich.config.Config
+import org.ekrich.config.ConfigFactory
+import org.ekrich.config.ConfigException
 import java.util.concurrent.TimeUnit
 import scala.annotation.tailrec
 
