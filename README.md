@@ -12,7 +12,7 @@ This is a work in progress with the goal to support JVM,
 [Scala Native](https://scala-native.readthedocs.io/), and [Scala.js](https://www.scala-js.org/).
 
 ## Sonatype
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig)
+[![Maven Central](https://img.shields.io/maven-central/v/org.ekrich/sconfig_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig_2.11)
 
 ```scala
 libraryDependencies += "org.ekrich" %% "sconfig" % "X.Y.Z"
