@@ -13,7 +13,7 @@ to the original project.
 Care has been taken to keep the API the same but changes are needed when moving from the Java API.
 Using Java is also be possible because the included Java examples work.
 
-If you are looking for a original proven Java API, see
+If you are looking for the original proven Java API, see
 [https://github.com/lightbend/config](https://github.com/lightbend/config).
 
 
