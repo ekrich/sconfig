@@ -11,7 +11,7 @@ For motivation and background about this project see the [PR](https://github.com
 to the original project.
 
 Care has been taken to keep the API the same but changes are needed when moving from the Java API.
-Using Java is also be possible because the included Java examples work.
+Using Java is also possible because the included Java examples work.
 
 If you are looking for the original proven Java API, see
 [https://github.com/lightbend/config](https://github.com/lightbend/config).
