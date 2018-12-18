@@ -76,7 +76,7 @@ lazy val root = (project in file("."))
     packageDoc := (sconfigJVM / Compile / packageDoc).value,
   )
 
-lazy val sconfig = crossProject(JVMPlatform)
+lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
   .crossType(CrossType.Full) // [Pure, Full, Dummy], default: CrossType.Full
   //.jsSettings(/* ... */) // defined in sbt-scalajs-crossproject
   .jvmSettings(
@@ -103,9 +103,11 @@ lazy val sconfig = crossProject(JVMPlatform)
     // replace with your old artifact id
     mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems
+  ).nativeSettings(
+    sources in Test := Nil,
+    scalaVersion := scala211,
+    crossScalaVersions := Nil
   )
-// configure Scala-Native settings
-//.nativeSettings( /* ... */ ) // defined in sbt-scala-native
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")

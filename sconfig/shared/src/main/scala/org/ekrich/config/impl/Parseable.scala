@@ -247,7 +247,8 @@ object Parseable {
     override def toString: String =
       getClass.getSimpleName + "(" + input.toExternalForm + ")"
   }
-  def newURL(input: URL, options: ConfigParseOptions): Parseable = { // we want file: URLs and files to always behave the same, so switch
+  def newURL(input: URL, options: ConfigParseOptions): Parseable = {
+    // we want file: URLs and files to always behave the same, so switch
     // to a file if it's a file: URL
     if (input.getProtocol == "file")
       newFile(ConfigImplUtil.urlToFile(input), options)
