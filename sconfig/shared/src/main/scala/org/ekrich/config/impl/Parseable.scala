@@ -18,7 +18,6 @@ import java.net.MalformedURLException
 import java.net.URI
 import java.net.URISyntaxException
 import java.net.URL
-import java.net.URLConnection
 import java.{util => ju}
 import org.ekrich.config._
 import org.ekrich.config.parser._
