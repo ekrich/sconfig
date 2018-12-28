@@ -60,7 +60,7 @@ lazy val root = (project in file("."))
   .aggregate(
     testLibJVM,
     sconfigJVM,
-    sconfigNative,
+    //sconfigNative,
     simpleLibScala,
     simpleAppScala,
     complexAppScala,
@@ -104,8 +104,10 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
     // replace with your old artifact id
     mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems
-  ).nativeSettings(
-    sources in Test := Nil,
+  )
+  .nativeSettings(
+    //sources in Test := Nil,
+    //nativeLinkStubs := true,
     scalaVersion := scala211,
     crossScalaVersions := Nil
   )
@@ -114,7 +116,10 @@ lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
 
 lazy val sconfigNative = sconfig.native
-
+  .settings(
+    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.6" % Test,
+    testFrameworks += new TestFramework("utest.runner.Framework")
+  )
 
 lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
