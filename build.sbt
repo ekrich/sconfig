@@ -71,6 +71,7 @@ lazy val root = (project in file("."))
   .settings(commonSettings)
   .settings(
     name := "sconfig-root",
+    crossScalaVersions := Nil,
     doc / aggregate := false,
     doc := (sconfigJVM / Compile / doc).value,
     packageDoc / aggregate := false,
@@ -109,7 +110,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
     //sources in Test := Nil,
     //nativeLinkStubs := true,
     scalaVersion := scala211,
-    crossScalaVersions := Nil
+    crossScalaVersions := List(scala211)
   )
 
 lazy val sconfigJVM = sconfig.jvm
@@ -144,6 +145,7 @@ lazy val testLib = crossProject(JVMPlatform)
   .in(file("test-lib"))
   .settings(
     name := "sconfig-test-lib",
+    crossScalaVersions := scalaVersions,
     publish / skip := true
   )
 
