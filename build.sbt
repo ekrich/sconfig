@@ -79,7 +79,7 @@ lazy val root = (project in file("."))
   )
 
 lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
-  .crossType(CrossType.Full) // [Pure, Full, Dummy], default: CrossType.Full
+  .crossType(CrossType.Full)
   //.jsSettings(/* ... */) // defined in sbt-scalajs-crossproject
   .jvmSettings(
     libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-3" % Test,
@@ -107,8 +107,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
   .nativeSettings(
-    //sources in Test := Nil,
-    //nativeLinkStubs := true,
+    nativeLinkStubs := true,
     scalaVersion := scala211,
     crossScalaVersions := List(scala211)
   )
