@@ -100,7 +100,10 @@ lazy val configLib = Project("sconfig", file("sconfig"))
     run / fork := true,
     Test / run / fork := true,
     //env vars for tests
-    Test / envVars ++= Map("testList.0" -> "0", "testList.1" -> "1"),
+    Test / envVars ++= Map(
+      "testList.0"      -> "0",
+      "testList.1"      -> "1",
+      "testClassesPath" -> (Test / classDirectory).value.getPath),
     // replace with your old artifact id
     mimaPreviousArtifacts := Set("com.typesafe" % "config" % "1.3.3"),
     mimaBinaryIssueFilters ++= ignoredABIProblems
