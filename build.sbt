@@ -13,14 +13,12 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val nextVersion = "0.7.0"
+val nextVersion = "0.8.0"
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
-  val snap = "-SNAPSHOT"
-  val tag  = out.ref.dropV.value
+  val tag = out.ref.dropV.value
   if (out.isCleanAfterTag) tag
-  // out.ref.value in non git project?
-  else nextVersion + "-" + out.ref.value + snap
+  else nextVersion + "-SNAPSHOT"
 }
 
 val scalacOpts = List("-unchecked", "-deprecation", "-feature")
