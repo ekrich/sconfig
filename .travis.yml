@@ -1,6 +1,3 @@
-# use Docker-based container (instead of OpenVZ)
-sudo: false
-
 language: scala
 
 jdk:
