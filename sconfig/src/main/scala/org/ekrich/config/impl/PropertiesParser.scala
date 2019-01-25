@@ -98,7 +98,7 @@ object PropertiesParser {
       valuePaths.add(path)
       // all parent paths are objects
       var next = path.parent
-      while ({ next != null }) {
+      while (next != null) {
         scopePaths.add(next)
         next = next.parent
       }
