@@ -26,7 +26,10 @@ val scalacOpts = List("-unchecked", "-deprecation", "-feature")
 ThisBuild / Compile / scalacOptions := scalacOpts
 ThisBuild / Test / scalacOptions := scalacOpts
 
-ThisBuild / crossScalaVersions := Seq("2.12.8", "2.11.12")
+val scala211 = "2.11.12"
+val scala212 = "2.12.8"
+val scala213 = "2.13.0-M5"
+ThisBuild / crossScalaVersions := Seq(scala211, scala212, scala213)
 
 inThisBuild(
   List(
