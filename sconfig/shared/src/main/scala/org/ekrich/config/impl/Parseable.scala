@@ -24,7 +24,7 @@ import org.ekrich.config.parser._
 
 /**
  * Internal implementation detail, not ABI stable, do not touch.
- * For use only by the {@link com.typesafe.config} package.
+ * For use only by the {@link org.ekrich.config} package.
  * The point of this class is to avoid "propagating" each
  * overload on "thing which can be parsed" through multiple
  * interfaces. Most interfaces can have just one overload that
