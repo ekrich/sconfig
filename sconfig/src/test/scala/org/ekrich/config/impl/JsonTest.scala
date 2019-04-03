@@ -3,12 +3,14 @@
  */
 package org.ekrich.config.impl
 
+import java.util.HashMap
+
 import org.junit.Assert._
 import org.junit._
+
 import net.liftweb.{json => lift}
-import java.io.Reader
+
 import org.ekrich.config._
-import java.util.HashMap
 
 class JsonTest extends TestUtils {
 
@@ -26,7 +28,7 @@ class JsonTest extends TestUtils {
     Parseable.newString(s, options).parseValue()
   }
 
-  private[this] def toLift(value: ConfigValue): lift.JValue = {
+  private[this] def toJson(value: ConfigValue): lift.JValue = {
     import scala.collection.JavaConverters._
 
     value match {
@@ -35,12 +37,12 @@ class JsonTest extends TestUtils {
           v.keySet()
             .asScala
             .map({ k =>
-              lift.JField(k, toLift(v.get(k)))
+              lift.JField(k, toJson(v.get(k)))
             })
             .toList)
       case v: ConfigList =>
         lift.JArray(v.asScala.toList.map({ elem =>
-          toLift(elem)
+          toJson(elem)
         }))
       case v: ConfigBoolean =>
         lift.JBool(v.unwrapped)
@@ -57,18 +59,18 @@ class JsonTest extends TestUtils {
     }
   }
 
-  private[this] def fromLift(liftValue: lift.JValue): AbstractConfigValue = {
+  private[this] def fromJson(liftValue: lift.JValue): AbstractConfigValue = {
     import scala.collection.JavaConverters._
 
     liftValue match {
       case lift.JObject(fields) =>
         val m = new HashMap[String, AbstractConfigValue]()
         fields.foreach({ field =>
-          m.put(field.name, fromLift(field.value))
+          m.put(field.name, fromJson(field.value))
         })
         new SimpleConfigObject(fakeOrigin(), m)
       case lift.JArray(values) =>
-        new SimpleConfigList(fakeOrigin(), values.map(fromLift(_)).asJava)
+        new SimpleConfigList(fakeOrigin(), values.map(fromJson(_)).asJava)
       case lift.JInt(i) =>
         if (i.isValidInt) intValue(i.intValue) else longValue(i.longValue)
       case lift.JBool(b) =>
@@ -107,11 +109,7 @@ class JsonTest extends TestUtils {
   // lift for a variety of JSON strings.
 
   private def fromJsonWithLiftParser(json: String): ConfigValue = {
-    withLiftExceptionsConverted(fromLift(lift.JsonParser.parse(json)))
-  }
-
-  private def fromJsonWithLiftParser(json: Reader): ConfigValue = {
-    withLiftExceptionsConverted(fromLift(lift.JsonParser.parse(json)))
+    withLiftExceptionsConverted(fromJson(lift.JsonParser.parse(json)))
   }
 
   // For string quoting, check behavior of escaping a random character instead of one on the list;
@@ -126,15 +124,11 @@ class JsonTest extends TestUtils {
         // lift unexpectedly doesn't throw, confirm that
         addOffendingJsonToException("lift-nonthrowing", invalid.test) {
           fromJsonWithLiftParser(invalid.test)
-          fromJsonWithLiftParser(new java.io.StringReader(invalid.test))
         }
       } else {
         addOffendingJsonToException("lift", invalid.test) {
           intercept[ConfigException] {
             fromJsonWithLiftParser(invalid.test)
-          }
-          intercept[ConfigException] {
-            fromJsonWithLiftParser(new java.io.StringReader(invalid.test))
           }
           tested += 1
         }
