@@ -81,9 +81,8 @@ lazy val root = (project in file("."))
 lazy val configLib = Project("sconfig", file("sconfig"))
   .dependsOn(testLib % "test->test")
   .settings(
-//    libraryDependencies += "io.argonaut" %% "argonaut" % "6.2.3" % Test,
-    libraryDependencies += "net.liftweb"  %% "lift-json"      % "3.3.0" % Test,
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.11"  % Test,
+    libraryDependencies += "io.crashbox" %% "spray-json" % "1.3.5-1" % Test,
+    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
     Compile / compile / javacOptions ++= Seq("-source",
                                              "1.8",
                                              "-target",

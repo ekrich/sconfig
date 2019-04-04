@@ -8,7 +8,7 @@ import java.util.HashMap
 import org.junit.Assert._
 import org.junit._
 
-import net.liftweb.{json => lift}
+import spray.json._
 
 import org.ekrich.config._
 
@@ -28,107 +28,92 @@ class JsonTest extends TestUtils {
     Parseable.newString(s, options).parseValue()
   }
 
-  private[this] def toJson(value: ConfigValue): lift.JValue = {
+  private[this] def toJson(value: ConfigValue): JsValue = {
     import scala.collection.JavaConverters._
 
     value match {
       case v: ConfigObject =>
-        lift.JObject(
+        JsObject(
           v.keySet()
             .asScala
-            .map({ k =>
-              lift.JField(k, toJson(v.get(k)))
-            })
-            .toList)
+            .map(k => (k, toJson(v.get(k))))
+            .toMap)
       case v: ConfigList =>
-        lift.JArray(v.asScala.toList.map({ elem =>
-          toJson(elem)
-        }))
+        JsArray(v.asScala.toVector.map(elem => toJson(elem)))
       case v: ConfigBoolean =>
-        lift.JBool(v.unwrapped)
+        JsBoolean(v.unwrapped)
       case v: ConfigInt =>
-        lift.JInt(BigInt(v.unwrapped))
+        JsNumber(BigInt(v.unwrapped))
       case v: ConfigLong =>
-        lift.JInt(BigInt(v.unwrapped))
+        JsNumber(BigInt(v.unwrapped))
       case v: ConfigDouble =>
-        lift.JDouble(v.unwrapped)
+        JsNumber(v.unwrapped)
       case v: ConfigString =>
-        lift.JString(v.unwrapped)
+        JsString(v.unwrapped)
       case v: ConfigNull =>
-        lift.JNull
+        JsNull
     }
   }
 
-  private[this] def fromJson(liftValue: lift.JValue): AbstractConfigValue = {
+  private[this] def fromJson(jsonValue: JsValue): AbstractConfigValue = {
     import scala.collection.JavaConverters._
 
-    liftValue match {
-      case lift.JObject(fields) =>
+    jsonValue match {
+      case JsObject(fields) =>
         val m = new HashMap[String, AbstractConfigValue]()
-        fields.foreach({ field =>
-          m.put(field.name, fromJson(field.value))
-        })
+        fields.foreach(field => m.put(field._1, fromJson(field._2)))
         new SimpleConfigObject(fakeOrigin(), m)
-      case lift.JArray(values) =>
+      case JsArray(values) =>
         new SimpleConfigList(fakeOrigin(), values.map(fromJson(_)).asJava)
-      case lift.JInt(i) =>
-        if (i.isValidInt) intValue(i.intValue) else longValue(i.longValue)
-      case lift.JBool(b) =>
+      case JsNumber(n) =>
+        if (n.isValidInt) intValue(n.intValue)
+        else if (n.isValidLong) longValue(n.longValue)
+        else doubleValue(n.doubleValue())
+      case JsBoolean(b) =>
         new ConfigBoolean(fakeOrigin(), b)
-      case lift.JDouble(d) =>
-        doubleValue(d)
-      case lift.JString(s) =>
+      case JsString(s) =>
         new ConfigString.Quoted(fakeOrigin(), s)
-      case lift.JNull =>
+      case JsNull =>
         new ConfigNull(fakeOrigin())
-      case lift.JNothing =>
-        throw new ConfigException.BugOrBroken(
-          "Lift returned JNothing, probably an empty document (?)")
       case _ =>
-        // Using lift-json 3.0 or newer for Scala 2.11+ matching on JField(_, _) is an error
-        // Using lift-json 2.6.3, Scala 2.10, we get the following warning:
-        // match may not be exhaustive. It would fail on the following input: JField(_, _)
-        // Remove this case when 2.10 support is dropped
-        throw new IllegalStateException("Unexpected JValue: " + liftValue)
+        throw new IllegalStateException("Unexpected JsValue: " + jsonValue)
     }
   }
 
-  private def withLiftExceptionsConverted[T](block: => T): T = {
+  private def withJsonExceptionsConverted[T](block: => T): T = {
     try {
       block
     } catch {
-      case e: lift.JsonParser.ParseException =>
+      case e: JsonParser.ParsingException =>
         throw new ConfigException.Parse(
-          SimpleConfigOrigin.newSimple("lift parser"),
+          SimpleConfigOrigin.newSimple("json parser"),
           e.getMessage(),
           e)
     }
   }
 
-  // parse a string using Lift's AST. We then test by ensuring we have the same results as
-  // lift for a variety of JSON strings.
+  // parse a string using the Json Parser's AST. We then test by ensuring we have the same results as
+  // the Json parser for a variety of JSON strings.
 
-  private def fromJsonWithLiftParser(json: String): ConfigValue = {
-    withLiftExceptionsConverted(fromJson(lift.JsonParser.parse(json)))
+  private def fromJsonWithJsonParser(json: String): ConfigValue = {
+    withJsonExceptionsConverted(fromJson(JsonParser(ParserInput(json))))
   }
 
-  // For string quoting, check behavior of escaping a random character instead of one on the list;
-  // lift-json seems to oddly treat that as a \ literal
-
+  // For string quoting, check behavior of escaping a random character instead of one on the list
   @Test
   def invalidJsonThrows(): Unit = {
     var tested = 0
-    // be sure Lift throws on the string
+    // be sure json parser throws on the string
     for (invalid <- whitespaceVariations(invalidJson, false)) {
-      if (invalid.liftBehaviorUnexpected) {
-        // lift unexpectedly doesn't throw, confirm that
-        addOffendingJsonToException("lift-nonthrowing", invalid.test) {
-          fromJsonWithLiftParser(invalid.test)
+      if (invalid.jsonBehaviorUnexpected) {
+        // json unexpectedly doesn't throw, confirm that
+        addOffendingJsonToException("json-nonthrowing", invalid.test) {
+          fromJsonWithJsonParser(invalid.test)
         }
       } else {
-        addOffendingJsonToException("lift", invalid.test) {
+        addOffendingJsonToException("json", invalid.test) {
           intercept[ConfigException] {
-            fromJsonWithLiftParser(invalid.test)
+            fromJsonWithJsonParser(invalid.test)
           }
           tested += 1
         }
@@ -156,13 +141,13 @@ class JsonTest extends TestUtils {
   def validJsonWorks(): Unit = {
     var tested = 0
 
-    // be sure we do the same thing as Lift when we build our JSON "DOM"
+    // be sure we do the same thing as json parser when we build our JSON "DOM"
     for (valid <- whitespaceVariations(validJson, true)) {
-      val liftAST = if (valid.liftBehaviorUnexpected) {
+      val jsonAST = if (valid.jsonBehaviorUnexpected) {
         SimpleConfigObject.empty
       } else {
-        addOffendingJsonToException("lift", valid.test) {
-          fromJsonWithLiftParser(valid.test)
+        addOffendingJsonToException("json", valid.test) {
+          fromJsonWithJsonParser(valid.test)
         }
       }
       val ourAST = addOffendingJsonToException("config-json", valid.test) {
@@ -171,11 +156,11 @@ class JsonTest extends TestUtils {
       val ourConfAST = addOffendingJsonToException("config-conf", valid.test) {
         parseAsConf(valid.test)
       }
-      if (valid.liftBehaviorUnexpected) {
+      if (valid.jsonBehaviorUnexpected) {
         // ignore this for now
       } else {
         addOffendingJsonToException("config", valid.test) {
-          assertEquals(liftAST, ourAST)
+          assertEquals(jsonAST, ourAST)
         }
       }
 

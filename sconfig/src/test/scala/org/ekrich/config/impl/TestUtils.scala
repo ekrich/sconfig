@@ -322,41 +322,42 @@ abstract trait TestUtils {
     ConfigImpl.defaultIncluder
   }
 
-  case class ParseTest(liftBehaviorUnexpected: Boolean,
+  case class ParseTest(jsonBehaviorUnexpected: Boolean,
                        whitespaceMatters: Boolean,
                        test: String)
   object ParseTest {
-    def apply(liftBehaviorUnexpected: Boolean, test: String): ParseTest = {
-      ParseTest(liftBehaviorUnexpected, false, test)
+    def apply(jsonBehaviorUnexpected: Boolean, test: String): ParseTest = {
+      ParseTest(jsonBehaviorUnexpected, false, test)
     }
   }
   implicit def string2jsontest(test: String): ParseTest = ParseTest(false, test)
 
   // note: it's important to put {} or [] at the root if you
   // want to test "invalidity reasons" other than "wrong root"
+  // spray-json throws so change to false
   private val invalidJsonInvalidConf = List[ParseTest](
     "{",
     "}",
     "[",
     "]",
     ",",
-    ParseTest(true, "10"), // value not in array or object, lift-json now allows this
-    ParseTest(true, "\"foo\""), // value not in array or object, lift-json allows it
+    ParseTest(true, "10"), // value not in array or object
+    ParseTest(true, "\"foo\""), // value not in array or object
     "\"", // single quote by itself
-    ParseTest(true, "[,]"), // array with just a comma in it; lift is OK with this
-    ParseTest(true, "[,,]"), // array with just two commas in it; lift is cool with this too
-    ParseTest(true, "[1,2,,]"), // array with two trailing commas
-    ParseTest(true, "[,1,2]"), // array with initial comma
-    ParseTest(true, "{ , }"), // object with just a comma in it
-    ParseTest(true, "{ , , }"), // object with just two commas in it
+    ParseTest(false, "[,]"), // array with just a comma in it
+    ParseTest(false, "[,,]"), // array with just two commas in it
+    ParseTest(false, "[1,2,,]"), // array with two trailing commas
+    ParseTest(false, "[,1,2]"), // array with initial comma
+    ParseTest(false, "{ , }"), // object with just a comma in it
+    ParseTest(false, "{ , , }"), // object with just two commas in it
     "{ 1,2 }", // object with single values not key-value pair
-    ParseTest(true, "{ , \"foo\" : 10 }"), // object starts with comma
-    ParseTest(true, "{ \"foo\" : 10 ,, }"), // object has two trailing commas
+    ParseTest(false, "{ , \"foo\" : 10 }"), // object starts with comma
+    ParseTest(false, "{ \"foo\" : 10 ,, }"), // object has two trailing commas
     " \"a\" : 10 ,, ", // two trailing commas for braceless root object
     "{ \"foo\" : }", // no value in object
     "{ : 10 }", // no key in object
-    ParseTest(true, " \"foo\" : "), // no value in object with no braces; lift-json thinks this is acceptable
-    ParseTest(true, " : 10 "), // no key in object with no braces; lift-json is cool with this too
+    ParseTest(false, " \"foo\" : "), // no value in object with no braces
+    ParseTest(false, " : 10 "), // no key in object with no braces
     " \"foo\" : 10 } ", // close brace but no open
     " \"foo\" : 10 [ ", // no-braces object with trailing gunk
     "{ \"foo\" }", // no value or colon
@@ -364,20 +365,20 @@ abstract trait TestUtils {
     "{ \"foo\" : 10, true }", // non-key after comma
     "{ foo \n bar : 10 }", // newline in the middle of the unquoted key
     "[ 1, \\",             // ends with backslash
-    // these two problems are ignored by the lift tokenizer
-    "[:\"foo\", \"bar\"]", // colon in an array; lift doesn't throw (tokenizer erases it)
-    "[\"foo\" : \"bar\"]", // colon in an array another way, lift ignores (tokenizer erases it)
+    // these two problems are ignored by the json tokenizer
+    "[:\"foo\", \"bar\"]", // colon in an array
+    "[\"foo\" : \"bar\"]", // colon in an array another way
     "[ \"hello ]", // unterminated string
-    ParseTest(true, "{ \"foo\" , true }"), // comma instead of colon, lift is fine with this
-    ParseTest(true, "{ \"foo\" : true \"bar\" : false }"), // missing comma between fields, lift fine with this
+    ParseTest(false, "{ \"foo\" , true }"), // comma instead of colon
+    ParseTest(false, "{ \"foo\" : true \"bar\" : false }"), // missing comma between fields
     "[ 10, }]", // array with } as an element
     "[ 10, {]", // array with { as an element
     "{}x", // trailing invalid token after the root object
     "[]x", // trailing invalid token after the root array
-    ParseTest(true, "{}{}"), // trailing token after the root object - lift OK with it
-    ParseTest(true, "{}true"), // trailing token after the root object; lift ignores the {}
-    ParseTest(true, "[]{}"), // trailing valid token after the root array
-    ParseTest(true, "[]true"), // trailing valid token after the root array, lift ignores the []
+    ParseTest(false, "{}{}"), // trailing token after the root object
+    ParseTest(false, "{}true"), // trailing token after the root object
+    ParseTest(false, "[]{}"), // trailing valid token after the root array
+    ParseTest(false, "[]true"), // trailing valid token after the root array
     "[${]", // unclosed substitution
     "[$]", // '$' by itself
     "[$  ]", // '$' by itself with spaces after
@@ -404,7 +405,7 @@ abstract trait TestUtils {
     "+= 10",
     "10 +=",
     "[ 10e+3e ]", // "+" not allowed in unquoted strings, and not a valid number
-    ParseTest(true, "[ \"foo\nbar\" ]"), // unescaped newline in quoted string, lift doesn't care
+    ParseTest(false, "[ \"foo\nbar\" ]"), // unescaped newline in quoted string
     "[ # comment ]",
     "${ #comment }",
     "[ // comment ]",
@@ -446,8 +447,9 @@ abstract trait TestUtils {
     """{ "foo" : { "bar" : "baz", "woo" : "w00t" }, "baz" : { "bar" : "baz", "woo" : [1,2,3,4], "w00t" : true, "a" : false, "b" : 3.14, "c" : null } }""",
     "{}",
     ParseTest(true, "[ 10e+3 ]")
-  ) // "+" in a number (lift doesn't handle)
+  )
 
+  // spray-json throws so change to false
   private val validConfInvalidJson = List[ParseTest](
     "", // empty document
     " ", // empty document single space
@@ -470,13 +472,13 @@ abstract trait TestUtils {
     "{ foo.bar \n : bar }", // newline after path expression in key
     "{ foo  bar : bar }", // whitespace in the key
     "{ true : bar }", // key is a non-string token
-    ParseTest(true, """{ "foo" : "bar", "foo" : "bar2" }"""), // dup keys - lift just returns both
-    ParseTest(true, "[ 1, 2, 3, ]"), // single trailing comma (lift fails to throw)
-    ParseTest(true, "[1,2,3  , ]"), // single trailing comma with whitespace
-    ParseTest(true, "[1,2,3\n\n , \n]"), // single trailing comma with newlines
-    ParseTest(true, "[1,]"), // single trailing comma with one-element array
-    ParseTest(true, "{ \"foo\" : 10, }"), // extra trailing comma (lift fails to throw)
-    ParseTest(true, "{ \"a\" : \"b\", }"), // single trailing comma in object
+    ParseTest(true, """{ "foo" : "bar", "foo" : "bar2" }"""), // dup keys
+    ParseTest(false, "[ 1, 2, 3, ]"), // single trailing comma
+    ParseTest(false, "[1,2,3  , ]"), // single trailing comma with whitespace
+    ParseTest(false, "[1,2,3\n\n , \n]"), // single trailing comma with newlines
+    ParseTest(false, "[1,]"), // single trailing comma with one-element array
+    ParseTest(false, "{ \"foo\" : 10, }"), // extra trailing comma
+    ParseTest(false, "{ \"a\" : \"b\", }"), // single trailing comma in object
     "{ a : b, }", // single trailing comma in object (unquoted strings)
     "{ a : b  \n  , \n }", // single trailing comma in object with newlines
     "a : b, c : d,", // single trailing comma in object with no root braces
@@ -574,8 +576,9 @@ abstract trait TestUtils {
     }
   }
 
-  protected def whitespaceVariations(tests: Seq[ParseTest],
-                                     validInLift: Boolean): Seq[ParseTest] = {
+  protected def whitespaceVariations(
+      tests: Seq[ParseTest],
+      validInJsonParser: Boolean): Seq[ParseTest] = {
     val variations = List(
       { s: String =>
         s
@@ -602,11 +605,11 @@ abstract trait TestUtils {
       } else {
         val withNonAscii =
           if (t.test.contains(" "))
-            Seq(ParseTest(validInLift, t.test.replace(" ", "\u2003"))) // 2003 = em space, to test non-ascii whitespace
+            Seq(ParseTest(validInJsonParser, t.test.replace(" ", "\u2003"))) // 2003 = em space, to test non-ascii whitespace
           else
             Seq()
         withNonAscii ++ (for (v <- variations)
-          yield ParseTest(t.liftBehaviorUnexpected, v(t.test)))
+          yield ParseTest(t.jsonBehaviorUnexpected, v(t.test)))
       }
     }
   }
