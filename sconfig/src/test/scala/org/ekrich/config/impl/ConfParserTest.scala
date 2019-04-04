@@ -115,7 +115,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def pathParsing() {
+  def pathParsing(): Unit = {
     assertEquals(path("a"), parsePath("a"))
     assertEquals(path("a", "b"), parsePath("a.b"))
     assertEquals(path("a.b"), parsePath("\"a.b\""))
@@ -173,7 +173,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def duplicateKeyLastWins() {
+  def duplicateKeyLastWins(): Unit = {
     val obj = parseConfig("""{ "a" : 10, "a" : 11 } """)
 
     assertEquals(1, obj.root.size())
@@ -181,7 +181,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def duplicateKeyObjectsMerged() {
+  def duplicateKeyObjectsMerged(): Unit = {
     val obj = parseConfig(
       """{ "a" : { "x" : 1, "y" : 2 }, "a" : { "x" : 42, "z" : 100 } }""")
 
@@ -193,7 +193,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def duplicateKeyObjectsMergedRecursively() {
+  def duplicateKeyObjectsMergedRecursively(): Unit = {
     val obj = parseConfig(
       """{ "a" : { "b" : { "x" : 1, "y" : 2 } }, "a" : { "b" : { "x" : 42, "z" : 100 } } }""")
 
@@ -206,7 +206,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def duplicateKeyObjectsMergedRecursivelyDeeper() {
+  def duplicateKeyObjectsMergedRecursivelyDeeper(): Unit = {
     val obj = parseConfig(
       """{ "a" : { "b" : { "c" : { "x" : 1, "y" : 2 } } }, "a" : { "b" : { "c" : { "x" : 42, "z" : 100 } } } }""")
 
@@ -220,7 +220,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def duplicateKeyObjectNullObject() {
+  def duplicateKeyObjectNullObject(): Unit = {
     // null is supposed to "reset" the object at key "a"
     val obj = parseConfig("""{ a : { b : 1 }, a : null, a : { c : 2 } }""")
     assertEquals(1, obj.root.size())
@@ -229,7 +229,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def duplicateKeyObjectNumberObject() {
+  def duplicateKeyObjectNumberObject(): Unit = {
     val obj = parseConfig("""{ a : { b : 1 }, a : 42, a : { c : 2 } }""")
     assertEquals(1, obj.root.size())
     assertEquals(1, obj.getObject("a").size())
@@ -237,7 +237,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def impliedCommaHandling() {
+  def impliedCommaHandling(): Unit = {
     val valids = Seq(
       """
 // one line
@@ -336,13 +336,13 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def keysWithSlash() {
+  def keysWithSlash(): Unit = {
     val obj = parseConfig("""/a/b/c=42, x/y/z : 32""")
     assertEquals(42, obj.getInt("/a/b/c"))
     assertEquals(32, obj.getInt("x/y/z"))
   }
 
-  private def lineNumberTest(num: Int, text: String) {
+  private def lineNumberTest(num: Int, text: String): Unit = {
     val e = intercept[ConfigException] {
       parseConfig(text)
     }
@@ -354,7 +354,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def lineNumbersInErrors() {
+  def lineNumbersInErrors(): Unit = {
     // error is at the last char
     lineNumberTest(1, "}")
     lineNumberTest(2, "\n}")
@@ -388,7 +388,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def toStringForParseables() {
+  def toStringForParseables(): Unit = {
     // just be sure the toString don't throw, to get test coverage
     val options = ConfigParseOptions.defaults
     Parseable.newFile(new File("foo"), options).toString
@@ -398,26 +398,26 @@ class ConfParserTest extends TestUtils {
     Parseable.newReader(new StringReader("{}"), options).toString
   }
 
-  private def assertComments(comments: Seq[String], conf: Config) {
+  private def assertComments(comments: Seq[String], conf: Config): Unit = {
     assertEquals(comments, conf.root.origin.comments.asScala.toSeq)
   }
 
   private def assertComments(comments: Seq[String],
                              conf: Config,
-                             path: String) {
+                             path: String): Unit = {
     assertEquals(comments, conf.getValue(path).origin.comments.asScala.toSeq)
   }
 
   private def assertComments(comments: Seq[String],
                              conf: Config,
                              path: String,
-                             index: Int) {
+                             index: Int): Unit = {
     val v = conf.getList(path).get(index)
     assertEquals(comments, v.origin.comments.asScala.toSeq)
   }
 
   @Test
-  def trackCommentsForSingleField() {
+  def trackCommentsForSingleField(): Unit = {
     // no comments
     val conf0 = parseConfig("""
                 {
@@ -624,7 +624,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def trackCommentsForMultipleFields() {
+  def trackCommentsForMultipleFields(): Unit = {
     // nested objects
     val conf5 = parseConfig("""
              # Outside
@@ -734,7 +734,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeFile() {
+  def includeFile(): Unit = {
     val conf = ConfigFactory.parseString(
       "include file(" + jsonQuotedResourceFile("test01") + ")")
 
@@ -745,7 +745,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeFileWithExtension() {
+  def includeFileWithExtension(): Unit = {
     val conf = ConfigFactory.parseString(
       "include file(" + jsonQuotedResourceFile("test01.conf") + ")")
 
@@ -755,7 +755,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeFileWhitespaceInsideParens() {
+  def includeFileWhitespaceInsideParens(): Unit = {
     val conf = ConfigFactory.parseString(
       "include file(  \n  " + jsonQuotedResourceFile("test01") + "  \n  )")
 
@@ -766,7 +766,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeFileNoWhitespaceOutsideParens() {
+  def includeFileNoWhitespaceOutsideParens(): Unit = {
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseString(
         "include file (" + jsonQuotedResourceFile("test01") + ")")
@@ -776,7 +776,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeFileNotQuoted() {
+  def includeFileNotQuoted(): Unit = {
     val f = resourceFile("test01")
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseString("include file(" + f + ")")
@@ -787,7 +787,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeFileNotQuotedAndSpecialChar() {
+  def includeFileNotQuotedAndSpecialChar(): Unit = {
     val f = resourceFile("test01")
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseString("include file(:" + f + ")")
@@ -799,7 +799,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeFileUnclosedParens() {
+  def includeFileUnclosedParens(): Unit = {
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseString(
         "include file(" + jsonQuotedResourceFile("test01") + " something")
@@ -809,7 +809,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeURLBasename() {
+  def includeURLBasename(): Unit = {
     // "AnySyntax" trick doesn't work for url() includes
     val url = resourceFile("test01").toURI().toURL().toExternalForm()
     val conf =
@@ -819,7 +819,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeURLWithExtension() {
+  def includeURLWithExtension(): Unit = {
     val url = resourceFile("test01.conf").toURI().toURL().toExternalForm()
     val conf =
       ConfigFactory.parseString("include url(" + quoteJsonString(url) + ")")
@@ -830,7 +830,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeURLInvalid() {
+  def includeURLInvalid(): Unit = {
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseString("include url(\"junk:junk:junk\")")
     }
@@ -839,7 +839,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeResources() {
+  def includeResources(): Unit = {
     val conf = ConfigFactory.parseString("include classpath(\"test01\")")
 
     // should have loaded conf, json, properties
@@ -849,7 +849,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeRequiredMissing() {
+  def includeRequiredMissing(): Unit = {
     // set this to allowMissing=true to demonstrate that the missing inclusion causes failure despite this setting
     val missing = ConfigParseOptions.defaults.setAllowMissing(true)
 
@@ -866,7 +866,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeRequiredFoundButNestedIncludeMissing() {
+  def includeRequiredFoundButNestedIncludeMissing(): Unit = {
     // set this to allowMissing=true to demonstrate that the missing nested inclusion is permitted despite this setting
     val missing = ConfigParseOptions.defaults.setAllowMissing(false)
 
@@ -882,7 +882,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeRequiredFound() {
+  def includeRequiredFound(): Unit = {
     val confs = Seq(
       "include required(\"test01\")",
       "include required( \"test01\" )",
@@ -912,7 +912,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeURLHeuristically() {
+  def includeURLHeuristically(): Unit = {
     val url  = resourceFile("test01.conf").toURI().toURL().toExternalForm()
     val conf = ConfigFactory.parseString("include " + quoteJsonString(url))
 
@@ -922,7 +922,7 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def includeURLBasenameHeuristically() {
+  def includeURLBasenameHeuristically(): Unit = {
     // "AnySyntax" trick doesn't work for url includes
     val url  = resourceFile("test01").toURI().toURL().toExternalForm()
     val conf = ConfigFactory.parseString("include " + quoteJsonString(url))
@@ -931,35 +931,35 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
-  def acceptBOMStartingFile() {
+  def acceptBOMStartingFile(): Unit = {
     // BOM at start of file should be ignored
     val conf = ConfigFactory.parseResources("bom.conf")
     assertEquals("bar", conf.getString("foo"))
   }
 
   @Test
-  def acceptBOMStartOfStringConfig() {
+  def acceptBOMStartOfStringConfig(): Unit = {
     // BOM at start of file is just whitespace, so ignored
     val conf = ConfigFactory.parseString("\uFEFFfoo=bar")
     assertEquals("bar", conf.getString("foo"))
   }
 
   @Test
-  def acceptBOMInStringValue() {
+  def acceptBOMInStringValue(): Unit = {
     // BOM inside quotes should be preserved, just as other whitespace would be
     val conf = ConfigFactory.parseString("foo=\"\uFEFF\uFEFF\"")
     assertEquals("\uFEFF\uFEFF", conf.getString("foo"))
   }
 
   @Test
-  def acceptBOMWhitespace() {
+  def acceptBOMWhitespace(): Unit = {
     // BOM here should be treated like other whitespace (ignored, since no quotes)
     val conf = ConfigFactory.parseString("foo= \uFEFFbar\uFEFF")
     assertEquals("bar", conf.getString("foo"))
   }
 
   @Test
-  def acceptMultiPeriodNumericPath() {
+  def acceptMultiPeriodNumericPath(): Unit = {
     val conf1 = ConfigFactory.parseString("0.1.2.3=foobar1")
     assertEquals("foobar1", conf1.getString("0.1.2.3"))
     val conf2 = ConfigFactory.parseString("0.1.2.3.ABC=foobar2")

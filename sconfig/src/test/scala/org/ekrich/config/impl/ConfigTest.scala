@@ -100,7 +100,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeTrivial() {
+  def mergeTrivial(): Unit = {
     val obj1   = parseObject("""{ "a" : 1 }""")
     val obj2   = parseObject("""{ "b" : 2 }""")
     val merged = merge(obj1, obj2).toConfig
@@ -111,14 +111,14 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeEmpty() {
+  def mergeEmpty(): Unit = {
     val merged = merge().toConfig
 
     assertEquals(0, merged.root.size)
   }
 
   @Test
-  def mergeOne() {
+  def mergeOne(): Unit = {
     val obj1   = parseObject("""{ "a" : 1 }""")
     val merged = merge(obj1).toConfig
 
@@ -127,7 +127,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeOverride() {
+  def mergeOverride(): Unit = {
     val obj1   = parseObject("""{ "a" : 1 }""")
     val obj2   = parseObject("""{ "a" : 2 }""")
     val merged = merge(obj1, obj2).toConfig
@@ -142,7 +142,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeN() {
+  def mergeN(): Unit = {
     val obj1 = parseObject("""{ "a" : 1 }""")
     val obj2 = parseObject("""{ "b" : 2 }""")
     val obj3 = parseObject("""{ "c" : 3 }""")
@@ -158,7 +158,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeOverrideN() {
+  def mergeOverrideN(): Unit = {
     val obj1 = parseObject("""{ "a" : 1 }""")
     val obj2 = parseObject("""{ "a" : 2 }""")
     val obj3 = parseObject("""{ "a" : 3 }""")
@@ -175,7 +175,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeNested() {
+  def mergeNested(): Unit = {
     val obj1   = parseObject("""{ "root" : { "a" : 1, "z" : 101 } }""")
     val obj2   = parseObject("""{ "root" : { "b" : 2, "z" : 102 } }""")
     val merged = merge(obj1, obj2).toConfig
@@ -188,7 +188,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeWithEmpty() {
+  def mergeWithEmpty(): Unit = {
     val obj1   = parseObject("""{ "a" : 1 }""")
     val obj2   = parseObject("""{ }""")
     val merged = merge(obj1, obj2).toConfig
@@ -203,7 +203,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeOverrideObjectAndPrimitive() {
+  def mergeOverrideObjectAndPrimitive(): Unit = {
     val obj1   = parseObject("""{ "a" : 1 }""")
     val obj2   = parseObject("""{ "a" : { "b" : 42 } }""")
     val merged = merge(obj1, obj2).toConfig
@@ -220,7 +220,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeOverrideObjectAndSubstitution() {
+  def mergeOverrideObjectAndSubstitution(): Unit = {
     val obj1   = parseObject("""{ "a" : 1 }""")
     val obj2   = parseObject("""{ "a" : { "b" : ${c} }, "c" : 42 }""")
     val merged = merge(obj1, obj2).toConfig
@@ -237,7 +237,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeObjectThenPrimitiveThenObject() {
+  def mergeObjectThenPrimitiveThenObject(): Unit = {
     // the semantic here is that the primitive blocks the
     // object that occurs at lower priority. This is consistent
     // with duplicate keys in the same file.
@@ -260,7 +260,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeObjectThenSubstitutionThenObject() {
+  def mergeObjectThenSubstitutionThenObject(): Unit = {
     // the semantic here is that the primitive blocks the
     // object that occurs at lower priority. This is consistent
     // with duplicate keys in the same file.
@@ -286,7 +286,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergePrimitiveThenObjectThenPrimitive() {
+  def mergePrimitiveThenObjectThenPrimitive(): Unit = {
     // the primitive should override the object
     val obj1 = parseObject("""{ "a" : 1 }""")
     val obj2 = parseObject("""{ "a" : { "b" : 42 } }""")
@@ -299,7 +299,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeSubstitutionThenObjectThenSubstitution() {
+  def mergeSubstitutionThenObjectThenSubstitution(): Unit = {
     // the substitution should override the object
     val obj1 = parseObject("""{ "a" : ${b}, "b" : 1 }""")
     val obj2 = parseObject("""{ "a" : { "b" : 42 } }""")
@@ -314,7 +314,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeSubstitutedValues() {
+  def mergeSubstitutedValues(): Unit = {
     val obj1 = parseObject("""{ "a" : { "x" : 1, "z" : 4 }, "c" : ${a} }""")
     val obj2 = parseObject("""{ "b" : { "y" : 2, "z" : 5 }, "c" : ${b} }""")
 
@@ -327,7 +327,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeObjectWithSubstituted() {
+  def mergeObjectWithSubstituted(): Unit = {
     val obj1 = parseObject(
       """{ "a" : { "x" : 1, "z" : 4 }, "c" : { "z" : 42 } }""")
     val obj2 = parseObject("""{ "b" : { "y" : 2, "z" : 5 }, "c" : ${b} }""")
@@ -356,7 +356,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeHidesCycles() {
+  def mergeHidesCycles(): Unit = {
     // the point here is that we should not try to evaluate a substitution
     // that's been overridden, and thus not end up with a cycle as long
     // as we override the problematic link in the cycle.
@@ -373,7 +373,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeWithObjectInFrontKeepsCycles() {
+  def mergeWithObjectInFrontKeepsCycles(): Unit = {
     // the point here is that if our eventual value will be an object, then
     // we have to evaluate the substitution to see if it's an object to merge,
     // so we don't avoid the cycle.
@@ -395,7 +395,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeSeriesOfSubstitutions() {
+  def mergeSeriesOfSubstitutions(): Unit = {
     val obj1 = parseObject("""{ "a" : { "x" : 1, "q" : 4 }, "j" : ${a} }""")
     val obj2 = parseObject("""{ "b" : { "y" : 2, "q" : 5 }, "j" : ${b} }""")
     val obj3 = parseObject("""{ "c" : { "z" : 3, "q" : 6 }, "j" : ${c} }""")
@@ -412,7 +412,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergePrimitiveAndTwoSubstitutions() {
+  def mergePrimitiveAndTwoSubstitutions(): Unit = {
     val obj1 = parseObject("""{ "j" : 42 }""")
     val obj2 = parseObject("""{ "b" : { "y" : 2, "q" : 5 }, "j" : ${b} }""")
     val obj3 = parseObject("""{ "c" : { "z" : 3, "q" : 6 }, "j" : ${c} }""")
@@ -428,7 +428,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeObjectAndTwoSubstitutions() {
+  def mergeObjectAndTwoSubstitutions(): Unit = {
     val obj1 = parseObject("""{ "j" : { "x" : 1, "q" : 4 } }""")
     val obj2 = parseObject("""{ "b" : { "y" : 2, "q" : 5 }, "j" : ${b} }""")
     val obj3 = parseObject("""{ "c" : { "z" : 3, "q" : 6 }, "j" : ${c} }""")
@@ -445,7 +445,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def mergeObjectSubstitutionObjectSubstitution() {
+  def mergeObjectSubstitutionObjectSubstitution(): Unit = {
     val obj1 = parseObject("""{ "j" : { "w" : 1, "q" : 5 } }""")
     val obj2 = parseObject("""{ "b" : { "x" : 2, "q" : 6 }, "j" : ${b} }""")
     val obj3 = parseObject("""{ "j" : { "y" : 3, "q" : 7 } }""")
@@ -521,33 +521,33 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def ignoredMergesDoNothing() {
+  def ignoredMergesDoNothing(): Unit = {
     val conf = parseConfig("{ a : 1 }")
     testIgnoredMergesDoNothing(conf)
   }
 
   @Test
-  def testNoMergeAcrossArray() {
+  def testNoMergeAcrossArray(): Unit = {
     val conf = parseConfig("a: {b:1}, a: [2,3], a:{c:4}")
     assertFalse("a.b found in: " + conf, conf.hasPath("a.b"))
     assertTrue("a.c not found in: " + conf, conf.hasPath("a.c"))
   }
 
   @Test
-  def testNoMergeAcrossUnresolvedArray() {
+  def testNoMergeAcrossUnresolvedArray(): Unit = {
     val conf = parseConfig("a: {b:1}, a: [2,${x}], a:{c:4}, x: 42")
     assertFalse("a.b found in: " + conf, conf.hasPath("a.b"))
     assertTrue("a.c not found in: " + conf, conf.hasPath("a.c"))
   }
 
   @Test
-  def testNoMergeLists() {
+  def testNoMergeLists(): Unit = {
     val conf = parseConfig("a: [1,2], a: [3,4]")
     assertEquals("lists did not merge", Seq(3, 4), conf.getIntList("a").asScala)
   }
 
   @Test
-  def testListsWithFallback() {
+  def testListsWithFallback(): Unit = {
     val list1   = ConfigValueFactory.fromIterable(Seq(1, 2, 3).asJava)
     val list2   = ConfigValueFactory.fromIterable(Seq(4, 5, 6).asJava)
     val merged1 = list1.withFallback(list2)
@@ -560,7 +560,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def integerRangeChecks() {
+  def integerRangeChecks(): Unit = {
     val conf = parseConfig(
       "{ tooNegative: " + (Integer.MIN_VALUE - 1L) + ", tooPositive: " + (Integer.MAX_VALUE + 1L) + "}")
     val en = intercept[ConfigException.WrongType] {
@@ -575,7 +575,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test01Getting() {
+  def test01Getting(): Unit = {
     val conf = ConfigFactory.load("test01")
 
     // get all the primitive types
@@ -653,7 +653,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test01Exceptions() {
+  def test01Exceptions(): Unit = {
     val conf = ConfigFactory.load("test01")
 
     // should throw Missing if key doesn't exist
@@ -752,7 +752,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test01Conversions() {
+  def test01Conversions(): Unit = {
     val conf = ConfigFactory.load("test01")
 
     // should convert numbers to string
@@ -893,7 +893,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test01MergingOtherFormats() {
+  def test01MergingOtherFormats(): Unit = {
     val conf = ConfigFactory.load("test01")
 
     // should have loaded stuff from .json
@@ -907,7 +907,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test01ToString() {
+  def test01ToString(): Unit = {
     val conf = ConfigFactory.load("test01")
 
     // toString() on conf objects doesn't throw (toString is just a debug string so not testing its result)
@@ -915,7 +915,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test01SystemFallbacks() {
+  def test01SystemFallbacks(): Unit = {
     val conf = ConfigFactory.load("test01")
     val jv   = System.getProperty("java.version")
     assertNotNull(jv)
@@ -929,7 +929,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test01Origins() {
+  def test01Origins(): Unit = {
     val conf = ConfigFactory.load("test01")
     val path = sys.env
       .getOrElse("testClassesPath", "testClassesPath must be set in build")
@@ -973,7 +973,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test01EntrySet() {
+  def test01EntrySet(): Unit = {
     val conf = ConfigFactory.load("test01")
 
     val javaEntries = conf.entrySet
@@ -985,7 +985,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test01Serializable() {
+  def test01Serializable(): Unit = {
     // we can't ever test an expected serialization here because it
     // will have system props in it that vary by test system,
     // and the ConfigOrigin in there will also vary by test system
@@ -994,7 +994,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test02SubstitutionsWithWeirdPaths() {
+  def test02SubstitutionsWithWeirdPaths(): Unit = {
     val conf = ConfigFactory.load("test02")
 
     assertEquals(42, conf.getInt("42_a"))
@@ -1005,7 +1005,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test02UseWeirdPathsWithConfigObject() {
+  def test02UseWeirdPathsWithConfigObject(): Unit = {
     val conf = ConfigFactory.load("test02")
 
     // we're checking that the getters in ConfigObject support
@@ -1017,7 +1017,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test03Includes() {
+  def test03Includes(): Unit = {
     val conf = ConfigFactory.load("test03")
 
     // include should have overridden the "ints" value in test03
@@ -1063,7 +1063,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test04LoadAkkaReference() {
+  def test04LoadAkkaReference(): Unit = {
     val conf = ConfigFactory.load("test04")
 
     // Note, test04 is an unmodified old-style akka.conf,
@@ -1080,7 +1080,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test05LoadPlayApplicationConf() {
+  def test05LoadPlayApplicationConf(): Unit = {
     val conf = ConfigFactory.load("test05")
 
     assertEquals("prod", conf.getString("%prod.application.mode"))
@@ -1088,7 +1088,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test06Merge() {
+  def test06Merge(): Unit = {
     // test06 mostly exists because its render() round trip is tricky
     val conf = ConfigFactory.load("test06")
 
@@ -1098,7 +1098,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test07IncludingResourcesFromFiles() {
+  def test07IncludingResourcesFromFiles(): Unit = {
     // first, check that when loading from classpath we include another classpath resource
     val fromClasspath =
       ConfigFactory.parseResources(classOf[ConfigTest], "/test07.conf")
@@ -1121,7 +1121,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test08IncludingSlashPrefixedResources() {
+  def test08IncludingSlashPrefixedResources(): Unit = {
     // first, check that when loading from classpath we include another classpath resource
     val fromClasspath =
       ConfigFactory.parseResources(classOf[ConfigTest], "/test08.conf")
@@ -1144,7 +1144,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test09DelayedMerge() {
+  def test09DelayedMerge(): Unit = {
     val conf = ConfigFactory.parseResources(classOf[ConfigTest], "/test09.conf")
     assertEquals(classOf[ConfigDelayedMergeObject].getSimpleName,
                  conf.root.get("a").getClass.getSimpleName)
@@ -1166,7 +1166,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def test10DelayedMergeRelativizing() {
+  def test10DelayedMergeRelativizing(): Unit = {
     val conf     = ConfigFactory.parseResources(classOf[ConfigTest], "/test10.conf")
     val resolved = conf.resolve
     assertEquals(3, resolved.getInt("foo.a.c"))
@@ -1179,7 +1179,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def renderRoundTrip() {
+  def renderRoundTrip(): Unit = {
     val allBooleans = true :: false :: Nil
     val optionsCombos = {
       for (formatted      <- allBooleans;
@@ -1254,7 +1254,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def serializeRoundTrip() {
+  def serializeRoundTrip(): Unit = {
     for (i <- 1 to 10) {
       val numString = i.toString
       val name      = "/test" + { if (numString.size == 1) "0" else "" } + numString
@@ -1268,7 +1268,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def isResolvedWorks() {
+  def isResolvedWorks(): Unit = {
     val resolved = ConfigFactory.parseString("foo = 1")
     assertTrue("config with no substitutions starts as resolved",
                resolved.isResolved)
@@ -1280,7 +1280,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def allowUnresolvedDoesAllowUnresolvedArrayElements() {
+  def allowUnresolvedDoesAllowUnresolvedArrayElements(): Unit = {
     val values = ConfigFactory.parseString("unknown = [someVal], known = 42")
     val unresolved = ConfigFactory.parseString(
       "concat = [${unknown}[]], sibling = [${unknown}, ${known}]")
@@ -1290,7 +1290,7 @@ class ConfigTest extends TestUtils {
   }
 
   @Test
-  def allowUnresolvedDoesAllowUnresolved() {
+  def allowUnresolvedDoesAllowUnresolved(): Unit = {
     val values = ConfigFactory.parseString("{ foo = 1, bar = 2, m = 3, n = 4}")
     assertTrue("config with no substitutions starts as resolved",
                values.isResolved)

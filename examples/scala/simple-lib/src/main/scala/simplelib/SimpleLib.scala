@@ -56,7 +56,7 @@ class SimpleLibContext2(config: Config) {
   }
 
   // this is the amazing functionality provided by simple-lib with a Settings class
-  def printSettings() {
+  def printSettings(): Unit = {
     println("foo=" + settings.foo)
     println("hello=" + settings.hello)
     println("whatever=" + settings.whatever)

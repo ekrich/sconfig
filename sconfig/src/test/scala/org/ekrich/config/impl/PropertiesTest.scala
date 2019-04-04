@@ -14,7 +14,7 @@ import org.ekrich.config.ConfigResolveOptions
 
 class PropertiesTest extends TestUtils {
   @Test
-  def pathSplitting() {
+  def pathSplitting(): Unit = {
     def last(s: String)       = PropertiesParser.lastElement(s)
     def exceptLast(s: String) = PropertiesParser.exceptLastElement(s)
 
@@ -41,7 +41,7 @@ class PropertiesTest extends TestUtils {
   }
 
   @Test
-  def pathObjectCreating() {
+  def pathObjectCreating(): Unit = {
     def p(key: String) = PropertiesParser.pathFromPropertyKey(key)
 
     assertEquals(path("a"), p("a"))
@@ -50,7 +50,7 @@ class PropertiesTest extends TestUtils {
   }
 
   @Test
-  def funkyPathsInProperties() {
+  def funkyPathsInProperties(): Unit = {
     def testPath(propsPath: String, confPath: String) {
       val props = new Properties()
 
@@ -79,7 +79,7 @@ class PropertiesTest extends TestUtils {
   }
 
   @Test
-  def objectsWinOverStrings() {
+  def objectsWinOverStrings(): Unit = {
     val props = new Properties()
 
     props.setProperty("a.b", "foo")
@@ -98,7 +98,7 @@ class PropertiesTest extends TestUtils {
   }
 
   @Test
-  def makeListWithNumericKeys() {
+  def makeListWithNumericKeys(): Unit = {
     import scala.collection.JavaConverters._
 
     val props = new Properties()
@@ -116,7 +116,7 @@ class PropertiesTest extends TestUtils {
   }
 
   @Test
-  def makeListWithNumericKeysWithGaps() {
+  def makeListWithNumericKeysWithGaps(): Unit = {
     import scala.collection.JavaConverters._
 
     val props = new Properties()
@@ -132,7 +132,7 @@ class PropertiesTest extends TestUtils {
   }
 
   @Test
-  def makeListWithNumericKeysWithNoise() {
+  def makeListWithNumericKeysWithNoise(): Unit = {
     import scala.collection.JavaConverters._
 
     val props = new Properties()
@@ -152,7 +152,7 @@ class PropertiesTest extends TestUtils {
   }
 
   @Test
-  def noNumericKeysAsListFails() {
+  def noNumericKeysAsListFails(): Unit = {
     import scala.collection.JavaConverters._
 
     val props = new Properties()
@@ -167,7 +167,7 @@ class PropertiesTest extends TestUtils {
   }
 
   @Test
-  def makeListWithNumericKeysAndMerge() {
+  def makeListWithNumericKeysAndMerge(): Unit = {
     import scala.collection.JavaConverters._
 
     val props = new Properties()
@@ -194,7 +194,7 @@ class PropertiesTest extends TestUtils {
   }
 
   @Test
-  def skipNonStringsInProperties() {
+  def skipNonStringsInProperties(): Unit = {
     val props = new Properties()
     props.put("a", new ThreadLocal[String]())
     props.put("b", new Date())

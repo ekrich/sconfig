@@ -53,7 +53,7 @@ class EquivalentsTest extends TestUtils {
   // would like each "equivNN" directory to be a suite and each file in the dir
   // to be a test, but not sure how to convince junit to do that.
   @Test
-  def testEquivalents() {
+  def testEquivalents(): Unit = {
     var dirCount  = 0
     var fileCount = 0
     for (equiv <- equivDirs()) {
