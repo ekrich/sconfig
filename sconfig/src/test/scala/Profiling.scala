@@ -43,7 +43,7 @@ object Util {
     timeHelper(body, iterations, false)
   }
 
-  def loop(args: Seq[String], body: () => Unit) {
+  def loop(args: Seq[String], body: () => Unit): Unit = {
     if (args.contains("-loop")) {
       println("looping; ctrl+C to escape")
       while (true) {

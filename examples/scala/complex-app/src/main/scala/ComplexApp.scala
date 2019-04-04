@@ -9,7 +9,7 @@ object ComplexApp extends App {
 
   // using a custom Config with the simple-lib library
   // (simple-lib is a library in this same examples/ directory)
-  def demoConfigInSimpleLib(config: Config) {
+  def demoConfigInSimpleLib(config: Config): Unit = {
     val context = new SimpleLibContext(config)
     context.printSetting("simple-lib.foo")
     context.printSetting("simple-lib.hello")

@@ -12,7 +12,7 @@ object RenderExample extends App {
     .setComments(comments)
     .setJson(!hocon)
 
-  def render(what: String) {
+  def render(what: String): Unit = {
     val conf = ConfigFactory
       .defaultOverrides()
       .withFallback(

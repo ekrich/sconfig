@@ -51,7 +51,7 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def funkyPathsInProperties(): Unit = {
-    def testPath(propsPath: String, confPath: String) {
+    def testPath(propsPath: String, confPath: String): Unit = {
       val props = new Properties()
 
       props.setProperty(propsPath, propsPath)

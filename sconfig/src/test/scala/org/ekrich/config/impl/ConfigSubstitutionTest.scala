@@ -55,56 +55,56 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def resolveTrivialKey() {
+  def resolveTrivialKey(): Unit = {
     val s = subst("foo")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(intValue(42), v)
   }
 
   @Test
-  def resolveTrivialPath() {
+  def resolveTrivialPath(): Unit = {
     val s = subst("bar.int")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(intValue(43), v)
   }
 
   @Test
-  def resolveInt() {
+  def resolveInt(): Unit = {
     val s = subst("bar.int")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(intValue(43), v)
   }
 
   @Test
-  def resolveBool() {
+  def resolveBool(): Unit = {
     val s = subst("bar.bool")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(boolValue(true), v)
   }
 
   @Test
-  def resolveNull() {
+  def resolveNull(): Unit = {
     val s = subst("bar.null")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(nullValue(), v)
   }
 
   @Test
-  def resolveString() {
+  def resolveString(): Unit = {
     val s = subst("bar.string")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(stringValue("hello"), v)
   }
 
   @Test
-  def resolveDouble() {
+  def resolveDouble(): Unit = {
     val s = subst("bar.double")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(doubleValue(3.14), v)
   }
 
   @Test
-  def resolveMissingThrows() {
+  def resolveMissingThrows(): Unit = {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       val s = subst("bar.missing")
       val v = resolveWithoutFallbacks(s, simpleObject)
@@ -114,14 +114,14 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def resolveIntInString() {
+  def resolveIntInString(): Unit = {
     val s = substInString("bar.int")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(stringValue("start<43>end"), v)
   }
 
   @Test
-  def resolveNullInString() {
+  def resolveNullInString(): Unit = {
     val s = substInString("bar.null")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(stringValue("start<null>end"), v)
@@ -132,7 +132,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def resolveMissingInString() {
+  def resolveMissingInString(): Unit = {
     val s = substInString("bar.missing", true /* optional */ )
     val v = resolveWithoutFallbacks(s, simpleObject)
     // absent object becomes empty string
@@ -145,28 +145,28 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def resolveBoolInString() {
+  def resolveBoolInString(): Unit = {
     val s = substInString("bar.bool")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(stringValue("start<true>end"), v)
   }
 
   @Test
-  def resolveStringInString() {
+  def resolveStringInString(): Unit = {
     val s = substInString("bar.string")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(stringValue("start<hello>end"), v)
   }
 
   @Test
-  def resolveDoubleInString() {
+  def resolveDoubleInString(): Unit = {
     val s = substInString("bar.double")
     val v = resolveWithoutFallbacks(s, simpleObject)
     assertEquals(stringValue("start<3.14>end"), v)
   }
 
   @Test
-  def missingInArray() {
+  def missingInArray(): Unit = {
     import scala.collection.JavaConverters._
 
     val obj = parseObject("""
@@ -179,7 +179,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def missingInObject() {
+  def missingInObject(): Unit = {
     import scala.collection.JavaConverters._
 
     val obj = parseObject(
@@ -203,21 +203,21 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def chainSubstitutions() {
+  def chainSubstitutions(): Unit = {
     val s = subst("foo")
     val v = resolveWithoutFallbacks(s, substChainObject)
     assertEquals(intValue(57), v)
   }
 
   @Test
-  def substitutionsLookForward() {
+  def substitutionsLookForward(): Unit = {
     val obj      = parseObject("""a=1,b=${a},a=2""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("b"))
   }
 
   @Test
-  def throwOnIncrediblyTrivialCycle() {
+  def throwOnIncrediblyTrivialCycle(): Unit = {
     val s = subst("a")
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       val v = resolveWithoutFallbacks(s, parseObject("a: ${a}"))
@@ -239,7 +239,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def throwOnCycles() {
+  def throwOnCycles(): Unit = {
     val s = subst("foo")
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       val v = resolveWithoutFallbacks(s, substCycleObject)
@@ -251,7 +251,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def throwOnOptionalReferenceToNonOptionalCycle() {
+  def throwOnOptionalReferenceToNonOptionalCycle(): Unit = {
     // we look up ${?foo}, but the cycle has hard
     // non-optional links in it so still has to throw.
     val s = subst("foo", optional = true)
@@ -274,7 +274,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def optionalLinkCyclesActLikeUndefined() {
+  def optionalLinkCyclesActLikeUndefined(): Unit = {
     val s = subst("foo", optional = true)
     val v = resolveWithoutFallbacks(s, substCycleObjectOptionalLink)
     assertNull(
@@ -283,7 +283,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def throwOnTwoKeyCycle() {
+  def throwOnTwoKeyCycle(): Unit = {
     val obj = parseObject("""a:${b},b:${a}""")
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
@@ -293,7 +293,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def throwOnFourKeyCycle() {
+  def throwOnFourKeyCycle(): Unit = {
     val obj = parseObject("""a:${b},b:${c},c:${d},d:${a}""")
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
@@ -303,7 +303,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def resolveObject() {
+  def resolveObject(): Unit = {
     val resolved = resolveWithoutFallbacks(substChainObject)
     assertEquals(57, resolved.getInt("foo"))
     assertEquals(57, resolved.getInt("bar"))
@@ -320,7 +320,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def avoidSideEffectCycles() {
+  def avoidSideEffectCycles(): Unit = {
     // The point of this test is that in traversing objects
     // to resolve a path, we need to avoid resolving
     // substitutions that are in the traversed objects but
@@ -335,7 +335,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def ignoreHiddenUndefinedSubst() {
+  def ignoreHiddenUndefinedSubst(): Unit = {
     // if a substitution is overridden then it shouldn't matter that it's undefined
     val obj      = parseObject("""a=${nonexistent},a=42""")
     val resolved = resolve(obj)
@@ -343,7 +343,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def objectDoesNotHideUndefinedSubst() {
+  def objectDoesNotHideUndefinedSubst(): Unit = {
     // if a substitution is overridden by an object we still need to
     // evaluate the substitution
     val obj = parseObject("""a=${nonexistent},a={ b : 42 }""")
@@ -355,7 +355,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def ignoreHiddenCircularSubst() {
+  def ignoreHiddenCircularSubst(): Unit = {
     // if a substitution is overridden then it shouldn't matter that it's circular
     val obj      = parseObject("""a=${a},a=42""")
     val resolved = resolve(obj)
@@ -381,7 +381,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def avoidDelayedMergeObjectResolveProblem1() {
+  def avoidDelayedMergeObjectResolveProblem1(): Unit = {
     assertTrue(
       delayedMergeObjectResolveProblem1
         .attemptPeekWithPartialResolve("item1")
@@ -411,7 +411,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def avoidDelayedMergeObjectResolveProblem2() {
+  def avoidDelayedMergeObjectResolveProblem2(): Unit = {
     assertTrue(
       delayedMergeObjectResolveProblem2
         .attemptPeekWithPartialResolve("item1")
@@ -450,7 +450,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def avoidDelayedMergeObjectResolveProblem3() {
+  def avoidDelayedMergeObjectResolveProblem3(): Unit = {
     assertTrue(
       delayedMergeObjectResolveProblem3
         .attemptPeekWithPartialResolve("item1")
@@ -481,7 +481,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def avoidDelayedMergeObjectResolveProblem4() {
+  def avoidDelayedMergeObjectResolveProblem4(): Unit = {
     // in this case we have a ConfigDelayedMerge not a ConfigDelayedMergeObject
     assertTrue(
       delayedMergeObjectResolveProblem4
@@ -512,7 +512,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def avoidDelayedMergeObjectResolveProblem5() {
+  def avoidDelayedMergeObjectResolveProblem5(): Unit = {
     // in this case we have a ConfigDelayedMerge not a ConfigDelayedMergeObject
     assertTrue(
       delayedMergeObjectResolveProblem5
@@ -563,7 +563,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def avoidDelayedMergeObjectResolveProblem6() {
+  def avoidDelayedMergeObjectResolveProblem6(): Unit = {
     assertTrue(
       delayedMergeObjectResolveProblem6
         .attemptPeekWithPartialResolve("item1")
@@ -600,7 +600,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def fetchKnownValueFromDelayedMergeObject() {
+  def fetchKnownValueFromDelayedMergeObject(): Unit = {
     assertTrue(
       delayedMergeObjectWithKnownValue
         .attemptPeekWithPartialResolve("item1")
@@ -626,7 +626,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def failToFetchFromDelayedMergeObjectNeedsFullResolve() {
+  def failToFetchFromDelayedMergeObjectNeedsFullResolve(): Unit = {
     assertTrue(
       delayedMergeObjectWithKnownValue
         .attemptPeekWithPartialResolve("item1")
@@ -663,7 +663,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def resolveDelayedMergeObjectEmbrace() {
+  def resolveDelayedMergeObjectEmbrace(): Unit = {
     assertTrue(
       delayedMergeObjectEmbrace
         .attemptPeekWithPartialResolve("item1")
@@ -693,7 +693,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def resolvePlainObjectEmbrace() {
+  def resolvePlainObjectEmbrace(): Unit = {
     assertTrue(
       plainObjectEmbrace
         .attemptPeekWithPartialResolve("item1")
@@ -711,7 +711,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def useRelativeToSameFileWhenRelativized() {
+  def useRelativeToSameFileWhenRelativized(): Unit = {
     val child = parseObject("""foo=in child,bar=${foo}""")
 
     val values = new java.util.HashMap[String, AbstractConfigValue]()
@@ -726,7 +726,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def useRelativeToRootWhenRelativized() {
+  def useRelativeToRootWhenRelativized(): Unit = {
     // here, "foo" is not defined in the child
     val child = parseObject("""bar=${foo}""")
 
@@ -760,7 +760,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def complexResolve() {
+  def complexResolve(): Unit = {
     import scala.collection.JavaConverters._
 
     val resolved = resolveWithoutFallbacks(substComplexObject)
@@ -788,12 +788,12 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def doNotSerializeUnresolvedObject() {
+  def doNotSerializeUnresolvedObject(): Unit = {
     checkNotSerializable(substComplexObject)
   }
 
   @Test
-  def resolveListFromSystemProps() {
+  def resolveListFromSystemProps(): Unit = {
     val props = parseObject("""
             |"a": ${testList}
             """.stripMargin)
@@ -813,7 +813,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def resolveListFromEnvVars() {
+  def resolveListFromEnvVars(): Unit = {
     val props = parseObject("""
             |"a": ${testList}
             """.stripMargin)
@@ -828,7 +828,7 @@ class ConfigSubstitutionTest extends TestUtils {
   // Now it just tests that if you override with system props, you can use system props
   // in substitutions.
   @Test
-  def overrideWithSystemProps() {
+  def overrideWithSystemProps(): Unit = {
     System.setProperty("configtest.a", "1234")
     System.setProperty("configtest.b", "5678")
     ConfigImpl.reloadSystemPropertiesConfig()
@@ -862,7 +862,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def fallbackToEnv() {
+  def fallbackToEnv(): Unit = {
     import scala.collection.JavaConverters._
 
     val resolved = resolve(substEnvVarObject)
@@ -885,7 +885,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def noFallbackToEnvIfValuesAreNull() {
+  def noFallbackToEnvIfValuesAreNull(): Unit = {
     import scala.collection.JavaConverters._
 
     // create a fallback object with all the env var names
@@ -908,7 +908,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def fallbackToEnvWhenRelativized() {
+  def fallbackToEnvWhenRelativized(): Unit = {
     import scala.collection.JavaConverters._
 
     val values = new java.util.HashMap[String, AbstractConfigValue]()
@@ -935,7 +935,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def throwWhenEnvNotFound() {
+  def throwWhenEnvNotFound(): Unit = {
     val obj = parseObject("""{ a : ${NOT_HERE} }""")
     intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
@@ -943,28 +943,28 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def optionalOverrideNotProvided() {
+  def optionalOverrideNotProvided(): Unit = {
     val obj      = parseObject("""{ a: 42, a : ${?NOT_HERE} }""")
     val resolved = resolve(obj)
     assertEquals(42, resolved.getInt("a"))
   }
 
   @Test
-  def optionalOverrideProvided() {
+  def optionalOverrideProvided(): Unit = {
     val obj      = parseObject("""{ HERE : 43, a: 42, a : ${?HERE} }""")
     val resolved = resolve(obj)
     assertEquals(43, resolved.getInt("a"))
   }
 
   @Test
-  def optionalOverrideOfObjectNotProvided() {
+  def optionalOverrideOfObjectNotProvided(): Unit = {
     val obj      = parseObject("""{ a: { b : 42 }, a : ${?NOT_HERE} }""")
     val resolved = resolve(obj)
     assertEquals(42, resolved.getInt("a.b"))
   }
 
   @Test
-  def optionalOverrideOfObjectProvided() {
+  def optionalOverrideOfObjectProvided(): Unit = {
     val obj      = parseObject("""{ HERE : 43, a: { b : 42 }, a : ${?HERE} }""")
     val resolved = resolve(obj)
     assertEquals(43, resolved.getInt("a"))
@@ -972,7 +972,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def optionalVanishesFromArray() {
+  def optionalVanishesFromArray(): Unit = {
     import scala.collection.JavaConverters._
     val obj      = parseObject("""{ a : [ 1, 2, 3, ${?NOT_HERE} ] }""")
     val resolved = resolve(obj)
@@ -980,7 +980,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def optionalUsedInArray() {
+  def optionalUsedInArray(): Unit = {
     import scala.collection.JavaConverters._
     val obj      = parseObject("""{ HERE: 4, a : [ 1, 2, 3, ${?HERE} ] }""")
     val resolved = resolve(obj)
@@ -988,14 +988,14 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReference() {
+  def substSelfReference(): Unit = {
     val obj      = parseObject("""a=1, a=${a}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a"))
   }
 
   @Test
-  def substSelfReferenceUndefined() {
+  def substSelfReferenceUndefined(): Unit = {
     val obj = parseObject("""a=${a}""")
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
@@ -1005,28 +1005,28 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceOptional() {
+  def substSelfReferenceOptional(): Unit = {
     val obj      = parseObject("""a=${?a}""")
     val resolved = resolve(obj)
     assertEquals("optional self reference disappears", 0, resolved.root.size)
   }
 
   @Test
-  def substSelfReferenceAlongPath() {
+  def substSelfReferenceAlongPath(): Unit = {
     val obj      = parseObject("""a.b=1, a.b=${a.b}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a.b"))
   }
 
   @Test
-  def substSelfReferenceAlongLongerPath() {
+  def substSelfReferenceAlongLongerPath(): Unit = {
     val obj      = parseObject("""a.b.c=1, a.b.c=${a.b.c}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a.b.c"))
   }
 
   @Test
-  def substSelfReferenceAlongPathMoreComplex() {
+  def substSelfReferenceAlongPathMoreComplex(): Unit = {
     // this is an example from the spec
     val obj      = parseObject("""
     foo : { a : { c : 1 } }
@@ -1039,7 +1039,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceIndirect() {
+  def substSelfReferenceIndirect(): Unit = {
     // this has two possible outcomes depending on whether
     // we resolve and memoize a first or b first. currently
     // java 8's hash table makes it resolve OK, but
@@ -1050,7 +1050,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceDoubleIndirect() {
+  def substSelfReferenceDoubleIndirect(): Unit = {
     // this has two possible outcomes depending on whether we
     // resolve and memoize a, b, or c first. currently java
     // 8's hash table makes it resolve OK, but it's also
@@ -1061,7 +1061,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceIndirectStackCycle() {
+  def substSelfReferenceIndirectStackCycle(): Unit = {
     // this situation is undefined, depends on
     // whether we resolve a or b first.
     val obj      = parseObject("""a=1, b={c=5}, b=${a}, a=${b}""")
@@ -1074,28 +1074,28 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceObject() {
+  def substSelfReferenceObject(): Unit = {
     val obj      = parseObject("""a={b=5}, a=${a}""")
     val resolved = resolve(obj)
     assertEquals(5, resolved.getInt("a.b"))
   }
 
   @Test
-  def substSelfReferenceObjectAlongPath() {
+  def substSelfReferenceObjectAlongPath(): Unit = {
     val obj      = parseObject("""a.b={c=5}, a.b=${a.b}""")
     val resolved = resolve(obj)
     assertEquals(5, resolved.getInt("a.b.c"))
   }
 
   @Test
-  def substSelfReferenceInConcat() {
+  def substSelfReferenceInConcat(): Unit = {
     val obj      = parseObject("""a=1, a=${a}foo""")
     val resolved = resolve(obj)
     assertEquals("1foo", resolved.getString("a"))
   }
 
   @Test
-  def substSelfReferenceIndirectInConcat() {
+  def substSelfReferenceIndirectInConcat(): Unit = {
     // this situation is undefined, depends on
     // whether we resolve a or b first. If b first
     // then there's an error because ${a} is undefined.
@@ -1114,35 +1114,35 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substOptionalSelfReferenceInConcat() {
+  def substOptionalSelfReferenceInConcat(): Unit = {
     val obj      = parseObject("""a=${?a}foo""")
     val resolved = resolve(obj)
     assertEquals("foo", resolved.getString("a"))
   }
 
   @Test
-  def substOptionalIndirectSelfReferenceInConcat() {
+  def substOptionalIndirectSelfReferenceInConcat(): Unit = {
     val obj      = parseObject("""a=${?b}foo,b=${?a}""")
     val resolved = resolve(obj)
     assertEquals("foo", resolved.getString("a"))
   }
 
   @Test
-  def substTwoOptionalSelfReferencesInConcat() {
+  def substTwoOptionalSelfReferencesInConcat(): Unit = {
     val obj      = parseObject("""a=${?a}foo${?a}""")
     val resolved = resolve(obj)
     assertEquals("foo", resolved.getString("a"))
   }
 
   @Test
-  def substTwoOptionalSelfReferencesInConcatWithPriorValue() {
+  def substTwoOptionalSelfReferencesInConcatWithPriorValue(): Unit = {
     val obj      = parseObject("""a=1,a=${?a}foo${?a}""")
     val resolved = resolve(obj)
     assertEquals("1foo1", resolved.getString("a"))
   }
 
   @Test
-  def substSelfReferenceMiddleOfStack() {
+  def substSelfReferenceMiddleOfStack(): Unit = {
     val obj      = parseObject("""a=1, a=${a}, a=2""")
     val resolved = resolve(obj)
     // the substitution would be 1, but then 2 overrides
@@ -1150,7 +1150,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceObjectMiddleOfStack() {
+  def substSelfReferenceObjectMiddleOfStack(): Unit = {
     val obj      = parseObject("""a={b=5}, a=${a}, a={c=6}""")
     val resolved = resolve(obj)
     assertEquals(5, resolved.getInt("a.b"))
@@ -1158,7 +1158,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substOptionalSelfReferenceMiddleOfStack() {
+  def substOptionalSelfReferenceMiddleOfStack(): Unit = {
     val obj      = parseObject("""a=1, a=${?a}, a=2""")
     val resolved = resolve(obj)
     // the substitution would be 1, but then 2 overrides
@@ -1166,7 +1166,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceBottomOfStack() {
+  def substSelfReferenceBottomOfStack(): Unit = {
     // self-reference should just be ignored since it's
     // overridden
     val obj      = parseObject("""a=${a}, a=1, a=2""")
@@ -1175,28 +1175,28 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substOptionalSelfReferenceBottomOfStack() {
+  def substOptionalSelfReferenceBottomOfStack(): Unit = {
     val obj      = parseObject("""a=${?a}, a=1, a=2""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("a"))
   }
 
   @Test
-  def substSelfReferenceTopOfStack() {
+  def substSelfReferenceTopOfStack(): Unit = {
     val obj      = parseObject("""a=1, a=2, a=${a}""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("a"))
   }
 
   @Test
-  def substOptionalSelfReferenceTopOfStack() {
+  def substOptionalSelfReferenceTopOfStack(): Unit = {
     val obj      = parseObject("""a=1, a=2, a=${?a}""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("a"))
   }
 
   @Test
-  def substSelfReferenceAlongAPath() {
+  def substSelfReferenceAlongAPath(): Unit = {
     // ${a} in the middle of the stack means "${a} in the stack
     // below us" and so ${a.b} means b inside the "${a} below us"
     // not b inside the final "${a}"
@@ -1206,7 +1206,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceAlongAPathInsideObject() {
+  def substSelfReferenceAlongAPathInsideObject(): Unit = {
     // if the ${a.b} is _inside_ a field value instead of
     // _being_ the field value, it does not look backward.
     val obj      = parseObject("""a={b={c=5}}, a={ x : ${a.b} }, a={b=2}""")
@@ -1215,7 +1215,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substInChildFieldNotASelfReference1() {
+  def substInChildFieldNotASelfReference1(): Unit = {
     // here, ${bar.foo} is not a self reference because
     // it's the value of a child field of bar, not bar
     // itself; so we use bar's current value, rather than
@@ -1231,7 +1231,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substInChildFieldNotASelfReference2() {
+  def substInChildFieldNotASelfReference2(): Unit = {
     // checking that having bar.foo later in the stack
     // doesn't break the behavior
     val obj      = parseObject("""
@@ -1246,7 +1246,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substInChildFieldNotASelfReference3() {
+  def substInChildFieldNotASelfReference3(): Unit = {
     // checking that having bar.foo earlier in the merge
     // stack doesn't break the behavior.
     val obj      = parseObject("""
@@ -1261,7 +1261,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substInChildFieldNotASelfReference4() {
+  def substInChildFieldNotASelfReference4(): Unit = {
     // checking that having bar set to non-object earlier
     // doesn't break the behavior.
     val obj      = parseObject("""
@@ -1276,7 +1276,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substInChildFieldNotASelfReference5() {
+  def substInChildFieldNotASelfReference5(): Unit = {
     // checking that having bar set to unresolved array earlier
     // doesn't break the behavior.
     val obj      = parseObject("""
@@ -1292,7 +1292,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def mutuallyReferringNotASelfReference() {
+  def mutuallyReferringNotASelfReference(): Unit = {
     val obj      = parseObject("""
     // bar.a should end up as 4
     bar : { a : ${foo.d}, b : 1 }
@@ -1307,21 +1307,21 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceMultipleTimes() {
+  def substSelfReferenceMultipleTimes(): Unit = {
     val obj      = parseObject("""a=1,a=${a},a=${a},a=${a}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a"))
   }
 
   @Test
-  def substSelfReferenceInConcatMultipleTimes() {
+  def substSelfReferenceInConcatMultipleTimes(): Unit = {
     val obj      = parseObject("""a=1,a=${a}x,a=${a}y,a=${a}z""")
     val resolved = resolve(obj)
     assertEquals("1xyz", resolved.getString("a"))
   }
 
   @Test
-  def substSelfReferenceInArray() {
+  def substSelfReferenceInArray(): Unit = {
     // never "look back" from "inside" an array
     val obj = parseObject("""a=1,a=[${a}, 2]""")
     val e = intercept[ConfigException.UnresolvedSubstitution] {
@@ -1332,7 +1332,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def substSelfReferenceInObject() {
+  def substSelfReferenceInObject(): Unit = {
     // never "look back" from "inside" an object
     val obj = parseObject("""a=1,a={ x : ${a} }""")
     val e = intercept[ConfigException.UnresolvedSubstitution] {
@@ -1343,7 +1343,7 @@ class ConfigSubstitutionTest extends TestUtils {
   }
 
   @Test
-  def selfReferentialObjectNotAffectedByOverriding() {
+  def selfReferentialObjectNotAffectedByOverriding(): Unit = {
     // this is testing that we can still refer to another
     // field in the same object, even though we are overriding
     // an earlier object.

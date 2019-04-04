@@ -26,7 +26,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def basicLoadAndGet() {
+  def basicLoadAndGet(): Unit = {
     val conf = ConfigFactory.load("test01")
 
     val a     = conf.getInt("ints.fortyTwo")
@@ -43,7 +43,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def noSystemVariables() {
+  def noSystemVariables(): Unit = {
     // should not have used system variables
     val conf = ConfigFactory
       .parseResourcesAnySyntax(classOf[PublicApiTest], "/test01")
@@ -58,7 +58,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def canLimitLoadToJson {
+  def canLimitLoadToJson: Unit = {
     val options = ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON)
     val conf =
       ConfigFactory.load("test01", options, ConfigResolveOptions.defaults)
@@ -70,7 +70,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def canLimitLoadToProperties {
+  def canLimitLoadToProperties: Unit = {
     val options =
       ConfigParseOptions.defaults.setSyntax(ConfigSyntax.PROPERTIES)
     val conf =
@@ -83,7 +83,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def canLimitLoadToConf {
+  def canLimitLoadToConf: Unit = {
     val options = ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF)
     val conf =
       ConfigFactory.load("test01", options, ConfigResolveOptions.defaults)
@@ -98,7 +98,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def emptyConfigs() {
+  def emptyConfigs(): Unit = {
     assertTrue(ConfigFactory.empty().isEmpty)
     assertEquals("empty config", ConfigFactory.empty().origin.description)
     assertTrue(ConfigFactory.empty("foo").isEmpty)
@@ -107,7 +107,8 @@ class PublicApiTest extends TestUtils {
 
   private val defaultValueDesc = "hardcoded value"
 
-  private def testFromValue(expectedValue: ConfigValue, createFrom: AnyRef) {
+  private def testFromValue(expectedValue: ConfigValue,
+                            createFrom: AnyRef): Unit = {
     assertEquals(expectedValue, ConfigValueFactory.fromAnyRef(createFrom))
 
     assertEquals(expectedValue,
@@ -130,18 +131,18 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def fromJavaBoolean() {
+  def fromJavaBoolean(): Unit = {
     testFromValue(boolValue(true), true: java.lang.Boolean)
     testFromValue(boolValue(false), false: java.lang.Boolean)
   }
 
   @Test
-  def fromJavaNull() {
+  def fromJavaNull(): Unit = {
     testFromValue(nullValue, null)
   }
 
   @Test
-  def fromJavaNumbers() {
+  def fromJavaNumbers(): Unit = {
     testFromValue(intValue(5), 5: java.lang.Integer)
     testFromValue(longValue(6), 6L: java.lang.Long)
     testFromValue(doubleValue(3.14), 3.14: java.lang.Double)
@@ -158,12 +159,12 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def fromJavaString() {
+  def fromJavaString(): Unit = {
     testFromValue(stringValue("hello world"), "hello world")
   }
 
   @Test
-  def fromJavaMap() {
+  def fromJavaMap(): Unit = {
     val emptyMapValue = Collections.emptyMap[String, AbstractConfigValue]
     val aMapValue = Map("a" -> 1, "b" -> 2, "c" -> 3)
       .mapValues(intValue(_): AbstractConfigValue)
@@ -187,7 +188,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def fromJavaCollection() {
+  def fromJavaCollection(): Unit = {
     val emptyListValue = Collections.emptyList[AbstractConfigValue]
     val aListValue     = List(1, 2, 3).map(intValue(_): AbstractConfigValue).asJava
 
@@ -222,19 +223,19 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def fromConfigMemorySize() {
+  def fromConfigMemorySize(): Unit = {
     testFromValue(longValue(1024), ConfigMemorySize.ofBytes(1024))
     testFromValue(longValue(512), ConfigMemorySize.ofBytes(512))
   }
 
   @Test
-  def fromDuration() {
+  def fromDuration(): Unit = {
     testFromValue(longValue(1000), Duration.ofMillis(1000))
     testFromValue(longValue(1000 * 60 * 60 * 24), Duration.ofDays(1))
   }
 
   @Test
-  def fromExistingConfigValue() {
+  def fromExistingConfigValue(): Unit = {
     testFromValue(longValue(1000), longValue(1000))
     testFromValue(stringValue("foo"), stringValue("foo"))
 
@@ -249,7 +250,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def fromExistingJavaListOfConfigValue() {
+  def fromExistingJavaListOfConfigValue(): Unit = {
     // you can mix "unwrapped" List with ConfigValue elements
     val list = List(longValue(1), longValue(2), longValue(3)).asJava
     testFromValue(
@@ -262,7 +263,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def roundTripUnwrap() {
+  def roundTripUnwrap(): Unit = {
     val conf = ConfigFactory.load("test01")
     assertTrue(conf.root.size > 4) // "has a lot of stuff in it"
     val unwrapped = conf.root.unwrapped
@@ -273,8 +274,9 @@ class PublicApiTest extends TestUtils {
     assertEquals(reunwrapped, unwrapped)
   }
 
-  private def testFromPathMap(expectedValue: ConfigObject,
-                              createFrom: java.util.Map[String, Object]) {
+  private def testFromPathMap(
+      expectedValue: ConfigObject,
+      createFrom: java.util.Map[String, Object]): Unit = {
     assertEquals(expectedValue, ConfigFactory.parseMap(createFrom).root)
     assertEquals(defaultValueDesc,
                  ConfigFactory.parseMap(createFrom).origin.description)
@@ -284,7 +286,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def fromJavaPathMap() {
+  def fromJavaPathMap(): Unit = {
     // first the same tests as with fromMap, but use parseMap
     val emptyMapValue = Collections.emptyMap[String, AbstractConfigValue]
     val aMapValue = Map("a" -> 1, "b" -> 2, "c" -> 3)
@@ -325,7 +327,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def brokenPathMap() {
+  def brokenPathMap(): Unit = {
     // "a" is both number 1 and an object
     val pathMapValue =
       Map("a" -> 1, "a.b" -> 2).asInstanceOf[Map[String, AnyRef]].asJava
@@ -335,7 +337,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def defaultParseOptions() {
+  def defaultParseOptions(): Unit = {
     val d = ConfigParseOptions.defaults
     assertEquals(true, d.getAllowMissing)
     assertNull(d.getIncluder)
@@ -343,7 +345,7 @@ class PublicApiTest extends TestUtils {
     assertNull(d.getSyntax)
   }
 
-  private def assertNotFound(e: ConfigException) {
+  private def assertNotFound(e: ConfigException): Unit = {
     assertTrue(
       "Message text: " + e.getMessage,
       e.getMessage.contains("No such") ||
@@ -354,7 +356,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def allowMissing() {
+  def allowMissing(): Unit = {
     val e = intercept[ConfigException.IO] {
       ConfigFactory.parseFile(
         resourceFile("nonexistent.conf"),
@@ -369,7 +371,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def allowMissingFileAnySyntax() {
+  def allowMissingFileAnySyntax(): Unit = {
     val e = intercept[ConfigException.IO] {
       ConfigFactory.parseFileAnySyntax(
         resourceFile("nonexistent"),
@@ -384,7 +386,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def allowMissingResourcesAnySyntax() {
+  def allowMissingResourcesAnySyntax(): Unit = {
     val e = intercept[ConfigException.IO] {
       ConfigFactory.parseResourcesAnySyntax(
         classOf[PublicApiTest],
@@ -401,7 +403,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def includesCanBeMissingThoughFileCannot() {
+  def includesCanBeMissingThoughFileCannot(): Unit = {
     // test03.conf contains some nonexistent includes. check that
     // setAllowMissing on the file (which is not missing) doesn't
     // change that the includes are allowed to be missing.
@@ -513,7 +515,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def includersAreUsedWithFiles() {
+  def includersAreUsedWithFiles(): Unit = {
     val included = whatWasIncluded(
       ConfigFactory.parseFile(resourceFile("test03.conf"), _))
 
@@ -534,7 +536,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def includersAreUsedRecursivelyWithFiles() {
+  def includersAreUsedRecursivelyWithFiles(): Unit = {
     // includes.conf has recursive includes in it
     val included = whatWasIncluded(
       ConfigFactory.parseFile(resourceFile("equiv03/includes.conf"), _))
@@ -549,7 +551,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def includersAreUsedRecursivelyWithString() {
+  def includersAreUsedRecursivelyWithString(): Unit = {
     val included = whatWasIncluded(
       ConfigFactory.parseString(""" include "equiv03/includes.conf" """, _))
 
@@ -565,7 +567,7 @@ class PublicApiTest extends TestUtils {
 
   // full includer should only be used with the file(), url(), classpath() syntax.
   @Test
-  def fullIncluderNotUsedWithoutNewSyntax() {
+  def fullIncluderNotUsedWithoutNewSyntax(): Unit = {
     val included = whatWasIncluded(
       ConfigFactory.parseFile(resourceFile("equiv03/includes.conf"), _))
 
@@ -583,7 +585,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def includersAreUsedWithClasspath() {
+  def includersAreUsedWithClasspath(): Unit = {
     val included = whatWasIncluded(
       ConfigFactory.parseResources(classOf[PublicApiTest], "/test03.conf", _))
 
@@ -604,7 +606,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def includersAreUsedRecursivelyWithClasspath() {
+  def includersAreUsedRecursivelyWithClasspath(): Unit = {
     // includes.conf has recursive includes in it; here we look it up
     // with an "absolute" class path resource.
     val included = whatWasIncluded(
@@ -621,7 +623,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def includersAreUsedRecursivelyWithClasspathRelativeResource() {
+  def includersAreUsedRecursivelyWithClasspathRelativeResource(): Unit = {
     // includes.conf has recursive includes in it; here we look it up
     // with a "class-relative" class path resource
     val included = whatWasIncluded(
@@ -638,7 +640,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def includersAreUsedRecursivelyWithURL() {
+  def includersAreUsedRecursivelyWithURL(): Unit = {
     // includes.conf has recursive includes in it; here we look it up
     // with a URL
     val included = whatWasIncluded(
@@ -655,7 +657,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def fullIncluderUsed() {
+  def fullIncluderUsed(): Unit = {
     val included = whatWasIncludedFull(
       ConfigFactory.parseString(
         """
@@ -684,7 +686,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def nonFullIncluderSurvivesNewStyleIncludes() {
+  def nonFullIncluderSurvivesNewStyleIncludes(): Unit = {
     val included = whatWasIncluded(
       ConfigFactory.parseString(
         """
@@ -706,21 +708,21 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def stringParsing() {
+  def stringParsing(): Unit = {
     val conf =
       ConfigFactory.parseString("{ a : b }", ConfigParseOptions.defaults)
     assertEquals("b", conf.getString("a"))
   }
 
   @Test
-  def readerParsing() {
+  def readerParsing(): Unit = {
     val conf = ConfigFactory.parseReader(new StringReader("{ a : b }"),
                                          ConfigParseOptions.defaults)
     assertEquals("b", conf.getString("a"))
   }
 
   @Test
-  def anySyntax() {
+  def anySyntax(): Unit = {
     // test01 has all three syntaxes; first load with basename
     val conf = ConfigFactory.parseFileAnySyntax(resourceFile("test01"),
                                                 ConfigParseOptions.defaults)
@@ -755,7 +757,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def resourceFromAnotherClasspath() {
+  def resourceFromAnotherClasspath(): Unit = {
     val conf = ConfigFactory.parseResources(classOf[PublicApiTest],
                                             "/test-lib.conf",
                                             ConfigParseOptions.defaults)
@@ -765,7 +767,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def multipleResourcesUsed() {
+  def multipleResourcesUsed(): Unit = {
     val conf =
       ConfigFactory.parseResources(classOf[PublicApiTest], "/test01.conf")
 
@@ -788,7 +790,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def splitAndJoinPath() {
+  def splitAndJoinPath(): Unit = {
     // the actual join-path logic should be tested OK in the non-public-API tests,
     // this is just to test the public wrappers.
 
@@ -811,7 +813,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def quoteString() {
+  def quoteString(): Unit = {
     // the actual quote logic should be tested OK in the non-public-API tests,
     // this is just to test the public wrapper.
 
@@ -821,7 +823,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def usesContextClassLoaderForReferenceConf() {
+  def usesContextClassLoaderForReferenceConf(): Unit = {
     val loaderA1 = new TestClassLoader(
       this.getClass().getClassLoader(),
       Map("reference.conf" -> resourceFile("a_1.conf").toURI.toURL()))
@@ -872,7 +874,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def usesContextClassLoaderForApplicationConf() {
+  def usesContextClassLoaderForApplicationConf(): Unit = {
     val loaderA1 = new TestClassLoader(
       this.getClass().getClassLoader(),
       Map("application.conf" -> resourceFile("a_1.conf").toURI.toURL()))
@@ -898,7 +900,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def usesSuppliedClassLoaderForReferenceConf() {
+  def usesSuppliedClassLoaderForReferenceConf(): Unit = {
     val loaderA1 = new TestClassLoader(
       this.getClass().getClassLoader(),
       Map("reference.conf" -> resourceFile("a_1.conf").toURI.toURL()))
@@ -1007,7 +1009,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def usesSuppliedClassLoaderForApplicationConf() {
+  def usesSuppliedClassLoaderForApplicationConf(): Unit = {
     val loaderA1 = new TestClassLoader(
       this.getClass().getClassLoader(),
       Map("application.conf" -> resourceFile("a_1.conf").toURI.toURL()))
@@ -1104,7 +1106,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def cachedDefaultConfig() {
+  def cachedDefaultConfig(): Unit = {
     val load1 = ConfigFactory.load()
     val load2 = ConfigFactory.load()
     assertTrue("load() was cached", load1 eq load2)
@@ -1133,7 +1135,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def cachedReferenceConfig() {
+  def cachedReferenceConfig(): Unit = {
     val load1 = ConfigFactory.defaultReference()
     val load2 = ConfigFactory.defaultReference()
     assertTrue("defaultReference() was cached", load1 eq load2)
@@ -1162,7 +1164,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def detectIncludeCycle() {
+  def detectIncludeCycle(): Unit = {
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.load("cycle")
     }
@@ -1174,7 +1176,7 @@ class PublicApiTest extends TestUtils {
   // We would ideally make this case NOT throw an exception but we need to do some work
   // to get there, see https://github.com/lightbend/config/issues/160
   @Test
-  def detectIncludeFromList() {
+  def detectIncludeFromList(): Unit = {
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.load("include-from-list.conf")
     }
@@ -1184,7 +1186,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def missingOverrideResourceFails() {
+  def missingOverrideResourceFails(): Unit = {
     assertEquals("config.file is not set",
                  null,
                  System.getProperty("config.file"))
@@ -1213,7 +1215,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def missingOverrideFileFails() {
+  def missingOverrideFileFails(): Unit = {
     assertEquals("config.resource is not set",
                  null,
                  System.getProperty("config.resource"))
@@ -1242,7 +1244,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def exceptionSerializable() {
+  def exceptionSerializable(): Unit = {
     // ArrayList is a serialization problem so we want to cover it in tests
     val comments =
       new java.util.ArrayList(List("comment 1", "comment 2").asJava)
@@ -1259,7 +1261,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def exceptionSerializableWithNullOrigin() {
+  def exceptionSerializableWithNullOrigin(): Unit = {
     val e = new ConfigException.Missing("this is a message",
                                         new RuntimeException("this is a cause"))
     assertTrue("origin null before serialize", e.origin == null)
@@ -1272,7 +1274,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def exceptionSerializableWithWrongType() {
+  def exceptionSerializableWithWrongType(): Unit = {
     val e = intercept[ConfigException.WrongType] {
       ConfigValueFactory.fromAnyRef(Map("item" -> "uhoh, fail").asJava) match {
         case o: ConfigObject => o.toConfig.getStringList("item")
@@ -1284,7 +1286,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def invalidateCaches() {
+  def invalidateCaches(): Unit = {
     val conf0 = ConfigFactory.load()
     val sys0  = ConfigFactory.systemProperties()
     val conf1 = ConfigFactory.load()

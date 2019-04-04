@@ -177,7 +177,7 @@ class JsonTest extends TestUtils {
   }
 
   @Test
-  def renderingJsonStrings() {
+  def renderingJsonStrings(): Unit = {
     def r(s: String) = ConfigImplUtil.renderJsonString(s)
     assertEquals(""""abcdefg"""", r("""abcdefg"""))
     assertEquals(""""\" \\ \n \b \f \r \t"""", r("\" \\ \n \b \f \r \t"))
