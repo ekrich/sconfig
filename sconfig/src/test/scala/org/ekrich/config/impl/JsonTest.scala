@@ -68,7 +68,7 @@ class JsonTest extends TestUtils {
       case JsNumber(n) =>
         if (n.isValidInt) intValue(n.intValue)
         else if (n.isValidLong) longValue(n.longValue)
-        else doubleValue(n.doubleValue())
+        else doubleValue(n.doubleValue)
       case JsBoolean(b) =>
         new ConfigBoolean(fakeOrigin(), b)
       case JsString(s) =>
