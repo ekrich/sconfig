@@ -144,7 +144,6 @@ lazy val testLib = crossProject(JVMPlatform)
   .in(file("test-lib"))
   .settings(
     name := "sconfig-test-lib",
-    crossScalaVersions := scalaVersions,
     publish / skip := true
   )
 
