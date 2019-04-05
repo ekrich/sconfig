@@ -102,7 +102,7 @@ lazy val configLib = Project("sconfig", file("sconfig"))
       "testList.1"      -> "1",
       "testClassesPath" -> (Test / classDirectory).value.getPath),
     // replace with your old artifact id
-    mimaPreviousArtifacts := Set("org.ekrich" % "sconfig" % prevVersion),
+    mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
 
