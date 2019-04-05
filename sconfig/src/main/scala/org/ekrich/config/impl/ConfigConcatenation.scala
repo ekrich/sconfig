@@ -167,7 +167,7 @@ final class ConfigConcatenation(origin: ConfigOrigin,
                        "concatenation has " + pieces.size + " pieces:")
       var count = 0
       for (v <- pieces.asScala) {
-        ConfigImpl.trace(indent, count + ": " + v)
+        ConfigImpl.trace(indent, s"$count: $v")
         count += 1
       }
     }

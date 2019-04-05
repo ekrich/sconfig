@@ -32,7 +32,7 @@ object ConfigDelayedMerge {
                        "delayed merge stack has " + stack.size + " items:")
       var count = 0
       for (v <- stack.asScala) {
-        ConfigImpl.trace(context.depth + 1, count + ": " + v)
+        ConfigImpl.trace(context.depth + 1, s"$count: $v")
         count += 1
       }
     }

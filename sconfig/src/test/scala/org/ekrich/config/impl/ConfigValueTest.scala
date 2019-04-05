@@ -20,7 +20,7 @@ import org.ekrich.config.ConfigFactory
 class ConfigValueTest extends TestUtils {
 
   @Test
-  def configOriginEquality() {
+  def configOriginEquality(): Unit = {
     val a       = SimpleConfigOrigin.newSimple("foo")
     val sameAsA = SimpleConfigOrigin.newSimple("foo")
     val b       = SimpleConfigOrigin.newSimple("bar")
@@ -31,13 +31,13 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configOriginNotSerializable() {
+  def configOriginNotSerializable(): Unit = {
     val a = SimpleConfigOrigin.newSimple("foo")
     checkNotSerializable(a)
   }
 
   @Test
-  def configIntEquality() {
+  def configIntEquality(): Unit = {
     val a       = intValue(42)
     val sameAsA = intValue(42)
     val b       = intValue(43)
@@ -48,7 +48,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configIntSerializable() {
+  def configIntSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_902000000_-050000001906" +
@@ -60,7 +60,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configLongEquality() {
+  def configLongEquality(): Unit = {
     val a       = longValue(Integer.MAX_VALUE + 42L)
     val sameAsA = longValue(Integer.MAX_VALUE + 42L)
     val b       = longValue(Integer.MAX_VALUE + 43L)
@@ -71,7 +71,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configLongSerializable() {
+  def configLongSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_E02000000_9050000001906" +
@@ -84,7 +84,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configIntAndLongEquality() {
+  def configIntAndLongEquality(): Unit = {
     val longVal    = longValue(42L)
     val intValue   = longValue(42)
     val longValueB = longValue(43L)
@@ -97,7 +97,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configDoubleEquality() {
+  def configDoubleEquality(): Unit = {
     val a       = doubleValue(3.14)
     val sameAsA = doubleValue(3.14)
     val b       = doubleValue(4.14)
@@ -108,7 +108,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configDoubleSerializable() {
+  def configDoubleSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i_z_e" +
       "_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w3F02000000_30500000019060000" +
@@ -121,7 +121,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configIntAndDoubleEquality() {
+  def configIntAndDoubleEquality(): Unit = {
     val doubleVal    = doubleValue(3.0)
     val intValue     = longValue(3)
     val doubleValueB = doubleValue(4.0)
@@ -134,7 +134,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configNullSerializable() {
+  def configNullSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_10200000025050000001906" +
@@ -146,7 +146,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configBooleanSerializable() {
+  def configBooleanSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_20200000026050000001906" +
@@ -158,7 +158,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configStringSerializable() {
+  def configStringSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_F02000000_:050000001906" +
@@ -180,7 +180,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configObjectEquality() {
+  def configObjectEquality(): Unit = {
     val aMap       = configMap("a" -> 1, "b" -> 2, "c" -> 3)
     val sameAsAMap = configMap("a" -> 1, "b" -> 2, "c" -> 3)
     val bMap       = configMap("a" -> 3, "b" -> 4, "c" -> 5)
@@ -213,7 +213,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def java6ConfigObjectSerializable() {
+  def java6ConfigObjectSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_z02000000_n050000001906" +
@@ -230,7 +230,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def java6ConfigConfigSerializable() {
+  def java6ConfigConfigSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_z02000000_n050000001906" +
@@ -247,7 +247,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configObjectSerializable() {
+  def configObjectSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_z02000000_n050000001906" +
@@ -264,7 +264,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configConfigSerializable() {
+  def configConfigSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_z02000000_n050000001906" +
@@ -289,7 +289,7 @@ class ConfigValueTest extends TestUtils {
    * implementation results in an EOFException thrown during deserialization.
    */
   @Test
-  def configConfigCustomSerializable() {
+  def configConfigCustomSerializable(): Unit = {
     val aMap     = configMap("a" -> 1, "b" -> 2, "c" -> 3)
     val expected = new SimpleConfigObject(fakeOrigin(), aMap).toConfig
     val actual   = checkSerializableWithCustomSerializer(expected)
@@ -298,7 +298,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configListEquality() {
+  def configListEquality(): Unit = {
     val aScalaSeq   = Seq(1, 2, 3) map { intValue(_): AbstractConfigValue }
     val aList       = new SimpleConfigList(fakeOrigin(), aScalaSeq.asJava)
     val sameAsAList = new SimpleConfigList(fakeOrigin(), aScalaSeq.asJava)
@@ -311,7 +311,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configListSerializable() {
+  def configListSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
       "_z_e_d_C_o_n_f_i_g_V_a_l_u_e00000000000000010C0000_x_p_w_q02000000_e050000001906" +
@@ -325,7 +325,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configReferenceEquality() {
+  def configReferenceEquality(): Unit = {
     val a       = subst("foo")
     val sameAsA = subst("foo")
     val b       = subst("bar")
@@ -343,14 +343,14 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configReferenceNotSerializable() {
+  def configReferenceNotSerializable(): Unit = {
     val a = subst("foo")
     assertTrue("wrong type " + a, a.isInstanceOf[ConfigReference])
     checkNotSerializable(a)
   }
 
   @Test
-  def configConcatenationEquality() {
+  def configConcatenationEquality(): Unit = {
     val a       = substInString("foo")
     val sameAsA = substInString("foo")
     val b       = substInString("bar")
@@ -367,14 +367,14 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configConcatenationNotSerializable() {
+  def configConcatenationNotSerializable(): Unit = {
     val a = substInString("foo")
     assertTrue("wrong type " + a, a.isInstanceOf[ConfigConcatenation])
     checkNotSerializable(a)
   }
 
   @Test
-  def configDelayedMergeEquality() {
+  def configDelayedMergeEquality(): Unit = {
     val s1 = subst("foo")
     val s2 = subst("bar")
     val a = new ConfigDelayedMerge(fakeOrigin(),
@@ -391,7 +391,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configDelayedMergeNotSerializable() {
+  def configDelayedMergeNotSerializable(): Unit = {
     val s1 = subst("foo")
     val s2 = subst("bar")
     val a = new ConfigDelayedMerge(fakeOrigin(),
@@ -400,7 +400,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configDelayedMergeObjectEquality() {
+  def configDelayedMergeObjectEquality(): Unit = {
     val empty = SimpleConfigObject.empty
     val s1    = subst("foo")
     val s2    = subst("bar")
@@ -420,7 +420,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configDelayedMergeObjectNotSerializable() {
+  def configDelayedMergeObjectNotSerializable(): Unit = {
     val empty = SimpleConfigObject.empty
     val s1    = subst("foo")
     val s2    = subst("bar")
@@ -431,7 +431,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def valuesToString() {
+  def valuesToString(): Unit = {
     // just check that these don't throw, the exact output
     // isn't super important since it's just for debugging
     intValue(10).toString()
@@ -459,21 +459,21 @@ class ConfigValueTest extends TestUtils {
     fakeOrigin().toString()
   }
 
-  private def unsupported(body: => Unit) {
+  private def unsupported(body: => Unit): Unit = {
     intercept[UnsupportedOperationException] {
       body
     }
   }
 
   @Test
-  def configObjectUnwraps() {
+  def configObjectUnwraps(): Unit = {
     val m = new SimpleConfigObject(fakeOrigin(),
                                    configMap("a" -> 1, "b" -> 2, "c" -> 3))
     assertEquals(Map("a" -> 1, "b" -> 2, "c" -> 3), m.unwrapped.asScala)
   }
 
   @Test
-  def configObjectImplementsMap() {
+  def configObjectImplementsMap(): Unit = {
     val m: ConfigObject = new SimpleConfigObject(
       fakeOrigin(),
       configMap("a" -> 1, "b" -> 2, "c" -> 3))
@@ -517,7 +517,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configListImplementsList() {
+  def configListImplementsList(): Unit = {
     val scalaSeq = Seq[AbstractConfigValue](stringValue("a"),
                                             stringValue("b"),
                                             stringValue("c"))
@@ -590,14 +590,14 @@ class ConfigValueTest extends TestUtils {
     unsupported { l.set(0, intValue(42)) }
   }
 
-  private def unresolved(body: => Unit) {
+  private def unresolved(body: => Unit): Unit = {
     intercept[ConfigException.NotResolved] {
       body
     }
   }
 
   @Test
-  def notResolvedThrown() {
+  def notResolvedThrown(): Unit = {
     // ConfigSubstitution
     unresolved { subst("foo").valueType }
     unresolved { subst("foo").unwrapped }
@@ -628,7 +628,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def roundTripNumbersThroughString() {
+  def roundTripNumbersThroughString(): Unit = {
     // formats rounded off with E notation
     val a = "132454454354353245.3254652656454808909932874873298473298472"
     // formats as 100000.0
@@ -652,7 +652,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def mergeOriginsWorks() {
+  def mergeOriginsWorks(): Unit = {
     def o(desc: String, empty: Boolean) = {
       val values = new java.util.HashMap[String, AbstractConfigValue]()
       if (!empty)
@@ -681,7 +681,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def hasPathWorks() {
+  def hasPathWorks(): Unit = {
     val empty = parseConfig("{}")
 
     assertFalse(empty.hasPath("foo"))
@@ -715,7 +715,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def newNumberWorks() {
+  def newNumberWorks(): Unit = {
     def nL(v: Long)   = ConfigNumber.newNumber(fakeOrigin(), v, null)
     def nD(v: Double) = ConfigNumber.newNumber(fakeOrigin(), v, null)
 
@@ -732,7 +732,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def automaticBooleanConversions() {
+  def automaticBooleanConversions(): Unit = {
     val trues = parseObject("{ a=true, b=yes, c=on }").toConfig
     assertEquals(true, trues.getBoolean("a"))
     assertEquals(true, trues.getBoolean("b"))
@@ -745,7 +745,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configOriginFileAndLine() {
+  def configOriginFileAndLine(): Unit = {
     val hasFilename        = SimpleConfigOrigin.newFile("foo")
     val noFilename         = SimpleConfigOrigin.newSimple("bar")
     val filenameWithLine   = hasFilename.withLineNumber(3)
@@ -781,7 +781,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withOnly() {
+  def withOnly(): Unit = {
     val obj = parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }")
     assertEquals("keep only a", parseObject("{ a=1 }"), obj.withOnlyKey("a"))
     assertEquals("keep only e",
@@ -808,7 +808,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withOnlyInvolvingUnresolved() {
+  def withOnlyInvolvingUnresolved(): Unit = {
     val obj = parseObject(
       "{ a = {}, a=${x}, b=${y}, b=${z}, x={asf:1}, y=2, z=3 }")
     assertEquals("keep only a.asf",
@@ -828,7 +828,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def without() {
+  def without(): Unit = {
     val obj = parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }")
     assertEquals("without a",
                  parseObject("{ b=2, c.d.y=3, e.f.g=4, c.d.z=5 }"),
@@ -854,7 +854,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withoutInvolvingUnresolved() {
+  def withoutInvolvingUnresolved(): Unit = {
     val obj = parseObject(
       "{ a = {}, a=${x}, b=${y}, b=${z}, x={asf:1}, y=2, z=3 }")
     assertEquals("without a.asf",
@@ -876,7 +876,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def atPathWorksOneElement() {
+  def atPathWorksOneElement(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
     val config = v.atPath("a")
     assertEquals(parseConfig("a=42"), config)
@@ -885,7 +885,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def atPathWorksTwoElements() {
+  def atPathWorksTwoElements(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
     val config = v.atPath("a.b")
     assertEquals(parseConfig("a.b=42"), config)
@@ -894,7 +894,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def atPathWorksFourElements() {
+  def atPathWorksFourElements(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
     val config = v.atPath("a.b.c.d")
     assertEquals(parseConfig("a.b.c.d=42"), config)
@@ -903,7 +903,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def atKeyWorks() {
+  def atKeyWorks(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
     val config = v.atKey("a")
     assertEquals(parseConfig("a=42"), config)
@@ -912,7 +912,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withValueDepth1FromEmpty() {
+  def withValueDepth1FromEmpty(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
     val config = ConfigFactory.empty.withValue("a", v)
     assertEquals(parseConfig("a=42"), config)
@@ -920,7 +920,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withValueDepth2FromEmpty() {
+  def withValueDepth2FromEmpty(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
     val config = ConfigFactory.empty.withValue("a.b", v)
     assertEquals(parseConfig("a.b=42"), config)
@@ -928,7 +928,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withValueDepth3FromEmpty() {
+  def withValueDepth3FromEmpty(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
     val config = ConfigFactory.empty.withValue("a.b.c", v)
     assertEquals(parseConfig("a.b.c=42"), config)
@@ -936,7 +936,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withValueDepth1OverwritesExisting() {
+  def withValueDepth1OverwritesExisting(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(47: Integer)
     val old    = v.atPath("a")
     val config = old.withValue("a", ConfigValueFactory.fromAnyRef(42: Integer))
@@ -945,7 +945,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withValueDepth2OverwritesExisting() {
+  def withValueDepth2OverwritesExisting(): Unit = {
     val v   = ConfigValueFactory.fromAnyRef(47: Integer)
     val old = v.atPath("a.b")
     val config =
@@ -955,7 +955,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withValueInsideExistingObject() {
+  def withValueInsideExistingObject(): Unit = {
     val v   = ConfigValueFactory.fromAnyRef(47: Integer)
     val old = v.atPath("a.c")
     val config =
@@ -966,7 +966,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def withValueBuildComplexConfig() {
+  def withValueBuildComplexConfig(): Unit = {
     val v1 = ConfigValueFactory.fromAnyRef(1: Integer)
     val v2 = ConfigValueFactory.fromAnyRef(2: Integer)
     val v3 = ConfigValueFactory.fromAnyRef(3: Integer)
@@ -980,7 +980,7 @@ class ConfigValueTest extends TestUtils {
   }
 
   @Test
-  def configOriginsInSerialization() {
+  def configOriginsInSerialization(): Unit = {
     import scala.collection.JavaConverters._
     val bases = Seq(
       SimpleConfigOrigin.newSimple("foo"),

@@ -184,7 +184,7 @@ object SimpleConfig {
   private def periodOf(n: Int, unit: ChronoUnit): Period = {
     if (unit.isTimeBased)
       throw new DateTimeException(
-        unit + " cannot be converted to a java.time.Period")
+        s"$unit cannot be converted to a java.time.Period")
     unit match {
       case ChronoUnit.DAYS =>
         return Period.ofDays(n)
@@ -196,7 +196,7 @@ object SimpleConfig {
         return Period.ofYears(n)
       case _ =>
         throw new DateTimeException(
-          unit + " cannot be converted to a java.time.Period")
+          s"$unit cannot be converted to a java.time.Period")
     }
   }
 
@@ -992,7 +992,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
   // originally: @Override public void checkValid(Config reference, String... restrictToPaths)
   // Now the code goes through the Scala varargs method but we need this one for Java
   def checkValid(reference: Config, restrictToPaths: Array[String]): Unit = {
-    checkValid(reference, restrictToPaths: _*)
+    checkValid(reference, restrictToPaths.toIndexedSeq: _*)
   }
 
   override def checkValid(reference: Config, restrictToPaths: String*): Unit = {

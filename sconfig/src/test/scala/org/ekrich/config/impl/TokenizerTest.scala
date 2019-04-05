@@ -11,28 +11,28 @@ import language.implicitConversions
 class TokenizerTest extends TestUtils {
 
   // FIXME most of this file should be using this method
-  private def tokenizerTest(expected: List[Token], s: String) {
+  private def tokenizerTest(expected: List[Token], s: String): Unit = {
     assertEquals(List(Tokens.START) ++ expected ++ List(Tokens.END),
                  tokenizeAsList(s))
     assertEquals(s, tokenizeAsString(s))
   }
 
   @Test
-  def tokenizeEmptyString() {
+  def tokenizeEmptyString(): Unit = {
     val source   = ""
     val expected = List()
     tokenizerTest(expected, source)
   }
 
   @Test
-  def tokenizeNewlines() {
+  def tokenizeNewlines(): Unit = {
     val source   = "\n\n"
     val expected = List(tokenLine(1), tokenLine(2))
     tokenizerTest(expected, source)
   }
 
   @Test
-  def tokenizeAllTypesNoSpaces() {
+  def tokenizeAllTypesNoSpaces(): Unit = {
     // all token types with no spaces (not sure JSON spec wants this to work,
     // but spec is unclear to me when spaces are required, and banning them
     // is actually extra work).
@@ -62,7 +62,7 @@ class TokenizerTest extends TestUtils {
   }
 
   @Test
-  def tokenizeAllTypesWithSingleSpaces() {
+  def tokenizeAllTypesWithSingleSpaces(): Unit = {
     val source = """ , : = } { ] [ += "foo" """ + "\"\"\"bar\"\"\"" + """ 42 true 3.14 false null ${a.b} ${?x.y} ${"c.d"} """ + "\n "
     val expected = List(
       tokenWhitespace(" "),
@@ -109,7 +109,7 @@ class TokenizerTest extends TestUtils {
   }
 
   @Test
-  def tokenizeAllTypesWithMultipleSpaces() {
+  def tokenizeAllTypesWithMultipleSpaces(): Unit = {
     val source = """   ,   :   =   }   {   ]   [   +=   "foo"   """ + "\"\"\"bar\"\"\"" + """   42   true   3.14   false   null   ${a.b}   ${?x.y}   ${"c.d"}  """ + "\n   "
     val expected = List(
       tokenWhitespace("   "),
@@ -156,56 +156,56 @@ class TokenizerTest extends TestUtils {
   }
 
   @Test
-  def tokenizeTrueAndUnquotedText() {
+  def tokenizeTrueAndUnquotedText(): Unit = {
     val source   = """truefoo"""
     val expected = List(tokenTrue, tokenUnquoted("foo"))
     tokenizerTest(expected, source)
   }
 
   @Test
-  def tokenizeFalseAndUnquotedText() {
+  def tokenizeFalseAndUnquotedText(): Unit = {
     val source   = """falsefoo"""
     val expected = List(tokenFalse, tokenUnquoted("foo"))
     tokenizerTest(expected, source)
   }
 
   @Test
-  def tokenizeNullAndUnquotedText() {
+  def tokenizeNullAndUnquotedText(): Unit = {
     val source   = """nullfoo"""
     val expected = List(tokenNull, tokenUnquoted("foo"))
     tokenizerTest(expected, source)
   }
 
   @Test
-  def tokenizeUnquotedTextContainingRoundBrace() {
+  def tokenizeUnquotedTextContainingRoundBrace(): Unit = {
     val source   = """(footrue)"""
     val expected = List(tokenUnquoted("(footrue)"))
     tokenizerTest(expected, source)
   }
 
   @Test
-  def tokenizeUnquotedTextContainingTrue() {
+  def tokenizeUnquotedTextContainingTrue(): Unit = {
     val source   = """footrue"""
     val expected = List(tokenUnquoted("footrue"))
     tokenizerTest(expected, source)
   }
 
   @Test
-  def tokenizeUnquotedTextContainingSpaceTrue() {
+  def tokenizeUnquotedTextContainingSpaceTrue(): Unit = {
     val source   = """foo true"""
     val expected = List(tokenUnquoted("foo"), tokenUnquoted(" "), tokenTrue)
     tokenizerTest(expected, source)
   }
 
   @Test
-  def tokenizeTrueAndSpaceAndUnquotedText() {
+  def tokenizeTrueAndSpaceAndUnquotedText(): Unit = {
     val source   = """true foo"""
     val expected = List(tokenTrue, tokenUnquoted(" "), tokenUnquoted("foo"))
     tokenizerTest(expected, source)
   }
 
   @Test
-  def tokenizeUnquotedTextContainingSlash() {
+  def tokenizeUnquotedTextContainingSlash(): Unit = {
     tokenizerTest(List(tokenUnquoted("a/b/c/")), "a/b/c/")
     tokenizerTest(List(tokenUnquoted("/")), "/")
     tokenizerTest(
@@ -215,7 +215,7 @@ class TokenizerTest extends TestUtils {
   }
 
   @Test
-  def tokenizeUnquotedTextKeepsSpaces() {
+  def tokenizeUnquotedTextKeepsSpaces(): Unit = {
     val source = "    foo     \n"
     val expected = List(tokenWhitespace("    "),
                         tokenUnquoted("foo"),
@@ -225,7 +225,7 @@ class TokenizerTest extends TestUtils {
   }
 
   @Test
-  def tokenizeUnquotedTextKeepsInternalSpaces() {
+  def tokenizeUnquotedTextKeepsInternalSpaces(): Unit = {
     val source = "    foo  bar baz   \n"
     val expected = List(
       tokenWhitespace("    "),
@@ -241,7 +241,7 @@ class TokenizerTest extends TestUtils {
   }
 
   @Test
-  def tokenizeMixedUnquotedQuoted() {
+  def tokenizeMixedUnquotedQuoted(): Unit = {
     val source = "    foo\"bar\"baz   \n"
     val expected = List(tokenWhitespace("    "),
                         tokenUnquoted("foo"),
@@ -372,7 +372,7 @@ class TokenizerTest extends TestUtils {
   }
 
   @Test
-  def commentsHandledInVariousContexts() {
+  def commentsHandledInVariousContexts(): Unit = {
     tokenizerTest(List(tokenString("//bar")), "\"//bar\"")
     tokenizerTest(List(tokenString("#bar")), "\"#bar\"")
     tokenizerTest(
@@ -440,7 +440,7 @@ class TokenizerTest extends TestUtils {
   }
 
   @Test
-  def tokenizeReservedChars() {
+  def tokenizeReservedChars(): Unit = {
     for (invalid <- "+`^?!@*&\\") {
       val tokenized = tokenizeAsList(invalid.toString)
       assertEquals(3, tokenized.size)

@@ -10,7 +10,7 @@ import org.ekrich.config.ConfigMemorySize
 class ConfigMemorySizeTest extends TestUtils {
 
   @Test
-  def testEquals() {
+  def testEquals(): Unit = {
     assertTrue(
       "Equal ConfigMemorySize are equal",
       ConfigMemorySize.ofBytes(10).equals(ConfigMemorySize.ofBytes(10)))
@@ -20,7 +20,7 @@ class ConfigMemorySizeTest extends TestUtils {
   }
 
   @Test
-  def testToUnits() {
+  def testToUnits(): Unit = {
     val kilobyte = ConfigMemorySize.ofBytes(1024)
     assertEquals(1024, kilobyte.toBytes)
   }

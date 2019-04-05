@@ -11,7 +11,7 @@ import org.ekrich.config.ConfigException
 class PathTest extends TestUtils {
 
   @Test
-  def pathEquality() {
+  def pathEquality(): Unit = {
     // note: foo.bar is a single key here
     val a = Path.newKey("foo.bar")
     // check that newKey worked
@@ -32,7 +32,7 @@ class PathTest extends TestUtils {
   }
 
   @Test
-  def pathToString() {
+  def pathToString(): Unit = {
     assertEquals("Path(foo)", path("foo").toString())
     assertEquals("Path(foo.bar)", path("foo", "bar").toString())
     assertEquals("Path(foo.\"bar*\")", path("foo", "bar*").toString())
@@ -40,7 +40,7 @@ class PathTest extends TestUtils {
   }
 
   @Test
-  def pathRender() {
+  def pathRender(): Unit = {
     case class RenderTest(expected: String, path: Path)
 
     val tests = Seq(
@@ -80,40 +80,40 @@ class PathTest extends TestUtils {
   }
 
   @Test
-  def pathFromPathList() {
+  def pathFromPathList(): Unit = {
     assertEquals(path("foo"), new Path(List(path("foo")).asJava))
     assertEquals(path("foo", "bar", "baz", "boo"),
                  new Path(List(path("foo", "bar"), path("baz", "boo")).asJava))
   }
 
   @Test
-  def pathPrepend() {
+  def pathPrepend(): Unit = {
     assertEquals(path("foo", "bar"), path("bar").prepend(path("foo")))
     assertEquals(path("a", "b", "c", "d"),
                  path("c", "d").prepend(path("a", "b")))
   }
 
   @Test
-  def pathLength() {
+  def pathLength(): Unit = {
     assertEquals(1, path("foo").length)
     assertEquals(2, path("foo", "bar").length)
   }
 
   @Test
-  def pathParent() {
+  def pathParent(): Unit = {
     assertNull(path("a").parent)
     assertEquals(path("a"), path("a", "b").parent)
     assertEquals(path("a", "b"), path("a", "b", "c").parent)
   }
 
   @Test
-  def pathLast() {
+  def pathLast(): Unit = {
     assertEquals("a", path("a").last)
     assertEquals("b", path("a", "b").last)
   }
 
   @Test
-  def pathStartsWith() {
+  def pathStartsWith(): Unit = {
     assertTrue(path("a", "b", "c", "d").startsWith(path("a", "b")))
     assertTrue(path("a", "b", "c", "d").startsWith(path("a", "b", "c", "d")))
     assertFalse(path("a", "b", "c", "d").startsWith(path("b", "c", "d")))
@@ -121,7 +121,7 @@ class PathTest extends TestUtils {
   }
 
   @Test
-  def pathsAreInvalid() {
+  def pathsAreInvalid(): Unit = {
     // this test is just of the Path.newPath() wrapper, the extensive
     // test of different paths is over in ConfParserTest
     intercept[ConfigException.BadPath] {

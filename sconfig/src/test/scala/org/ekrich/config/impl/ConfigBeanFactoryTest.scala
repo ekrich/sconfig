@@ -19,7 +19,7 @@ import scala.collection.mutable.ArrayBuffer
 class ConfigBeanFactoryTest extends TestUtils {
 
   @Test
-  def toCamelCase() {
+  def toCamelCase(): Unit = {
     assertEquals("configProp", ConfigImplUtil.toCamelCase("config-prop"))
     assertEquals("configProp", ConfigImplUtil.toCamelCase("configProp"))
     assertEquals("fooBar", ConfigImplUtil.toCamelCase("foo-----bar"))
@@ -29,7 +29,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testCreate() {
+  def testCreate(): Unit = {
     val configIs: InputStream = this
       .getClass()
       .getClassLoader()
@@ -46,7 +46,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testValidation() {
+  def testValidation(): Unit = {
     val configIs: InputStream = this
       .getClass()
       .getClassLoader()
@@ -71,7 +71,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testCreateBool() {
+  def testCreateBool(): Unit = {
     val beanConfig: BooleansConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("booleans"),
       classOf[BooleansConfig])
@@ -81,7 +81,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testCreateString() {
+  def testCreateString(): Unit = {
     val beanConfig: StringsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("strings"),
       classOf[StringsConfig])
@@ -91,7 +91,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testCreateEnum() {
+  def testCreateEnum(): Unit = {
     val beanConfig: EnumsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("enums"),
       classOf[EnumsConfig])
@@ -102,7 +102,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testCreateNumber() {
+  def testCreateNumber(): Unit = {
     val beanConfig: NumbersConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("numbers"),
       classOf[NumbersConfig])
@@ -119,7 +119,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testCreateList() {
+  def testCreateList(): Unit = {
     val beanConfig: ArraysConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("arrays"),
       classOf[ArraysConfig])
@@ -160,7 +160,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testCreateSet() {
+  def testCreateSet(): Unit = {
     val beanConfig: SetsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("sets"),
       classOf[SetsConfig])
@@ -198,7 +198,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testCreateDuration() {
+  def testCreateDuration(): Unit = {
     val beanConfig: DurationsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("durations"),
       classOf[DurationsConfig])
@@ -209,7 +209,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testCreateBytes() {
+  def testCreateBytes(): Unit = {
     val beanConfig: BytesConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("bytes"),
       classOf[BytesConfig])
@@ -220,7 +220,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testPreferCamelNames() {
+  def testPreferCamelNames(): Unit = {
     val beanConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("preferCamelNames"),
       classOf[PreferCamelNamesConfig])
@@ -231,7 +231,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testValues() {
+  def testValues(): Unit = {
     val beanConfig = ConfigBeanFactory.create(loadConfig().getConfig("values"),
                                               classOf[ValuesConfig])
     assertNotNull(beanConfig)
@@ -245,7 +245,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testOptionalProperties() {
+  def testOptionalProperties(): Unit = {
     val beanConfig: ObjectsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("objects"),
       classOf[ObjectsConfig])
@@ -269,7 +269,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testNotABeanField() {
+  def testNotABeanField(): Unit = {
     val e = intercept[ConfigException.BadBean] {
       ConfigBeanFactory.create(parseConfig("notBean=42"),
                                classOf[NotABeanFieldConfig])
@@ -281,7 +281,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testNotAnEnumField() {
+  def testNotAnEnumField(): Unit = {
     val e = intercept[ConfigException.BadValue] {
       ConfigBeanFactory.create(parseConfig("{problem=P1,solutions=[S4]}"),
                                classOf[EnumsConfig])
@@ -294,7 +294,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testUnsupportedListElement() {
+  def testUnsupportedListElement(): Unit = {
     val e = intercept[ConfigException.BadBean] {
       ConfigBeanFactory.create(parseConfig("uri=[42]"),
                                classOf[UnsupportedListElementConfig])
@@ -305,7 +305,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testUnsupportedMapKey() {
+  def testUnsupportedMapKey(): Unit = {
     val e = intercept[ConfigException.BadBean] {
       ConfigBeanFactory.create(parseConfig("map={}"),
                                classOf[UnsupportedMapKeyConfig])
@@ -316,7 +316,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
-  def testUnsupportedMapValue() {
+  def testUnsupportedMapValue(): Unit = {
     val e = intercept[ConfigException.BadBean] {
       ConfigBeanFactory.create(parseConfig("map={}"),
                                classOf[UnsupportedMapValueConfig])

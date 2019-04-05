@@ -15,7 +15,7 @@ import language.implicitConversions
  */
 class ApiExamples {
   @Test
-  def readSomeConfig() {
+  def readSomeConfig(): Unit = {
     val conf = ConfigFactory.load("test01")
 
     // you don't have to write the types explicitly of course,

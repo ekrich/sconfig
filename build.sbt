@@ -13,7 +13,9 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
+val prevVersion = "0.7.0"
 val nextVersion = "0.8.0"
+
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
   val tag = out.ref.dropV.value
@@ -26,7 +28,10 @@ val scalacOpts = List("-unchecked", "-deprecation", "-feature")
 ThisBuild / Compile / scalacOptions := scalacOpts
 ThisBuild / Test / scalacOptions := scalacOpts
 
-ThisBuild / crossScalaVersions := Seq("2.12.8", "2.11.12")
+val scala211 = "2.11.12"
+val scala212 = "2.12.8"
+val scala213 = "2.13.0-M5"
+ThisBuild / crossScalaVersions := Seq(scala211, scala212, scala213)
 
 inThisBuild(
   List(
@@ -76,14 +81,8 @@ lazy val root = (project in file("."))
 lazy val configLib = Project("sconfig", file("sconfig"))
   .dependsOn(testLib % "test->test")
   .settings(
-    libraryDependencies += {
-      val liftVersion = scalaBinaryVersion.value match {
-        case "2.10" => "2.6.3" // last version that supports 2.10
-        case _      => "3.3.0" // latest version for 2.11 and 2.12
-      }
-      "net.liftweb" %% "lift-json" % liftVersion % Test
-    },
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
+    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-1" % Test,
+    libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     Compile / compile / javacOptions ++= Seq("-source",
                                              "1.8",
                                              "-target",
@@ -103,7 +102,7 @@ lazy val configLib = Project("sconfig", file("sconfig"))
       "testList.1"      -> "1",
       "testClassesPath" -> (Test / classDirectory).value.getPath),
     // replace with your old artifact id
-    mimaPreviousArtifacts := Set("com.typesafe" % "config" % "1.3.3"),
+    mimaPreviousArtifacts := Set("org.ekrich" % "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
 

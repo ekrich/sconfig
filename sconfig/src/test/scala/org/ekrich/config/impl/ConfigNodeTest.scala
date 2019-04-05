@@ -5,24 +5,24 @@ import org.junit.Test
 
 class ConfigNodeTest extends TestUtils {
 
-  private def singleTokenNodeTest(token: Token) {
+  private def singleTokenNodeTest(token: Token): Unit = {
     val node = configNodeSingleToken(token)
     assertEquals(node.render, token.tokenText())
   }
 
-  private def keyNodeTest(path: String) {
+  private def keyNodeTest(path: String): Unit = {
     val node = configNodeKey(path)
     assertEquals(path, node.render)
   }
 
-  private def simpleValueNodeTest(token: Token) {
+  private def simpleValueNodeTest(token: Token): Unit = {
     val node = configNodeSimpleValue(token)
     assertEquals(node.render, token.tokenText())
   }
 
   private def fieldNodeTest(key: ConfigNodePath,
                             value: AbstractConfigNodeValue,
-                            newValue: AbstractConfigNodeValue) {
+                            newValue: AbstractConfigNodeValue): Unit = {
     val keyValNode = nodeKeyValuePair(key, value)
     assertEquals(key.render + " : " + value.render, keyValNode.render)
     assertEquals(key.render, keyValNode.path.render)
@@ -35,7 +35,7 @@ class ConfigNodeTest extends TestUtils {
 
   private def topLevelValueReplaceTest(value: AbstractConfigNodeValue,
                                        newValue: AbstractConfigNodeValue,
-                                       key: String = "foo") {
+                                       key: String = "foo"): Unit = {
     val complexNodeChildren = List(nodeOpenBrace,
                                    nodeKeyValuePair(configNodeKey(key), value),
                                    nodeCloseBrace)
@@ -50,7 +50,7 @@ class ConfigNodeTest extends TestUtils {
 
   private def replaceDuplicatesTest(value1: AbstractConfigNodeValue,
                                     value2: AbstractConfigNodeValue,
-                                    value3: AbstractConfigNodeValue) {
+                                    value3: AbstractConfigNodeValue): Unit = {
     val key         = configNodeKey("foo")
     val keyValPair1 = nodeKeyValuePair(key, value1)
     val keyValPair2 = nodeKeyValuePair(key, value2)
@@ -65,7 +65,7 @@ class ConfigNodeTest extends TestUtils {
                  complexNode.setValueOnPath("foo", nodeInt(15)).render)
   }
 
-  private def nonExistentPathTest(value: AbstractConfigNodeValue) {
+  private def nonExistentPathTest(value: AbstractConfigNodeValue): Unit = {
     val node = configNodeObject(
       List(nodeKeyValuePair(configNodeKey("bar"), nodeInt(15))))
     assertEquals("bar : 15", node.render)
@@ -75,7 +75,7 @@ class ConfigNodeTest extends TestUtils {
   }
 
   @Test
-  def createBasicConfigNode() {
+  def createBasicConfigNode(): Unit = {
     //Ensure a ConfigNodeSingleToken can handle all its required token types
     singleTokenNodeTest(Tokens.START)
     singleTokenNodeTest(Tokens.END)
@@ -96,14 +96,14 @@ class ConfigNodeTest extends TestUtils {
   }
 
   @Test
-  def createConfigNodeSetting() {
+  def createConfigNodeSetting(): Unit = {
     //Ensure a ConfigNodeSetting can handle the normal key types
     keyNodeTest("foo")
     keyNodeTest("\"Hello I am a key how are you today\"")
   }
 
   @Test
-  def pathNodeSubpath() {
+  def pathNodeSubpath(): Unit = {
     val origPath = "a.b.c.\"@$%#@!@#$\".\"\".1234.5678"
     val pathNode = configNodeKey(origPath)
     assertEquals(origPath, pathNode.render)
@@ -112,7 +112,7 @@ class ConfigNodeTest extends TestUtils {
   }
 
   @Test
-  def createConfigNodeSimpleValue() {
+  def createConfigNodeSimpleValue(): Unit = {
     //Ensure a ConfigNodeSimpleValue can handle the normal value types
     simpleValueNodeTest(tokenInt(10))
     simpleValueNodeTest(tokenLong(10000))
@@ -128,7 +128,7 @@ class ConfigNodeTest extends TestUtils {
   }
 
   @Test
-  def createConfigNodeField() {
+  def createConfigNodeField(): Unit = {
     // Supports Quoted and Unquoted keys
     fieldNodeTest(configNodeKey("\"abc\""), nodeInt(123), nodeInt(245))
     fieldNodeTest(configNodeKey("abc"), nodeInt(123), nodeInt(245))
@@ -143,7 +143,7 @@ class ConfigNodeTest extends TestUtils {
   }
 
   @Test
-  def replaceNodes() {
+  def replaceNodes(): Unit = {
     //Ensure simple values can be replaced by other simple values
     topLevelValueReplaceTest(nodeInt(10), nodeInt(15))
     topLevelValueReplaceTest(nodeLong(10000), nodeInt(20))
@@ -206,7 +206,7 @@ class ConfigNodeTest extends TestUtils {
   }
 
   @Test
-  def removeDuplicates() {
+  def removeDuplicates(): Unit = {
     val emptyMapNode = configNodeObject(List(nodeOpenBrace, nodeCloseBrace))
     val emptyArrayNode = configNodeArray(
       List(nodeOpenBracket, nodeCloseBracket))
@@ -218,7 +218,7 @@ class ConfigNodeTest extends TestUtils {
   }
 
   @Test
-  def addNonExistentPaths() {
+  def addNonExistentPaths(): Unit = {
     nonExistentPathTest(nodeInt(10))
     nonExistentPathTest(
       configNodeArray(List(nodeOpenBracket, nodeInt(15), nodeCloseBracket)))
@@ -230,7 +230,7 @@ class ConfigNodeTest extends TestUtils {
   }
 
   @Test
-  def replaceNestedNodes() {
+  def replaceNestedNodes(): Unit = {
     // Test that all features of node replacement in a map work in a complex map containing nested maps
     val origText = "foo : bar\nbaz : {\n\t\"abc.def\" : 123\n\t//This is a comment about the below setting\n\n\tabc : {\n\t\t" +
       "def : \"this is a string\"\n\t\tghi : ${\"a.b\"}\n\t}\n}\nbaz.abc.ghi : 52\nbaz.abc.ghi : 53\n}"

@@ -3,16 +3,12 @@
  */
 package org.ekrich.config.impl
 
+import java.io.File
+
 import org.junit.Assert._
 import org.junit._
-import net.liftweb.{json => lift}
-import java.io.Reader
-import java.io.StringReader
+
 import org.ekrich.config._
-import java.util.HashMap
-import java.io.File
-import org.junit.runner.RunWith
-import org.junit.runners.AllTests
 
 class EquivalentsTest extends TestUtils {
 
@@ -57,7 +53,7 @@ class EquivalentsTest extends TestUtils {
   // would like each "equivNN" directory to be a suite and each file in the dir
   // to be a test, but not sure how to convince junit to do that.
   @Test
-  def testEquivalents() {
+  def testEquivalents(): Unit = {
     var dirCount  = 0
     var fileCount = 0
     for (equiv <- equivDirs()) {

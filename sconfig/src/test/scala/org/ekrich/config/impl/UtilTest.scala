@@ -20,7 +20,7 @@ class UtilTest extends TestUtils {
   }
 
   @Test
-  def unicodeTrimSupplementaryChars() {
+  def unicodeTrimSupplementaryChars(): Unit = {
     assertEquals("", ConfigImplUtil.unicodeTrim(""))
     assertEquals("a", ConfigImplUtil.unicodeTrim("a"))
     assertEquals("abc", ConfigImplUtil.unicodeTrim("abc"))
@@ -37,7 +37,7 @@ class UtilTest extends TestUtils {
   }
 
   @Test
-  def definitionOfWhitespace() {
+  def definitionOfWhitespace(): Unit = {
     assertTrue(ConfigImplUtil.isWhitespace(' '))
     assertTrue(ConfigImplUtil.isWhitespace('\n'))
     // these three are nonbreaking spaces
@@ -51,7 +51,7 @@ class UtilTest extends TestUtils {
   }
 
   @Test
-  def equalsThatHandlesNull() {
+  def equalsThatHandlesNull(): Unit = {
     assertTrue(ConfigImplUtil.equalsHandlingNull(null, null))
     assertFalse(ConfigImplUtil.equalsHandlingNull(new Object(), null))
     assertFalse(ConfigImplUtil.equalsHandlingNull(null, new Object()))
@@ -60,7 +60,7 @@ class UtilTest extends TestUtils {
 
   val lotsOfStrings = (invalidJson ++ validConf).map(_.test)
 
-  private def roundtripJson(s: String) {
+  private def roundtripJson(s: String): Unit = {
     val rendered = ConfigImplUtil.renderJsonString(s)
     val parsed   = parseConfig("{ foo: " + rendered + "}").getString("foo")
     assertTrue(
@@ -71,7 +71,7 @@ class UtilTest extends TestUtils {
     )
   }
 
-  private def roundtripUnquoted(s: String) {
+  private def roundtripUnquoted(s: String): Unit = {
     val rendered = ConfigImplUtil.renderStringUnquotedIfPossible(s)
     val parsed   = parseConfig("{ foo: " + rendered + "}").getString("foo")
     assertTrue(
@@ -83,14 +83,14 @@ class UtilTest extends TestUtils {
   }
 
   @Test
-  def renderJsonString() {
+  def renderJsonString(): Unit = {
     for (s <- lotsOfStrings) {
       roundtripJson(s)
     }
   }
 
   @Test
-  def renderUnquotedIfPossible() {
+  def renderUnquotedIfPossible(): Unit = {
     for (s <- lotsOfStrings) {
       roundtripUnquoted(s)
     }
