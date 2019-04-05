@@ -60,7 +60,7 @@ lazy val root = (project in file("."))
   .aggregate(
     testLibJVM,
     sconfigJVM,
-    //sconfigNative,
+    sconfigNative,
     simpleLibScala,
     simpleAppScala,
     complexAppScala,
