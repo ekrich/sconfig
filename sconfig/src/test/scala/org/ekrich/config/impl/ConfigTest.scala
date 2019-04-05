@@ -54,7 +54,7 @@ class ConfigTest extends TestUtils {
   // Merging should always be associative (same results however the values are grouped,
   // as long as they remain in the same order)
   private def associativeMerge(allObjects: Seq[AbstractConfigObject])(
-      assertions: SimpleConfig => Unit) {
+      assertions: SimpleConfig => Unit): Unit = {
     def makeTrees(
         objects: Seq[AbstractConfigObject]): Iterator[AbstractConfigObject] = {
       objects.length match {
@@ -472,7 +472,7 @@ class ConfigTest extends TestUtils {
     }
   }
 
-  private def testIgnoredMergesDoNothing(nonEmpty: ConfigMergeable) {
+  private def testIgnoredMergesDoNothing(nonEmpty: ConfigMergeable): Unit = {
     // falling back to a primitive once should switch us to "ignoreFallbacks" mode
     // and then twice should "return this". Falling back to an empty object should
     // return this unless the empty object was ignoreFallbacks and then we should

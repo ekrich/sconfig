@@ -346,7 +346,7 @@ class ConfParserTest extends TestUtils {
     val e = intercept[ConfigException] {
       parseConfig(text)
     }
-    if (!e.getMessage.contains(num + ":"))
+    if (!e.getMessage.contains(s"$num:"))
       throw new Exception(
         "error message did not contain line '" + num + "' '" + text
           .replace("\n", "\\n") + "'",

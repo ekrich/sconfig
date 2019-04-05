@@ -459,7 +459,7 @@ class ConfigValueTest extends TestUtils {
     fakeOrigin().toString()
   }
 
-  private def unsupported(body: => Unit) {
+  private def unsupported(body: => Unit): Unit = {
     intercept[UnsupportedOperationException] {
       body
     }
@@ -590,7 +590,7 @@ class ConfigValueTest extends TestUtils {
     unsupported { l.set(0, intValue(42)) }
   }
 
-  private def unresolved(body: => Unit) {
+  private def unresolved(body: => Unit): Unit = {
     intercept[ConfigException.NotResolved] {
       body
     }

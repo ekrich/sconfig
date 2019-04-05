@@ -14,7 +14,7 @@ import scala.io.Source
 class ValidationTest extends TestUtils {
 
   @Test
-  def validation() {
+  def validation(): Unit = {
     val reference = ConfigFactory.parseFile(
       resourceFile("validate-reference.conf"),
       ConfigParseOptions.defaults)
@@ -46,7 +46,7 @@ class ValidationTest extends TestUtils {
   }
 
   @Test
-  def validationWithRoot() {
+  def validationWithRoot(): Unit = {
     val objectWithB = parseObject("""{ b : c }""")
     val reference = ConfigFactory
       .parseFile(resourceFile("validate-reference.conf"),
@@ -69,7 +69,7 @@ class ValidationTest extends TestUtils {
   }
 
   @Test
-  def validationCatchesUnresolved() {
+  def validationCatchesUnresolved(): Unit = {
     val reference = parseConfig("""{ a : 2 }""")
     val conf      = parseConfig("""{ b : ${c}, c : 42 }""")
     val e = intercept[ConfigException.NotResolved] {
@@ -80,7 +80,7 @@ class ValidationTest extends TestUtils {
   }
 
   @Test
-  def validationCatchesListOverriddenWithNumber() {
+  def validationCatchesListOverriddenWithNumber(): Unit = {
     val reference = parseConfig("""{ a : [{},{},{}] }""")
     val conf      = parseConfig("""{ a : 42 }""")
     val e = intercept[ConfigException.ValidationFailed] {
@@ -93,7 +93,7 @@ class ValidationTest extends TestUtils {
   }
 
   @Test
-  def validationCatchesListOverriddenWithDifferentList() {
+  def validationCatchesListOverriddenWithDifferentList(): Unit = {
     val reference = parseConfig("""{ a : [true,false,false] }""")
     val conf      = parseConfig("""{ a : [42,43] }""")
     val e = intercept[ConfigException.ValidationFailed] {
@@ -121,14 +121,14 @@ class ValidationTest extends TestUtils {
   }
 
   @Test
-  def validationAllowsListOverriddenWithSameTypeList() {
+  def validationAllowsListOverriddenWithSameTypeList(): Unit = {
     val reference = parseConfig("""{ a : [1,2,3] }""")
     val conf      = parseConfig("""{ a : [4,5] }""")
     conf.checkValid(reference)
   }
 
   @Test
-  def validationCatchesListOverriddenWithNoIndexesObject() {
+  def validationCatchesListOverriddenWithNoIndexesObject(): Unit = {
     val reference = parseConfig("""{ a : [1,2,3] }""")
     val conf      = parseConfig("""{ a : { notANumber: foo } }""")
     val e = intercept[ConfigException.ValidationFailed] {
@@ -141,7 +141,7 @@ class ValidationTest extends TestUtils {
   }
 
   @Test
-  def validationAllowsListOverriddenWithIndexedObject() {
+  def validationAllowsListOverriddenWithIndexedObject(): Unit = {
     val reference = parseConfig("""{ a : [a,b,c] }""")
     val conf      = parseConfig("""{ a : { "0" : x, "1" : y } }""")
     conf.checkValid(reference)

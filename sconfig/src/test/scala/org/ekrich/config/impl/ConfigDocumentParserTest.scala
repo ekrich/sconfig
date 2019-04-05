@@ -6,14 +6,15 @@ import org.junit.Test
 
 class ConfigDocumentParserTest extends TestUtils {
 
-  private def parseTest(origText: String) {
+  private def parseTest(origText: String): Unit = {
     val node = ConfigDocumentParser.parse(tokenize(origText),
                                           fakeOrigin(),
                                           ConfigParseOptions.defaults)
     assertEquals(origText, node.render)
   }
 
-  private def parseJSONFailuresTest(origText: String, containsMessage: String) {
+  private def parseJSONFailuresTest(origText: String,
+                                    containsMessage: String): Unit = {
     var exceptionThrown = false
     val e = intercept[ConfigException] {
       ConfigDocumentParser.parse(
@@ -24,7 +25,8 @@ class ConfigDocumentParserTest extends TestUtils {
     assertTrue(e.getMessage.contains(containsMessage))
   }
 
-  private def parseSimpleValueTest(origText: String, finalText: String = null) {
+  private def parseSimpleValueTest(origText: String,
+                                   finalText: String = null): Unit = {
     val expectedRenderedText = if (finalText == null) origText else finalText
     val node = ConfigDocumentParser.parseValue(tokenize(origText),
                                                fakeOrigin(),
@@ -40,7 +42,7 @@ class ConfigDocumentParserTest extends TestUtils {
     assertTrue(nodeJSON.isInstanceOf[ConfigNodeSimpleValue])
   }
 
-  private def parseComplexValueTest(origText: String) {
+  private def parseComplexValueTest(origText: String): Unit = {
     val node = ConfigDocumentParser.parseValue(tokenize(origText),
                                                fakeOrigin(),
                                                ConfigParseOptions.defaults)
@@ -56,7 +58,7 @@ class ConfigDocumentParserTest extends TestUtils {
   }
 
   private def parseSingleValueInvalidJSONTest(origText: String,
-                                              containsMessage: String) {
+                                              containsMessage: String): Unit = {
     val node = ConfigDocumentParser.parseValue(tokenize(origText),
                                                fakeOrigin(),
                                                ConfigParseOptions.defaults)
@@ -71,7 +73,7 @@ class ConfigDocumentParserTest extends TestUtils {
     assertTrue(e.getMessage.contains(containsMessage))
   }
 
-  private def parseLeadingTrailingFailure(toReplace: String) {
+  private def parseLeadingTrailingFailure(toReplace: String): Unit = {
     val e = intercept[ConfigException] {
       ConfigDocumentParser.parseValue(tokenize(toReplace),
                                       fakeOrigin(),
@@ -85,7 +87,7 @@ class ConfigDocumentParserTest extends TestUtils {
   }
 
   @Test
-  def parseSuccess {
+  def parseSuccess: Unit = {
     parseTest("foo:bar")
     parseTest(" foo : bar ")
     parseTest("""include "foo.conf" """)
@@ -217,7 +219,7 @@ class ConfigDocumentParserTest extends TestUtils {
   }
 
   @Test
-  def parseJSONFailures() {
+  def parseJSONFailures(): Unit = {
     // JSON does not support concatenations
     parseJSONFailuresTest("""{ "foo": 123 456 789 } """,
                           "Expecting close brace } or a comma")
@@ -261,7 +263,7 @@ class ConfigDocumentParserTest extends TestUtils {
   }
 
   @Test
-  def parseSingleValues() {
+  def parseSingleValues(): Unit = {
     // Parse simple values
     parseSimpleValueTest("123")
     parseSimpleValueTest("123.456")
@@ -290,7 +292,7 @@ class ConfigDocumentParserTest extends TestUtils {
   }
 
   @Test
-  def parseSingleValuesFailures {
+  def parseSingleValuesFailures: Unit = {
     // Parse Simple Value throws on leading and trailing whitespace, comments, or newlines
     parseLeadingTrailingFailure("   123")
     parseLeadingTrailingFailure("123   ")
@@ -337,7 +339,7 @@ class ConfigDocumentParserTest extends TestUtils {
   }
 
   @Test
-  def parseEmptyDocument {
+  def parseEmptyDocument: Unit = {
     val node = ConfigDocumentParser.parse(tokenize(""),
                                           fakeOrigin(),
                                           ConfigParseOptions.defaults)

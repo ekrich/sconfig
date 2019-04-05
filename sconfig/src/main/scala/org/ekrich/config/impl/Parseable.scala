@@ -275,10 +275,10 @@ object Parseable {
         }
       if (sibling == null) return null
       if (sibling.exists) {
-        trace(sibling + " exists, so loading it as a file")
+        trace(s"$sibling exists, so loading it as a file")
         newFile(sibling, options.setOriginDescription(null))
       } else {
-        trace(sibling + " does not exist, so trying it as a classpath resource")
+        trace(s"$sibling does not exist, so trying it as a classpath resource")
         super.relativeTo(filename)
       }
     }

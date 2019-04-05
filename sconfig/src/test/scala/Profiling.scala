@@ -64,7 +64,7 @@ object FileLoad extends App {
   val ms = Util.time(() => task(), 4000)
   println("file load: " + ms + "ms")
 
-  Util.loop(args, () => task())
+  Util.loop(args.toIndexedSeq, () => task())
 }
 
 object Resolve extends App {
@@ -80,7 +80,7 @@ object Resolve extends App {
   val ms = Util.time(() => task(), 3000000)
   println("resolve: " + ms + "ms")
 
-  Util.loop(args, () => task())
+  Util.loop(args.toIndexedSeq, () => task())
 }
 
 object GetExistingPath extends App {
@@ -95,7 +95,7 @@ object GetExistingPath extends App {
   val ms = Util.time(() => task(), 2000000)
   println("GetExistingPath: " + ms + "ms")
 
-  Util.loop(args, () => task())
+  Util.loop(args.toIndexedSeq, () => task())
 }
 
 object GetSeveralExistingPaths extends App {
@@ -115,7 +115,7 @@ object GetSeveralExistingPaths extends App {
   val ms = Util.time(() => task(), 5000000)
   println("GetSeveralExistingPaths: " + ms + "ms")
 
-  Util.loop(args, () => task())
+  Util.loop(args.toIndexedSeq, () => task())
 }
 
 object HasPathOnMissing extends App {
@@ -131,7 +131,7 @@ object HasPathOnMissing extends App {
   val ms = Util.time(() => task(), 20000000)
   println("HasPathOnMissing: " + ms + "ms")
 
-  Util.loop(args, () => task())
+  Util.loop(args.toIndexedSeq, () => task())
 }
 
 object CatchExceptionOnMissing extends App {
@@ -158,6 +158,6 @@ object CatchExceptionOnMissing extends App {
     val ms = Util.time(() => task(), 300000)
     println("CatchExceptionOnMissing: " + ms + "ms")
 
-    Util.loop(args, () => task())
+    Util.loop(args.toIndexedSeq, () => task())
   }
 }

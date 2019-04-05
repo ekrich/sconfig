@@ -24,7 +24,7 @@ class SimpleLibContext(config: Config) {
   }
 
   // this is the amazing functionality provided by simple-lib
-  def printSetting(path: String) {
+  def printSetting(path: String): Unit = {
     println("The setting '" + path + "' is: " + config.getString(path))
   }
 }

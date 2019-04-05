@@ -168,7 +168,7 @@ final class ResolveSource(val root: AbstractConfigObject,
       ConfigImpl.trace(context.depth, "searching for " + subst)
     if (ConfigImpl.traceSubstitutionsEnabled)
       ConfigImpl.trace(context.depth,
-                       subst + " - looking up relative to file it occurred in")
+                       s"$subst - looking up relative to file it occurred in")
     // First we look up the full path, which means relative to the
     // included file if we were not a root file
     var result =
@@ -181,14 +181,14 @@ final class ResolveSource(val root: AbstractConfigObject,
       if (prefixLength > 0) {
         if (ConfigImpl.traceSubstitutionsEnabled)
           ConfigImpl.trace(result.result.context.depth,
-                           unprefixed + " - looking up relative to parent file")
+                           s"$unprefixed - looking up relative to parent file")
         result =
           ResolveSource.findInObject(root, result.result.context, unprefixed)
       }
       if (result.result.value == null && result.result.context.options.getUseSystemEnvironment) {
         if (ConfigImpl.traceSubstitutionsEnabled)
           ConfigImpl.trace(result.result.context.depth,
-                           unprefixed + " - looking up in system environment")
+                           s"$unprefixed - looking up in system environment")
         result = ResolveSource.findInObject(
           ConfigImpl.envVariablesAsConfigObject,
           context,

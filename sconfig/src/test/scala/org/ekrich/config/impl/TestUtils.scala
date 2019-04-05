@@ -76,12 +76,12 @@ abstract trait TestUtils {
 
   private object notEqualToAnything extends NotEqualToAnythingElse
 
-  private def checkNotEqualToRandomOtherThing(a: Any) {
+  private def checkNotEqualToRandomOtherThing(a: Any): Unit = {
     assertFalse(a.equals(notEqualToAnything))
     assertFalse(notEqualToAnything.equals(a))
   }
 
-  protected def checkNotEqualObjects(a: Any, b: Any) {
+  protected def checkNotEqualObjects(a: Any, b: Any): Unit = {
     assertFalse(a.equals(b))
     assertFalse(b.equals(a))
     // hashcode inequality isn't guaranteed, but
@@ -94,7 +94,7 @@ abstract trait TestUtils {
     checkNotEqualToRandomOtherThing(b)
   }
 
-  protected def checkEqualObjects(a: Any, b: Any) {
+  protected def checkEqualObjects(a: Any, b: Any): Unit = {
     assertTrue(a.equals(b))
     assertTrue(b.equals(a))
     assertTrue(a.hashCode() == b.hashCode())
@@ -888,13 +888,13 @@ abstract trait TestUtils {
     ConfigImplUtil.renderJsonString(s)
 
   sealed abstract class Problem(path: String, line: Int) {
-    def check(p: ConfigException.ValidationProblem) {
+    def check(p: ConfigException.ValidationProblem): Unit = {
       assertEquals("matching path", path, p.path)
       assertEquals("matching line for " + path, line, p.origin.lineNumber)
     }
 
     protected def assertMessage(p: ConfigException.ValidationProblem,
-                                re: String) {
+                                re: String): Unit = {
       assertTrue(
         "didn't get expected message for " + path + ": got '" + p.problem + "'",
         p.problem.matches(re))
@@ -903,7 +903,7 @@ abstract trait TestUtils {
 
   case class Missing(path: String, line: Int, expected: String)
       extends Problem(path, line) {
-    override def check(p: ConfigException.ValidationProblem) {
+    override def check(p: ConfigException.ValidationProblem): Unit = {
       super.check(p)
       val re = "No setting.*" + path + ".*expecting.*" + expected + ".*"
       assertMessage(p, re)
@@ -912,7 +912,7 @@ abstract trait TestUtils {
 
   case class WrongType(path: String, line: Int, expected: String, got: String)
       extends Problem(path, line) {
-    override def check(p: ConfigException.ValidationProblem) {
+    override def check(p: ConfigException.ValidationProblem): Unit = {
       super.check(p)
       val re = "Wrong value type.*" + path + ".*expecting.*" + expected + ".*got.*" + got + ".*"
       assertMessage(p, re)
@@ -924,7 +924,7 @@ abstract trait TestUtils {
                               expected: String,
                               got: String)
       extends Problem(path, line) {
-    override def check(p: ConfigException.ValidationProblem) {
+    override def check(p: ConfigException.ValidationProblem): Unit = {
       super.check(p)
       val re = "List at.*" + path + ".*wrong value type.*expecting.*" + expected + ".*got.*element of.*" + got + ".*"
       assertMessage(p, re)
@@ -932,7 +932,7 @@ abstract trait TestUtils {
   }
 
   protected def checkValidationException(e: ConfigException.ValidationFailed,
-                                         expecteds: Seq[Problem]) {
+                                         expecteds: Seq[Problem]): Unit = {
     val problems =
       e.problems.asScala.toIndexedSeq.sortBy(_.path).sortBy(_.origin.lineNumber)
 

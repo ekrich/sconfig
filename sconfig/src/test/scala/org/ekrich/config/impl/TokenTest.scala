@@ -9,7 +9,7 @@ import org.junit._
 class TokenTest extends TestUtils {
 
   @Test
-  def tokenEquality() {
+  def tokenEquality(): Unit = {
     // syntax tokens
     checkEqualObjects(Tokens.START, Tokens.START)
     checkNotEqualObjects(Tokens.START, Tokens.OPEN_CURLY)
@@ -60,7 +60,7 @@ class TokenTest extends TestUtils {
   }
 
   @Test
-  def tokenToString() {
+  def tokenToString(): Unit = {
     // just be sure toString() doesn't throw, it's for debugging
     // so its exact output doesn't matter a lot
     tokenTrue.toString()

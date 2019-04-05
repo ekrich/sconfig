@@ -76,7 +76,7 @@ final class ConfigReference(
         else
           throw new ConfigException.UnresolvedSubstitution(
             origin,
-            expression + " was part of a cycle of substitutions involving " + e.traceString,
+            s"$expression was part of a cycle of substitutions involving ${e.traceString}",
             e)
     }
     if (v == null && !expression.optional)
