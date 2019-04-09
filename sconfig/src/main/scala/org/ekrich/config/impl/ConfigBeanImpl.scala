@@ -12,6 +12,7 @@ import java.lang.reflect.Type
 import java.{util => ju}
 import java.{lang => jl}
 import java.time.Duration
+import scala.reflect.ClassTag
 import scala.util.control.Breaks._
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigObject
@@ -155,7 +156,7 @@ object ConfigBeanImpl {
       parameterType: Type,
       parameterClass: Class[_],
       config: Config,
-      configPropName: String)(implicit m: Manifest[T]): Any =
+      configPropName: String)(implicit ct: ClassTag[T]): Any =
     if ((parameterClass == classOf[jl.Boolean]) || (parameterClass == classOf[
           Boolean])) config.getBoolean(configPropName)
     else if ((parameterClass == classOf[Integer]) || (parameterClass == classOf[
@@ -228,7 +229,7 @@ object ConfigBeanImpl {
       parameterType: Type,
       parameterClass: Class[_],
       config: Config,
-      configPropName: String)(implicit m: Manifest[T]): ju.List[_] = {
+      configPropName: String)(implicit ct: ClassTag[T]): ju.List[_] = {
     val elementType: Type =
       parameterType.asInstanceOf[ParameterizedType].getActualTypeArguments()(0)
     if (elementType == classOf[jl.Boolean])

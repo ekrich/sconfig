@@ -239,20 +239,20 @@ abstract trait TestUtils {
     objectStream.close()
   }
 
-  protected def checkSerializable[T: Manifest](expectedHex: String, o: T): T = {
+  protected def checkSerializable[T: ClassTag](expectedHex: String, o: T): T = {
     val t = checkSerializable(o)
     checkSerializationCompat(expectedHex, o)
     t
   }
 
-  protected def checkSerializableOldFormat[T: Manifest](expectedHex: String,
+  protected def checkSerializableOldFormat[T: ClassTag](expectedHex: String,
                                                         o: T): T = {
     val t = checkSerializable(o)
     checkSerializationCompat(expectedHex, o, changedOK = true)
     t
   }
 
-  protected def checkSerializableNoMeaningfulEquals[T: Manifest](o: T): T = {
+  protected def checkSerializableNoMeaningfulEquals[T: ClassTag](o: T): T = {
     assertTrue(o.getClass.getSimpleName + " not an instance of Serializable",
                o.isInstanceOf[java.io.Serializable])
 
@@ -279,7 +279,7 @@ abstract trait TestUtils {
     b.asInstanceOf[T]
   }
 
-  protected def checkSerializable[T: Manifest](o: T): T = {
+  protected def checkSerializable[T: ClassTag](o: T): T = {
     checkEqualObjects(o, o)
 
     assertTrue(o.getClass.getSimpleName + " not an instance of Serializable",
@@ -983,7 +983,7 @@ abstract trait TestUtils {
     }
   }
 
-  protected def checkSerializableWithCustomSerializer[T: Manifest](o: T): T = {
+  protected def checkSerializableWithCustomSerializer[T: ClassTag](o: T): T = {
     val byteStream   = new ByteArrayOutputStream()
     val objectStream = new CustomObjectOutputStream(byteStream)
     objectStream.writeObject(o)
