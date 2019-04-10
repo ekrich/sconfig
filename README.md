@@ -25,6 +25,7 @@ libraryDependencies += "org.ekrich" %% "sconfig" % "X.Y.Z"
 ```
 
 To use in sbt, replace `X.Y.Z` with the version from Maven Central badge above.
+All available versions can be seen at the [Maven Repository](https://mvnrepository.com/artifact/org.ekrich/sconfig).
 
 ## Usage and Help
 [![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.11.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.11)
@@ -41,5 +42,6 @@ For specific changes, refer to the releases below.
 
 ## Versions
 
+Release [0.7.6](https://github.com/ekrich/sconfig/releases/tag/v0.7.6) - (2019-04-10)<br/>
 Release [0.7.5](https://github.com/ekrich/sconfig/releases/tag/v0.7.5) - (2019-04-05)<br/>
 Release [0.7.0](https://github.com/ekrich/sconfig/releases/tag/v0.7.0) - (2018-12-14)

@@ -30,7 +30,7 @@ ThisBuild / Test / scalacOptions := scalacOpts
 
 val scala211 = "2.11.12"
 val scala212 = "2.12.8"
-val scala213 = "2.13.0-M5"
+val scala213 = "2.13.0-RC1"
 ThisBuild / crossScalaVersions := Seq(scala211, scala212, scala213)
 
 inThisBuild(
@@ -81,7 +81,7 @@ lazy val root = (project in file("."))
 lazy val configLib = Project("sconfig", file("sconfig"))
   .dependsOn(testLib % "test->test")
   .settings(
-    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-1" % Test,
+    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-3" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     Compile / compile / javacOptions ++= Seq("-source",
                                              "1.8",
