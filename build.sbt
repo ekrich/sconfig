@@ -13,7 +13,7 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "0.7.0"
+val prevVersion = "0.7.6"
 val nextVersion = "0.8.0"
 
 // stable snapshot is not great for publish local
