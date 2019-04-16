@@ -1,6 +1,6 @@
 _Copyright (c) 2011-2016 Typesafe Inc._<br/>
 _Copyright (c) 2016-2018 Lightbend Inc. (formerly Typesafe Inc.)_<br/>
-_Copyright (c) 2018      Eric K Richardson_
+_Copyright (c) 2018-2019 Eric K Richardson_
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
