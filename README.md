@@ -11,7 +11,7 @@ For motivation and background about this project see the [PR](https://github.com
 to the original project.
 
 Care has been taken to keep the API the same but changes are needed when moving from the Java API.
-Using Java is also possible because the included Java examples work.
+Using Java is also possible because the included Java examples work. 
 
 If you are looking for the original proven Java API, see
 [https://github.com/lightbend/config](https://github.com/lightbend/config).
@@ -32,11 +32,18 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 [![Join chat https://gitter.im/ekrich/sconfig](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ekrich/sconfig?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 The following document copies are local to this repository but internal links may refer to the
-original site documents via hyperlink.
+original site documents via hyperlink. These are here as a snapshot when the library was ported
+for reference purposes only. Refer to `config` library above to see the latest docs.
 
 [Overview](docs/original/README.md) - A comprehensive guide to configuration.
 
 [HOCON](docs/original/HOCON.md) - The HOCON Specification
+
+The intent is to keep the library in sync with the original but each PR needs to be be ported
+to maintain feature parity. Changes to support Scala Native and Scala.js may make this goal
+unattainable in the future.
+
+[Scala Native](docs/SCALA-NATIVE.md) - A guide to using Scala Native.
 
 For specific changes, refer to the releases below.
 
