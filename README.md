@@ -24,7 +24,7 @@ If you are looking for the original proven Java API, see
 libraryDependencies += "org.ekrich" %%% "sconfig" % "x.y.z"
 ```
 
-To use in sbt, replace `X.Y.Z` with the version from Maven Central badge above.
+To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above.
 All available versions can be seen at the [Maven Repository](https://mvnrepository.com/artifact/org.ekrich/sconfig).
 
 ## Usage and Help
