@@ -1,3 +1,4 @@
+sudo: required
 
 language: scala
 
@@ -6,6 +7,11 @@ jdk:
 
 scala:
   - 2.11.12
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
 
 stages:
 - name: test
@@ -17,7 +23,8 @@ jobs:
   # stage="test" if no stage is specified
   - env: TEST="scalafmt"
     script: ./scripts/scalafmt --test
-  - env: TEST="test"
+  - env: TEST="linux"
+    before_install: ./scripts/travis-os-setup.sh
     script: sbt +test doc
   - stage: release
     script: sbt ci-release
