@@ -6,6 +6,7 @@ package org.ekrich.config.impl
 import java.{lang => jl}
 import java.{util => ju}
 import scala.util.control.Breaks._
+import scala.collection.mutable.ArrayStack
 import org.ekrich.config._
 
 object ConfigDocumentParser {
@@ -48,7 +49,7 @@ object ConfigDocumentParser {
                                    val tokens: ju.Iterator[Token]) {
 
     private var lineNumber   = 1
-    final private var buffer = new ju.Stack[Token]
+    final private var buffer = new ArrayStack[Token]
     // this is the number of "equals" we are inside,
     // used to modify the error message to reflect that
     // someone may think this is .properties format.

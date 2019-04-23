@@ -4,6 +4,8 @@
 .settings
 .idea
 .idea_modules
+.metals/
+.bloop/
 /bin-test-lib
 target/
 /bin

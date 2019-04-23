@@ -778,25 +778,23 @@ class ConfigSubstitutionTest extends TestUtils {
                  resolved.getIntList("x.y.ptrToPtrToArr").asScala)
   }
 
-  private val substSystemPropsObject = {
+  private val substSystemPropsObject =
     parseObject("""
-{
-    "a" : ${configtest.a},
-    "b" : ${configtest.b}
-}
-""")
-  }
+      {
+        "a" : ${configtest.a},
+        "b" : ${configtest.b}
+      }
+      """)
 
   @Test
-  def doNotSerializeUnresolvedObject(): Unit = {
+  def doNotSerializeUnresolvedObject(): Unit =
     checkNotSerializable(substComplexObject)
-  }
 
   @Test
   def resolveListFromSystemProps(): Unit = {
     val props = parseObject("""
-            |"a": ${testList}
-            """.stripMargin)
+                              |"a": ${testList}
+                            """.stripMargin)
 
     System.setProperty("testList.0", "0")
     System.setProperty("testList.1", "1")
@@ -815,8 +813,8 @@ class ConfigSubstitutionTest extends TestUtils {
   @Test
   def resolveListFromEnvVars(): Unit = {
     val props = parseObject("""
-            |"a": ${testList}
-            """.stripMargin)
+                              |"a": ${testList}
+                            """.stripMargin)
 
     //"testList.0" and "testList.1" are defined as envVars in build.sbt
     val resolved = resolve(props)

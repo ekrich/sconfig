@@ -18,14 +18,13 @@ import java.net.MalformedURLException
 import java.net.URI
 import java.net.URISyntaxException
 import java.net.URL
-import java.net.URLConnection
 import java.{util => ju}
 import org.ekrich.config._
 import org.ekrich.config.parser._
 
 /**
  * Internal implementation detail, not ABI stable, do not touch.
- * For use only by the {@link com.typesafe.config} package.
+ * For use only by the {@link org.ekrich.config} package.
  * The point of this class is to avoid "propagating" each
  * overload on "thing which can be parsed" through multiple
  * interfaces. Most interfaces can have just one overload that
@@ -247,7 +246,8 @@ object Parseable {
     override def toString: String =
       getClass.getSimpleName + "(" + input.toExternalForm + ")"
   }
-  def newURL(input: URL, options: ConfigParseOptions): Parseable = { // we want file: URLs and files to always behave the same, so switch
+  def newURL(input: URL, options: ConfigParseOptions): Parseable = {
+    // we want file: URLs and files to always behave the same, so switch
     // to a file if it's a file: URL
     if (input.getProtocol == "file")
       newFile(ConfigImplUtil.urlToFile(input), options)

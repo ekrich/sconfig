@@ -7,7 +7,7 @@ import java.io.Reader
 
 /**
  * Factory for creating
- * [[com.typesafe.config.parser.ConfigDocument]] instances.
+ * [[org.ekrich.config.parser.ConfigDocument]] instances.
  */
 object ConfigDocumentFactory {
 
@@ -19,7 +19,7 @@ object ConfigDocumentFactory {
    * @param options
    *       parse options to control how the reader is interpreted
    * @return the parsed configuration
-   * @throws [[com.typesafe.config.ConfigException]] on IO or parse errors
+   * @throws [[org.ekrich.config.ConfigException]] on IO or parse errors
    */
   def parseReader(reader: Reader, options: ConfigParseOptions): ConfigDocument =
     Parseable.newReader(reader, options).parseConfigDocument
@@ -32,7 +32,7 @@ object ConfigDocumentFactory {
    * @param reader
    *       the reader to parse
    * @return the parsed configuration
-   * @throws com.typesafe.config.ConfigException on IO or parse errors
+   * @throws org.ekrich.config.ConfigException on IO or parse errors
    */
   def parseReader(reader: Reader): ConfigDocument =
     parseReader(reader, ConfigParseOptions.defaults)
@@ -45,7 +45,7 @@ object ConfigDocumentFactory {
    * @param options
    *       parse options to control how the file is interpreted
    * @return the parsed configuration
-   * @throws com.typesafe.config.ConfigException on IO or parse errors
+   * @throws org.ekrich.config.ConfigException on IO or parse errors
    */
   def parseFile(file: File, options: ConfigParseOptions): ConfigDocument =
     Parseable.newFile(file, options).parseConfigDocument
@@ -58,7 +58,7 @@ object ConfigDocumentFactory {
    * @param file
    *       the file to parse
    * @return the parsed configuration
-   * @throws com.typesafe.config.ConfigException on IO or parse errors
+   * @throws org.ekrich.config.ConfigException on IO or parse errors
    */
   def parseFile(file: File): ConfigDocument =
     parseFile(file, ConfigParseOptions.defaults)

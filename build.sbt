@@ -1,7 +1,5 @@
-// to release, bump major/minor/micro as appropriate,
-// update NEWS, update version in README.md, tag, then
-// publishSigned.
-// Release tags should follow: http://semver.org/
+// shadow sbt-scalajs' crossProject and CrossType until Scala.js 1.0.0 is released
+import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 addCommandAlias(
   "run-examples",
@@ -60,8 +58,9 @@ ThisBuild / pomIncludeRepository := { _ =>
 
 lazy val root = (project in file("."))
   .aggregate(
-    testLib,
-    configLib,
+    testLibJVM,
+    sconfigJVM,
+    sconfigNative,
     simpleLibScala,
     simpleAppScala,
     complexAppScala,
@@ -72,15 +71,17 @@ lazy val root = (project in file("."))
   .settings(commonSettings)
   .settings(
     name := "sconfig-root",
+    crossScalaVersions := Nil,
     doc / aggregate := false,
-    doc := (configLib / Compile / doc).value,
+    doc := (sconfigJVM / Compile / doc).value,
     packageDoc / aggregate := false,
-    packageDoc := (configLib / Compile / packageDoc).value,
+    packageDoc := (sconfigJVM / Compile / packageDoc).value,
   )
 
-lazy val configLib = Project("sconfig", file("sconfig"))
-  .dependsOn(testLib % "test->test")
-  .settings(
+lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
+  .crossType(CrossType.Full)
+  //.jsSettings(/* ... */) // defined in sbt-scalajs-crossproject
+  .jvmSettings(
     libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-3" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     Compile / compile / javacOptions ++= Seq("-source",
@@ -105,26 +106,50 @@ lazy val configLib = Project("sconfig", file("sconfig"))
     mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
+  .nativeSettings(
+    nativeLinkStubs := true,
+    scalaVersion := scala211,
+    crossScalaVersions := List(scala211)
+  )
+
+lazy val sconfigJVM = sconfig.jvm
+  .dependsOn(testLibJVM % "test->test")
+
+lazy val sconfigNative = sconfig.native
+  .settings(
+    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.7" % Test,
+    testFrameworks += new TestFramework("utest.runner.Framework")
+  )
 
 lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
   import com.typesafe.tools.mima.core.ProblemFilters._
   Seq(
-    exclude[Problem]("com.typesafe.config.impl.*")
+    exclude[Problem]("org.ekrich.config.impl.*")
   )
 }
 
-lazy val commonSettings: Seq[Setting[_]] = Def.settings(
-  unpublished
-)
+lazy val commonSettings: Seq[Setting[_]] =
+  Def.settings(
+    skipPublish
+  )
 
-def proj(id: String, base: File) = Project(id, base) settings commonSettings
+def proj(id: String, base: File) =
+  Project(id, base) settings commonSettings
 
-lazy val testLib = proj("sconfig-test-lib", file("test-lib"))
+lazy val testLibJVM = testLib.jvm
+
+lazy val testLib = crossProject(JVMPlatform)
+  .crossType(CrossType.Full)
+  .in(file("test-lib"))
+  .settings(
+    name := "sconfig-test-lib",
+    publish / skip := true
+  )
 
 lazy val simpleLibScala = proj(
   "sconfig-simple-lib-scala",
-  file("examples/scala/simple-lib")) dependsOn configLib
+  file("examples/scala/simple-lib")) dependsOn sconfigJVM
 lazy val simpleAppScala = proj(
   "sconfig-simple-app-scala",
   file("examples/scala/simple-app")) dependsOn simpleLibScala
@@ -134,7 +159,7 @@ lazy val complexAppScala = proj(
 
 lazy val simpleLibJava = proj(
   "sconfig-simple-lib-java",
-  file("examples/java/simple-lib")) dependsOn configLib
+  file("examples/java/simple-lib")) dependsOn sconfigJVM
 lazy val simpleAppJava = proj(
   "sconfig-simple-app-java",
   file("examples/java/simple-app")) dependsOn simpleLibJava
@@ -142,7 +167,7 @@ lazy val complexAppJava = proj(
   "sconfig-complex-app-java",
   file("examples/java/complex-app")) dependsOn simpleLibJava
 
-val unpublished = Seq(
+val skipPublish = Seq(
   // no artifacts in this project
   publishArtifact := false,
   // make-pom has a more specific publishArtifact setting already
