@@ -117,7 +117,7 @@ lazy val sconfigJVM = sconfig.jvm
 
 lazy val sconfigNative = sconfig.native
   .settings(
-    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.6" % Test,
+    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.7" % Test,
     testFrameworks += new TestFramework("utest.runner.Framework")
   )
 

@@ -49,6 +49,7 @@ For specific changes, refer to the releases below.
 
 ## Versions
 
+Release [0.8.0](https://github.com/ekrich/sconfig/releases/tag/v0.8.0) - (2019-04-23)<br/>
 Release [0.7.6](https://github.com/ekrich/sconfig/releases/tag/v0.7.6) - (2019-04-10)<br/>
 Release [0.7.5](https://github.com/ekrich/sconfig/releases/tag/v0.7.5) - (2019-04-05)<br/>
 Release [0.7.0](https://github.com/ekrich/sconfig/releases/tag/v0.7.0) - (2018-12-14)
