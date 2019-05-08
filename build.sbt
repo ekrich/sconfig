@@ -1,5 +1,5 @@
 // shadow sbt-scalajs' crossProject and CrossType until Scala.js 1.0.0 is released
-import sbtcrossproject.CrossPlugin.autoImport.crossProject
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 addCommandAlias(
   "run-examples",
@@ -78,9 +78,8 @@ lazy val root = (project in file("."))
     packageDoc := (sconfigJVM / Compile / packageDoc).value,
   )
 
-lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
+lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
-  //.jsSettings(/* ... */) // defined in sbt-scalajs-crossproject
   .jvmSettings(
     libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-3" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
@@ -111,11 +110,20 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
     scalaVersion := scala211,
     crossScalaVersions := List(scala211)
   )
+  .jsSettings(
+    crossScalaVersions := Seq(scala212, scala211)
+  )
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
 
 lazy val sconfigNative = sconfig.native
+  .settings(
+    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.7" % Test,
+    testFrameworks += new TestFramework("utest.runner.Framework")
+  )
+
+lazy val sconfigJS = sconfig.js
   .settings(
     libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.7" % Test,
     testFrameworks += new TestFramework("utest.runner.Framework")
