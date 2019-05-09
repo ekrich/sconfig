@@ -61,6 +61,7 @@ lazy val root = (project in file("."))
     testLibJVM,
     sconfigJVM,
     sconfigNative,
+    sconfigJS,
     simpleLibScala,
     simpleAppScala,
     complexAppScala,
