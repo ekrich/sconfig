@@ -7,21 +7,24 @@ import utest._
 object ConfigFactoryTests extends TestSuite {
   println("Testing sconfig for Scala.js")
   val tests = Tests {
-    // commented out for JS - not sure how yet
-    //   "load() check system property throws NotImplementedError" - {
+    // Avoid this test in Scala.js as Scala Native has the following:
+    // java.lang.Class$.forName(java.lang.String)java.lang.Class
+    // java.lang.Class.getConstructor([java.lang.Class)java.lang.reflect.Constructor
+    // and java.util.IdentityHashMap
+    // "load() check system property throws NotImplementedError" - {
 
-    //     // example of how system properties override; note this
-    //     // must be set before the config lib is used
-    //     val propKey = "simple-prop.whatever"
-    //     val propVal = "This value comes from a system property"
-    //     System.setProperty(propKey, propVal)
+    //   // example of how system properties override; note this
+    //   // must be set before the config lib is used
+    //   val propKey = "simple-prop.whatever"
+    //   val propVal = "This value comes from a system property"
+    //   System.setProperty(propKey, propVal)
 
-    //     // Load our own config values from the default location, application.conf
-    //     val e = intercept[NotImplementedError] {
-    //       val conf = ConfigFactory.load()
-    //       assert(conf.getString(propKey) == propVal)
-    //     }
+    //   // Load our own config values from the default location, application.conf
+    //   val e = intercept[NotImplementedError] {
+    //     val conf = ConfigFactory.load()
+    //     assert(conf.getString(propKey) == propVal)
     //   }
+    // }
 
     "parseString(s: String) scalafmt example works" - {
       val configStr =

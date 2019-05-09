@@ -111,7 +111,8 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     crossScalaVersions := List(scala211)
   )
   .jsSettings(
-    crossScalaVersions := Seq(scala212, scala211)
+    crossScalaVersions := Seq(scala212, scala211),
+    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5",
   )
 
 lazy val sconfigJVM = sconfig.jvm
