@@ -12,6 +12,7 @@ import java.{util => ju}
 import scala.collection.JavaConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.compatOps._
 
 // it would be cleaner to have a class hierarchy for various origin types,
 // but was hoping this would be enough simpler to be a little messy. eh.

@@ -12,6 +12,7 @@ import java.util.Properties
 import scala.collection.JavaConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.compatOps._
 
 object PropertiesParser {
   @throws[IOException]

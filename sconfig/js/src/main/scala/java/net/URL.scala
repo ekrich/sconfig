@@ -17,6 +17,7 @@ class URL(from: String) {
 
   def toExternalForm(): java.lang.String = ???
 
-  // *** added ***
+  // added
   def getFile(): String = ???
 }
+

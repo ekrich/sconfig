@@ -3,6 +3,7 @@
  */
 package org.ekrich.config
 
+import org.ekrich.config.compatOps._
 import org.ekrich.config.impl.ConfigImplUtil
 
 /**

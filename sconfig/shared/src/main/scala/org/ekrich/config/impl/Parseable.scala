@@ -21,6 +21,7 @@ import java.net.URL
 import java.{util => ju}
 import org.ekrich.config._
 import org.ekrich.config.parser._
+import org.ekrich.config.compatOps._
 
 /**
  * Internal implementation detail, not ABI stable, do not touch.
