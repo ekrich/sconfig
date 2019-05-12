@@ -20,4 +20,3 @@ class URL(from: String) {
   // added
   def getFile(): String = ???
 }
-

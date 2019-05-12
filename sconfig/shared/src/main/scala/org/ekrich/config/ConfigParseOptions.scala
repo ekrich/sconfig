@@ -3,8 +3,8 @@
  */
 package org.ekrich.config
 
-import org.ekrich.config.compatOps._
 import org.ekrich.config.impl.ConfigImplUtil
+import org.ekrich.config.impl.PlatformThread
 
 /**
  * A set of options related to parsing.
@@ -219,6 +219,10 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
    * @return class loader to use
    */
   def getClassLoader: ClassLoader =
-    if (this.classLoader == null) Thread.currentThread.getContextClassLoader
-    else this.classLoader
+    if (this.classLoader == null) {
+      val thread = Thread.currentThread
+      new PlatformThread(thread).getContextClassLoader
+    } else {
+      this.classLoader
+    }
 }

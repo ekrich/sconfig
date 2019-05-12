@@ -3,8 +3,6 @@
  */
 package org.ekrich.config
 
-import org.ekrich.config.compatOps._
-
 /**
  * An opaque handle to something that can be parsed, obtained from
  * {@link ConfigIncludeContext}.

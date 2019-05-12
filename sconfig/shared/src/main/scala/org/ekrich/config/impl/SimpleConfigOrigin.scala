@@ -12,7 +12,6 @@ import java.{util => ju}
 import scala.collection.JavaConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
-import org.ekrich.config.compatOps._
 
 // it would be cleaner to have a class hierarchy for various origin types,
 // but was hoping this would be enough simpler to be a little messy. eh.
@@ -28,8 +27,10 @@ object SimpleConfigOrigin {
                            null)
   private[impl] def newFile(filename: String): SimpleConfigOrigin = {
     var url: String = null
-    try url = new File(filename).toURI.toURL.toExternalForm
-    catch {
+    try {
+      val uri = new File(filename).toURI
+      url = new PlatformUri(uri).toURL.toExternalForm
+    } catch {
       case e: MalformedURLException =>
         url = null
     }

@@ -21,7 +21,6 @@ import java.net.URL
 import java.{util => ju}
 import org.ekrich.config._
 import org.ekrich.config.parser._
-import org.ekrich.config.compatOps._
 
 /**
  * Internal implementation detail, not ABI stable, do not touch.
@@ -86,7 +85,7 @@ object Parseable {
       // element of the path in siblingURI gets stripped out,
       // so to get something in the same directory as
       // siblingURI we just call resolve().
-      val resolved = siblingURI.resolve(relative).toURL
+      val resolved = new PlatformUri(siblingURI.resolve(relative)).toURL
       resolved
     } catch {
       case e: MalformedURLException =>
