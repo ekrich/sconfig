@@ -82,6 +82,7 @@ lazy val root = (project in file("."))
 lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .jvmSettings(
+    sharedJvmNativeSource,
     libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-3" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     Compile / compile / javacOptions ++= Seq("-source",
@@ -107,14 +108,21 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
   .nativeSettings(
+    crossScalaVersions := List(scala211),
+    scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
+    sharedJvmNativeSource,
     nativeLinkStubs := true,
-    scalaVersion := scala211,
-    crossScalaVersions := List(scala211)
   )
   .jsSettings(
     crossScalaVersions := Seq(scala212, scala211),
     libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5",
   )
+
+lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
+  Compile / unmanagedSourceDirectories +=
+    (ThisBuild / baseDirectory).value
+      / "sconfig" / "sharedjvmnative" / "src" / "main" / "scala"
+)
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
