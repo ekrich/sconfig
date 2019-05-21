@@ -75,7 +75,8 @@ object Parseable {
       // NOTHING.
     }
   }
-  private[impl] def relativeTo(url: URL, filename: String): URL = { // I'm guessing this completely fails on Windows, help wanted
+  private[impl] def relativeTo(url: URL, filename: String): URL = {
+    // I'm guessing this completely fails on Windows, help wanted
     if (new File(filename).isAbsolute) return null
     try {
       val siblingURI = url.toURI
@@ -84,7 +85,7 @@ object Parseable {
       // element of the path in siblingURI gets stripped out,
       // so to get something in the same directory as
       // siblingURI we just call resolve().
-      val resolved = siblingURI.resolve(relative).toURL
+      val resolved = new PlatformUri(siblingURI.resolve(relative)).toURL
       resolved
     } catch {
       case e: MalformedURLException =>
@@ -173,10 +174,11 @@ object Parseable {
     }
   }
 
-  private[impl] class ParseableURL protected (val input: URL) // does not postConstruct (subclass does it)
+  private[impl] class ParseableURL protected (val input: URL)
       extends Parseable {
-    private var contentTypeStr
-      : String = null // shadowing with a different type(ConfigSyntax) doesn't work in Scala
+    // does not postConstruct (subclass does it)
+    private var contentTypeStr: String = null
+    // shadowing with a different type(ConfigSyntax) doesn't work in Scala
     def this(input: URL, options: ConfigParseOptions) {
       this(input)
       postConstruct(options)

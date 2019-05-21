@@ -1,5 +1,5 @@
 // shadow sbt-scalajs' crossProject and CrossType until Scala.js 1.0.0 is released
-import sbtcrossproject.CrossPlugin.autoImport.crossProject
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 addCommandAlias(
   "run-examples",
@@ -61,6 +61,7 @@ lazy val root = (project in file("."))
     testLibJVM,
     sconfigJVM,
     sconfigNative,
+    sconfigJS,
     simpleLibScala,
     simpleAppScala,
     complexAppScala,
@@ -78,10 +79,10 @@ lazy val root = (project in file("."))
     packageDoc := (sconfigJVM / Compile / packageDoc).value,
   )
 
-lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
+lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
-  //.jsSettings(/* ... */) // defined in sbt-scalajs-crossproject
   .jvmSettings(
+    sharedJvmNativeSource,
     libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-3" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     Compile / compile / javacOptions ++= Seq("-source",
@@ -107,15 +108,32 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform)
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
   .nativeSettings(
+    crossScalaVersions := List(scala211),
+    scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
+    sharedJvmNativeSource,
     nativeLinkStubs := true,
-    scalaVersion := scala211,
-    crossScalaVersions := List(scala211)
   )
+  .jsSettings(
+    crossScalaVersions := Seq(scala212, scala211),
+    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5",
+  )
+
+lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
+  Compile / unmanagedSourceDirectories +=
+    (ThisBuild / baseDirectory).value
+      / "sconfig" / "sharedjvmnative" / "src" / "main" / "scala"
+)
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
 
 lazy val sconfigNative = sconfig.native
+  .settings(
+    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.7" % Test,
+    testFrameworks += new TestFramework("utest.runner.Framework")
+  )
+
+lazy val sconfigJS = sconfig.js
   .settings(
     libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.7" % Test,
     testFrameworks += new TestFramework("utest.runner.Framework")
