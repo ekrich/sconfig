@@ -1,7 +1,6 @@
-# Scala Native Help
+# Scala Native and Scala.js Help
 
-Scala Native support has been added so [scalafmt](https://scalameta.org/scalafmt/) can 
-become a native application. The release has minimal capabilities at this time so 
+The release has minimal capabilities at this time so
 the following is an example of how to use the API. 
 
 ## Read from String example
@@ -26,7 +25,7 @@ val maxCol = conf.getInt("maxColumn")
 val isGit = conf.getBoolean("project.git")
 ```
 
-### How to read a HOCON configuation file into a String
+### How to read a HOCON configuation file into a String for Scala Native
 
 In order to read the configuration file into a `String` you need to know the relative
 path from where the executable was started or use an absolute path. If the 
@@ -37,12 +36,15 @@ application to find the path.
 
 ```scala
 val dir = System.getProperty("user.dir")
-println(s"Dir: $dir")
+println(s"Working Dir: $dir")
 ```
 
 Continuing the same thought process you can use the following code to read the file
 into a `String` from a simple `sbt` project where the `src` directory is at the top
-level of your project.
+level of your project and you are using the `run` command. If you package your
+application or run the application executable directly, then making the path relative
+to the binary with the code above could be your best option. Another option is to use
+the `"user.home"` property to configure the file path.
 
 ```scala
 import java.nio.file.{Files, Paths}
