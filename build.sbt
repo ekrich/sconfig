@@ -11,7 +11,7 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "0.9.0"
+val prevVersion = "0.9.1"
 val nextVersion = "1.0.0"
 
 // stable snapshot is not great for publish local
@@ -28,7 +28,7 @@ ThisBuild / Test / scalacOptions := scalacOpts
 
 val scala211 = "2.11.12"
 val scala212 = "2.12.8"
-val scala213 = "2.13.0-RC2"
+val scala213 = "2.13.0"
 ThisBuild / crossScalaVersions := Seq(scala211, scala212, scala213)
 
 inThisBuild(
@@ -83,7 +83,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .jvmSettings(
     sharedJvmNativeSource,
-    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-4" % Test,
+    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-5" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     Compile / compile / javacOptions ++= Seq("-source",
                                              "1.8",
@@ -114,7 +114,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     nativeLinkStubs := true,
   )
   .jsSettings(
-    crossScalaVersions := Seq(scala212, scala211),
     libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5",
   )
 
@@ -129,15 +128,12 @@ lazy val sconfigJVM = sconfig.jvm
 
 lazy val sconfigNative = sconfig.native
   .settings(
-    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.7" % Test,
+    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.9" % Test,
     testFrameworks += new TestFramework("utest.runner.Framework")
   )
 
 lazy val sconfigJS = sconfig.js
-  .settings(
-    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.7" % Test,
-    testFrameworks += new TestFramework("utest.runner.Framework")
-  )
+  .enablePlugins(ScalaJSJUnitPlugin)
 
 lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
