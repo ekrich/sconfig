@@ -1,5 +1,5 @@
 // versions
-val scalaJSVersion     = "0.6.27"
+val scalaJSVersion     = "0.6.28"
 val scalaNativeVersion = "0.3.9"
 val crossVer           = "0.6.0"
 
