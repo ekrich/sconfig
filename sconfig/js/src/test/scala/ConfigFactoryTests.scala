@@ -26,4 +26,25 @@ class ConfigFactoryTests {
     assert(conf.getInt("maxColumn") == 100)
     assert(conf.getBoolean("project.git") == true)
   }
+
+  @Test
+  def resolveString: Unit = {
+
+    val configStr =
+      """
+        |_pattern.default.main = "../default/main.conf"
+        |core = {
+        |  version: 0.1
+        |  extends: [
+        |    ${_pattern.default.main}
+        |  ]
+        |}
+    """.stripMargin
+
+    val conf  = ConfigFactory.parseString(configStr)
+    val rconf = conf.resolve()
+
+    assert(conf.getDouble("core.version") == 0.1)
+    assert(conf.getString("core.extends") == "../default/main.conf")
+  }
 }
