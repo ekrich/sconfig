@@ -10,7 +10,7 @@ import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigResolveOptions
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigFactory
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class ConcatenationTest extends TestUtils {
 

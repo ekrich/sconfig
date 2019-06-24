@@ -14,7 +14,7 @@ abstract class ConfigNodeComplexValue(
 
   override def tokens: ju.Collection[Token] = {
     val tokens = new ju.ArrayList[Token]
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     for (child <- children.asScala) {
       tokens.addAll(child.tokens)
     }

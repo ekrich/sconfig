@@ -7,7 +7,7 @@ import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 import java.{util => ju}
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigFactory

@@ -8,7 +8,7 @@ import org.junit._
 import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigParseOptions
 import org.ekrich.config.ConfigException
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.io.Source
 
 class ValidationTest extends TestUtils {

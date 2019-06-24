@@ -101,7 +101,7 @@ private[impl] final class ResolveContext(
   private[impl] def traceString: String = {
     val separator = ", "
     val sb        = new StringBuilder
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     for (value <- resolveStack.asScala) {
       if (value.isInstanceOf[ConfigReference]) {
         sb.append(value.asInstanceOf[ConfigReference].expression.toString)

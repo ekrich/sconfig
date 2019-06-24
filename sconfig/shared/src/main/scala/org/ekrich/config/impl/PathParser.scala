@@ -143,7 +143,7 @@ object PathParser {
       }
     }
     val pb = new PathBuilder
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     for (e <- buf.asScala) {
       if (e.sb.length == 0 && !e.canBeEmpty)
         throw new ConfigException.BadPath(

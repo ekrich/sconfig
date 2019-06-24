@@ -13,7 +13,7 @@ import beanconfig._
 import org.junit.Assert._
 import org.junit._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ArrayBuffer
 
 class ConfigBeanFactoryTest extends TestUtils {

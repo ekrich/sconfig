@@ -53,12 +53,14 @@ abstract class ArraySeq[+T] extends AbstractSeq[T] with IndexedSeq[T] {
   override def stringPrefix = "ArraySeq"
 
   /** Clones this object, including the underlying Array. */
-  override def clone(): ArraySeq[T] = ArraySeq unsafeWrapArray unsafeArray.clone()
+  override def clone(): ArraySeq[T] =
+    ArraySeq unsafeWrapArray unsafeArray.clone()
 
   /** Creates new builder for this collection ==> move to subclasses
    */
   override protected[this] def newBuilder: Builder[T, ArraySeq[T]] =
-    new WrappedArrayBuilder[T](elemTag).mapResult(w => ArraySeq.unsafeWrapArray(w.array))
+    new WrappedArrayBuilder[T](elemTag).mapResult(w =>
+      ArraySeq.unsafeWrapArray(w.array))
 
 }
 
@@ -96,7 +98,8 @@ object ArraySeq {
       case x: Array[Unit]    => new ofUnit(x)
     }).asInstanceOf[ArraySeq[T]]
 
-  implicit def canBuildFrom[T](implicit m: ClassTag[T]): CanBuildFrom[ArraySeq[_], T, ArraySeq[T]] =
+  implicit def canBuildFrom[T](
+      implicit m: ClassTag[T]): CanBuildFrom[ArraySeq[_], T, ArraySeq[T]] =
     new CanBuildFrom[ArraySeq[_], T, ArraySeq[T]] {
       def apply(from: ArraySeq[_]): Builder[T, ArraySeq[T]] =
         ArrayBuilder.make[T]()(m) mapResult ArraySeq.unsafeWrapArray[T]
@@ -105,12 +108,15 @@ object ArraySeq {
     }
 
   @SerialVersionUID(3L)
-  final class ofRef[T <: AnyRef](val unsafeArray: Array[T]) extends ArraySeq[T] with Serializable {
+  final class ofRef[T <: AnyRef](val unsafeArray: Array[T])
+      extends ArraySeq[T]
+      with Serializable {
     lazy val elemTag         = ClassTag[T](unsafeArray.getClass.getComponentType)
     def length: Int          = unsafeArray.length
     def apply(index: Int): T = unsafeArray(index)
     def update(index: Int, elem: T) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofRef[_] =>
         arrayEquals(unsafeArray.asInstanceOf[Array[AnyRef]],
@@ -120,12 +126,15 @@ object ArraySeq {
   }
 
   @SerialVersionUID(3L)
-  final class ofByte(val unsafeArray: Array[Byte]) extends ArraySeq[Byte] with Serializable {
+  final class ofByte(val unsafeArray: Array[Byte])
+      extends ArraySeq[Byte]
+      with Serializable {
     def elemTag                 = ClassTag.Byte
     def length: Int             = unsafeArray.length
     def apply(index: Int): Byte = unsafeArray(index)
     def update(index: Int, elem: Byte) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofByte => Arrays.equals(unsafeArray, that.unsafeArray)
       case _            => super.equals(that)
@@ -133,12 +142,15 @@ object ArraySeq {
   }
 
   @SerialVersionUID(3L)
-  final class ofShort(val unsafeArray: Array[Short]) extends ArraySeq[Short] with Serializable {
+  final class ofShort(val unsafeArray: Array[Short])
+      extends ArraySeq[Short]
+      with Serializable {
     def elemTag                  = ClassTag.Short
     def length: Int              = unsafeArray.length
     def apply(index: Int): Short = unsafeArray(index)
     def update(index: Int, elem: Short) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofShort => Arrays.equals(unsafeArray, that.unsafeArray)
       case _             => super.equals(that)
@@ -146,12 +158,15 @@ object ArraySeq {
   }
 
   @SerialVersionUID(3L)
-  final class ofChar(val unsafeArray: Array[Char]) extends ArraySeq[Char] with Serializable {
+  final class ofChar(val unsafeArray: Array[Char])
+      extends ArraySeq[Char]
+      with Serializable {
     def elemTag                 = ClassTag.Char
     def length: Int             = unsafeArray.length
     def apply(index: Int): Char = unsafeArray(index)
     def update(index: Int, elem: Char) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofChar => Arrays.equals(unsafeArray, that.unsafeArray)
       case _            => super.equals(that)
@@ -159,12 +174,15 @@ object ArraySeq {
   }
 
   @SerialVersionUID(3L)
-  final class ofInt(val unsafeArray: Array[Int]) extends ArraySeq[Int] with Serializable {
+  final class ofInt(val unsafeArray: Array[Int])
+      extends ArraySeq[Int]
+      with Serializable {
     def elemTag                = ClassTag.Int
     def length: Int            = unsafeArray.length
     def apply(index: Int): Int = unsafeArray(index)
     def update(index: Int, elem: Int) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofInt => Arrays.equals(unsafeArray, that.unsafeArray)
       case _           => super.equals(that)
@@ -172,12 +190,15 @@ object ArraySeq {
   }
 
   @SerialVersionUID(3L)
-  final class ofLong(val unsafeArray: Array[Long]) extends ArraySeq[Long] with Serializable {
+  final class ofLong(val unsafeArray: Array[Long])
+      extends ArraySeq[Long]
+      with Serializable {
     def elemTag                 = ClassTag.Long
     def length: Int             = unsafeArray.length
     def apply(index: Int): Long = unsafeArray(index)
     def update(index: Int, elem: Long) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofLong => Arrays.equals(unsafeArray, that.unsafeArray)
       case _            => super.equals(that)
@@ -185,12 +206,15 @@ object ArraySeq {
   }
 
   @SerialVersionUID(3L)
-  final class ofFloat(val unsafeArray: Array[Float]) extends ArraySeq[Float] with Serializable {
+  final class ofFloat(val unsafeArray: Array[Float])
+      extends ArraySeq[Float]
+      with Serializable {
     def elemTag                  = ClassTag.Float
     def length: Int              = unsafeArray.length
     def apply(index: Int): Float = unsafeArray(index)
     def update(index: Int, elem: Float) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofFloat => Arrays.equals(unsafeArray, that.unsafeArray)
       case _             => super.equals(that)
@@ -198,12 +222,15 @@ object ArraySeq {
   }
 
   @SerialVersionUID(3L)
-  final class ofDouble(val unsafeArray: Array[Double]) extends ArraySeq[Double] with Serializable {
+  final class ofDouble(val unsafeArray: Array[Double])
+      extends ArraySeq[Double]
+      with Serializable {
     def elemTag                   = ClassTag.Double
     def length: Int               = unsafeArray.length
     def apply(index: Int): Double = unsafeArray(index)
     def update(index: Int, elem: Double) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofDouble => Arrays.equals(unsafeArray, that.unsafeArray)
       case _              => super.equals(that)
@@ -218,7 +245,8 @@ object ArraySeq {
     def length: Int                = unsafeArray.length
     def apply(index: Int): Boolean = unsafeArray(index)
     def update(index: Int, elem: Boolean) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofBoolean => Arrays.equals(unsafeArray, that.unsafeArray)
       case _               => super.equals(that)
@@ -226,26 +254,30 @@ object ArraySeq {
   }
 
   @SerialVersionUID(3L)
-  final class ofUnit(val unsafeArray: Array[Unit]) extends ArraySeq[Unit] with Serializable {
+  final class ofUnit(val unsafeArray: Array[Unit])
+      extends ArraySeq[Unit]
+      with Serializable {
     def elemTag                 = ClassTag.Unit
     def length: Int             = unsafeArray.length
     def apply(index: Int): Unit = unsafeArray(index)
     def update(index: Int, elem: Unit) { unsafeArray(index) = elem }
-    override def hashCode = MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
+    override def hashCode =
+      MurmurHash3.arrayHash(unsafeArray, MurmurHash3.seqSeed)
     override def equals(that: Any) = that match {
       case that: ofUnit => unsafeArray.length == that.unsafeArray.length
       case _            => super.equals(that)
     }
   }
 
-  private[this] def arrayEquals(xs: Array[AnyRef], ys: Array[AnyRef]): Boolean = {
+  private[this] def arrayEquals(xs: Array[AnyRef],
+                                ys: Array[AnyRef]): Boolean = {
     if (xs eq ys)
       return true
     if (xs.length != ys.length)
       return false
 
     val len = xs.length
-    var i = 0
+    var i   = 0
     while (i < len) {
       if (xs(i) != ys(i))
         return false

@@ -8,7 +8,7 @@ import java.io.Serializable
 import java.{lang => jl}
 import java.{util => ju}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import org.ekrich.config._
 import org.ekrich.config.impl.AbstractConfigValue._
 

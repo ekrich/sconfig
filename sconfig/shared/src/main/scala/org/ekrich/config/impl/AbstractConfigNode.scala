@@ -12,7 +12,7 @@ abstract class AbstractConfigNode extends ConfigNode {
 
   override final def render: String = {
     val origText = new StringBuilder
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     for (t <- tokens.asScala) {
       origText.append(t.tokenText)
     }

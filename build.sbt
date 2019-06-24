@@ -21,12 +21,11 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
   else nextVersion + "-SNAPSHOT"
 }
 
-val scalacOpts = List(
-  "-unchecked",
-  "-deprecation",
-  "-feature",
-  "-language:higherKinds",
-  "-language:implicitConversions")
+val scalacOpts = List("-unchecked",
+                      "-deprecation",
+                      "-feature",
+                      "-language:higherKinds",
+                      "-language:implicitConversions")
 
 ThisBuild / Compile / scalacOptions := scalacOpts
 ThisBuild / Test / scalacOptions := scalacOpts

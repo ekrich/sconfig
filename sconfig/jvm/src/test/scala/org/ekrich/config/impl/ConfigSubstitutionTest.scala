@@ -10,7 +10,7 @@ import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigResolveOptions
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigFactory
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class ConfigSubstitutionTest extends TestUtils {
 
@@ -167,7 +167,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def missingInArray(): Unit = {
-    import scala.collection.JavaConverters._
 
     val obj = parseObject("""
     a : [ ${?missing}, ${?also.missing} ]
@@ -180,7 +179,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def missingInObject(): Unit = {
-    import scala.collection.JavaConverters._
 
     val obj = parseObject(
       """
@@ -761,7 +759,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def complexResolve(): Unit = {
-    import scala.collection.JavaConverters._
 
     val resolved = resolveWithoutFallbacks(substComplexObject)
 
@@ -861,7 +858,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def fallbackToEnv(): Unit = {
-    import scala.collection.JavaConverters._
 
     val resolved = resolve(substEnvVarObject)
 
@@ -884,7 +880,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def noFallbackToEnvIfValuesAreNull(): Unit = {
-    import scala.collection.JavaConverters._
 
     // create a fallback object with all the env var names
     // set to null. we want to be sure this blocks
@@ -907,7 +902,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def fallbackToEnvWhenRelativized(): Unit = {
-    import scala.collection.JavaConverters._
 
     val values = new java.util.HashMap[String, AbstractConfigValue]()
 
@@ -971,7 +965,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def optionalVanishesFromArray(): Unit = {
-    import scala.collection.JavaConverters._
     val obj      = parseObject("""{ a : [ 1, 2, 3, ${?NOT_HERE} ] }""")
     val resolved = resolve(obj)
     assertEquals(Seq(1, 2, 3), resolved.getIntList("a").asScala)
@@ -979,7 +972,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def optionalUsedInArray(): Unit = {
-    import scala.collection.JavaConverters._
     val obj      = parseObject("""{ HERE: 4, a : [ 1, 2, 3, ${?HERE} ] }""")
     val resolved = resolve(obj)
     assertEquals(Seq(1, 2, 3, 4), resolved.getIntList("a").asScala)

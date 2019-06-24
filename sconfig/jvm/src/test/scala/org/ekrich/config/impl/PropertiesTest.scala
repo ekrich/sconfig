@@ -6,6 +6,7 @@ package org.ekrich.config.impl
 import org.junit.Assert._
 import org.junit._
 import java.util.{Date, Properties}
+import scala.jdk.CollectionConverters._
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigParseOptions
 import org.ekrich.config.ConfigFactory
@@ -99,7 +100,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeys(): Unit = {
-    import scala.collection.JavaConverters._
 
     val props = new Properties()
     props.setProperty("a.0", "0")
@@ -117,7 +117,7 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeysWithGaps(): Unit = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val props = new Properties()
     props.setProperty("a.1", "0")
@@ -133,7 +133,7 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeysWithNoise(): Unit = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val props = new Properties()
     props.setProperty("a.-1", "-1")
@@ -153,7 +153,7 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def noNumericKeysAsListFails(): Unit = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val props = new Properties()
     props.setProperty("a.bar", "0")
@@ -168,7 +168,7 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeysAndMerge(): Unit = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val props = new Properties()
     props.setProperty("a.0", "0")

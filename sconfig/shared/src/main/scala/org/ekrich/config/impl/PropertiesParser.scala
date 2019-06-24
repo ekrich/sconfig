@@ -9,7 +9,7 @@ import java.{util => ju}
 import java.util.Collections
 import java.util.Comparator
 import java.util.Properties
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 

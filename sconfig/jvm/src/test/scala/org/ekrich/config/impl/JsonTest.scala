@@ -10,6 +10,7 @@ import org.junit._
 
 import spray.json._
 
+import scala.jdk.CollectionConverters._
 import org.ekrich.config._
 
 class JsonTest extends TestUtils {
@@ -29,7 +30,6 @@ class JsonTest extends TestUtils {
   }
 
   private[this] def toJson(value: ConfigValue): JsValue = {
-    import scala.collection.JavaConverters._
 
     value match {
       case v: ConfigObject =>
@@ -56,7 +56,6 @@ class JsonTest extends TestUtils {
   }
 
   private[this] def fromJson(jsonValue: JsValue): AbstractConfigValue = {
-    import scala.collection.JavaConverters._
 
     jsonValue match {
       case JsObject(fields) =>

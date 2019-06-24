@@ -1,6 +1,7 @@
 package org.ekrich.config.impl
 
 import java.{util => ju}
+import scala.jdk.CollectionConverters._
 
 final class ConfigNodeInclude(
     final val children: ju.Collection[AbstractConfigNode],
@@ -10,7 +11,6 @@ final class ConfigNodeInclude(
 
   override def tokens: ju.Collection[Token] = {
     val tokens = new ju.ArrayList[Token]
-    import scala.collection.JavaConverters._
     for (child <- children.asScala) {
       tokens.addAll(child.tokens)
     }
@@ -18,7 +18,6 @@ final class ConfigNodeInclude(
   }
 
   private[impl] def name: String = {
-    import scala.collection.JavaConverters._
     for (n <- children.asScala) {
       if (n.isInstanceOf[ConfigNodeSimpleValue])
         return Tokens

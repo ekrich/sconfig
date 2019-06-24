@@ -26,7 +26,7 @@ import java.util.concurrent.Callable
 import org.ekrich.config._
 import scala.reflect.ClassTag
 import scala.reflect.classTag
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import language.implicitConversions
 
 abstract trait TestUtils {
@@ -295,23 +295,20 @@ abstract trait TestUtils {
 
   // origin() is not part of value equality but is serialized, so
   // we check it separately
-  protected def checkEqualOrigins[T](a: T, b: T): Unit = {
-    import scala.collection.JavaConverters._
-    (a, b) match {
-      case (obj1: ConfigObject, obj2: ConfigObject) =>
-        assertEquals(obj1.origin, obj2.origin)
-        for (e <- obj1.entrySet().asScala) {
-          checkEqualOrigins(e.getValue(), obj2.get(e.getKey()))
-        }
-      case (list1: ConfigList, list2: ConfigList) =>
-        assertEquals(list1.origin, list2.origin)
-        for ((v1, v2) <- list1.asScala zip list2.asScala) {
-          checkEqualOrigins(v1, v2)
-        }
-      case (value1: ConfigValue, value2: ConfigValue) =>
-        assertEquals(value1.origin, value2.origin)
-      case _ =>
-    }
+  protected def checkEqualOrigins[T](a: T, b: T): Unit = (a, b) match {
+    case (obj1: ConfigObject, obj2: ConfigObject) =>
+      assertEquals(obj1.origin, obj2.origin)
+      for (e <- obj1.entrySet().asScala) {
+        checkEqualOrigins(e.getValue(), obj2.get(e.getKey()))
+      }
+    case (list1: ConfigList, list2: ConfigList) =>
+      assertEquals(list1.origin, list2.origin)
+      for ((v1, v2) <- list1.asScala zip list2.asScala) {
+        checkEqualOrigins(v1, v2)
+      }
+    case (value1: ConfigValue, value2: ConfigValue) =>
+      assertEquals(value1.origin, value2.origin)
+    case _ =>
   }
 
   def fakeOrigin() = {
@@ -649,7 +646,6 @@ abstract trait TestUtils {
 
   protected def substInString(ref: String,
                               optional: Boolean): ConfigConcatenation = {
-    import scala.collection.JavaConverters._
     val path = Path.newPath(ref)
     val pieces = List[AbstractConfigValue](stringValue("start<"),
                                            subst(ref, optional),
@@ -714,7 +710,6 @@ abstract trait TestUtils {
   }
 
   def tokenizeAsList(s: String) = {
-    import scala.collection.JavaConverters._
     tokenize(s).asScala.toList
   }
 
@@ -813,7 +808,6 @@ abstract trait TestUtils {
                                   val additions: Map[String, URL])
       extends ClassLoader(parent) {
     override def findResources(name: String) = {
-      import scala.collection.JavaConverters._
       val other = super.findResources(name).asScala
       additions
         .get(name)
@@ -861,7 +855,6 @@ abstract trait TestUtils {
         printIndented(indent, "- " + a.valueType)
         printIndented(indent, "+ " + b.valueType)
       } else if (a.valueType == ConfigValueType.OBJECT) {
-        import scala.collection.JavaConverters._
         printIndented(indent, "OBJECT")
         val aS = a.asInstanceOf[ConfigObject].asScala
         val bS = b.asInstanceOf[ConfigObject].asScala

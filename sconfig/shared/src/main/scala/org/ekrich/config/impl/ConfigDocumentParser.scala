@@ -204,7 +204,7 @@ object ConfigDocumentParser {
       // all succeeding tokens
       if (valueCount < 2) {
         var value: AbstractConfigNodeValue = null
-        import scala.collection.JavaConverters._
+        import scala.jdk.CollectionConverters._
         for (node <- values.asScala) {
           if (node.isInstanceOf[AbstractConfigNodeValue])
             value = node.asInstanceOf[AbstractConfigNodeValue]
