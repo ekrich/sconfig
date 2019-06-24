@@ -117,7 +117,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeysWithGaps(): Unit = {
-    import scala.jdk.CollectionConverters._
 
     val props = new Properties()
     props.setProperty("a.1", "0")
@@ -133,7 +132,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeysWithNoise(): Unit = {
-    import scala.jdk.CollectionConverters._
 
     val props = new Properties()
     props.setProperty("a.-1", "-1")
@@ -153,7 +151,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def noNumericKeysAsListFails(): Unit = {
-    import scala.jdk.CollectionConverters._
 
     val props = new Properties()
     props.setProperty("a.bar", "0")
@@ -168,7 +165,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeysAndMerge(): Unit = {
-    import scala.jdk.CollectionConverters._
 
     val props = new Properties()
     props.setProperty("a.0", "0")
