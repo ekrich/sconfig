@@ -167,8 +167,7 @@ class PublicApiTest extends TestUtils {
   def fromJavaMap(): Unit = {
     val emptyMapValue = Collections.emptyMap[String, AbstractConfigValue]
     val aMapValue = Map("a" -> 1, "b" -> 2, "c" -> 3)
-      .mapValues(intValue(_): AbstractConfigValue)
-      .toMap
+    .transform((_, v) => (intValue(v): AbstractConfigValue))
       .asJava
     testFromValue(new SimpleConfigObject(fakeOrigin(), emptyMapValue),
                   Collections.emptyMap[String, Int])
@@ -242,8 +241,7 @@ class PublicApiTest extends TestUtils {
     val aMapValue = new SimpleConfigObject(
       fakeOrigin(),
       Map("a" -> 1, "b" -> 2, "c" -> 3)
-        .mapValues(intValue(_): AbstractConfigValue)
-        .toMap
+      .transform((_, v) => (intValue(v): AbstractConfigValue))
         .asJava)
 
     testFromValue(aMapValue, aMapValue)
@@ -290,8 +288,7 @@ class PublicApiTest extends TestUtils {
     // first the same tests as with fromMap, but use parseMap
     val emptyMapValue = Collections.emptyMap[String, AbstractConfigValue]
     val aMapValue = Map("a" -> 1, "b" -> 2, "c" -> 3)
-      .mapValues(intValue(_): AbstractConfigValue)
-      .toMap
+      .transform((_, v) => (intValue(v): AbstractConfigValue))
       .asJava
     testFromPathMap(new SimpleConfigObject(fakeOrigin(), emptyMapValue),
                     Collections.emptyMap[String, Object])
