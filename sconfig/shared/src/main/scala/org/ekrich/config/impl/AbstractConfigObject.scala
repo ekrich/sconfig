@@ -15,6 +15,7 @@ import org.ekrich.config.ConfigValue
 import org.ekrich.config.ConfigValueType
 
 import scala.annotation.varargs
+import scala.jdk.CollectionConverters._
 
 object AbstractConfigObject {
 
@@ -41,7 +42,6 @@ object AbstractConfigObject {
     val origins                   = new ju.ArrayList[ConfigOrigin]
     var firstOrigin: ConfigOrigin = null
     var numMerged                 = 0
-    import scala.collection.JavaConverters._
     for (v <- stack.asScala) {
       if (firstOrigin == null) firstOrigin = v.origin
       if (v.isInstanceOf[AbstractConfigObject] && (v
@@ -65,7 +65,6 @@ object AbstractConfigObject {
 
   @varargs private[impl] def mergeOrigins(
       stack: AbstractConfigObject*): ConfigOrigin = {
-    import scala.collection.JavaConverters._
     val javaColl = stack.asJavaCollection
     mergeOrigins(javaColl)
     //throws NotPossibleToResolve

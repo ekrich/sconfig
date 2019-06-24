@@ -18,7 +18,7 @@ import java.io.ObjectOutput
 import java.io.ObjectStreamException
 import java.{util => ju}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 
 import org.ekrich.config.Config

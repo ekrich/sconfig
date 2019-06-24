@@ -2,6 +2,7 @@ package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
+import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
@@ -86,7 +87,6 @@ object ConfigConcatenation {
     else {
       val flattened =
         new ju.ArrayList[AbstractConfigValue](pieces.size)
-      import scala.collection.JavaConverters._
       for (v <- pieces.asScala) {
         if (v.isInstanceOf[ConfigConcatenation])
           flattened.addAll(v.asInstanceOf[ConfigConcatenation].pieces)
@@ -94,7 +94,6 @@ object ConfigConcatenation {
       }
       val consolidated =
         new ju.ArrayList[AbstractConfigValue](flattened.size)
-      import scala.collection.JavaConverters._
       for (v <- flattened.asScala) {
         if (consolidated.isEmpty) consolidated.add(v) else join(consolidated, v)
       }
@@ -122,7 +121,6 @@ final class ConfigConcatenation(origin: ConfigOrigin,
     throw new ConfigException.BugOrBroken(
       "Created concatenation with less than 2 items: " + this)
   var hadUnmergeable = false
-  import scala.collection.JavaConverters._
   for (p <- pieces.asScala) {
     if (p.isInstanceOf[ConfigConcatenation])
       throw new ConfigException.BugOrBroken(
@@ -158,8 +156,6 @@ final class ConfigConcatenation(origin: ConfigOrigin,
   override def resolveSubstitutions(
       context: ResolveContext,
       source: ResolveSource): ResolveResult[_ <: AbstractConfigValue] = {
-
-    import scala.collection.JavaConverters._
 
     if (ConfigImpl.traceSubstitutionsEnabled) {
       val indent = context.depth + 2
@@ -224,7 +220,6 @@ final class ConfigConcatenation(origin: ConfigOrigin,
   override def relativized(prefix: Path): ConfigConcatenation = {
     val newPieces =
       new ju.ArrayList[AbstractConfigValue]
-    import scala.collection.JavaConverters._
     for (p <- pieces.asScala) {
       newPieces.add(p.relativized(prefix))
     }
@@ -248,7 +243,6 @@ final class ConfigConcatenation(origin: ConfigOrigin,
                       indent: Int,
                       atRoot: Boolean,
                       options: ConfigRenderOptions): Unit = {
-    import scala.collection.JavaConverters._
     for (p <- pieces.asScala) {
       p.render(sb, indent, atRoot, options)
     }

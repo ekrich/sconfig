@@ -31,7 +31,7 @@ object Path {
   def newPath(path: String): Path = PathParser.parsePath(path)
 
   private def convert(i: ju.Iterator[Path]): Seq[String] = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     i.asScala.toSeq.map(_.first)
   }
 

@@ -340,7 +340,7 @@ object ConfigException {
     private def makeMessage(
         problems: jl.Iterable[ConfigException.ValidationProblem]): String = {
       val sb = new StringBuilder
-      import scala.collection.JavaConverters._
+      import scala.jdk.CollectionConverters._
       for (p <- problems.asScala) {
         sb.append(p.origin.description)
         sb.append(": ")

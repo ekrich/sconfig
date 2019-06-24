@@ -5,7 +5,7 @@ package org.ekrich.config.impl
 
 import org.junit.Assert._
 import org.junit._
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 
 class PathTest extends TestUtils {

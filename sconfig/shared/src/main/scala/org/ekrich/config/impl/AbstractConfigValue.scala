@@ -63,7 +63,7 @@ object AbstractConfigValue {
 
   def hasDescendantInList(list: ju.List[AbstractConfigValue],
                           descendant: AbstractConfigValue): Boolean = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     for (v <- list.asScala) {
       if (v == descendant) return true
     }

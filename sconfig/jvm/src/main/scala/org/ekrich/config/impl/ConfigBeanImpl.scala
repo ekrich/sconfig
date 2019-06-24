@@ -13,6 +13,7 @@ import java.{util => ju}
 import java.{lang => jl}
 import java.time.Duration
 import scala.reflect.ClassTag
+import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigObject
@@ -48,7 +49,6 @@ object ConfigBeanImpl {
     val configProps =
       new ju.HashMap[String, AbstractConfigValue]
     val originalNames = new ju.HashMap[String, String]
-    import scala.collection.JavaConverters._
     for (configProp <- config.root.entrySet.asScala) {
       val originalName = configProp.getKey
       val camelName    = ConfigImplUtil.toCamelCase(originalName)
@@ -84,7 +84,6 @@ object ConfigBeanImpl {
       // Try to throw all validation issues at once (this does not comprehensively
       // find every issue, but it should find common ones).
       val problems = new ju.ArrayList[ConfigException.ValidationProblem]
-      import scala.collection.JavaConverters._
       for (beanProp <- beanProps.asScala) {
         val setter: Method           = beanProp.getWriteMethod
         val parameterClass: Class[_] = setter.getParameterTypes()(0)
@@ -105,7 +104,6 @@ object ConfigBeanImpl {
         throw new ConfigException.ValidationFailed(problems)
       // Fill in the bean instance
       val bean = clazz.getConstructor().newInstance()
-      import scala.collection.JavaConverters._
       for (beanProp <- beanProps.asScala) {
         breakable {
           val setter         = beanProp.getWriteMethod
@@ -258,7 +256,6 @@ object ConfigBeanImpl {
       val beanList = new ju.ArrayList[AnyRef]
       val configList: ju.List[_ <: Config] =
         config.getConfigList(configPropName)
-      import scala.collection.JavaConverters._
       for (listMember <- configList.asScala) {
         beanList.add(
           createInternal(listMember, elementType.asInstanceOf[Class[T]]))

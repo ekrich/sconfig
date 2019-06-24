@@ -9,7 +9,7 @@ import java.io.{File, StringReader}
 
 import org.ekrich.config._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import java.net.URL
 import java.util.Properties
 

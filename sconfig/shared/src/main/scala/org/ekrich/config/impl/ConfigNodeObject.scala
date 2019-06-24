@@ -2,7 +2,7 @@ package org.ekrich.config.impl
 
 import org.ekrich.config.ConfigSyntax
 import java.{util => ju}
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 
 final class ConfigNodeObject private[impl] (

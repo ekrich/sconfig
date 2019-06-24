@@ -159,7 +159,7 @@ object Tokens {
         this.value.iterator) + "}"
     override def toString(): String = {
       val sb = new StringBuilder
-      import scala.collection.JavaConverters._
+      import scala.jdk.CollectionConverters._
       for (t <- value.asScala) {
         sb.append(t.toString)
       }

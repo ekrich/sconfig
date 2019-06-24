@@ -8,7 +8,7 @@ import org.junit._
 import org.ekrich.config.ConfigValue
 import java.util.Collections
 import java.net.URL
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigList
 import org.ekrich.config.ConfigException
@@ -981,7 +981,6 @@ class ConfigValueTest extends TestUtils {
 
   @Test
   def configOriginsInSerialization(): Unit = {
-    import scala.collection.JavaConverters._
     val bases = Seq(
       SimpleConfigOrigin.newSimple("foo"),
       SimpleConfigOrigin.newFile("/tmp/blahblah"),

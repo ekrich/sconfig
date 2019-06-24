@@ -5,7 +5,7 @@ package org.ekrich.config.impl
 
 import org.ekrich.config.ConfigException
 import java.{util => ju}
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
     extends AbstractConfigNode {

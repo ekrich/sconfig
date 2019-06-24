@@ -14,7 +14,7 @@ final class ConfigNodeRoot private[impl] (
     throw new ConfigException.BugOrBroken("Tried to indent the root object")
 
   private[impl] def value: ConfigNodeComplexValue = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     for (node <- children.asScala) {
       if (node.isInstanceOf[ConfigNodeComplexValue])
         return node.asInstanceOf[ConfigNodeComplexValue]

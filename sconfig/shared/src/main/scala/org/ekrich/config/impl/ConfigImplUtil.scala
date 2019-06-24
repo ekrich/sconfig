@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream
 import java.net.URISyntaxException
 import java.net.URL
 import java.{util => ju}
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin

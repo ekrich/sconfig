@@ -16,7 +16,7 @@ import java.time.temporal.TemporalAmount
 import java.{util => ju}
 import java.util.concurrent.TimeUnit
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigException

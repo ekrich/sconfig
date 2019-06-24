@@ -10,7 +10,7 @@ import org.junit._
 import org.ekrich.config._
 import java.util.concurrent.TimeUnit
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigResolveOptions
 import java.util.concurrent.TimeUnit.{
   DAYS,
