@@ -117,11 +117,11 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
     sharedJvmNativeSource,
     sharedCollectSource,
-    nativeLinkStubs := true,
+    nativeLinkStubs := true
   )
   .jsSettings(
     libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5",
-    sharedCollectSource,
+    sharedCollectSource
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
@@ -144,7 +144,7 @@ lazy val sconfigJVM = sconfig.jvm
 lazy val sconfigNative = sconfig.native
   .settings(
     logLevel := Level.Info, // Info or Debug
-    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.6.9" % Test,
+    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.7.1" % Test,
     testFrameworks += new TestFramework("utest.runner.Framework")
   )
 

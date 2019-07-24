@@ -706,45 +706,6 @@ trait Config extends ConfigMergeable {
   def getMemorySize(path: String): ConfigMemorySize
 
   /**
-   * Get value as a duration in milliseconds. If the value is already a
-   * number, then it's left alone; if it's a string, it's parsed understanding
-   * units suffixes like "10m" or "5ns" as documented in the <a
-   * href="https://github.com/lightbend/config/blob/master/HOCON.md">the
-   * spec</a>.
-   *
-   * @deprecated As of release 1.1, replaced by { @link #getDuration(String, TimeUnit)}
-   * @param path
-   * path expression
-   * @return the duration value at the requested path, in milliseconds
-   * @throws ConfigException.Missing
-   * if value is absent or null
-   * @throws ConfigException.WrongType
-   * if value is not convertible to Long or String
-   * @throws ConfigException.BadValue
-   * if value cannot be parsed as a number of milliseconds
-   */
-  @deprecated("", "") def getMilliseconds(path: String): jl.Long
-
-  /**
-   * Get value as a duration in nanoseconds. If the value is already a number
-   * it's taken as milliseconds and converted to nanoseconds. If it's a
-   * string, it's parsed understanding unit suffixes, as for
-   * {@link #getDuration(String, TimeUnit)}.
-   *
-   * @deprecated As of release 1.1, replaced by { @link #getDuration(String, TimeUnit)}
-   * @param path
-   * path expression
-   * @return the duration value at the requested path, in nanoseconds
-   * @throws ConfigException.Missing
-   * if value is absent or null
-   * @throws ConfigException.WrongType
-   * if value is not convertible to Long or String
-   * @throws ConfigException.BadValue
-   * if value cannot be parsed as a number of nanoseconds
-   */
-  @deprecated("", "") def getNanoseconds(path: String): jl.Long
-
-  /**
    * Gets a value as a duration in a specified
    * {@link java.util.concurrent.TimeUnit TimeUnit}. If the value is already a
    * number, then it's taken as milliseconds and then converted to the
@@ -1024,20 +985,6 @@ trait Config extends ConfigMergeable {
    * if value is not convertible to a list of memory sizes
    */
   def getMemorySizeList(path: String): ju.List[ConfigMemorySize]
-
-  /**
-   * @deprecated As of release 1.1, replaced by { @link #getDurationList(String, TimeUnit)}
-   * @param path the path
-   * @return list of millisecond values
-   */
-  @deprecated("", "") def getMillisecondsList(path: String): ju.List[jl.Long]
-
-  /**
-   * @deprecated As of release 1.1, replaced by { @link #getDurationList(String, TimeUnit)}
-   * @param path the path
-   * @return list of nanosecond values
-   */
-  @deprecated("", "") def getNanosecondsList(path: String): ju.List[jl.Long]
 
   /**
    * Gets a list, converting each value in the list to a duration, using the

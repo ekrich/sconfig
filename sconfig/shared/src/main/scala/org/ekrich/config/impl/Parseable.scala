@@ -615,7 +615,8 @@ abstract class Parseable protected (
       ConfigDocumentParser.parse(tokens, origin, finalOptions),
       finalOptions)
   }
-  def parse(): ConfigObject                           = Parseable.forceParsedToObject(parseValue(options))
+  def parse(): ConfigObject =
+    Parseable.forceParsedToObject(parseValue(options))
   def parseConfigDocument(): ConfigDocument           = parseDocument(options)
   private[impl] def parseValue(): AbstractConfigValue = parseValue(options)
   override final def origin(): ConfigOrigin           = initialOrigin

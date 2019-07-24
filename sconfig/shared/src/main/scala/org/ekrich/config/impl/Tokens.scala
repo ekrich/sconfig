@@ -32,8 +32,9 @@ object Tokens {
 
   private[Tokens] class Line private[impl] (origin: ConfigOrigin)
       extends Token(TokenType.NEWLINE, origin) {
-    override def toString: String              = "'\\n'@" + lineNumber
-    override def canEqual(other: Any): Boolean = other.isInstanceOf[Tokens.Line]
+    override def toString: String = "'\\n'@" + lineNumber
+    override def canEqual(other: Any): Boolean =
+      other.isInstanceOf[Tokens.Line]
     override def equals(other: Any): Boolean =
       super.equals(other) && other
         .asInstanceOf[Tokens.Line]
@@ -176,7 +177,8 @@ object Tokens {
 
   def isValue(token: Token) = token.isInstanceOf[Tokens.Value]
   def getValue(token: Token) =
-    if (token.isInstanceOf[Tokens.Value]) token.asInstanceOf[Tokens.Value].value
+    if (token.isInstanceOf[Tokens.Value])
+      token.asInstanceOf[Tokens.Value].value
     else
       throw new ConfigException.BugOrBroken(
         "tried to get value of non-value token " + token)

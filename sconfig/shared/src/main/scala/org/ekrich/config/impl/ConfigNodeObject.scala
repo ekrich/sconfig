@@ -255,7 +255,8 @@ final class ConfigNodeObject private[impl] (
       newObjectNodes.add(new ConfigNodeSingleToken(Tokens.CLOSE_CURLY))
       val newObject = new ConfigNodeObject(newObjectNodes)
       newNodes.add(
-        newObject.addValueOnPath(desiredPath.subPath(1), indentedValue, flavor))
+        newObject
+          .addValueOnPath(desiredPath.subPath(1), indentedValue, flavor))
     }
     // Combine these two cases so that we only have to iterate once
     if ((flavor == ConfigSyntax.JSON) || startsWithBrace || sameLine) {
@@ -267,7 +268,9 @@ final class ConfigNodeObject private[impl] (
                 .get(i)
                 .isInstanceOf[ConfigNodeField]) {
             if (i + 1 >= childrenCopy.size ||
-                !(childrenCopy.get(i + 1).isInstanceOf[ConfigNodeSingleToken] &&
+                !(childrenCopy
+                  .get(i + 1)
+                  .isInstanceOf[ConfigNodeSingleToken] &&
                   childrenCopy
                     .get(i + 1)
                     .asInstanceOf[ConfigNodeSingleToken]

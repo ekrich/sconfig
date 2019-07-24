@@ -704,7 +704,8 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     val v = find(path, ConfigValueType.NUMBER)
     v.asInstanceOf[ConfigNumber]
   }
-  override def getNumber(path: String): Number = getConfigNumber(path).unwrapped
+  override def getNumber(path: String): Number =
+    getConfigNumber(path).unwrapped
   override def getInt(path: String): Int = {
     val n = getConfigNumber(path)
     n.intValueRangeChecked(path)
@@ -747,10 +748,6 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
   }
   override def getMemorySize(path: String): ConfigMemorySize =
     ConfigMemorySize.ofBytes(getBytes(path))
-  @deprecated("", "") override def getMilliseconds(path: String): jl.Long =
-    getDuration(path, TimeUnit.MILLISECONDS)
-  @deprecated("", "") override def getNanoseconds(path: String): jl.Long =
-    getDuration(path, TimeUnit.NANOSECONDS)
   override def getDuration(path: String, unit: TimeUnit): Long = {
     val v = find(path, ConfigValueType.STRING)
     val result = unit.convert(
@@ -960,12 +957,6 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     }
     builder
   }
-  @deprecated("", "") override def getMillisecondsList(
-      path: String): ju.List[jl.Long] =
-    getDurationList(path, TimeUnit.MILLISECONDS)
-  @deprecated("", "") override def getNanosecondsList(
-      path: String): ju.List[jl.Long] =
-    getDurationList(path, TimeUnit.NANOSECONDS)
   override def toFallbackValue: AbstractConfigObject = `object`
   override def withFallback(other: ConfigMergeable): SimpleConfig = { // this can return "this" if the withFallback doesn't need a new
     // ConfigObject

@@ -95,7 +95,8 @@ object ConfigConcatenation {
       val consolidated =
         new ju.ArrayList[AbstractConfigValue](flattened.size)
       for (v <- flattened.asScala) {
-        if (consolidated.isEmpty) consolidated.add(v) else join(consolidated, v)
+        if (consolidated.isEmpty) consolidated.add(v)
+        else join(consolidated, v)
       }
       consolidated
     }

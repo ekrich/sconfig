@@ -165,7 +165,8 @@ object ConfigBeanImpl {
     else if ((parameterClass == classOf[jl.Long]) || (parameterClass == classOf[
                Long]))
       config.getLong(configPropName)
-    else if (parameterClass == classOf[String]) config.getString(configPropName)
+    else if (parameterClass == classOf[String])
+      config.getString(configPropName)
     else if (parameterClass == classOf[Duration])
       config.getDuration(configPropName)
     else if (parameterClass == classOf[ConfigMemorySize])
@@ -235,7 +236,8 @@ object ConfigBeanImpl {
     else if (elementType == classOf[Integer]) config.getIntList(configPropName)
     else if (elementType == classOf[jl.Double])
       config.getDoubleList(configPropName)
-    else if (elementType == classOf[jl.Long]) config.getLongList(configPropName)
+    else if (elementType == classOf[jl.Long])
+      config.getLongList(configPropName)
     else if (elementType == classOf[String])
       config.getStringList(configPropName)
     else if (elementType == classOf[Duration])
@@ -247,7 +249,8 @@ object ConfigBeanImpl {
       config.getConfigList(configPropName)
     else if (elementType == classOf[ConfigObject])
       config.getObjectList(configPropName)
-    else if (elementType == classOf[ConfigValue]) config.getList(configPropName)
+    else if (elementType == classOf[ConfigValue])
+      config.getList(configPropName)
     else if (elementType.asInstanceOf[Class[_]].isEnum) {
       val enumValues =
         config.getEnumList(elementType.asInstanceOf[Class[T]], configPropName)

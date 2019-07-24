@@ -671,11 +671,11 @@ class ConfigTest extends TestUtils {
     }
 
     intercept[ConfigException.Null] {
-      conf.getMilliseconds("nulls.null")
+      conf.getDuration("nulls.null", TimeUnit.MILLISECONDS)
     }
 
     intercept[ConfigException.Null] {
-      conf.getNanoseconds("nulls.null")
+      conf.getDuration("nulls.null", TimeUnit.NANOSECONDS)
     }
 
     intercept[ConfigException.Null] {
@@ -704,11 +704,11 @@ class ConfigTest extends TestUtils {
     }
 
     intercept[ConfigException.WrongType] {
-      conf.getMilliseconds("ints")
+      conf.getDuration("ints", TimeUnit.MILLISECONDS)
     }
 
     intercept[ConfigException.WrongType] {
-      conf.getNanoseconds("ints")
+      conf.getDuration("ints", TimeUnit.NANOSECONDS)
     }
 
     intercept[ConfigException.WrongType] {
@@ -735,11 +735,11 @@ class ConfigTest extends TestUtils {
     // should throw BadValue on things that don't parse
     // as durations and sizes
     intercept[ConfigException.BadValue] {
-      conf.getMilliseconds("strings.a")
+      conf.getDuration("strings.a", TimeUnit.MILLISECONDS)
     }
 
     intercept[ConfigException.BadValue] {
-      conf.getNanoseconds("strings.a")
+      conf.getDuration("strings.a", TimeUnit.NANOSECONDS)
     }
 
     intercept[ConfigException.BadValue] {
@@ -798,21 +798,37 @@ class ConfigTest extends TestUtils {
 
     // should get durations
     def asNanos(secs: Int) = TimeUnit.SECONDS.toNanos(secs)
-    assertEquals(1000L, conf.getMilliseconds("durations.second"))
-    assertEquals(asNanos(1), conf.getNanoseconds("durations.second"))
-    assertEquals(1000L, conf.getMilliseconds("durations.secondAsNumber"))
-    assertEquals(asNanos(1), conf.getNanoseconds("durations.secondAsNumber"))
-    assertEquals(Seq(1000L, 2000L, 3000L, 4000L),
-                 conf.getMillisecondsList("durations.secondsList").asScala)
-    assertEquals(Seq(asNanos(1), asNanos(2), asNanos(3), asNanos(4)),
-                 conf.getNanosecondsList("durations.secondsList").asScala)
-    assertEquals(500L, conf.getMilliseconds("durations.halfSecond"))
+    assertEquals(1000L,
+                 conf.getDuration("durations.second", TimeUnit.MILLISECONDS))
+    assertEquals(asNanos(1),
+                 conf.getDuration("durations.second", TimeUnit.NANOSECONDS))
+    assertEquals(
+      1000L,
+      conf.getDuration("durations.secondAsNumber", TimeUnit.MILLISECONDS))
+    assertEquals(
+      asNanos(1),
+      conf.getDuration("durations.secondAsNumber", TimeUnit.NANOSECONDS))
+    assertEquals(
+      Seq(1000L, 2000L, 3000L, 4000L),
+      conf
+        .getDurationList("durations.secondsList", TimeUnit.MILLISECONDS)
+        .asScala)
+    assertEquals(
+      Seq(asNanos(1), asNanos(2), asNanos(3), asNanos(4)),
+      conf
+        .getDurationList("durations.secondsList", TimeUnit.NANOSECONDS)
+        .asScala)
+    assertEquals(
+      500L,
+      conf.getDuration("durations.halfSecond", TimeUnit.MILLISECONDS))
     assertEquals(4878955355435272204L,
-                 conf.getNanoseconds("durations.largeNanos"))
-    assertEquals(4878955355435272204L,
-                 conf.getNanoseconds("durations.plusLargeNanos"))
-    assertEquals(-4878955355435272204L,
-                 conf.getNanoseconds("durations.minusLargeNanos"))
+                 conf.getDuration("durations.largeNanos", TimeUnit.NANOSECONDS))
+    assertEquals(
+      4878955355435272204L,
+      conf.getDuration("durations.plusLargeNanos", TimeUnit.NANOSECONDS))
+    assertEquals(
+      -4878955355435272204L,
+      conf.getDuration("durations.minusLargeNanos", TimeUnit.NANOSECONDS))
 
     // get durations as java.time.Duration
     assertEquals(1000L, conf.getDuration("durations.second").toMillis)
@@ -1145,7 +1161,8 @@ class ConfigTest extends TestUtils {
 
   @Test
   def test09DelayedMerge(): Unit = {
-    val conf = ConfigFactory.parseResources(classOf[ConfigTest], "/test09.conf")
+    val conf =
+      ConfigFactory.parseResources(classOf[ConfigTest], "/test09.conf")
     assertEquals(classOf[ConfigDelayedMergeObject].getSimpleName,
                  conf.root.get("a").getClass.getSimpleName)
     assertEquals(classOf[ConfigDelayedMerge].getSimpleName,
@@ -1167,7 +1184,8 @@ class ConfigTest extends TestUtils {
 
   @Test
   def test10DelayedMergeRelativizing(): Unit = {
-    val conf     = ConfigFactory.parseResources(classOf[ConfigTest], "/test10.conf")
+    val conf =
+      ConfigFactory.parseResources(classOf[ConfigTest], "/test10.conf")
     val resolved = conf.resolve
     assertEquals(3, resolved.getInt("foo.a.c"))
     assertEquals(5, resolved.getInt("foo.b"))

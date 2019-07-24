@@ -327,7 +327,8 @@ abstract trait TestUtils {
       ParseTest(jsonBehaviorUnexpected, false, test)
     }
   }
-  implicit def string2jsontest(test: String): ParseTest = ParseTest(false, test)
+  implicit def string2jsontest(test: String): ParseTest =
+    ParseTest(false, test)
 
   // note: it's important to put {} or [] at the root if you
   // want to test "invalidity reasons" other than "wrong root"
@@ -621,7 +622,8 @@ abstract trait TestUtils {
   protected def nullValue()           = new ConfigNull(fakeOrigin())
   protected def stringValue(s: String) =
     new ConfigString.Quoted(fakeOrigin(), s)
-  protected def doubleValue(d: Double) = new ConfigDouble(fakeOrigin(), d, null)
+  protected def doubleValue(d: Double) =
+    new ConfigDouble(fakeOrigin(), d, null)
 
   protected def parseObject(s: String) = {
     parseConfig(s).root
@@ -669,7 +671,8 @@ abstract trait TestUtils {
   def tokenLine(line: Int)   = Tokens.newLine(fakeOrigin.withLineNumber(line))
   def tokenCommentDoubleSlash(text: String) =
     Tokens.newCommentDoubleSlash(fakeOrigin(), text)
-  def tokenCommentHash(text: String) = Tokens.newCommentHash(fakeOrigin(), text)
+  def tokenCommentHash(text: String) =
+    Tokens.newCommentHash(fakeOrigin(), text)
   def tokenWhitespace(text: String) =
     Tokens.newIgnoredWhitespace(fakeOrigin(), text)
 
@@ -927,7 +930,9 @@ abstract trait TestUtils {
   protected def checkValidationException(e: ConfigException.ValidationFailed,
                                          expecteds: Seq[Problem]): Unit = {
     val problems =
-      e.problems.asScala.toIndexedSeq.sortBy(_.path).sortBy(_.origin.lineNumber)
+      e.problems.asScala.toIndexedSeq
+        .sortBy(_.path)
+        .sortBy(_.origin.lineNumber)
 
     //for (problem <- problems)
     //    System.err.println(problem.origin.description() + ": " + problem.path() + ": " + problem.problem())

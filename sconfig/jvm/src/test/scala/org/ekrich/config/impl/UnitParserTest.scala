@@ -126,10 +126,10 @@ class UnitParserTest extends TestUtils {
                  conf.getDuration("foo", TimeUnit.DAYS))
     assertEquals("could get 1d from conf as nanos",
                  dayInNanos,
-                 conf.getNanoseconds("foo"))
+                 conf.getDuration("foo", TimeUnit.NANOSECONDS))
     assertEquals("could get 1d from conf as millis",
                  TimeUnit.DAYS.toMillis(1),
-                 conf.getMilliseconds("foo"))
+                 conf.getDuration("foo", TimeUnit.MILLISECONDS))
   }
 
   @Test

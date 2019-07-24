@@ -202,7 +202,8 @@ object ConfigParser {
         if (node.isInstanceOf[ConfigNodeComment]) {
           lastWasNewline = false
           comments.add(node.asInstanceOf[ConfigNodeComment].commentText)
-        } else if (node.isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
+        } else if (node
+                     .isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
                      node.asInstanceOf[ConfigNodeSingleToken].token)) {
           lineNumber += 1
           if (lastWasNewline) { // Drop all comments if there was a blank line and start a new comment block
@@ -329,7 +330,8 @@ object ConfigParser {
         if (node.isInstanceOf[ConfigNodeComment]) {
           comments.add(node.asInstanceOf[ConfigNodeComment].commentText)
           lastWasNewLine = false
-        } else if (node.isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
+        } else if (node
+                     .isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
                      node.asInstanceOf[ConfigNodeSingleToken].token)) {
           lineNumber += 1
           if (lastWasNewLine && v == null) comments.clear()

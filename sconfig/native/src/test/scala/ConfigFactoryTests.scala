@@ -6,7 +6,7 @@ import utest._
 object ConfigFactoryTests extends TestSuite {
   println("Testing sconfig for Scala Native")
   val tests = Tests {
-    "load() check system property throws NotImplementedError" - {
+    test("load() check system property throws NotImplementedError") {
 
       // example of how system properties override; note this
       // must be set before the config lib is used
@@ -21,7 +21,7 @@ object ConfigFactoryTests extends TestSuite {
       }
     }
 
-    "parseString(s: String) scalafmt example works" - {
+    test("parseString(s: String) scalafmt example works") {
       val configStr =
         """
           |maxColumn = 100
