@@ -3,7 +3,8 @@ package org.ekrich.config.impl
 final class SubstitutionExpression(val path: Path, val optional: Boolean) {
 
   private[impl] def changePath(newPath: Path) =
-    if (newPath eq path) this else new SubstitutionExpression(newPath, optional)
+    if (newPath eq path) this
+    else new SubstitutionExpression(newPath, optional)
 
   override def toString: String =
     "${" + (if (optional) "?" else "") + path.render + "}"

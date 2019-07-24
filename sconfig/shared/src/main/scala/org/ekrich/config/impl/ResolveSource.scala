@@ -99,9 +99,10 @@ object ResolveSource {
       val next: ResolveSource.Node[T]) {
 
     def this(value: T) = this(value, null)
-    private[impl] def prepend(value: T) = new ResolveSource.Node[T](value, this)
-    private[impl] def head: T           = value
-    private[impl] def tail: Node[T]     = next
+    private[impl] def prepend(value: T) =
+      new ResolveSource.Node[T](value, this)
+    private[impl] def head: T       = value
+    private[impl] def tail: Node[T] = next
     private[impl] def last = {
       var i = this
       while ({ i.next != null }) i = i.next

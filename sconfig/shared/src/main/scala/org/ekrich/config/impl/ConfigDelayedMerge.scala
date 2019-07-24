@@ -80,7 +80,7 @@ object ConfigDelayedMerge {
         sourceForEnd = source.pushParent(replaceable)
       }
       if (ConfigImpl.traceSubstitutionsEnabled)
-        ConfigImpl.trace(newContext.depth, "sourceForEnd      =" + sourceForEnd)
+        ConfigImpl.trace(newContext.depth, "sourceForEnd=" + sourceForEnd)
       if (ConfigImpl.traceSubstitutionsEnabled)
         ConfigImpl.trace(
           newContext.depth,

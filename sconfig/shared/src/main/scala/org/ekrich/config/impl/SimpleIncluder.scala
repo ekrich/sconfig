@@ -212,7 +212,8 @@ object SimpleIncluder {
   }
 
   private[impl] def makeFull(includer: ConfigIncluder) =
-    if (includer.isInstanceOf[FullIncluder]) includer.asInstanceOf[FullIncluder]
+    if (includer.isInstanceOf[FullIncluder])
+      includer.asInstanceOf[FullIncluder]
     else new SimpleIncluder.Proxy(includer)
 }
 

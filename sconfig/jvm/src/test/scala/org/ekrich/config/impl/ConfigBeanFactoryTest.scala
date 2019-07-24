@@ -175,7 +175,10 @@ class ConfigBeanFactoryTest extends TestUtils {
     assertTrue(beanConfig.getOfConfig.iterator().next().isInstanceOf[Config])
     assertEquals(3, beanConfig.getOfConfigObject.size)
     assertTrue(
-      beanConfig.getOfConfigObject.iterator().next().isInstanceOf[ConfigObject])
+      beanConfig.getOfConfigObject
+        .iterator()
+        .next()
+        .isInstanceOf[ConfigObject])
     assertEquals(Set(intValue(1), intValue(2), stringValue("a")),
                  beanConfig.getOfConfigValue.asScala)
     assertEquals(

@@ -120,7 +120,9 @@ object GetSeveralExistingPaths extends App {
 
 object HasPathOnMissing extends App {
   val conf =
-    ConfigFactory.parseString("aaaaa.bbbbb.ccccc.d=42,x=10, y=11, z=12").resolve
+    ConfigFactory
+      .parseString("aaaaa.bbbbb.ccccc.d=42,x=10, y=11, z=12")
+      .resolve
 
   def task(): Unit = {
     if (conf.hasPath("aaaaa.bbbbb.ccccc.e")) {
@@ -136,7 +138,9 @@ object HasPathOnMissing extends App {
 
 object CatchExceptionOnMissing extends App {
   val conf =
-    ConfigFactory.parseString("aaaaa.bbbbb.ccccc.d=42,x=10, y=11, z=12").resolve
+    ConfigFactory
+      .parseString("aaaaa.bbbbb.ccccc.d=42,x=10, y=11, z=12")
+      .resolve
 
   def anotherStackFrame(remaining: Int)(body: () => Unit): Int = {
     if (remaining == 0) {

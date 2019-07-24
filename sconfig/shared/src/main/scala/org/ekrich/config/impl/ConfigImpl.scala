@@ -280,7 +280,8 @@ object ConfigImpl {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
-  def systemPropertiesAsConfig: Config = systemPropertiesAsConfigObject.toConfig
+  def systemPropertiesAsConfig: Config =
+    systemPropertiesAsConfigObject.toConfig
   def reloadSystemPropertiesConfig(): Unit = {
     // ConfigFactory.invalidateCaches() relies on this having the side
     // effect that it drops all caches

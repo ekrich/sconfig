@@ -14,6 +14,7 @@ import equiv03.SomethingInEquiv03
 import java.io.StringReader
 import java.net.URL
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 class PublicApiTest extends TestUtils {
 
@@ -32,7 +33,7 @@ class PublicApiTest extends TestUtils {
     val a     = conf.getInt("ints.fortyTwo")
     val child = conf.getConfig("ints")
     val c     = child.getInt("fortyTwo")
-    val ms    = conf.getMilliseconds("durations.halfSecond")
+    val ms    = conf.getDuration("durations.halfSecond", TimeUnit.MILLISECONDS)
 
     // should have used system variables
     if (System.getenv("HOME") != null)
@@ -641,8 +642,8 @@ class PublicApiTest extends TestUtils {
     // includes.conf has recursive includes in it; here we look it up
     // with a URL
     val included = whatWasIncluded(
-      ConfigFactory.parseURL(resourceFile("/equiv03/includes.conf").toURI.toURL,
-                             _))
+      ConfigFactory
+        .parseURL(resourceFile("/equiv03/includes.conf").toURI.toURL, _))
 
     assertEquals(List("letters/a.conf",
                       "numbers/1.conf",
