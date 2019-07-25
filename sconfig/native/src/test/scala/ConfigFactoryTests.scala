@@ -2,6 +2,7 @@ package test
 
 import org.ekrich.config.ConfigFactory
 import utest._
+import org.ekrich.config.ConfigRenderOptions
 
 object ConfigFactoryTests extends TestSuite {
   println("Testing sconfig for Scala Native")
@@ -37,6 +38,27 @@ object ConfigFactoryTests extends TestSuite {
 
       assert(conf.getInt("maxColumn") == 100)
       assert(conf.getBoolean("project.git") == true)
+    }
+
+    test("resolve() to force substitution") {
+
+      val configStr =
+        """
+          |pattern-default-main = default
+          |core = {
+          |  version: "0.1"
+          |  extends: [
+          |    ${pattern-default-main}
+          |  ]
+          |}
+    """.stripMargin
+
+      val conf = ConfigFactory.parseString(configStr)
+      assert(conf.isResolved == false)
+      val rconf = conf.resolve()
+      assert(rconf.isResolved == true)
+      val pattern = rconf.getList("core.extends").get(0).unwrapped
+      assert(pattern == "default")
     }
   }
 }
