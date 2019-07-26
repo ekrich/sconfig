@@ -2,8 +2,10 @@
 val scalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
   .filter(_.nonEmpty)
   .getOrElse("0.6.28")
-val scalaNativeVersion = sys.env.get("SCALANATIVE_VERSION").getOrElse("0.3.9")
-val crossVer           = "0.6.0"
+val scalaNativeVersion = Option(System.getenv("SCALANATIVE_VERSION"))
+  .filter(_.nonEmpty)
+  .getOrElse("0.3.9")
+val crossVer = "0.6.0"
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
 addSbtPlugin("com.geirsson" % "sbt-ci-release"  % "1.2.6")

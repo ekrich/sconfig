@@ -10,6 +10,10 @@ matrix:
     - os: linux
       dist: trusty
 
+env:
+  - SCALANATIVE_VERSION=0.3.9
+  - SCALANATIVE_VERSION=0.4.0-M2
+
 stages:
 - name: test
 - name: release
