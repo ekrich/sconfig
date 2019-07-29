@@ -103,17 +103,15 @@ object ConfigImpl {
         parseOptions: ConfigParseOptions): ConfigParseable =
       Parseable.newResources(klass, name, parseOptions)
   }
-  def parseResourcesAnySyntax(
-      klass: Class[_],
-      resourceBasename: String,
-      baseOptions: ConfigParseOptions): ConfigObject = {
+  def parseResourcesAnySyntax(klass: Class[_],
+                              resourceBasename: String,
+                              baseOptions: ConfigParseOptions): ConfigObject = {
     val source =
       new ConfigImpl.ClasspathNameSourceWithClass(klass)
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
-  def parseResourcesAnySyntax(
-      resourceBasename: String,
-      baseOptions: ConfigParseOptions): ConfigObject = {
+  def parseResourcesAnySyntax(resourceBasename: String,
+                              baseOptions: ConfigParseOptions): ConfigObject = {
     val source = new ConfigImpl.ClasspathNameSource
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
