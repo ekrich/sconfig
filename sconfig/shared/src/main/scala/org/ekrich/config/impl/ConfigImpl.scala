@@ -103,15 +103,17 @@ object ConfigImpl {
         parseOptions: ConfigParseOptions): ConfigParseable =
       Parseable.newResources(klass, name, parseOptions)
   }
-  def parseResourcesAnySyntax(klass: Class[_],
-                              resourceBasename: String,
-                              baseOptions: ConfigParseOptions): ConfigObject = {
+  def parseResourcesAnySyntax(
+      klass: Class[_],
+      resourceBasename: String,
+      baseOptions: ConfigParseOptions): ConfigObject = {
     val source =
       new ConfigImpl.ClasspathNameSourceWithClass(klass)
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
-  def parseResourcesAnySyntax(resourceBasename: String,
-                              baseOptions: ConfigParseOptions): ConfigObject = {
+  def parseResourcesAnySyntax(
+      resourceBasename: String,
+      baseOptions: ConfigParseOptions): ConfigObject = {
     val source = new ConfigImpl.ClasspathNameSource
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
@@ -257,8 +259,13 @@ object ConfigImpl {
     val systemProperties     = System.getProperties
     val systemPropertiesCopy = new ju.Properties
     systemProperties.synchronized {
-      // See https://github.com/scala/bug/issues/10418
-      (systemPropertiesCopy: ju.Map[AnyRef, AnyRef]).putAll(systemProperties)
+      for (entry <- systemProperties.entrySet().asScala) {
+        // Java 11 introduces 'java.version.date', but we don't want that to
+        // overwrite 'java.version'
+        if (!entry.getKey().toString().startsWith("java.version.")) {
+          systemPropertiesCopy.put(entry.getKey(), entry.getValue());
+        }
+      }
     }
     systemPropertiesCopy
   }
