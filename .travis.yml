@@ -2,9 +2,6 @@ sudo: required
 
 language: scala
 
-jdk:
-  - openjdk8
-
 scala:
   - 2.11.12
 
@@ -22,11 +19,18 @@ jobs:
   include:
   # stage="test" if no stage is specified
   - env: TEST="scalafmt"
+    jdk: openjdk8
     script: ./scripts/scalafmt --test
   - env: TEST="linux"
+    jdk: openjdk8
+    before_install: ./scripts/travis-os-setup.sh
+    script: sbt +test doc
+  - env: TEST="linux"
+    jdk: openjdk11
     before_install: ./scripts/travis-os-setup.sh
     script: sbt +test doc
   - stage: release
+    jdk: openjdk8
     script: sbt ci-release
 
 cache:
