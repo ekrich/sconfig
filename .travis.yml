@@ -28,7 +28,7 @@ jobs:
   - env: TEST="linux"
     jdk: openjdk11
     before_install: ./scripts/travis-os-setup.sh
-    script: sbt +test doc
+    script: sbt +sconfigJVM/test +sconfigJS/test doc # avoid tests on Scala Native due to link error on jdk11
   - stage: release
     jdk: openjdk8
     script: sbt ci-release
