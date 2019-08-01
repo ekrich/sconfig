@@ -144,8 +144,8 @@ lazy val sconfigJVM = sconfig.jvm
 lazy val sconfigNative = sconfig.native
   .settings(
     logLevel := Level.Info, // Info or Debug
-    libraryDependencies += "com.lihaoyi" %%% "utest" % "0.7.1" % Test,
-    testFrameworks += new TestFramework("utest.runner.Framework")
+    libraryDependencies += "com.github.lolgab" %%% "minitest" % "2.5.0-5f3852e" % Test,
+    testFrameworks += new TestFramework("minitest.runner.Framework")
   )
 
 lazy val sconfigJS = sconfig.js
