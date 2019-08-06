@@ -88,7 +88,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jvmSettings(
     libraryDependencies += collectCompatDep.value,
     sharedJvmNativeSource,
-    sharedCollectSource,
     libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-5" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     Compile / compile / javacOptions ++= Seq("-source",
@@ -118,13 +117,11 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
     libraryDependencies += collectCompatDep.value,
     sharedJvmNativeSource,
-    sharedCollectSource,
     nativeLinkStubs := true
   )
   .jsSettings(
     libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5",
     libraryDependencies += collectCompatDep.value,
-    sharedCollectSource
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
@@ -133,16 +130,9 @@ lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
       / "sconfig" / "sharedjvmnative" / "src" / "main" / "scala"
 )
 
+// added collection compat - revisit when 2.11 and 2.12 are dropped
 lazy val collectCompatDep =
   Def.setting("org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.2")
-// added collection compat - revisit when 2.11 and 2.12 are dropped
-lazy val sharedCollectSource: Seq[Setting[_]] = Def.settings(
-  unmanagedSourceDirectories in Compile += {
-    val sharedSourceDir = (baseDirectory in ThisBuild).value / "sconfig/shared/src/main"
-    if (scalaVersion.value.startsWith("2.13.")) sharedSourceDir / "scala-2.13"
-    else sharedSourceDir / "scala-2.11_2.12"
-  }
-)
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
