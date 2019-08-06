@@ -40,7 +40,7 @@ The intent is to keep the library in sync with the original but each PR needs to
 to maintain feature parity. The documentation could contain features that are not yet implemented
 in this library.
 
-[Scala Native](docs/SCALA-NATIVE.md) - A guide to using Scala Native and Scala.js.
+[Scala Native and Scala.js](docs/SCALA-NATIVE.md) - A guide to using Scala Native and Scala.js.
 
 For specific changes, refer to the releases below.
 
