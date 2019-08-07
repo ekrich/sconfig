@@ -85,8 +85,10 @@ lazy val root = (project in file("."))
 
 lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
+  .settings(
+    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.2"
+  )
   .jvmSettings(
-    libraryDependencies += collectCompatDep.value,
     sharedJvmNativeSource,
     libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-5" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
@@ -115,13 +117,14 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .nativeSettings(
     crossScalaVersions := List(scala211),
     scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
-    libraryDependencies += collectCompatDep.value,
     sharedJvmNativeSource,
-    nativeLinkStubs := true
+    nativeLinkStubs := true,
+    logLevel := Level.Info, // Info or Debug
+    libraryDependencies += "com.github.lolgab" %%% "minitest" % "2.5.0-5f3852e" % Test,
+    testFrameworks += new TestFramework("minitest.runner.Framework")
   )
   .jsSettings(
-    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5",
-    libraryDependencies += collectCompatDep.value,
+    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5"
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
@@ -130,20 +133,9 @@ lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
       / "sconfig" / "sharedjvmnative" / "src" / "main" / "scala"
 )
 
-// added collection compat - revisit when 2.11 and 2.12 are dropped
-lazy val collectCompatDep =
-  Def.setting("org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.2")
-
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
-
 lazy val sconfigNative = sconfig.native
-  .settings(
-    logLevel := Level.Info, // Info or Debug
-    libraryDependencies += "com.github.lolgab" %%% "minitest" % "2.5.0-5f3852e" % Test,
-    testFrameworks += new TestFramework("minitest.runner.Framework")
-  )
-
 lazy val sconfigJS = sconfig.js
   .enablePlugins(ScalaJSJUnitPlugin)
 
