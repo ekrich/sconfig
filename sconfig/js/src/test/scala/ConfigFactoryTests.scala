@@ -32,21 +32,20 @@ class ConfigFactoryTests {
 
     val configStr =
       """
-        |pattern.default.main = "default"
+        |pattern-default-main = default
         |core = {
         |  version: "0.1"
         |  extends: [
-        |    ${pattern_default_main}
+        |    ${pattern-default-main}
         |  ]
         |}
     """.stripMargin
 
     val conf = ConfigFactory.parseString(configStr)
-    println(conf.isResolved + "  " + conf)
+    assert(conf.isResolved == false)
     val rconf = conf.resolve()
-    println(rconf.toString)
-    //assert(rconf.getString("version") == "0.1")
-    //println(rconf.getList("extends").get(0).render)
-    //assert(conf.getList("core.extends").get(0).render == "default")
+    assert(rconf.isResolved == true)
+    val pattern = rconf.getList("core.extends").get(0).unwrapped
+    assert(pattern == "default")
   }
 }
