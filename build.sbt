@@ -34,7 +34,13 @@ val scala211 = "2.11.12"
 val scala212 = "2.12.8"
 val scala213 = "2.13.0"
 val dotty    = "0.18.1-RC1"
-ThisBuild / crossScalaVersions := Seq(scala211, scala212, scala213, dotty)
+
+val versionsBase   = Seq(scala211, scala212, scala213)
+val versionsJVM    = versionsBase :+ dotty
+val versionsJS     = versionsBase
+val versionsNative = Seq(scala211)
+
+ThisBuild / crossScalaVersions := versionsJVM
 
 inThisBuild(
   List(
@@ -118,7 +124,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
   .nativeSettings(
-    crossScalaVersions := List(scala211),
+    crossScalaVersions := versionsNative,
     scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
     sharedJvmNativeSource,
     nativeLinkStubs := true,
@@ -127,6 +133,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     testFrameworks += new TestFramework("minitest.runner.Framework")
   )
   .jsSettings(
+    crossScalaVersions := versionsJS,
     libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5"
   )
 

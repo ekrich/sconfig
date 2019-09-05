@@ -149,12 +149,11 @@ object ConfigBeanImpl {
   // setting. So, instead, we only support a limited number of
   // types plus you can always use Object, ConfigValue, Config,
   // ConfigObject, etc.  as an escape hatch.
-  private def getValue[T <: jl.Enum[T]](
-      beanClass: Class[_],
-      parameterType: Type,
-      parameterClass: Class[_],
-      config: Config,
-      configPropName: String)(implicit ct: ClassTag[T]): Any =
+  private def getValue[T <: jl.Enum[T]](beanClass: Class[_],
+                                        parameterType: Type,
+                                        parameterClass: Class[_],
+                                        config: Config,
+                                        configPropName: String): Any =
     if ((parameterClass == classOf[jl.Boolean]) || (parameterClass == classOf[
           Boolean])) config.getBoolean(configPropName)
     else if ((parameterClass == classOf[Integer]) || (parameterClass == classOf[
@@ -229,7 +228,8 @@ object ConfigBeanImpl {
       parameterType: Type,
       parameterClass: Class[_],
       config: Config,
-      configPropName: String)(implicit ct: ClassTag[T]): ju.List[_] = {
+      configPropName: String): ju.List[_] = {
+        
     val elementType: Type =
       parameterType.asInstanceOf[ParameterizedType].getActualTypeArguments()(0)
     if (elementType == classOf[jl.Boolean])
