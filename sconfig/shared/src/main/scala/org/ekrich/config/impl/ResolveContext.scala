@@ -44,7 +44,7 @@ private[impl] final class ResolveContext(
   val resolveStack = ju.Collections.unmodifiableList(_resolveStack)
   val cycleMarkers = ju.Collections.unmodifiableSet(_cycleMarkers)
 
-  def this(options: ConfigResolveOptions, restrictToChild: Path) {
+  def this(options: ConfigResolveOptions, restrictToChild: Path) = {
     // LinkedHashSet keeps the traversal order which is at least useful
     // in error messages if nothing else
     this(new ResolveMemos,

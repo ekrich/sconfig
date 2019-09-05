@@ -18,9 +18,9 @@ final class ConfigReference(
     extends AbstractConfigValue(origin)
     with Unmergeable {
 
-  def this(origin: ConfigOrigin, expr: SubstitutionExpression) {
+  def this(origin: ConfigOrigin, expr: SubstitutionExpression) =
     this(origin, expr, 0)
-  }
+
   private def notResolved =
     new ConfigException.NotResolved(
       "need to Config#resolve(), see the API docs for Config#resolve(); substitution not resolved: " + this)

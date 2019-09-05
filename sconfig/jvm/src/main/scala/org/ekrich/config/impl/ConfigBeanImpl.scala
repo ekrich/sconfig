@@ -149,7 +149,7 @@ object ConfigBeanImpl {
   // setting. So, instead, we only support a limited number of
   // types plus you can always use Object, ConfigValue, Config,
   // ConfigObject, etc.  as an escape hatch.
-  private def getValue[T <: Enum[T]](
+  private def getValue[T <: jl.Enum[T]](
       beanClass: Class[_],
       parameterType: Type,
       parameterClass: Class[_],
@@ -221,9 +221,10 @@ object ConfigBeanImpl {
                    parameterType,
                    parameterClass,
                    config,
-                   configPropName))
+                   configPropName)
+    )
 
-  private def getListValue[T <: Enum[T]](
+  private def getListValue[T <: jl.Enum[T]](
       beanClass: Class[_],
       parameterType: Type,
       parameterClass: Class[_],

@@ -43,7 +43,7 @@ object AbstractConfigObject {
     var firstOrigin: ConfigOrigin = null
     var numMerged                 = 0
     for (v <- stack.asScala) {
-      if (firstOrigin == null) firstOrigin = v.origin
+      if (firstOrigin == null) firstOrigin = v.origin()
       if (v.isInstanceOf[AbstractConfigObject] && (v
             .asInstanceOf[AbstractConfigObject]
             .resolveStatus eq ResolveStatus.RESOLVED) && v
@@ -53,7 +53,7 @@ object AbstractConfigObject {
         // config in the description, since they arex
         // likely to be "implementation details"
       } else {
-        origins.add(v.origin)
+        origins.add(v.origin())
         numMerged += 1
       }
     }

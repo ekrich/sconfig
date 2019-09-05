@@ -3,8 +3,10 @@
  */
 package org.ekrich.config.impl
 
+import java.{lang => jl}
+
 final class FromMapMode private (name: String, ordinal: Int)
-    extends Enum[FromMapMode](name, ordinal)
+    extends jl.Enum[FromMapMode](name, ordinal)
 
 object FromMapMode {
 

@@ -384,8 +384,8 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
   private var value: ConfigValue = null
   private var wasConfig: Boolean = false
 
-  def this(value: ConfigValue) {
-    this
+  def this(value: ConfigValue) = {
+    this()
     this.value = value
     this.wasConfig = false
   }

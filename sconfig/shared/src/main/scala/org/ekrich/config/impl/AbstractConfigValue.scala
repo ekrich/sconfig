@@ -228,7 +228,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
       // falling back to a non-object doesn't merge anything, and also
       // prohibits merging any objects that we fall back to later.
       // so we have to switch to ignoresFallbacks mode.
-      withFallbacksIgnored
+      withFallbacksIgnored()
     } else { // if unresolved, we may have to look back to fallbacks as part of
       // the resolution process, so always delay
       delayMerge(stack, fallback)
@@ -254,14 +254,14 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
   }
 
   override def withOrigin(origin: ConfigOrigin): AbstractConfigValue =
-    if (this.origin eq origin) this else newCopy(origin)
+    if (this.origin() eq origin) this else newCopy(origin)
 
   // this is only overridden to change the return type
   override def withFallback(mergeable: ConfigMergeable): AbstractConfigValue =
     if (ignoresFallbacks) this
     else {
       val other =
-        mergeable.asInstanceOf[MergeableValue].toFallbackValue
+        mergeable.asInstanceOf[MergeableValue].toFallbackValue()
       if (other.isInstanceOf[Unmergeable])
         mergedWithTheUnmergeable(other.asInstanceOf[Unmergeable])
       else if (other.isInstanceOf[AbstractConfigObject])

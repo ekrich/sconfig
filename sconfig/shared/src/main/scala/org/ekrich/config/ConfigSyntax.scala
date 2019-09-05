@@ -3,6 +3,8 @@
  */
 package org.ekrich.config
 
+import java.{lang => jl}
+
 /**
  * The syntax of a character stream (<a href="http://json.org">JSON</a>, <a
  * href="https://github.com/lightbend/config/blob/master/HOCON.md">HOCON</a>
@@ -12,7 +14,7 @@ package org.ekrich.config
  *
  */
 final class ConfigSyntax private (name: String, ordinal: Int)
-    extends Enum[ConfigSyntax](name, ordinal)
+    extends jl.Enum[ConfigSyntax](name, ordinal)
 
 object ConfigSyntax {
 

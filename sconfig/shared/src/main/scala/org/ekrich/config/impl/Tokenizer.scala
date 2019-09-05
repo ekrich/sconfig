@@ -474,23 +474,24 @@ object Tokenizer {
       val expression = new ju.ArrayList[Token]
       var t: Token   = null
       breakable {
-        do {
+        while ({
           t = pullNextToken(saver)
           // note that we avoid validating the allowed tokens inside
           // the substitution here; we even allow nested substitutions
           // in the tokenizer. The parser sorts it out.
           if (t eq Tokens.CLOSE_CURLY) { // end the loop, done!
             break // break
-          } else if (t eq Tokens.END)
+          } else if (t eq Tokens.END) {
             throw TokenIterator.problem(
               origin,
               "Substitution ${ was not closed with a }")
-          else {
+          } else {
             val whitespace = saver.check(t, origin, lineNumber)
             if (whitespace != null) expression.add(whitespace)
             expression.add(t)
           }
-        } while (true)
+          true
+        }) ()
       }
       Tokens.newSubstitution(origin, optional, expression)
     }

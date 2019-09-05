@@ -3,12 +3,14 @@
  */
 package org.ekrich.config
 
+import java.{lang => jl}
+
 /**
  * The type of a configuration value (following the
  * [[http://json.org JSON]] type schema).
  */
 final class ConfigValueType private (name: String, ordinal: Int)
-    extends Enum[ConfigValueType](name, ordinal)
+    extends jl.Enum[ConfigValueType](name, ordinal)
 
 object ConfigValueType {
 

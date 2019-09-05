@@ -175,7 +175,7 @@ object SimpleIncluder {
   // the Proxy is a proxy for an application-provided includer that uses our
   // default implementations when the application-provided includer doesn't
   // have an implementation.
-  private class Proxy private[impl] (val delegate: ConfigIncluder)
+  private class Proxy private[impl] (val delegater: ConfigIncluder)
       extends FullIncluder {
 
     override def withFallback(fallback: ConfigIncluder): ConfigIncluder = { // we never fall back
@@ -184,28 +184,28 @@ object SimpleIncluder {
 
     override def include(context: ConfigIncludeContext,
                          what: String): ConfigObject =
-      delegate.include(context, what)
+      delegater.include(context, what)
 
     override def includeResources(context: ConfigIncludeContext,
                                   what: String): ConfigObject =
-      if (delegate.isInstanceOf[ConfigIncluderClasspath])
-        delegate
+      if (delegater.isInstanceOf[ConfigIncluderClasspath])
+        delegater
           .asInstanceOf[ConfigIncluderClasspath]
           .includeResources(context, what)
       else includeResourceWithoutFallback(context, what)
 
     override def includeURL(context: ConfigIncludeContext,
                             what: URL): ConfigObject =
-      if (delegate.isInstanceOf[ConfigIncluderURL])
-        delegate
+      if (delegater.isInstanceOf[ConfigIncluderURL])
+        delegater
           .asInstanceOf[ConfigIncluderURL]
           .includeURL(context, what)
       else includeURLWithoutFallback(context, what)
 
     override def includeFile(context: ConfigIncludeContext,
                              what: File): ConfigObject =
-      if (delegate.isInstanceOf[ConfigIncluderFile])
-        delegate
+      if (delegater.isInstanceOf[ConfigIncluderFile])
+        delegater
           .asInstanceOf[ConfigIncluderFile]
           .includeFile(context, what)
       else includeFileWithoutFallback(context, what)

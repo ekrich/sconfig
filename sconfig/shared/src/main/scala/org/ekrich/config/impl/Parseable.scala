@@ -179,7 +179,7 @@ object Parseable {
     // does not postConstruct (subclass does it)
     private var contentTypeStr: String = null
     // shadowing with a different type(ConfigSyntax) doesn't work in Scala
-    def this(input: URL, options: ConfigParseOptions) {
+    def this(input: URL, options: ConfigParseOptions) = {
       this(input)
       postConstruct(options)
     }

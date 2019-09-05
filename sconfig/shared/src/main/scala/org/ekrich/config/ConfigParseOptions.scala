@@ -221,7 +221,7 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
   def getClassLoader: ClassLoader =
     if (this.classLoader == null) {
       val thread = Thread.currentThread
-      new PlatformThread(thread).getContextClassLoader
+      new PlatformThread(thread).getContextClassLoader()
     } else {
       this.classLoader
     }

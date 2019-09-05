@@ -164,9 +164,8 @@ object ConfigException {
                                       Null.makeMessage(path, expected),
                                       cause) {
 
-    def this(origin: ConfigOrigin, path: String, expected: String) {
+    def this(origin: ConfigOrigin, path: String, expected: String) =
       this(origin, path, expected, null)
-    }
   }
 
   /**

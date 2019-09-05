@@ -18,13 +18,11 @@ class Token private[impl] (tokenType: TokenType,
                            tokenText: String,
                            debugString: String) {
 
-  def this(tokenType: TokenType, origin: ConfigOrigin, tokenText: String) {
+  def this(tokenType: TokenType, origin: ConfigOrigin, tokenText: String) =
     this(tokenType, origin, tokenText, null)
-  }
 
-  def this(tokenType: TokenType, origin: ConfigOrigin) {
+  def this(tokenType: TokenType, origin: ConfigOrigin) =
     this(tokenType, origin, null)
-  }
 
   final private[impl] def tokenType(): TokenType = tokenType
 
