@@ -229,7 +229,7 @@ object ConfigBeanImpl {
       parameterClass: Class[_],
       config: Config,
       configPropName: String): ju.List[_] = {
-        
+
     val elementType: Type =
       parameterType.asInstanceOf[ParameterizedType].getActualTypeArguments()(0)
     if (elementType == classOf[jl.Boolean])

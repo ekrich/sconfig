@@ -193,9 +193,9 @@ object ConfigDelayedMerge {
 }
 
 final class ConfigDelayedMerge(
-    origin: ConfigOrigin, // earlier items in the stack win
+    _origin: ConfigOrigin, // earlier items in the stack win
     val stack: ju.List[AbstractConfigValue])
-    extends AbstractConfigValue(origin)
+    extends AbstractConfigValue(_origin)
     with Unmergeable
     with ReplaceableMergeStack {
 

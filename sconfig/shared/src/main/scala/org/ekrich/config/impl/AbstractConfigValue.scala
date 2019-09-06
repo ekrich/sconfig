@@ -254,7 +254,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
   }
 
   override def withOrigin(origin: ConfigOrigin): AbstractConfigValue =
-    if (this.origin() eq origin) this else newCopy(origin)
+    if (this.origin eq origin) this else newCopy(origin)
 
   // this is only overridden to change the return type
   override def withFallback(mergeable: ConfigMergeable): AbstractConfigValue =

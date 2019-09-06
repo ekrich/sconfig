@@ -597,7 +597,7 @@ object SimpleConfig {
 
     lazy val unitsMap: ju.Map[String, MemoryUnit] = {
       val map = new ju.HashMap[String, MemoryUnit]
-      for (unit <- MemoryUnit.values) {
+      for (unit <- MemoryUnit.values()) {
         map.put(unit.prefix + "byte", unit)
         map.put(unit.prefix + "bytes", unit)
         if (unit.prefix.length == 0) {

@@ -12,14 +12,14 @@ import org.ekrich.config.ConfigRenderOptions
  * kind of value.
  */
 final class ConfigReference(
-    origin: ConfigOrigin,
+    _origin: ConfigOrigin,
     val expression: SubstitutionExpression, // the length of any prefixes added with relativized()
     val prefixLength: Int)
-    extends AbstractConfigValue(origin)
+    extends AbstractConfigValue(_origin)
     with Unmergeable {
 
-  def this(origin: ConfigOrigin, expr: SubstitutionExpression) =
-    this(origin, expr, 0)
+  def this(_origin: ConfigOrigin, expr: SubstitutionExpression) =
+    this(_origin, expr, 0)
 
   private def notResolved =
     new ConfigException.NotResolved(

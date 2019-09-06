@@ -51,10 +51,10 @@ object SimpleConfigList {
 }
 
 @SerialVersionUID(2L)
-final class SimpleConfigList(origin: ConfigOrigin,
+final class SimpleConfigList(_origin: ConfigOrigin,
                              val value: ju.List[AbstractConfigValue],
                              status: ResolveStatus)
-    extends AbstractConfigValue(origin)
+    extends AbstractConfigValue(_origin)
     with ConfigList
     with Container
     with Serializable {
@@ -64,8 +64,8 @@ final class SimpleConfigList(origin: ConfigOrigin,
     throw new ConfigException.BugOrBroken(
       "SimpleConfigList created with wrong resolve status: " + this)
 
-  def this(origin: ConfigOrigin, value: ju.List[AbstractConfigValue]) =
-    this(origin, value, ResolveStatus.fromValues(value))
+  def this(_origin: ConfigOrigin, value: ju.List[AbstractConfigValue]) =
+    this(_origin, value, ResolveStatus.fromValues(value))
 
   override def valueType: ConfigValueType = ConfigValueType.LIST
 

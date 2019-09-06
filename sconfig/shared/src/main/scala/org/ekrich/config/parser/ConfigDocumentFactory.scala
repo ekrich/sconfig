@@ -22,7 +22,7 @@ object ConfigDocumentFactory {
    * @throws [[org.ekrich.config.ConfigException]] on IO or parse errors
    */
   def parseReader(reader: Reader, options: ConfigParseOptions): ConfigDocument =
-    Parseable.newReader(reader, options).parseConfigDocument
+    Parseable.newReader(reader, options).parseConfigDocument()
 
   /**
    * Parses a reader into a Config instance as with
@@ -48,7 +48,7 @@ object ConfigDocumentFactory {
    * @throws org.ekrich.config.ConfigException on IO or parse errors
    */
   def parseFile(file: File, options: ConfigParseOptions): ConfigDocument =
-    Parseable.newFile(file, options).parseConfigDocument
+    Parseable.newFile(file, options).parseConfigDocument()
 
   /**
    * Parses a file into a ConfigDocument instance as with
@@ -71,7 +71,7 @@ object ConfigDocumentFactory {
    * @return the parsed configuration
    */
   def parseString(s: String, options: ConfigParseOptions): ConfigDocument =
-    Parseable.newString(s, options).parseConfigDocument
+    Parseable.newString(s, options).parseConfigDocument()
 
   /**
    * Parses a string (which should be valid HOCON or JSON). Uses the

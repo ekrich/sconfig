@@ -133,12 +133,12 @@ object SimpleConfigObject {
 }
 
 @SerialVersionUID(2L)
-final class SimpleConfigObject(origin: ConfigOrigin,
+final class SimpleConfigObject(_origin: ConfigOrigin,
                                // this map should never be modified - assume immutable
                                val value: ju.Map[String, AbstractConfigValue],
                                val status: ResolveStatus,
                                override val ignoresFallbacks: Boolean)
-    extends AbstractConfigObject(origin)
+    extends AbstractConfigObject(_origin)
     with Serializable {
 
   if (value == null)
@@ -149,8 +149,8 @@ final class SimpleConfigObject(origin: ConfigOrigin,
   if (status ne ResolveStatus.fromValues(value.values))
     throw new ConfigException.BugOrBroken("Wrong resolved status on " + this)
 
-  def this(origin: ConfigOrigin, value: ju.Map[String, AbstractConfigValue]) =
-    this(origin,
+  def this(_origin: ConfigOrigin, value: ju.Map[String, AbstractConfigValue]) =
+    this(_origin,
          value,
          ResolveStatus.fromValues(value.values),
          false /* ignoresFallbacks */ )
