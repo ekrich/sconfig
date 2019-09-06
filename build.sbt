@@ -40,6 +40,7 @@ val versionsJVM    = versionsBase :+ dotty
 val versionsJS     = versionsBase
 val versionsNative = Seq(scala211)
 
+ThisBuild / scalaVersion := scala212
 ThisBuild / crossScalaVersions := versionsJVM
 
 inThisBuild(

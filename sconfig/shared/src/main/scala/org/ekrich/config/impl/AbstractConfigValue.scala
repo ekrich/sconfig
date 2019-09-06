@@ -121,7 +121,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     extends ConfigValue
     with MergeableValue {
 
-  override def origin(): SimpleConfigOrigin =
+  override def origin: SimpleConfigOrigin =
     this._origin.asInstanceOf[SimpleConfigOrigin]
 
   /**
