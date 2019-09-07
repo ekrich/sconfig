@@ -313,10 +313,10 @@ object Tokenizer {
         case e: NumberFormatException =>
           // not a number after all, see if it's an unquoted string.
           for (u <- s.toCharArray) {
-            if (TokenIterator.notInUnquotedText.indexOf(u) >= 0)
+            if (TokenIterator.notInUnquotedText.indexOf(u.toInt) >= 0)
               throw problem(
-                asString(u),
-                "Reserved character '" + asString(u) + "' is not allowed outside quotes",
+                asString(u.toInt),
+                s"Reserved character '${asString(u.toInt)}' is not allowed outside quotes",
                 true /* suggestQuotes */
               )
           }

@@ -272,7 +272,7 @@ object ConfigImpl {
       .newProperties(
         getSystemProperties,
         ConfigParseOptions.defaults.setOriginDescription("system properties"))
-      .parse
+      .parse()
       .asInstanceOf[AbstractConfigObject]
   private object SystemPropertiesHolder {
     // this isn't final due to the reloadSystemPropertiesConfig() hack below
@@ -321,7 +321,7 @@ object ConfigImpl {
           val unresolvedResources = Parseable
             .newResources("reference.conf",
                           ConfigParseOptions.defaults.setClassLoader(loader))
-            .parse
+            .parse()
             .toConfig
           systemPropertiesAsConfig
             .withFallback(unresolvedResources)

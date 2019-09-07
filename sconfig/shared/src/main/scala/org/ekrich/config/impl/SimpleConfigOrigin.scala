@@ -29,7 +29,7 @@ object SimpleConfigOrigin {
     var url: String = null
     try {
       val uri = new File(filename).toURI
-      url = new PlatformUri(uri).toURL.toExternalForm
+      url = new PlatformUri(uri).toURL().toExternalForm
     } catch {
       case e: MalformedURLException =>
         url = null
@@ -261,7 +261,7 @@ object SimpleConfigOrigin {
     if (originTypeOrdinal == null)
       throw new IOException("Missing ORIGIN_TYPE field")
     val originType: OriginType =
-      OriginType.values(originTypeOrdinal.byteValue)
+      OriginType.values(originTypeOrdinal.intValue)
     val urlOrNull =
       m.get(SerializedField.ORIGIN_URL).asInstanceOf[String]
     var resourceOrNull =

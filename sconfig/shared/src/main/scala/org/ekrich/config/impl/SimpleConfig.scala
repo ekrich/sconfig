@@ -541,7 +541,7 @@ object SimpleConfig {
                                           val powerOf: Int,
                                           val power: Int)
       extends Enum[MemoryUnit](name, ordinal) {
-    val bytes = BigInteger.valueOf(powerOf).pow(power)
+    val bytes = BigInteger.valueOf(powerOf.toLong).pow(power)
 
   }
 

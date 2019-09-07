@@ -286,7 +286,7 @@ object Tokens {
   def newString(origin: ConfigOrigin, value: String, origText: String) =
     newValue(new ConfigString.Quoted(origin, value), origText)
   def newInt(origin: ConfigOrigin, value: Int, origText: String) =
-    newValue(ConfigNumber.newNumber(origin, value, origText), origText)
+    newValue(ConfigNumber.newNumber(origin, value.toLong, origText), origText)
   def newDouble(origin: ConfigOrigin, value: Double, origText: String) =
     newValue(ConfigNumber.newNumber(origin, value, origText), origText)
   def newLong(origin: ConfigOrigin, value: Long, origText: String) =

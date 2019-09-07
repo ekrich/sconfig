@@ -13,20 +13,20 @@ object Token { // this is used for singleton tokens like COMMA or OPEN_CURLY
     new Token(tokenType, null, tokenText, debugString)
 }
 
-class Token private[impl] (tokenType: TokenType,
+class Token private[impl] (_tokenType: TokenType,
                            _origin: ConfigOrigin,
-                           tokenText: String,
+                           _tokenText: String,
                            debugString: String) {
 
-  def this(tokenType: TokenType, _origin: ConfigOrigin, tokenText: String) =
-    this(tokenType, _origin, tokenText, null)
+  def this(_tokenType: TokenType, _origin: ConfigOrigin, _tokenText: String) =
+    this(_tokenType, _origin, _tokenText, null)
 
-  def this(tokenType: TokenType, _origin: ConfigOrigin) =
-    this(tokenType, _origin, null)
+  def this(_tokenType: TokenType, _origin: ConfigOrigin) =
+    this(_tokenType, _origin, null)
 
-  final private[impl] def tokenType(): TokenType = tokenType
+  final private[impl] def tokenType: TokenType = _tokenType
 
-  def tokenText(): String = tokenText
+  def tokenText: String = _tokenText
 
   // this is final because we don't always use the origin() accessor,
   // and we don't because it throws if origin is null

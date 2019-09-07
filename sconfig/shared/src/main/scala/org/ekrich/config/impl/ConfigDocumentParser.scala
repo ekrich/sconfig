@@ -38,7 +38,7 @@ object ConfigDocumentParser {
       var i = 0
       while (i < s.length) {
         val c = s.charAt(i)
-        if (!ConfigImplUtil.isWhitespace(c)) return false
+        if (!ConfigImplUtil.isWhitespace(c.toInt)) return false
         i += 1
       }
       true

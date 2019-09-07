@@ -26,7 +26,7 @@ final class ConfigLong(origin: ConfigOrigin,
   }
   override def longValue: Long = value
 
-  override def doubleValue: Double = value
+  override def doubleValue: Double = value.toDouble
 
   override def newCopy(origin: ConfigOrigin) =
     new ConfigLong(origin, value, originalText)

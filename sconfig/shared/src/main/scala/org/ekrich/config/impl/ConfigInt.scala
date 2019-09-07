@@ -25,9 +25,9 @@ final class ConfigInt(origin: ConfigOrigin,
     if (s == null) Integer.toString(value) else s
   }
 
-  override def longValue: Long = value
+  override def longValue: Long = value.toLong
 
-  override def doubleValue: Double = value
+  override def doubleValue: Double = value.toDouble
 
   override def newCopy(origin: ConfigOrigin) =
     new ConfigInt(origin, value, originalText)

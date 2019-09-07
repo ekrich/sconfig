@@ -85,7 +85,7 @@ object Parseable {
       // element of the path in siblingURI gets stripped out,
       // so to get something in the same directory as
       // siblingURI we just call resolve().
-      val resolved = new PlatformUri(siblingURI.resolve(relative)).toURL
+      val resolved = new PlatformUri(siblingURI.resolve(relative)).toURL()
       resolved
     } catch {
       case e: MalformedURLException =>
@@ -350,7 +350,7 @@ object Parseable {
             "Loading config from resource '" + resource + "' URL " + url.toExternalForm + " from class loader " + loader)
         val element =
           newResourceURL(url, finalOptions, resource, this)
-        val v = element.parseValue
+        val v = element.parseValue()
         merged = merged.withFallback(v)
       }
       merged
@@ -481,7 +481,7 @@ abstract class Parseable protected (
     // with ParseableResources.relativeTo
     var resource = filename
     if (filename.startsWith("/")) resource = filename.substring(1)
-    Parseable.newResources(resource, options.setOriginDescription(null))
+    Parseable.newResources(resource, options().setOriginDescription(null))
   }
   override def parse(baseOptions: ConfigParseOptions): ConfigObject = {
     val stack = Parseable.parseStack.get
@@ -615,10 +615,11 @@ abstract class Parseable protected (
       ConfigDocumentParser.parse(tokens, origin, finalOptions),
       finalOptions)
   }
+
   def parse(): ConfigObject =
-    Parseable.forceParsedToObject(parseValue(options))
-  def parseConfigDocument(): ConfigDocument           = parseDocument(options)
-  private[impl] def parseValue(): AbstractConfigValue = parseValue(options)
+    Parseable.forceParsedToObject(parseValue(options()))
+  def parseConfigDocument(): ConfigDocument           = parseDocument(options())
+  private[impl] def parseValue(): AbstractConfigValue = parseValue(options())
   override final def origin(): ConfigOrigin           = initialOrigin
   protected def createOrigin(): ConfigOrigin
   override def options(): ConfigParseOptions = initialOptions
