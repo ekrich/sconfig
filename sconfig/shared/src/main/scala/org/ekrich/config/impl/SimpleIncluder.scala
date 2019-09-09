@@ -72,7 +72,7 @@ object SimpleIncluder {
                         parseOptions: ConfigParseOptions): ConfigParseable
   }
 
-  private class RelativeNameSource private[impl] (
+  private[impl] class RelativeNameSource private[impl] (
       val context: ConfigIncludeContext)
       extends SimpleIncluder.NameSource {
 
@@ -175,7 +175,7 @@ object SimpleIncluder {
   // the Proxy is a proxy for an application-provided includer that uses our
   // default implementations when the application-provided includer doesn't
   // have an implementation.
-  private class Proxy private[impl] (val delegater: ConfigIncluder)
+  private[impl] class Proxy private[impl] (val delegater: ConfigIncluder)
       extends FullIncluder {
 
     override def withFallback(fallback: ConfigIncluder): ConfigIncluder = { // we never fall back

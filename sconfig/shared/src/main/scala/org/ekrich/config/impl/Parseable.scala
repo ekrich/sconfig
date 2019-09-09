@@ -122,14 +122,14 @@ object Parseable {
     new ParseableNotFound(whatNotFound, message, options)
 
   final private[impl] class ParseableReader private[impl] (
-      reader: Reader,
+      _reader: Reader,
       options: ConfigParseOptions)
       extends Parseable(options) {
     postConstruct(options)
     override protected def reader(): Reader = {
       if (ConfigImpl.traceLoadsEnabled)
-        trace("Loading config from reader " + reader)
-      reader
+        trace("Loading config from reader " + _reader)
+      _reader
     }
     override protected def createOrigin: ConfigOrigin =
       SimpleConfigOrigin.newSimple("Reader")
@@ -241,7 +241,7 @@ object Parseable {
     override private[impl] def relativeTo(filename: String): ConfigParseable = {
       val url = Parseable.relativeTo(input, filename)
       if (url == null) return null
-      newURL(url, options.setOriginDescription(null))
+      newURL(url, options().setOriginDescription(null))
     }
     override protected def createOrigin: ConfigOrigin =
       SimpleConfigOrigin.newURL(input)
@@ -291,7 +291,7 @@ object Parseable {
   }
   def newFile(input: File, options: ConfigParseOptions) =
     new ParseableFile(input, options)
-  final private class ParseableResourceURL private[impl] (
+  final private[impl] class ParseableResourceURL private[impl] (
       input: URL,
       options: ConfigParseOptions,
       val resource: String,
@@ -317,7 +317,7 @@ object Parseable {
       if (i < 0) null else resource.substring(0, i)
     }
   }
-  final private class ParseableResources private[impl] (
+  final private[impl] class ParseableResources private[impl] (
       val resource: String,
       options: ConfigParseOptions)
       extends Parseable(options)

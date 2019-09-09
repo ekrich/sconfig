@@ -126,8 +126,8 @@ object Tokens {
     }
   }
 
-  abstract private class Comment private[impl] (origin: ConfigOrigin,
-                                                val text: String)
+  abstract private[impl] class Comment private[impl] (origin: ConfigOrigin,
+                                                      val text: String)
       extends Token(TokenType.COMMENT, origin) {
 
     override def toString(): String = {

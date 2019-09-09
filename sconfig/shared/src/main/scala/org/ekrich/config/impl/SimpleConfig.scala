@@ -535,11 +535,11 @@ object SimpleConfig {
     }
   }
 
-  private final class MemoryUnit private (name: String,
-                                          ordinal: Int,
-                                          val prefix: String,
-                                          val powerOf: Int,
-                                          val power: Int)
+  private[impl] final class MemoryUnit private[impl] (name: String,
+                                                      ordinal: Int,
+                                                      val prefix: String,
+                                                      val powerOf: Int,
+                                                      val power: Int)
       extends Enum[MemoryUnit](name, ordinal) {
     val bytes = BigInteger.valueOf(powerOf.toLong).pow(power)
 

@@ -27,7 +27,7 @@ import org.ekrich.config.ConfigValue
  */
 object ConfigImpl {
 
-  private class LoaderCache private[impl] () {
+  private[impl] class LoaderCache private[impl] () {
     private[impl] var currentSystemProperties: Config = null
     private var currentLoader                         = new WeakReference[ClassLoader](null)
     private var cache                                 = new ju.HashMap[String, Config]
@@ -325,7 +325,7 @@ object ConfigImpl {
             .toConfig
           systemPropertiesAsConfig
             .withFallback(unresolvedResources)
-            .resolve
+            .resolve()
         }
       }
     )

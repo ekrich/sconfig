@@ -19,7 +19,7 @@ import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
 @SerialVersionUID(2L)
 object SimpleConfigObject {
 
-  final private class ResolveModifier private[impl] (
+  final private[impl] class ResolveModifier private[impl] (
       var context: ResolveContext,
       val source: ResolveSource)
       extends AbstractConfigValue.Modifier {

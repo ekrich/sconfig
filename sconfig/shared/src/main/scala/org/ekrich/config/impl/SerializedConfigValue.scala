@@ -93,7 +93,7 @@ object SerializedConfigValue {
     }
   }
 
-  private class FieldOut private[impl] (val code: SerializedField) {
+  private[impl] class FieldOut private[impl] (val code: SerializedField) {
     final private[impl] var bytes = new ByteArrayOutputStream
     final private[impl] var data  = new DataOutputStream(bytes)
   }
