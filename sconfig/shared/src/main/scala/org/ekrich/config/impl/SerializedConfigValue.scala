@@ -3,7 +3,7 @@
  */
 package org.ekrich.config.impl
 
-import java.{lang => jl}
+
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInput
@@ -16,6 +16,7 @@ import java.io.NotSerializableException
 import java.io.ObjectInput
 import java.io.ObjectOutput
 import java.io.ObjectStreamException
+import java.{lang => jl}
 import java.{util => ju}
 
 import scala.jdk.CollectionConverters._
@@ -44,7 +45,7 @@ object SerializedConfigValue {
   final class SerializedValueType private (name: String,
                                            ordinal: Int,
                                            val configType: ConfigValueType)
-      extends Enum[SerializedValueType](name, ordinal)
+      extends jl.Enum[SerializedValueType](name, ordinal)
 
   object SerializedValueType {
     // the ordinals here are in the wire format, caution
@@ -466,7 +467,7 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
 
 // this is how we try to be extensible
 final class SerializedField private (name: String, ordinal: Int)
-    extends Enum[SerializedField](name, ordinal)
+    extends jl.Enum[SerializedField](name, ordinal)
 
 object SerializedField {
   // represents a field code we didn't recognize

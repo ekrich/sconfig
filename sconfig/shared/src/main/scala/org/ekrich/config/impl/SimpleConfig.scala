@@ -540,7 +540,7 @@ object SimpleConfig {
                                                       val prefix: String,
                                                       val powerOf: Int,
                                                       val power: Int)
-      extends Enum[MemoryUnit](name, ordinal) {
+      extends jl.Enum[MemoryUnit](name, ordinal) {
     val bytes = BigInteger.valueOf(powerOf.toLong).pow(power)
 
   }
@@ -716,7 +716,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     val v = find(path, ConfigValueType.STRING)
     v.unwrapped.asInstanceOf[String]
   }
-  def getEnum[T <: Enum[T]](enumClass: Class[T], path: String): T = {
+  def getEnum[T <: jl.Enum[T]](enumClass: Class[T], path: String): T = {
     val v = find(path, ConfigValueType.STRING)
     getEnumValue(path, enumClass, v)
   }
@@ -826,7 +826,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
   override def getStringList(path: String): ju.List[String] =
     getHomogeneousUnwrappedList(path, ConfigValueType.STRING)
 
-  def getEnumList[T <: Enum[T]](enumClass: Class[T],
+  def getEnumList[T <: jl.Enum[T]](enumClass: Class[T],
                                 path: String): ju.List[T] = {
     val enumNames = getHomogeneousWrappedList(path, ConfigValueType.STRING)
       .asInstanceOf[ju.List[ConfigString]]
@@ -838,11 +838,11 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     enumList
   }
 
-  private def getEnumValue[T <: Enum[T]](path: String,
+  private def getEnumValue[T <: jl.Enum[T]](path: String,
                                          enumClass: Class[T],
                                          enumConfigValue: ConfigValue) = {
     val enumName = enumConfigValue.unwrapped.asInstanceOf[String]
-    try Enum.valueOf(enumClass, enumName)
+    try jl.Enum.valueOf(enumClass, enumName)
     catch {
       case e: IllegalArgumentException =>
         val enumNames     = new ju.ArrayList[String]

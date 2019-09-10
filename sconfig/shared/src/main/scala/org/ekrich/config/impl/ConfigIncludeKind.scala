@@ -1,7 +1,9 @@
 package org.ekrich.config.impl
 
+import java.{lang => jl}
+
 final class ConfigIncludeKind private (name: String, ordinal: Int)
-    extends Enum[ConfigIncludeKind](name, ordinal)
+    extends jl.Enum[ConfigIncludeKind](name, ordinal)
 
 object ConfigIncludeKind {
 
