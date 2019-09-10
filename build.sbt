@@ -94,6 +94,7 @@ lazy val root = (project in file("."))
 lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
+    scala2or3Source,
     libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.2"
   )
   .jvmSettings(
@@ -143,6 +144,12 @@ lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
     (ThisBuild / baseDirectory).value
       / "sconfig" / "sharedjvmnative" / "src" / "main" / "scala"
 )
+
+lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
+    Compile / unmanagedSourceDirectories +=
+    (ThisBuild / baseDirectory).value
+      / "sconfig" /  { if (isDotty.value) "sharedScala3" else "sharedScala2" } / "src" / "main" / "scala"
+  )
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
