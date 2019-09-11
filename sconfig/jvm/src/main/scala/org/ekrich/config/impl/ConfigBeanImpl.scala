@@ -116,12 +116,11 @@ object ConfigBeanImpl {
               break // continue, Otherwise, raise a {@link Missing} exception right here
             throw new ConfigException.Missing(beanProp.getName)
           }
-          val unwrapped =
-            getValue(clazz,
-                     parameterType,
-                     parameterClass,
-                     config,
-                     configPropName)
+          val unwrapped = getValue(clazz,
+                                   parameterType,
+                                   parameterClass,
+                                   config,
+                                   configPropName)
           setter.invoke(bean, unwrapped.asInstanceOf[AnyRef])
         }
       }
@@ -149,11 +148,11 @@ object ConfigBeanImpl {
   // setting. So, instead, we only support a limited number of
   // types plus you can always use Object, ConfigValue, Config,
   // ConfigObject, etc.  as an escape hatch.
-  private def getValue[T <: jl.Enum[T]](beanClass: Class[_],
-                                        parameterType: Type,
-                                        parameterClass: Class[_],
-                                        config: Config,
-                                        configPropName: String): Any =
+  private def getValue(beanClass: Class[_],
+                       parameterType: Type,
+                       parameterClass: Class[_],
+                       config: Config,
+                       configPropName: String): Any =
     if ((parameterClass == classOf[jl.Boolean]) || (parameterClass == classOf[
           Boolean])) config.getBoolean(configPropName)
     else if ((parameterClass == classOf[Integer]) || (parameterClass == classOf[
@@ -201,14 +200,21 @@ object ConfigBeanImpl {
     else if (parameterClass == classOf[ConfigList])
       config.getList(configPropName)
     else if (parameterClass.isEnum) {
-      val enumValue =
-        config.getEnum(parameterClass.asInstanceOf[Class[T]], configPropName)
-      enumValue
+      // assigning to val and returning causes ClassCastException
+      config.getEnum(getEnumAsClass(parameterClass), configPropName)
     } else if (hasAtLeastOneBeanProperty(parameterClass))
       createInternal(config.getConfig(configPropName), parameterClass)
-    else
+    else {
       throw new ConfigException.BadBean(
         "Bean property " + configPropName + " of class " + beanClass.getName + " has unsupported type " + parameterType)
+    }
+
+  private def getEnumAsClass[T <: jl.Enum[T]](
+      parameterClass: Class[_]): Class[T] =
+    parameterClass.asInstanceOf[Class[T]]
+
+  private def getTypeAsClass[T](elementType: Type): Class[T] =
+    elementType.asInstanceOf[Class[T]]
 
   private def getSetValue(beanClass: Class[_],
                           parameterType: Type,
@@ -223,12 +229,11 @@ object ConfigBeanImpl {
                    configPropName)
     )
 
-  private def getListValue[T <: jl.Enum[T]](
-      beanClass: Class[_],
-      parameterType: Type,
-      parameterClass: Class[_],
-      config: Config,
-      configPropName: String): ju.List[_] = {
+  private def getListValue(beanClass: Class[_],
+                           parameterType: Type,
+                           parameterClass: Class[_],
+                           config: Config,
+                           configPropName: String): ju.List[_] = {
 
     val elementType: Type =
       parameterType.asInstanceOf[ParameterizedType].getActualTypeArguments()(0)
@@ -254,15 +259,14 @@ object ConfigBeanImpl {
       config.getList(configPropName)
     else if (elementType.asInstanceOf[Class[_]].isEnum) {
       val enumValues =
-        config.getEnumList(elementType.asInstanceOf[Class[T]], configPropName)
+        config.getEnumList(getTypeAsClass(elementType), configPropName)
       enumValues
     } else if (hasAtLeastOneBeanProperty(elementType.asInstanceOf[Class[_]])) {
       val beanList = new ju.ArrayList[AnyRef]
       val configList: ju.List[_ <: Config] =
         config.getConfigList(configPropName)
       for (listMember <- configList.asScala) {
-        beanList.add(
-          createInternal(listMember, elementType.asInstanceOf[Class[T]]))
+        beanList.add(createInternal(listMember, getTypeAsClass(elementType)))
       }
       beanList
     } else

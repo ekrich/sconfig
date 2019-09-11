@@ -737,7 +737,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     getHomogeneousUnwrappedList(path, ConfigValueType.STRING)
 
   def getEnumList[T <: jl.Enum[T]](enumClass: Class[T],
-                                path: String): ju.List[T] = {
+                                   path: String): ju.List[T] = {
     val enumNames = getHomogeneousWrappedList(path, ConfigValueType.STRING)
       .asInstanceOf[ju.List[ConfigString]]
     val enumList = new ju.ArrayList[T]
@@ -749,11 +749,12 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
   }
 
   private def getEnumValue[T <: jl.Enum[T]](path: String,
-                                         enumClass: Class[T],
-                                         enumConfigValue: ConfigValue) = {
+                                            enumClass: Class[T],
+                                            enumConfigValue: ConfigValue): T = {
     val enumName = enumConfigValue.unwrapped.asInstanceOf[String]
-    try jl.Enum.valueOf(enumClass, enumName)
-    catch {
+    try {
+      jl.Enum.valueOf(enumClass, enumName)
+    } catch {
       case e: IllegalArgumentException =>
         val enumNames     = new ju.ArrayList[String]
         val enumConstants = enumClass.getEnumConstants
