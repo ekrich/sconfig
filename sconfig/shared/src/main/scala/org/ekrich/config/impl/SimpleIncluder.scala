@@ -100,7 +100,7 @@ object SimpleIncluder {
     if (name.endsWith(".conf") || name.endsWith(".json") || name.endsWith(
           ".properties")) {
       val p = source.nameToParseable(name, options)
-      obj = p.parse(p.options.setAllowMissing(options.getAllowMissing))
+      obj = p.parse(p.options().setAllowMissing(options.getAllowMissing))
     } else {
       val confHandle =
         source.nameToParseable(name + ".conf", options)
@@ -114,7 +114,8 @@ object SimpleIncluder {
       obj = SimpleConfigObject.empty(SimpleConfigOrigin.newSimple(name))
       if (syntax == null || (syntax eq ConfigSyntax.CONF)) try {
         obj = confHandle.parse(
-          confHandle.options
+          confHandle
+            .options()
             .setAllowMissing(false)
             .setSyntax(ConfigSyntax.CONF))
         gotSomething = true
@@ -124,7 +125,8 @@ object SimpleIncluder {
       }
       if (syntax == null || (syntax eq ConfigSyntax.JSON)) try {
         val parsed = jsonHandle.parse(
-          jsonHandle.options
+          jsonHandle
+            .options()
             .setAllowMissing(false)
             .setSyntax(ConfigSyntax.JSON))
         obj = obj.withFallback(parsed)
@@ -135,7 +137,8 @@ object SimpleIncluder {
       }
       if (syntax == null || (syntax eq ConfigSyntax.PROPERTIES)) try {
         val parsed = propsHandle.parse(
-          propsHandle.options
+          propsHandle
+            .options()
             .setAllowMissing(false)
             .setSyntax(ConfigSyntax.PROPERTIES))
         obj = obj.withFallback(parsed)

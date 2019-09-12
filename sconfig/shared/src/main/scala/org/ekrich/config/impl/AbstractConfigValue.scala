@@ -261,7 +261,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     if (ignoresFallbacks) this
     else {
       val other =
-        mergeable.asInstanceOf[MergeableValue].toFallbackValue()
+        mergeable.asInstanceOf[MergeableValue].toFallbackValue
       if (other.isInstanceOf[Unmergeable])
         mergedWithTheUnmergeable(other.asInstanceOf[Unmergeable])
       else if (other.isInstanceOf[AbstractConfigObject])

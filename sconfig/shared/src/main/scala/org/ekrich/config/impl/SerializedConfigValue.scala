@@ -3,7 +3,6 @@
  */
 package org.ekrich.config.impl
 
-
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInput

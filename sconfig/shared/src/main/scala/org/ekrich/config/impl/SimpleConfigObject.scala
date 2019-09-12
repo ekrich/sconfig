@@ -265,7 +265,7 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
   override def newCopy(newStatus: ResolveStatus,
                        newOrigin: ConfigOrigin): SimpleConfigObject =
     newCopy(newStatus, newOrigin, ignoresFallbacks)
-  override def withFallbacksIgnored: SimpleConfigObject =
+  override def withFallbacksIgnored(): SimpleConfigObject =
     if (ignoresFallbacks) this
     else newCopy(resolveStatus, origin, true)
   override def resolveStatus: ResolveStatus =

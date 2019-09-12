@@ -146,10 +146,10 @@ lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
 )
 
 lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
-    Compile / unmanagedSourceDirectories +=
+  Compile / unmanagedSourceDirectories +=
     (ThisBuild / baseDirectory).value
-      / "sconfig" /  { if (isDotty.value) "sharedScala3" else "sharedScala2" } / "src" / "main" / "scala"
-  )
+      / "sconfig" / { if (isDotty.value) "sharedScala3" else "sharedScala2" } / "src" / "main" / "scala"
+)
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")

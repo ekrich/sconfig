@@ -131,7 +131,7 @@ object Parseable {
         trace("Loading config from reader " + _reader)
       _reader
     }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newSimple("Reader")
   }
   // note that we will never close this reader; you have to do it when parsing
@@ -144,12 +144,12 @@ object Parseable {
       options: ConfigParseOptions)
       extends Parseable(options) {
     postConstruct(options)
-    override protected def reader: Reader = {
+    override protected def reader(): Reader = {
       if (ConfigImpl.traceLoadsEnabled)
         trace("Loading config from a String " + input)
       new StringReader(input)
     }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newSimple("String")
     override def toString: String = getClass.getSimpleName + "(" + input + ")"
   }
@@ -243,7 +243,7 @@ object Parseable {
       if (url == null) return null
       newURL(url, options().setOriginDescription(null))
     }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newURL(input)
     override def toString: String =
       getClass.getSimpleName + "(" + input.toExternalForm + ")"
@@ -261,7 +261,7 @@ object Parseable {
       extends Parseable(options) {
     postConstruct(options)
     @throws[IOException]
-    override protected def reader: Reader = {
+    override protected def reader(): Reader = {
       if (ConfigImpl.traceLoadsEnabled)
         trace("Loading config from a file: " + input)
       val stream = new FileInputStream(input)
@@ -284,7 +284,7 @@ object Parseable {
         super.relativeTo(filename)
       }
     }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newFile(input.getPath)
     override def toString: String =
       getClass.getSimpleName + "(" + input.getPath + ")"
@@ -298,7 +298,7 @@ object Parseable {
       val relativizer: Relativizer)
       extends ParseableURL(input, options) {
     postConstruct(options)
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newResource(resource, input)
     override private[impl] def relativeTo(filename: String) =
       relativizer.relativeTo(filename)
@@ -373,7 +373,7 @@ object Parseable {
           newResources(parent + "/" + sibling,
                        options.setOriginDescription(null))
       }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newResource(resource)
     override def toString: String =
       getClass.getSimpleName + "(" + resource + ")"
@@ -426,7 +426,7 @@ object Parseable {
       PropertiesParser.fromProperties(origin, props)
     }
     override private[impl] def guessSyntax = ConfigSyntax.PROPERTIES
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newSimple("properties")
     override def toString: String =
       getClass.getSimpleName + "(" + props.size + " props)"
