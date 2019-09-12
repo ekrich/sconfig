@@ -119,9 +119,9 @@ object SimpleConfigObject {
   private val EMPTY_NAME    = "empty config"
   private val emptyInstance = empty(SimpleConfigOrigin.newSimple(EMPTY_NAME))
   // commented out temporarily, used in Java
-  private[impl] def empty: SimpleConfigObject = emptyInstance
+  private[impl] def empty(): SimpleConfigObject = emptyInstance
   private[impl] def empty(origin: ConfigOrigin): SimpleConfigObject =
-    if (origin == null) empty
+    if (origin == null) empty()
     else
       new SimpleConfigObject(
         origin,

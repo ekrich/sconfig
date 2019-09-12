@@ -671,7 +671,7 @@ class ConfigSubstitutionTest extends TestUtils {
         .attemptPeekWithPartialResolve("item2")
         .isInstanceOf[ConfigDelayedMergeObject])
 
-    val resolved = delayedMergeObjectEmbrace.toConfig.resolve
+    val resolved = delayedMergeObjectEmbrace.toConfig.resolve()
     assertEquals(1, resolved.getInt("item1.c"))
     assertEquals(1, resolved.getInt("item2.d"))
     assertEquals(15, resolved.getInt("item1.x"))
@@ -701,7 +701,7 @@ class ConfigSubstitutionTest extends TestUtils {
         .attemptPeekWithPartialResolve("item2")
         .isInstanceOf[SimpleConfigObject])
 
-    val resolved = plainObjectEmbrace.toConfig.resolve
+    val resolved = plainObjectEmbrace.toConfig.resolve()
     assertEquals(14, resolved.getInt("item1.b"))
     assertEquals(10, resolved.getInt("item2.e"))
     assertEquals(14, resolved.getInt("item2.f"))
@@ -896,7 +896,7 @@ class ConfigSubstitutionTest extends TestUtils {
 
     for (k <- resolved.root.keySet().asScala) {
       assertNotNull(resolved.root.get(k))
-      assertEquals(nullValue, resolved.root.get(k))
+      assertEquals(nullValue(), resolved.root.get(k))
     }
   }
 

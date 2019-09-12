@@ -37,7 +37,7 @@ class ConfigBeanFactoryTest extends TestUtils {
     val config: Config = ConfigFactory
       .parseReader(new InputStreamReader(configIs),
                    ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF))
-      .resolve
+      .resolve()
     val beanConfig: TestBeanConfig =
       ConfigBeanFactory.create(config, classOf[TestBeanConfig])
     assertNotNull(beanConfig)
@@ -54,7 +54,7 @@ class ConfigBeanFactoryTest extends TestUtils {
     val config: Config = ConfigFactory
       .parseReader(new InputStreamReader(configIs),
                    ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF))
-      .resolve
+      .resolve()
       .getConfig("validation")
     val e = intercept[ConfigException.ValidationFailed] {
       ConfigBeanFactory.create(config, classOf[ValidationBeanConfig])
@@ -348,7 +348,7 @@ class ConfigBeanFactoryTest extends TestUtils {
       val config: Config = ConfigFactory
         .parseReader(new InputStreamReader(configIs),
                      ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF))
-        .resolve
+        .resolve()
       config
     } finally {
       configIs.close()

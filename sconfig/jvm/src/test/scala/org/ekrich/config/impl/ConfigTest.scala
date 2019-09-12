@@ -38,7 +38,7 @@ class ConfigTest extends TestUtils {
 
   def mergeUnresolved(toMerge: AbstractConfigObject*) = {
     if (toMerge.isEmpty) {
-      SimpleConfigObject.empty
+      SimpleConfigObject.empty()
     } else {
       toMerge.reduce((first, second) => first.withFallback(second))
     }
@@ -1176,7 +1176,7 @@ class ConfigTest extends TestUtils {
     }
 
     // be sure resolving doesn't throw
-    val resolved = conf.resolve
+    val resolved = conf.resolve()
     assertEquals(3, resolved.getInt("a.c"))
     assertEquals(5, resolved.getInt("b"))
     assertEquals(10, resolved.getInt("a.q"))
@@ -1186,7 +1186,7 @@ class ConfigTest extends TestUtils {
   def test10DelayedMergeRelativizing(): Unit = {
     val conf =
       ConfigFactory.parseResources(classOf[ConfigTest], "/test10.conf")
-    val resolved = conf.resolve
+    val resolved = conf.resolve()
     assertEquals(3, resolved.getInt("foo.a.c"))
     assertEquals(5, resolved.getInt("foo.b"))
     assertEquals(10, resolved.getInt("foo.a.q"))
@@ -1221,7 +1221,7 @@ class ConfigTest extends TestUtils {
         ConfigParseOptions.defaults.setAllowMissing(false))
       for (renderOptions <- optionsCombos) {
         val unresolvedRender = conf.root.render(renderOptions)
-        val resolved         = conf.resolve
+        val resolved         = conf.resolve()
         val resolvedRender   = resolved.root.render(renderOptions)
         val unresolvedParsed = ConfigFactory.parseString(
           unresolvedRender,
@@ -1280,7 +1280,7 @@ class ConfigTest extends TestUtils {
         classOf[ConfigTest],
         name,
         ConfigParseOptions.defaults.setAllowMissing(false))
-      val resolved = conf.resolve
+      val resolved = conf.resolve()
       checkSerializable(resolved)
     }
   }
@@ -1293,7 +1293,7 @@ class ConfigTest extends TestUtils {
     val unresolved = ConfigFactory.parseString("foo = ${a}, a=42")
     assertFalse("config with substitutions starts as not resolved",
                 unresolved.isResolved)
-    val resolved2 = unresolved.resolve
+    val resolved2 = unresolved.resolve()
     assertTrue("after resolution, config is now resolved", resolved2.isResolved)
   }
 
@@ -1303,7 +1303,7 @@ class ConfigTest extends TestUtils {
     val unresolved = ConfigFactory.parseString(
       "concat = [${unknown}[]], sibling = [${unknown}, ${known}]")
     unresolved.resolve(ConfigResolveOptions.defaults.setAllowUnresolved(true))
-    unresolved.withFallback(values).resolve
+    unresolved.withFallback(values).resolve()
     unresolved.resolveWith(values)
   }
 
@@ -1346,7 +1346,7 @@ class ConfigTest extends TestUtils {
     // scope "val resolved"
     {
       // and given the values for the resolve, we should be able to
-      val resolved = allowedUnresolved.withFallback(values).resolve
+      val resolved = allowedUnresolved.withFallback(values).resolve()
       for (kv <- Seq("a" -> 1, "b" -> 2, "c.x" -> 3, "c.y" -> 4)) {
         assertEquals(kv._2, resolved.getInt(kv._1))
       }
@@ -1369,7 +1369,7 @@ class ConfigTest extends TestUtils {
   def resolveWithWorks(): Unit = {
     // the a=42 is present here to be sure it gets ignored when we resolveWith
     val unresolved = ConfigFactory.parseString("foo = ${a}, a = 42")
-    assertEquals(42, unresolved.resolve.getInt("foo"))
+    assertEquals(42, unresolved.resolve().getInt("foo"))
     val source   = ConfigFactory.parseString("a = 43")
     val resolved = unresolved.resolveWith(source)
     assertEquals(43, resolved.getInt("foo"))
