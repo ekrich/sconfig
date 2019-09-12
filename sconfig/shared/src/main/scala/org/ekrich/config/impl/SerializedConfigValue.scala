@@ -197,8 +197,7 @@ object SerializedConfigValue {
     import SerializedValueType._
     val stb = in.readUnsignedByte
     val st  = SerializedValueType.forInt(stb)
-    if (st == null)
-      throw new IOException("Unknown serialized value type: " + stb)
+
     st match {
       case BOOLEAN =>
         new ConfigBoolean(origin, in.readBoolean)
@@ -239,7 +238,9 @@ object SerializedConfigValue {
           i += 1
         }
         new SimpleConfigObject(origin, map)
-      case _ =>
+      case null =>
+        throw new IOException("Unknown serialized value type: " + stb)
+      case _ => // warning in Dotty "Unreachable case" because enum values are a closed set
         throw new IOException("Unhandled serialized value type: " + st)
     }
   }
