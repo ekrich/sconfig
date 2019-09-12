@@ -27,8 +27,14 @@ val scalacOpts = List("-unchecked",
                       "-language:higherKinds",
                       "-language:implicitConversions")
 
-ThisBuild / Compile / scalacOptions := scalacOpts
-ThisBuild / Test / scalacOptions := scalacOpts
+val dotcOpts = List("-Xdiags:verbose")
+
+ThisBuild / Compile / scalacOptions := {
+  if (isDotty.value) dotcOpts else scalacOpts
+}
+ThisBuild / Test / scalacOptions := {
+  if (isDotty.value) dotcOpts else scalacOpts
+}
 
 val scala211 = "2.11.12"
 val scala212 = "2.12.8"
