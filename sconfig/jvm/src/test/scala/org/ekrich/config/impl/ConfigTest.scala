@@ -797,7 +797,7 @@ class ConfigTest extends TestUtils {
     }
 
     // should get durations
-    def asNanos(secs: Int) = TimeUnit.SECONDS.toNanos(secs)
+    def asNanos(secs: Int) = TimeUnit.SECONDS.toNanos(secs.toLong)
     assertEquals(1000L,
                  conf.getDuration("durations.second", TimeUnit.MILLISECONDS))
     assertEquals(asNanos(1),
@@ -853,7 +853,7 @@ class ConfigTest extends TestUtils {
     def assertDurationAsTimeUnit(unit: TimeUnit): Unit = {
       def ns2unit(l: Long) = unit.convert(l, NANOSECONDS)
       def ms2unit(l: Long) = unit.convert(l, MILLISECONDS)
-      def s2unit(i: Int)   = unit.convert(i, SECONDS)
+      def s2unit(i: Int)   = unit.convert(i.toLong, SECONDS)
       assertEquals(ms2unit(1000L), conf.getDuration("durations.second", unit))
       assertEquals(s2unit(1), conf.getDuration("durations.second", unit))
       assertEquals(ms2unit(1000L),

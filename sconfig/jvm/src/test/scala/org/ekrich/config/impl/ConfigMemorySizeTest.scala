@@ -22,6 +22,6 @@ class ConfigMemorySizeTest extends TestUtils {
   @Test
   def testToUnits(): Unit = {
     val kilobyte = ConfigMemorySize.ofBytes(1024)
-    assertEquals(1024, kilobyte.toBytes)
+    assertEquals(1024L, kilobyte.toBytes)
   }
 }

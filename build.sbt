@@ -23,9 +23,7 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
 
 val scalacOpts = List("-unchecked",
                       "-deprecation",
-                      "-feature",
-                      "-language:higherKinds",
-                      "-language:implicitConversions")
+                      "-feature")
 
 val dotcOpts = List("-Xdiags:verbose")
 
