@@ -40,7 +40,7 @@ val scala213 = "2.13.0"
 val dotty    = "0.18.1-RC1"
 
 val versionsBase   = Seq(scala211, scala212, scala213)
-val versionsJVM    = versionsBase :+ dotty
+val versionsJVM    = versionsBase //:+ dotty
 val versionsJS     = versionsBase
 val versionsNative = Seq(scala211)
 
