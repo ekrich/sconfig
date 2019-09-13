@@ -11,7 +11,7 @@ class SimpleIncludeContext(parseable: Parseable, options: ConfigParseOptions)
     extends ConfigIncludeContext {
 
   def this(parseable: Parseable) =
-    this(parseable, SimpleIncluder.clearForInclude(parseable.options))
+    this(parseable, SimpleIncluder.clearForInclude(parseable.options()))
 
   private[impl] def withParseable(parseable: Parseable) =
     if (parseable eq this.parseable) this

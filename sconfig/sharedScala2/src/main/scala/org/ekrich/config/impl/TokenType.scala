@@ -1,10 +1,9 @@
-/**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
- */
 package org.ekrich.config.impl
 
+import java.{lang => jl}
+
 final class TokenType private (name: String, ordinal: Int)
-    extends Enum[TokenType](name, ordinal)
+    extends jl.Enum[TokenType](name, ordinal)
 
 object TokenType {
 

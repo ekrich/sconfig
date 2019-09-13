@@ -112,9 +112,9 @@ object ConfigConcatenation {
   }
 }
 
-final class ConfigConcatenation(origin: ConfigOrigin,
+final class ConfigConcatenation(_origin: ConfigOrigin,
                                 val pieces: ju.List[AbstractConfigValue])
-    extends AbstractConfigValue(origin)
+    extends AbstractConfigValue(_origin)
     with Unmergeable
     with Container {
 

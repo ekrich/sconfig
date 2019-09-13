@@ -66,7 +66,7 @@ object ConfigParser {
     }
   }
 
-  final private class ParseContext private[impl] (
+  final private[impl] class ParseContext private[impl] (
       val flavor: ConfigSyntax,
       val baseOrigin: ConfigOrigin,
       val document: ConfigNodeRoot,

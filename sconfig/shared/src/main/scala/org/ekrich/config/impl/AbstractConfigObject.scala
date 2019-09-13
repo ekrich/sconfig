@@ -75,8 +75,8 @@ object AbstractConfigObject {
       "ConfigObject is immutable, you can't call Map." + method)
 }
 
-abstract class AbstractConfigObject(origin: ConfigOrigin)
-    extends AbstractConfigValue(origin)
+abstract class AbstractConfigObject(_origin: ConfigOrigin)
+    extends AbstractConfigValue(_origin)
     with ConfigObject
     with Container {
 

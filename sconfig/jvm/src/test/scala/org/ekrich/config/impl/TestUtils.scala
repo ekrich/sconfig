@@ -668,7 +668,7 @@ abstract trait TestUtils {
   def tokenDouble(d: Double) = Tokens.newDouble(fakeOrigin(), d, "" + d)
   def tokenInt(i: Int)       = Tokens.newInt(fakeOrigin(), i, "" + i)
   def tokenLong(l: Long)     = Tokens.newLong(fakeOrigin(), l, l.toString())
-  def tokenLine(line: Int)   = Tokens.newLine(fakeOrigin.withLineNumber(line))
+  def tokenLine(line: Int)   = Tokens.newLine(fakeOrigin().withLineNumber(line))
   def tokenCommentDoubleSlash(text: String) =
     Tokens.newCommentDoubleSlash(fakeOrigin(), text)
   def tokenCommentHash(text: String) =

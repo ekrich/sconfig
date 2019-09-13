@@ -27,7 +27,7 @@ import org.ekrich.config.ConfigValue
  */
 object ConfigImpl {
 
-  private class LoaderCache private[impl] () {
+  private[impl] class LoaderCache private[impl] () {
     private[impl] var currentSystemProperties: Config = null
     private var currentLoader                         = new WeakReference[ClassLoader](null)
     private var cache                                 = new ju.HashMap[String, Config]
@@ -272,7 +272,7 @@ object ConfigImpl {
       .newProperties(
         getSystemProperties,
         ConfigParseOptions.defaults.setOriginDescription("system properties"))
-      .parse
+      .parse()
       .asInstanceOf[AbstractConfigObject]
   private object SystemPropertiesHolder {
     // this isn't final due to the reloadSystemPropertiesConfig() hack below
@@ -321,11 +321,11 @@ object ConfigImpl {
           val unresolvedResources = Parseable
             .newResources("reference.conf",
                           ConfigParseOptions.defaults.setClassLoader(loader))
-            .parse
+            .parse()
             .toConfig
           systemPropertiesAsConfig
             .withFallback(unresolvedResources)
-            .resolve
+            .resolve()
         }
       }
     )

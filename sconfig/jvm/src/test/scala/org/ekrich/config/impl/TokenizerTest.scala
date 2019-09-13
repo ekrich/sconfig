@@ -348,11 +348,11 @@ class TokenizerTest extends TestUtils {
         extends NumberTest(s, result)
     case class DoubleTest(override val s: String, override val result: Token)
         extends NumberTest(s, result)
-    implicit def pair2inttest(pair: (String, Int)) =
+    implicit def pair2inttest(pair: (String, Int)): LongTest =
       LongTest(pair._1, tokenLong(pair._2))
-    implicit def pair2longtest(pair: (String, Long)) =
+    implicit def pair2longtest(pair: (String, Long)): LongTest =
       LongTest(pair._1, tokenLong(pair._2))
-    implicit def pair2doubletest(pair: (String, Double)) =
+    implicit def pair2doubletest(pair: (String, Double)): DoubleTest =
       DoubleTest(pair._1, tokenDouble(pair._2))
 
     val tests = List[NumberTest](("1", 1),

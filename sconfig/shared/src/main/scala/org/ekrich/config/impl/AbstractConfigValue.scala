@@ -121,7 +121,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     extends ConfigValue
     with MergeableValue {
 
-  override def origin(): SimpleConfigOrigin =
+  override def origin: SimpleConfigOrigin =
     this._origin.asInstanceOf[SimpleConfigOrigin]
 
   /**
@@ -228,7 +228,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
       // falling back to a non-object doesn't merge anything, and also
       // prohibits merging any objects that we fall back to later.
       // so we have to switch to ignoresFallbacks mode.
-      withFallbacksIgnored
+      withFallbacksIgnored()
     } else { // if unresolved, we may have to look back to fallbacks as part of
       // the resolution process, so always delay
       delayMerge(stack, fallback)

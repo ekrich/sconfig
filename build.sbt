@@ -21,19 +21,29 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
   else nextVersion + "-SNAPSHOT"
 }
 
-val scalacOpts = List("-unchecked",
-                      "-deprecation",
-                      "-feature",
-                      "-language:higherKinds",
-                      "-language:implicitConversions")
+val scalacOpts = List("-unchecked", "-deprecation", "-feature")
 
-ThisBuild / Compile / scalacOptions := scalacOpts
-ThisBuild / Test / scalacOptions := scalacOpts
+val dotcOpts = List("-Xdiags:verbose")
+
+ThisBuild / Compile / scalacOptions := {
+  if (isDotty.value) dotcOpts else scalacOpts
+}
+ThisBuild / Test / scalacOptions := {
+  if (isDotty.value) dotcOpts else scalacOpts
+}
 
 val scala211 = "2.11.12"
 val scala212 = "2.12.8"
 val scala213 = "2.13.0"
-ThisBuild / crossScalaVersions := Seq(scala211, scala212, scala213)
+val dotty    = "0.18.1-RC1"
+
+val versionsBase   = Seq(scala211, scala212, scala213)
+val versionsJVM    = versionsBase //:+ dotty
+val versionsJS     = versionsBase
+val versionsNative = Seq(scala211)
+
+ThisBuild / scalaVersion := scala212
+ThisBuild / crossScalaVersions := versionsJVM
 
 inThisBuild(
   List(
@@ -86,12 +96,15 @@ lazy val root = (project in file("."))
 lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
+    scala2or3Source,
     libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.2"
   )
   .jvmSettings(
     sharedJvmNativeSource,
     libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-5" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
+    libraryDependencies := libraryDependencies.value
+      .map(_.withDottyCompat(scalaVersion.value)),
     Compile / compile / javacOptions ++= Seq("-source",
                                              "1.8",
                                              "-target",
@@ -115,7 +128,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
   .nativeSettings(
-    crossScalaVersions := List(scala211),
+    crossScalaVersions := versionsNative,
     scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
     sharedJvmNativeSource,
     nativeLinkStubs := true,
@@ -124,6 +137,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     testFrameworks += new TestFramework("minitest.runner.Framework")
   )
   .jsSettings(
+    crossScalaVersions := versionsJS,
     libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5"
   )
 
@@ -131,6 +145,12 @@ lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
   Compile / unmanagedSourceDirectories +=
     (ThisBuild / baseDirectory).value
       / "sconfig" / "sharedjvmnative" / "src" / "main" / "scala"
+)
+
+lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
+  Compile / unmanagedSourceDirectories +=
+    (ThisBuild / baseDirectory).value
+      / "sconfig" / { if (isDotty.value) "sharedScala3" else "sharedScala2" } / "src" / "main" / "scala"
 )
 
 lazy val sconfigJVM = sconfig.jvm

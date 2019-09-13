@@ -1,8 +1,10 @@
 package org.ekrich.config.impl
 
+import java.{lang => jl}
+
 // caution: ordinals used in serialization
 final class OriginType private (name: String, ordinal: Int)
-    extends Enum[OriginType](name, ordinal)
+    extends jl.Enum[OriginType](name, ordinal)
 
 object OriginType {
 

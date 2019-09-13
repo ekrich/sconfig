@@ -3,7 +3,6 @@
  */
 package org.ekrich.config.impl
 
-import java.{lang => jl}
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInput
@@ -16,6 +15,7 @@ import java.io.NotSerializableException
 import java.io.ObjectInput
 import java.io.ObjectOutput
 import java.io.ObjectStreamException
+import java.{lang => jl}
 import java.{util => ju}
 
 import scala.jdk.CollectionConverters._
@@ -41,59 +41,7 @@ import org.ekrich.config.ConfigValueType
 @SerialVersionUID(1L)
 object SerializedConfigValue {
 
-  final class SerializedValueType private (name: String,
-                                           ordinal: Int,
-                                           val configType: ConfigValueType)
-      extends Enum[SerializedValueType](name, ordinal)
-
-  object SerializedValueType {
-    // the ordinals here are in the wire format, caution
-    final val NULL = new SerializedValueType("NULL", 0, ConfigValueType.NULL)
-    final val BOOLEAN =
-      new SerializedValueType("BOOLEAN", 1, ConfigValueType.BOOLEAN)
-    final val INT  = new SerializedValueType("INT", 2, ConfigValueType.NUMBER)
-    final val LONG = new SerializedValueType("LONG", 3, ConfigValueType.NUMBER)
-    final val DOUBLE =
-      new SerializedValueType("DOUBLE", 4, ConfigValueType.NUMBER)
-    final val STRING =
-      new SerializedValueType("STRING", 5, ConfigValueType.STRING)
-    final val LIST = new SerializedValueType("LIST", 6, ConfigValueType.LIST)
-    final val OBJECT =
-      new SerializedValueType("OBJECT", 7, ConfigValueType.OBJECT)
-
-    private[this] final val _values: Array[SerializedValueType] =
-      Array(NULL, BOOLEAN, INT, LONG, DOUBLE, STRING, LIST, OBJECT)
-
-    def values: Array[SerializedValueType] = _values.clone()
-
-    def valueOf(name: String): SerializedValueType = {
-      _values.find(_.name == name).getOrElse {
-        throw new IllegalArgumentException(
-          "No enum const SerializedValueType." + name)
-      }
-    }
-
-    private[impl] def forInt(b: Int): SerializedValueType =
-      if (b < values.length) values(b)
-      else null // really?
-
-    private[impl] def forValue(value: ConfigValue): SerializedValueType = {
-      val t = value.valueType
-      if (t eq ConfigValueType.NUMBER) {
-        if (value.isInstanceOf[ConfigInt]) return INT
-        else if (value.isInstanceOf[ConfigLong]) return LONG
-        else if (value.isInstanceOf[ConfigDouble]) return DOUBLE
-      } else {
-        for (st <- values) {
-          if (st.configType eq t) return st
-        }
-      }
-      throw new ConfigException.BugOrBroken(
-        "don't know how to serialize " + value)
-    }
-  }
-
-  private class FieldOut private[impl] (val code: SerializedField) {
+  private[impl] class FieldOut private[impl] (val code: SerializedField) {
     final private[impl] var bytes = new ByteArrayOutputStream
     final private[impl] var data  = new DataOutputStream(bytes)
   }
@@ -249,8 +197,7 @@ object SerializedConfigValue {
     import SerializedValueType._
     val stb = in.readUnsignedByte
     val st  = SerializedValueType.forInt(stb)
-    if (st == null)
-      throw new IOException("Unknown serialized value type: " + stb)
+
     st match {
       case BOOLEAN =>
         new ConfigBoolean(origin, in.readBoolean)
@@ -291,7 +238,9 @@ object SerializedConfigValue {
           i += 1
         }
         new SimpleConfigObject(origin, map)
-      case _ =>
+      case null =>
+        throw new IOException("Unknown serialized value type: " + stb)
+      case _ => // warning in Dotty "Unreachable case" because enum values are a closed set
         throw new IOException("Unhandled serialized value type: " + st)
     }
   }
@@ -384,8 +333,8 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
   private var value: ConfigValue = null
   private var wasConfig: Boolean = false
 
-  def this(value: ConfigValue) {
-    this
+  def this(value: ConfigValue) = {
+    this()
     this.value = value
     this.wasConfig = false
   }
@@ -462,68 +411,4 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
                    else 0))
     h
   }
-}
-
-// this is how we try to be extensible
-final class SerializedField private (name: String, ordinal: Int)
-    extends Enum[SerializedField](name, ordinal)
-
-object SerializedField {
-  // represents a field code we didn't recognize
-  final val UNKNOWN = new SerializedField("UNKNOWN", 0)
-  // end of a list of fields
-  final val END_MARKER = new SerializedField("END_MARKER", 1)
-  // Fields at the root
-  final val ROOT_VALUE      = new SerializedField("ROOT_VALUE", 2)
-  final val ROOT_WAS_CONFIG = new SerializedField("ROOT_WAS_CONFIG", 3)
-  // Fields that make up a value
-  final val VALUE_DATA   = new SerializedField("VALUE_DATA", 4)
-  final val VALUE_ORIGIN = new SerializedField("VALUE_ORIGIN", 5)
-  // Fields that make up an origin
-  final val ORIGIN_DESCRIPTION = new SerializedField("ORIGIN_DESCRIPTION", 6)
-  final val ORIGIN_LINE_NUMBER = new SerializedField("ORIGIN_LINE_NUMBER", 7)
-  final val ORIGIN_END_LINE_NUMBER =
-    new SerializedField("ORIGIN_END_LINE_NUMBER", 8)
-  final val ORIGIN_TYPE     = new SerializedField("ORIGIN_TYPE", 9)
-  final val ORIGIN_URL      = new SerializedField("ORIGIN_URL", 10)
-  final val ORIGIN_COMMENTS = new SerializedField("ORIGIN_COMMENTS", 11)
-  final val ORIGIN_NULL_URL = new SerializedField("ORIGIN_NULL_URL", 12)
-  final val ORIGIN_NULL_COMMENTS =
-    new SerializedField("ORIGIN_NULL_COMMENTS", 13)
-  final val ORIGIN_RESOURCE = new SerializedField("ORIGIN_RESOURCE", 14)
-  final val ORIGIN_NULL_RESOURCE =
-    new SerializedField("ORIGIN_NULL_RESOURCE", 15)
-
-  private[this] final val _values: Array[SerializedField] =
-    Array(
-      UNKNOWN,
-      END_MARKER,
-      ROOT_VALUE,
-      ROOT_WAS_CONFIG,
-      VALUE_DATA,
-      VALUE_ORIGIN,
-      ORIGIN_DESCRIPTION,
-      ORIGIN_LINE_NUMBER,
-      ORIGIN_END_LINE_NUMBER,
-      ORIGIN_TYPE,
-      ORIGIN_URL,
-      ORIGIN_COMMENTS,
-      ORIGIN_NULL_URL,
-      ORIGIN_NULL_COMMENTS,
-      ORIGIN_RESOURCE,
-      ORIGIN_NULL_RESOURCE
-    )
-
-  def values: Array[SerializedField] = _values.clone()
-
-  def valueOf(name: String): SerializedField = {
-    _values.find(_.name == name).getOrElse {
-      throw new IllegalArgumentException(
-        "No enum const SerializedField." + name)
-    }
-  }
-
-  private[impl] def forInt(b: Int): SerializedField =
-    if (b < values.length) values(b)
-    else UNKNOWN
 }

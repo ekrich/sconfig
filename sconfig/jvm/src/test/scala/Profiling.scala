@@ -71,7 +71,7 @@ object Resolve extends App {
   val conf = ConfigFactory.load("test02")
 
   def task(): Unit = {
-    conf.resolve
+    conf.resolve()
     if (conf.getInt("103_a") != 103) {
       throw new Exception("broken file load")
     }
@@ -84,7 +84,7 @@ object Resolve extends App {
 }
 
 object GetExistingPath extends App {
-  val conf = ConfigFactory.parseString("aaaaa.bbbbb.ccccc.d=42").resolve
+  val conf = ConfigFactory.parseString("aaaaa.bbbbb.ccccc.d=42").resolve()
 
   def task(): Unit = {
     if (conf.getInt("aaaaa.bbbbb.ccccc.d") != 42) {
@@ -102,7 +102,7 @@ object GetSeveralExistingPaths extends App {
   val conf = ConfigFactory
     .parseString(
       "aaaaa { bbbbb.ccccc.d=42, qqqqq.rrrrr = 43 }, xxxxx.yyyyy.zzzzz = 44 ")
-    .resolve
+    .resolve()
 
   def task(): Unit = {
     if (conf.getInt("aaaaa.bbbbb.ccccc.d") != 42 ||
@@ -122,7 +122,7 @@ object HasPathOnMissing extends App {
   val conf =
     ConfigFactory
       .parseString("aaaaa.bbbbb.ccccc.d=42,x=10, y=11, z=12")
-      .resolve
+      .resolve()
 
   def task(): Unit = {
     if (conf.hasPath("aaaaa.bbbbb.ccccc.e")) {
@@ -140,7 +140,7 @@ object CatchExceptionOnMissing extends App {
   val conf =
     ConfigFactory
       .parseString("aaaaa.bbbbb.ccccc.d=42,x=10, y=11, z=12")
-      .resolve
+      .resolve()
 
   def anotherStackFrame(remaining: Int)(body: () => Unit): Int = {
     if (remaining == 0) {

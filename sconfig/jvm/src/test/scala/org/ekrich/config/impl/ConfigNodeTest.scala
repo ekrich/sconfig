@@ -7,7 +7,7 @@ class ConfigNodeTest extends TestUtils {
 
   private def singleTokenNodeTest(token: Token): Unit = {
     val node = configNodeSingleToken(token)
-    assertEquals(node.render, token.tokenText())
+    assertEquals(node.render, token.tokenText)
   }
 
   private def keyNodeTest(path: String): Unit = {
@@ -17,7 +17,7 @@ class ConfigNodeTest extends TestUtils {
 
   private def simpleValueNodeTest(token: Token): Unit = {
     val node = configNodeSimpleValue(token)
-    assertEquals(node.render, token.tokenText())
+    assertEquals(node.render, token.tokenText)
   }
 
   private def fieldNodeTest(key: ConfigNodePath,

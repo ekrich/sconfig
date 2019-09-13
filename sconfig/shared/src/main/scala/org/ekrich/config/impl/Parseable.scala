@@ -85,7 +85,7 @@ object Parseable {
       // element of the path in siblingURI gets stripped out,
       // so to get something in the same directory as
       // siblingURI we just call resolve().
-      val resolved = new PlatformUri(siblingURI.resolve(relative)).toURL
+      val resolved = new PlatformUri(siblingURI.resolve(relative)).toURL()
       resolved
     } catch {
       case e: MalformedURLException =>
@@ -122,16 +122,16 @@ object Parseable {
     new ParseableNotFound(whatNotFound, message, options)
 
   final private[impl] class ParseableReader private[impl] (
-      reader: Reader,
+      _reader: Reader,
       options: ConfigParseOptions)
       extends Parseable(options) {
     postConstruct(options)
     override protected def reader(): Reader = {
       if (ConfigImpl.traceLoadsEnabled)
-        trace("Loading config from reader " + reader)
-      reader
+        trace("Loading config from reader " + _reader)
+      _reader
     }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newSimple("Reader")
   }
   // note that we will never close this reader; you have to do it when parsing
@@ -144,12 +144,12 @@ object Parseable {
       options: ConfigParseOptions)
       extends Parseable(options) {
     postConstruct(options)
-    override protected def reader: Reader = {
+    override protected def reader(): Reader = {
       if (ConfigImpl.traceLoadsEnabled)
         trace("Loading config from a String " + input)
       new StringReader(input)
     }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newSimple("String")
     override def toString: String = getClass.getSimpleName + "(" + input + ")"
   }
@@ -179,7 +179,7 @@ object Parseable {
     // does not postConstruct (subclass does it)
     private var contentTypeStr: String = null
     // shadowing with a different type(ConfigSyntax) doesn't work in Scala
-    def this(input: URL, options: ConfigParseOptions) {
+    def this(input: URL, options: ConfigParseOptions) = {
       this(input)
       postConstruct(options)
     }
@@ -241,9 +241,9 @@ object Parseable {
     override private[impl] def relativeTo(filename: String): ConfigParseable = {
       val url = Parseable.relativeTo(input, filename)
       if (url == null) return null
-      newURL(url, options.setOriginDescription(null))
+      newURL(url, options().setOriginDescription(null))
     }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newURL(input)
     override def toString: String =
       getClass.getSimpleName + "(" + input.toExternalForm + ")"
@@ -261,7 +261,7 @@ object Parseable {
       extends Parseable(options) {
     postConstruct(options)
     @throws[IOException]
-    override protected def reader: Reader = {
+    override protected def reader(): Reader = {
       if (ConfigImpl.traceLoadsEnabled)
         trace("Loading config from a file: " + input)
       val stream = new FileInputStream(input)
@@ -284,21 +284,21 @@ object Parseable {
         super.relativeTo(filename)
       }
     }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newFile(input.getPath)
     override def toString: String =
       getClass.getSimpleName + "(" + input.getPath + ")"
   }
   def newFile(input: File, options: ConfigParseOptions) =
     new ParseableFile(input, options)
-  final private class ParseableResourceURL private[impl] (
+  final private[impl] class ParseableResourceURL private[impl] (
       input: URL,
       options: ConfigParseOptions,
       val resource: String,
       val relativizer: Relativizer)
       extends ParseableURL(input, options) {
     postConstruct(options)
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newResource(resource, input)
     override private[impl] def relativeTo(filename: String) =
       relativizer.relativeTo(filename)
@@ -317,7 +317,7 @@ object Parseable {
       if (i < 0) null else resource.substring(0, i)
     }
   }
-  final private class ParseableResources private[impl] (
+  final private[impl] class ParseableResources private[impl] (
       val resource: String,
       options: ConfigParseOptions)
       extends Parseable(options)
@@ -350,7 +350,7 @@ object Parseable {
             "Loading config from resource '" + resource + "' URL " + url.toExternalForm + " from class loader " + loader)
         val element =
           newResourceURL(url, finalOptions, resource, this)
-        val v = element.parseValue
+        val v = element.parseValue()
         merged = merged.withFallback(v)
       }
       merged
@@ -373,7 +373,7 @@ object Parseable {
           newResources(parent + "/" + sibling,
                        options.setOriginDescription(null))
       }
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newResource(resource)
     override def toString: String =
       getClass.getSimpleName + "(" + resource + ")"
@@ -426,7 +426,7 @@ object Parseable {
       PropertiesParser.fromProperties(origin, props)
     }
     override private[impl] def guessSyntax = ConfigSyntax.PROPERTIES
-    override protected def createOrigin: ConfigOrigin =
+    override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newSimple("properties")
     override def toString: String =
       getClass.getSimpleName + "(" + props.size + " props)"
@@ -481,7 +481,7 @@ abstract class Parseable protected (
     // with ParseableResources.relativeTo
     var resource = filename
     if (filename.startsWith("/")) resource = filename.substring(1)
-    Parseable.newResources(resource, options.setOriginDescription(null))
+    Parseable.newResources(resource, options().setOriginDescription(null))
   }
   override def parse(baseOptions: ConfigParseOptions): ConfigObject = {
     val stack = Parseable.parseStack.get
@@ -615,10 +615,11 @@ abstract class Parseable protected (
       ConfigDocumentParser.parse(tokens, origin, finalOptions),
       finalOptions)
   }
+
   def parse(): ConfigObject =
-    Parseable.forceParsedToObject(parseValue(options))
-  def parseConfigDocument(): ConfigDocument           = parseDocument(options)
-  private[impl] def parseValue(): AbstractConfigValue = parseValue(options)
+    Parseable.forceParsedToObject(parseValue(options()))
+  def parseConfigDocument(): ConfigDocument           = parseDocument(options())
+  private[impl] def parseValue(): AbstractConfigValue = parseValue(options())
   override final def origin(): ConfigOrigin           = initialOrigin
   protected def createOrigin(): ConfigOrigin
   override def options(): ConfigParseOptions = initialOptions

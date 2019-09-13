@@ -55,8 +55,8 @@ object Tokens {
       super.equals(other) && other
         .asInstanceOf[Tokens.UnquotedText]
         .value == value
-    override def hashCode(): Int     = 41 * (41 + super.hashCode) + value.hashCode
-    override def tokenText(): String = value
+    override def hashCode(): Int   = 41 * (41 + super.hashCode) + value.hashCode
+    override def tokenText: String = value
   }
 
   private[Tokens] class IgnoredWhitespace private[impl] (origin: ConfigOrigin,
@@ -69,8 +69,8 @@ object Tokens {
       super.equals(other) && other
         .asInstanceOf[Tokens.IgnoredWhitespace]
         .value == value
-    override def hashCode(): Int     = 41 * (41 + super.hashCode) + value.hashCode
-    override def tokenText(): String = value
+    override def hashCode(): Int   = 41 * (41 + super.hashCode) + value.hashCode
+    override def tokenText: String = value
   }
 
   private[Tokens] class Problem private[impl] (origin: ConfigOrigin,
@@ -117,17 +117,17 @@ object Tokens {
         origin: ConfigOrigin,
         text: String)
         extends Tokens.Comment(origin, text) {
-      override def tokenText(): String = "//" + text
+      override def tokenText: String = "//" + text
     }
     final private[impl] class HashComment private[impl] (origin: ConfigOrigin,
                                                          text: String)
         extends Tokens.Comment(origin, text) {
-      override def tokenText(): String = "#" + text
+      override def tokenText: String = "#" + text
     }
   }
 
-  abstract private class Comment private[impl] (origin: ConfigOrigin,
-                                                val text: String)
+  abstract private[impl] class Comment private[impl] (origin: ConfigOrigin,
+                                                      val text: String)
       extends Token(TokenType.COMMENT, origin) {
 
     override def toString(): String = {
@@ -155,7 +155,7 @@ object Tokens {
                      val value: ju.List[Token])
       extends Token(TokenType.SUBSTITUTION, origin) {
 
-    override def tokenText(): String =
+    override def tokenText: String =
       "${" + (if (this.optional) "?" else "") + Tokenizer.render(
         this.value.iterator) + "}"
     override def toString(): String = {
@@ -286,7 +286,7 @@ object Tokens {
   def newString(origin: ConfigOrigin, value: String, origText: String) =
     newValue(new ConfigString.Quoted(origin, value), origText)
   def newInt(origin: ConfigOrigin, value: Int, origText: String) =
-    newValue(ConfigNumber.newNumber(origin, value, origText), origText)
+    newValue(ConfigNumber.newNumber(origin, value.toLong, origText), origText)
   def newDouble(origin: ConfigOrigin, value: Double, origText: String) =
     newValue(ConfigNumber.newNumber(origin, value, origText), origText)
   def newLong(origin: ConfigOrigin, value: Long, origText: String) =

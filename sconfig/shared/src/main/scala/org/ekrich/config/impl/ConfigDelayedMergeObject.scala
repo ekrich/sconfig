@@ -22,9 +22,9 @@ object ConfigDelayedMergeObject {
       "need to Config#resolve() before using this object, see the API docs for Config#resolve()")
 }
 
-final class ConfigDelayedMergeObject(origin: ConfigOrigin,
+final class ConfigDelayedMergeObject(_origin: ConfigOrigin,
                                      val stack: ju.List[AbstractConfigValue])
-    extends AbstractConfigObject(origin)
+    extends AbstractConfigObject(_origin)
     with Unmergeable
     with ReplaceableMergeStack {
   if (stack.isEmpty)

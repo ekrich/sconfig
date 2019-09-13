@@ -56,7 +56,7 @@ object ConfigImplUtil {
         case '\t' =>
           sb.append("\\t")
         case _ =>
-          if (isC0Control(c)) sb.append("\\u%04x".format(c.toInt))
+          if (isC0Control(c.toInt)) sb.append("\\u%04x".format(c.toInt))
           else sb.append(c)
       }
       i += 1

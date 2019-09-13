@@ -356,7 +356,7 @@ object ConfigFactory {
    *
    * @return the default override configuration
    */
-  def defaultOverrides(): Config = systemProperties
+  def defaultOverrides(): Config = systemProperties()
 
   /**
    * Like [[ConfigFactory.defaultOverrides()]] but allows you to specify a class loader
@@ -365,7 +365,7 @@ object ConfigFactory {
    * @param loader class loader to look for resources in
    * @return the default override configuration
    */
-  def defaultOverrides(loader: ClassLoader): Config = systemProperties
+  def defaultOverrides(loader: ClassLoader): Config = systemProperties()
 
   /**
    * Obtains the default application-specific configuration,
@@ -541,7 +541,7 @@ object ConfigFactory {
    */
   def parseProperties(properties: Properties,
                       options: ConfigParseOptions): Config =
-    Parseable.newProperties(properties, options).parse.toConfig
+    Parseable.newProperties(properties, options).parse().toConfig
 
   /**
    * Like [[ConfigFactory#parseProperties(Properties, ConfigParseOptions)]] but uses default
@@ -570,7 +570,7 @@ object ConfigFactory {
    * @throws ConfigException on IO or parse errors
    */
   def parseReader(reader: Reader, options: ConfigParseOptions): Config =
-    Parseable.newReader(reader, options).parse.toConfig
+    Parseable.newReader(reader, options).parse().toConfig
 
   /**
    * Parses a reader into a Config instance as with
@@ -601,7 +601,7 @@ object ConfigFactory {
    * @throws ConfigException on IO or parse errors
    */
   def parseURL(url: URL, options: ConfigParseOptions): Config =
-    Parseable.newURL(url, options).parse.toConfig
+    Parseable.newURL(url, options).parse().toConfig
 
   /**
    * Parses a url into a [[Config]] instance as with
@@ -631,7 +631,7 @@ object ConfigFactory {
    * @throws ConfigException on IO or parse errors
    */
   def parseFile(file: File, options: ConfigParseOptions): Config =
-    Parseable.newFile(file, options).parse.toConfig
+    Parseable.newFile(file, options).parse().toConfig
 
   /**
    * Parses a file into a Config instance as with
@@ -720,7 +720,7 @@ object ConfigFactory {
   def parseResources(klass: Class[_],
                      resource: String,
                      options: ConfigParseOptions): Config =
-    Parseable.newResources(klass, resource, options).parse.toConfig
+    Parseable.newResources(klass, resource, options).parse().toConfig
 
   /**
    * Like [[ConfigFactory#parseResources(Class,String,ConfigParseOptions)]] but always uses
@@ -890,7 +890,7 @@ object ConfigFactory {
   def parseResources(resource: String, options: ConfigParseOptions): Config = {
     val withLoader =
       ensureClassLoader(options, "parseResources")
-    Parseable.newResources(resource, withLoader).parse.toConfig
+    Parseable.newResources(resource, withLoader).parse().toConfig
   }
 
   /**
@@ -937,7 +937,7 @@ object ConfigFactory {
    * @return the parsed configuration
    */
   def parseString(s: String, options: ConfigParseOptions): Config =
-    Parseable.newString(s, options).parse.toConfig
+    Parseable.newString(s, options).parse().toConfig
 
   /**
    * Parses a string (which should be valid HOCON or JSON).

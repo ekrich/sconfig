@@ -19,7 +19,7 @@ import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
 @SerialVersionUID(2L)
 object SimpleConfigObject {
 
-  final private class ResolveModifier private[impl] (
+  final private[impl] class ResolveModifier private[impl] (
       var context: ResolveContext,
       val source: ResolveSource)
       extends AbstractConfigValue.Modifier {
@@ -119,9 +119,9 @@ object SimpleConfigObject {
   private val EMPTY_NAME    = "empty config"
   private val emptyInstance = empty(SimpleConfigOrigin.newSimple(EMPTY_NAME))
   // commented out temporarily, used in Java
-  private[impl] def empty: SimpleConfigObject = emptyInstance
+  private[impl] def empty(): SimpleConfigObject = emptyInstance
   private[impl] def empty(origin: ConfigOrigin): SimpleConfigObject =
-    if (origin == null) empty
+    if (origin == null) empty()
     else
       new SimpleConfigObject(
         origin,
@@ -133,12 +133,12 @@ object SimpleConfigObject {
 }
 
 @SerialVersionUID(2L)
-final class SimpleConfigObject(origin: ConfigOrigin,
+final class SimpleConfigObject(_origin: ConfigOrigin,
                                // this map should never be modified - assume immutable
                                val value: ju.Map[String, AbstractConfigValue],
                                val status: ResolveStatus,
                                override val ignoresFallbacks: Boolean)
-    extends AbstractConfigObject(origin)
+    extends AbstractConfigObject(_origin)
     with Serializable {
 
   if (value == null)
@@ -149,8 +149,8 @@ final class SimpleConfigObject(origin: ConfigOrigin,
   if (status ne ResolveStatus.fromValues(value.values))
     throw new ConfigException.BugOrBroken("Wrong resolved status on " + this)
 
-  def this(origin: ConfigOrigin, value: ju.Map[String, AbstractConfigValue]) =
-    this(origin,
+  def this(_origin: ConfigOrigin, value: ju.Map[String, AbstractConfigValue]) =
+    this(_origin,
          value,
          ResolveStatus.fromValues(value.values),
          false /* ignoresFallbacks */ )
@@ -265,7 +265,7 @@ final class SimpleConfigObject(origin: ConfigOrigin,
   override def newCopy(newStatus: ResolveStatus,
                        newOrigin: ConfigOrigin): SimpleConfigObject =
     newCopy(newStatus, newOrigin, ignoresFallbacks)
-  override def withFallbacksIgnored: SimpleConfigObject =
+  override def withFallbacksIgnored(): SimpleConfigObject =
     if (ignoresFallbacks) this
     else newCopy(resolveStatus, origin, true)
   override def resolveStatus: ResolveStatus =

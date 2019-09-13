@@ -19,7 +19,7 @@ class SimpleLibContext(config: Config) {
 
   // This uses the standard default Config, if none is provided,
   // which simplifies apps willing to use the defaults
-  def this() {
+  def this() = {
     this(ConfigFactory.load())
   }
 
@@ -51,7 +51,7 @@ class SimpleLibSettings(config: Config) {
 class SimpleLibContext2(config: Config) {
   val settings = new SimpleLibSettings(config)
 
-  def this() {
+  def this() = {
     this(ConfigFactory.load())
   }
 

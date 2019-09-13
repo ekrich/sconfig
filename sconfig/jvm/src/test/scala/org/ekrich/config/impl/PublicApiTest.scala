@@ -139,7 +139,7 @@ class PublicApiTest extends TestUtils {
 
   @Test
   def fromJavaNull(): Unit = {
-    testFromValue(nullValue, null)
+    testFromValue(nullValue(), null)
   }
 
   @Test

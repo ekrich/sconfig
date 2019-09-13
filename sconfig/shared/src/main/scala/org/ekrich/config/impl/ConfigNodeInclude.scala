@@ -18,13 +18,13 @@ final class ConfigNodeInclude(
   }
 
   private[impl] def name: String = {
-    for (n <- children.asScala) {
-      if (n.isInstanceOf[ConfigNodeSimpleValue])
-        return Tokens
-          .getValue(n.asInstanceOf[ConfigNodeSimpleValue].token)
+    children.asScala.find(_.isInstanceOf[ConfigNodeSimpleValue]) match {
+      case Some(node) =>
+        Tokens
+          .getValue(node.asInstanceOf[ConfigNodeSimpleValue].token)
           .unwrapped
           .asInstanceOf[String]
+      case None => null
     }
-    null
   }
 }

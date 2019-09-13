@@ -1,12 +1,13 @@
 package org.ekrich.config.impl
 
+import java.{lang => jl}
 import java.{util => ju}
 
 /**
  * Status of substitution resolution.
  */
 class ResolveStatus private (name: String, ordinal: Int)
-    extends Enum[ResolveStatus](name, ordinal)
+    extends jl.Enum[ResolveStatus](name, ordinal)
 
 object ResolveStatus {
 

@@ -401,7 +401,7 @@ class ConfigValueTest extends TestUtils {
 
   @Test
   def configDelayedMergeObjectEquality(): Unit = {
-    val empty = SimpleConfigObject.empty
+    val empty = SimpleConfigObject.empty()
     val s1    = subst("foo")
     val s2    = subst("bar")
     val a = new ConfigDelayedMergeObject(
@@ -421,7 +421,7 @@ class ConfigValueTest extends TestUtils {
 
   @Test
   def configDelayedMergeObjectNotSerializable(): Unit = {
-    val empty = SimpleConfigObject.empty
+    val empty = SimpleConfigObject.empty()
     val s1    = subst("foo")
     val s2    = subst("bar")
     val a = new ConfigDelayedMergeObject(
@@ -440,7 +440,7 @@ class ConfigValueTest extends TestUtils {
     stringValue("hi").toString()
     nullValue().toString()
     boolValue(true).toString()
-    val emptyObj = SimpleConfigObject.empty
+    val emptyObj = SimpleConfigObject.empty()
     emptyObj.toString()
     (new SimpleConfigList(fakeOrigin(),
                           Collections.emptyList[AbstractConfigValue]()))
@@ -610,7 +610,7 @@ class ConfigValueTest extends TestUtils {
     unresolved { dm.unwrapped }
 
     // ConfigDelayedMergeObject
-    val emptyObj = SimpleConfigObject.empty
+    val emptyObj = SimpleConfigObject.empty()
     val dmo = new ConfigDelayedMergeObject(
       fakeOrigin(),
       List[AbstractConfigValue](emptyObj, subst("a"), subst("b")).asJava)
@@ -813,14 +813,14 @@ class ConfigValueTest extends TestUtils {
       "{ a = {}, a=${x}, b=${y}, b=${z}, x={asf:1}, y=2, z=3 }")
     assertEquals("keep only a.asf",
                  parseObject("{ a={asf:1} }"),
-                 obj.toConfig.resolve.withOnlyPath("a.asf").root)
+                 obj.toConfig.resolve().withOnlyPath("a.asf").root)
 
     intercept[ConfigException.UnresolvedSubstitution] {
-      obj.withOnlyKey("a").toConfig.resolve
+      obj.withOnlyKey("a").toConfig.resolve()
     }
 
     intercept[ConfigException.UnresolvedSubstitution] {
-      obj.withOnlyKey("b").toConfig.resolve
+      obj.withOnlyKey("b").toConfig.resolve()
     }
 
     assertEquals(ResolveStatus.UNRESOLVED, obj.resolveStatus)
@@ -859,14 +859,14 @@ class ConfigValueTest extends TestUtils {
       "{ a = {}, a=${x}, b=${y}, b=${z}, x={asf:1}, y=2, z=3 }")
     assertEquals("without a.asf",
                  parseObject("{ a={}, b=3, x={asf:1}, y=2, z=3 }"),
-                 obj.toConfig.resolve.withoutPath("a.asf").root)
+                 obj.toConfig.resolve().withoutPath("a.asf").root)
 
     intercept[ConfigException.UnresolvedSubstitution] {
-      obj.withoutKey("x").toConfig.resolve
+      obj.withoutKey("x").toConfig.resolve()
     }
 
     intercept[ConfigException.UnresolvedSubstitution] {
-      obj.withoutKey("z").toConfig.resolve
+      obj.withoutKey("z").toConfig.resolve()
     }
 
     assertEquals(ResolveStatus.UNRESOLVED, obj.resolveStatus)
@@ -914,7 +914,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def withValueDepth1FromEmpty(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
-    val config = ConfigFactory.empty.withValue("a", v)
+    val config = ConfigFactory.empty().withValue("a", v)
     assertEquals(parseConfig("a=42"), config)
     assertTrue(config.getValue("a") eq v)
   }
@@ -922,7 +922,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def withValueDepth2FromEmpty(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
-    val config = ConfigFactory.empty.withValue("a.b", v)
+    val config = ConfigFactory.empty().withValue("a.b", v)
     assertEquals(parseConfig("a.b=42"), config)
     assertTrue(config.getValue("a.b") eq v)
   }
@@ -930,7 +930,7 @@ class ConfigValueTest extends TestUtils {
   @Test
   def withValueDepth3FromEmpty(): Unit = {
     val v      = ConfigValueFactory.fromAnyRef(42: Integer)
-    val config = ConfigFactory.empty.withValue("a.b.c", v)
+    val config = ConfigFactory.empty().withValue("a.b.c", v)
     assertEquals(parseConfig("a.b.c=42"), config)
     assertTrue(config.getValue("a.b.c") eq v)
   }
@@ -971,7 +971,8 @@ class ConfigValueTest extends TestUtils {
     val v2 = ConfigValueFactory.fromAnyRef(2: Integer)
     val v3 = ConfigValueFactory.fromAnyRef(3: Integer)
     val v4 = ConfigValueFactory.fromAnyRef(4: Integer)
-    val config = ConfigFactory.empty
+    val config = ConfigFactory
+      .empty()
       .withValue("a", v1)
       .withValue("b.c", v2)
       .withValue("b.d", v3)
