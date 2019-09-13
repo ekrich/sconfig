@@ -21,9 +21,7 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
   else nextVersion + "-SNAPSHOT"
 }
 
-val scalacOpts = List("-unchecked",
-                      "-deprecation",
-                      "-feature")
+val scalacOpts = List("-unchecked", "-deprecation", "-feature")
 
 val dotcOpts = List("-Xdiags:verbose")
 
