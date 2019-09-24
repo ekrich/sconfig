@@ -712,7 +712,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     obj
   }
   override def getConfig(path: String): SimpleConfig = getObject(path).toConfig
-  override def getAnyRef(path: String): Any = {
+  override def getAnyRef(path: String): AnyRef = {
     val v = find(path, null)
     v.unwrapped
   }
@@ -887,7 +887,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     }
     l
   }
-  override def getAnyRefList(path: String): ju.List[_] = {
+  override def getAnyRefList(path: String): ju.List[_ <: AnyRef] = {
     val l    = new ju.ArrayList[AnyRef]
     val list = getList(path)
     for (v <- list.asScala) {
