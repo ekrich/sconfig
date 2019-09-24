@@ -1,6 +1,7 @@
 package beanconfig;
 
-
+// Java object returns are fully specified and should be reverted
+// in the future. See https://github.com/lampepfl/dotty/issues/7312
 public class BooleansConfig {
     Boolean trueVal;
     Boolean trueValAgain;
@@ -9,7 +10,7 @@ public class BooleansConfig {
     Boolean on;
     boolean off;
 
-    public Boolean getTrueVal() {
+    public java.lang.Boolean getTrueVal() {
         return trueVal;
     }
 
@@ -25,7 +26,7 @@ public class BooleansConfig {
         this.trueValAgain = trueValAgain;
     }
 
-    public Boolean getFalseVal() {
+    public java.lang.Boolean getFalseVal() {
         return falseVal;
     }
 
