@@ -209,7 +209,7 @@ class UnitParserTest extends TestUtils {
 
     for (s <- oneMegas) {
       val result = parseMem(s)
-      assertEquals(1000 * 1000, result)
+      assertEquals(1000L * 1000, result)
     }
 
     var result = 1024L * 1024 * 1024
