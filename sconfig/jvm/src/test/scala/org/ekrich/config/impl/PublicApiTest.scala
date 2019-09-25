@@ -1433,7 +1433,7 @@ class PublicApiTest extends TestUtils {
     }
   }
 
-  @Test
+  @Ignore @Test
   def exceptionSerializable(): Unit = {
     // ArrayList is a serialization problem so we want to cover it in tests
     val comments =
@@ -1455,7 +1455,7 @@ class PublicApiTest extends TestUtils {
     assertTrue("origins equal after deserialize", e.origin.equals(eCopy.origin))
   }
 
-  @Test
+  @Ignore @Test
   def exceptionSerializableWithNullOrigin(): Unit = {
     val e = new ConfigException.Missing(
       "this is a message",
@@ -1474,7 +1474,7 @@ class PublicApiTest extends TestUtils {
     assertTrue("origin null after deserialize", e.origin == null)
   }
 
-  @Test
+  @Ignore @Test
   def exceptionSerializableWithWrongType(): Unit = {
     val e = intercept[ConfigException.WrongType] {
       ConfigValueFactory.fromAnyRef(Map("item" -> "uhoh, fail").asJava) match {

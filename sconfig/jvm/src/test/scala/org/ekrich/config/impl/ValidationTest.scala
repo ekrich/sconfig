@@ -114,7 +114,7 @@ class ValidationTest extends TestUtils {
     checkValidationException(e, expecteds)
   }
 
-  @Test
+  @Ignore @Test
   def validationFailedSerializable(): Unit = {
     // Reusing a previous test case to generate an error
     val reference = parseConfig("""{ a : [{},{},{}] }""")
