@@ -21,8 +21,11 @@ enum SerializedValueType(val configType: ConfigValueType)
 
 object SerializedValueType {
   private[impl] def forInt(b: Int): SerializedValueType =
-    if (b < values.length) values(b)
-    else null // really?
+    if (b >= 0 && b < values.length)
+      values(b)
+    else
+      throw new IllegalArgumentException(
+        s"No enum SerializedValueType ordinal $b")
 
   private[impl] def forValue(value: ConfigValue): SerializedValueType = {
     val t = value.valueType
@@ -31,8 +34,13 @@ object SerializedValueType {
       else if (value.isInstanceOf[ConfigLong]) return LONG
       else if (value.isInstanceOf[ConfigDouble]) return DOUBLE
     } else {
-      for (st <- values) {
-        if (st.configType eq t) return st
+      var n = 0
+      while (n < values.length) {
+        val st = values(n)
+        if (st.configType eq t){
+          return st
+        }
+        n += 1
       }
     }
     throw new ConfigException.BugOrBroken(
