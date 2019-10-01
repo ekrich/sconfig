@@ -91,7 +91,8 @@ final class ConfigParseOptions private (
    * @return options with the origin description set
    */
   def setOriginDescription(originDescription: String): ConfigParseOptions = { // findbugs complains about == here but is wrong, do not "fix"
-    if (this.originDescription == originDescription) this
+    if (this.originDescription == originDescription)
+      this
     else if (this.originDescription != null && originDescription != null && this.originDescription == originDescription)
       this
     else
@@ -113,8 +114,10 @@ final class ConfigParseOptions private (
 
   /** this is package-private, not public API */
   private[config] def withFallbackOriginDescription(originDescription: String) =
-    if (this.originDescription == null) setOriginDescription(originDescription)
-    else this
+    if (this.originDescription == null)
+      setOriginDescription(originDescription)
+    else
+      this
 
   /**
    * Set to false to throw an exception if the item being parsed (for example
@@ -126,7 +129,8 @@ final class ConfigParseOptions private (
    * @return options with the "allow missing" flag set
    */
   def setAllowMissing(allowMissing: Boolean): ConfigParseOptions =
-    if (this.allowMissing == allowMissing) this
+    if (this.allowMissing == allowMissing)
+      this
     else
       new ConfigParseOptions(
         this.syntax,
@@ -151,7 +155,8 @@ final class ConfigParseOptions private (
    * @return new version of the parse options with different includer
    */
   def setIncluder(includer: ConfigIncluder): ConfigParseOptions =
-    if (this.includer == includer) this
+    if (this.includer == includer)
+      this
     else
       new ConfigParseOptions(
         this.syntax,
@@ -173,10 +178,12 @@ final class ConfigParseOptions private (
   def prependIncluder(includer: ConfigIncluder): ConfigParseOptions = {
     if (includer == null)
       throw new NullPointerException("null includer passed to prependIncluder")
-    if (this.includer eq includer) this
+    if (this.includer eq includer)
+      this
     else if (this.includer != null)
       setIncluder(includer.withFallback(this.includer))
-    else setIncluder(includer)
+    else
+      setIncluder(includer)
   }
 
   /**
@@ -190,10 +197,12 @@ final class ConfigParseOptions private (
   def appendIncluder(includer: ConfigIncluder): ConfigParseOptions = {
     if (includer == null)
       throw new NullPointerException("null includer passed to appendIncluder")
-    if (this.includer == includer) this
+    if (this.includer == includer)
+      this
     else if (this.includer != null)
       setIncluder(this.includer.withFallback(includer))
-    else setIncluder(includer)
+    else
+      setIncluder(includer)
   }
 
   /**
@@ -213,7 +222,8 @@ final class ConfigParseOptions private (
    * @return options with the class loader set
    */
   def setClassLoader(loader: ClassLoader): ConfigParseOptions =
-    if (this.classLoader == loader) this
+    if (this.classLoader == loader)
+      this
     else
       new ConfigParseOptions(
         this.syntax,

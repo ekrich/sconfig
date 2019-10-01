@@ -252,8 +252,8 @@ object ConfigFactory {
     val withLoader =
       ConfigParseOptions.defaults.setClassLoader(loader)
     ConfigImpl.computeCachedConfig(loader, "load", new Callable[Config]() {
-      override def call: Config =
-        return load(loader, defaultApplication(withLoader))
+      override def call(): Config =
+        load(loader, defaultApplication(withLoader))
     })
   }
 

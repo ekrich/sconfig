@@ -30,7 +30,7 @@ object ConfigImpl {
   private[impl] class LoaderCache private[impl] () {
     private[impl] var currentSystemProperties: Config = null
     private var currentLoader                         = new WeakReference[ClassLoader](null)
-    private var cache                                 = new ju.HashMap[String, Config]
+    private val cache                                 = new ju.HashMap[String, Config]
 
     // for now, caching as long as the loader remains the same,
     // drop entire cache if it changes.
@@ -52,8 +52,9 @@ object ConfigImpl {
         }
         var config = cache.get(key)
         if (config == null) {
-          try config = updater.call
-          catch {
+          try {
+            config = updater.call()
+          } catch {
             case e: RuntimeException =>
               throw e // this will include ConfigException
 
@@ -70,8 +71,8 @@ object ConfigImpl {
       }
   }
   private object LoaderCacheHolder {
-    private[impl] val cache = new ConfigImpl.LoaderCache
-    private[impl] def invalidate: Unit = cache.synchronized {
+    private[impl] val cache = new ConfigImpl.LoaderCache()
+    private[impl] def invalidate(): Unit = cache.synchronized {
       cache.currentSystemProperties = null
     }
   }
@@ -82,8 +83,9 @@ object ConfigImpl {
       updater: Callable[Config]
   ): Config = {
     var cache: LoaderCache = null
-    try cache = LoaderCacheHolder.cache
-    catch {
+    try {
+      cache = LoaderCacheHolder.cache
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
@@ -311,8 +313,9 @@ object ConfigImpl {
       loadSystemProperties
   }
   private[impl] def systemPropertiesAsConfigObject: AbstractConfigObject =
-    try SystemPropertiesHolder.systemProperties
-    catch {
+    try {
+      SystemPropertiesHolder.systemProperties
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
@@ -322,7 +325,7 @@ object ConfigImpl {
     // ConfigFactory.invalidateCaches() relies on this having the side
     // effect that it drops all caches
     // change - could not find the side effect so added a method to invalidate explicitly
-    LoaderCacheHolder.invalidate
+    LoaderCacheHolder.invalidate()
     SystemPropertiesHolder.systemProperties = loadSystemProperties
   }
   private def loadEnvVariables: AbstractConfigObject =
@@ -334,8 +337,9 @@ object ConfigImpl {
     @volatile private[impl] var envVariables = loadEnvVariables
   }
   def envVariablesAsConfigObject: AbstractConfigObject =
-    try EnvVariablesHolder.envVariables
-    catch {
+    try {
+      EnvVariablesHolder.envVariables
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
@@ -350,7 +354,7 @@ object ConfigImpl {
       loader,
       "defaultReference",
       new Callable[Config]() {
-        override def call: Config = {
+        override def call(): Config = {
           val unresolvedResources = Parseable
             .newResources(
               "reference.conf",
@@ -358,9 +362,10 @@ object ConfigImpl {
             )
             .parse()
             .toConfig
-          systemPropertiesAsConfig
+          val config = systemPropertiesAsConfig
             .withFallback(unresolvedResources)
             .resolve()
+          config
         }
       }
     )
@@ -397,14 +402,16 @@ object ConfigImpl {
   }
 
   def traceLoadsEnabled: Boolean =
-    try DebugHolder.traceLoadsEnabled
-    catch {
+    try {
+      DebugHolder.traceLoadsEnabled
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
   def traceSubstitutionsEnabled: Boolean =
-    try DebugHolder.traceSubstitutionsEnabled
-    catch {
+    try {
+      DebugHolder.traceSubstitutionsEnabled
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
