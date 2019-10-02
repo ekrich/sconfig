@@ -379,7 +379,7 @@ object ConfigImpl {
   }
 
   def defaultReference(loader: ClassLoader): Config = {
-    val updater = new Callable[Config]() {
+    val updater = new Callable[Config] {
       override def call(): Config = {
         val unresolvedResources = Parseable
           .newResources(
