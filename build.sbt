@@ -136,7 +136,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       "testList.1"      -> "1",
       "testClassesPath" -> (Test / classDirectory).value.getPath
     ),
-    Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
+    Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005",
     // mima settings
     mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems

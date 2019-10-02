@@ -148,18 +148,24 @@ object PropertiesParser {
       val last                       = path.last
       val rawValue                   = pathMap.get(path)
       var value: AbstractConfigValue = null
-      if (convertedFromProperties)
+      if (convertedFromProperties) {
         if (rawValue.isInstanceOf[String]) {
           value = new ConfigString.Quoted(origin, rawValue.asInstanceOf[String])
-        } else { // silently ignore non-string values in Properties
+        } else {
+          // silently ignore non-string values in Properties
           value = null
-        } else
+        }
+      } else {
         value = ConfigImpl.fromAnyRef(
           pathMap.get(path),
           origin,
           FromMapMode.KEYS_ARE_PATHS
         )
-      if (value != null) parent.put(last, value)
+      }
+
+      if (value != null) {
+        parent.put(last, value)
+      }
     }
     /*
      * Make a list of scope paths from longest to shortest, so children go

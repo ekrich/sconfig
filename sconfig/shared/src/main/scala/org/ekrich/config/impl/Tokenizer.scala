@@ -168,16 +168,18 @@ object Tokenizer {
     // like ${ or +=, everything else should use
     // nextCharSkippingComments().
     private def nextCharRaw: Int =
-      if (buffer.isEmpty)
-        try input.read
-        catch {
+      if (buffer.isEmpty) {
+        try {
+          input.read
+        } catch {
           case e: IOException =>
             throw new ConfigException.IO(
               origin,
               "read error: " + e.getMessage,
               e
             )
-        } else {
+        }
+      } else {
         val c = buffer.pop
         c
       }

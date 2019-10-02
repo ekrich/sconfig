@@ -186,7 +186,7 @@ final class ConfigDelayedMergeObject(
             layer.asInstanceOf[AbstractConfigObject]
           val v =
             objectLayer.attemptPeekWithPartialResolve(key)
-          if (v != null)
+          if (v != null) {
             if (v.ignoresFallbacks) {
               // we know we won't need to merge anything in to this value
               return v
@@ -197,7 +197,8 @@ final class ConfigDelayedMergeObject(
               // value. we'll throw the exception when we get to those
               // unmergeable values, so continue here.
               break // continue
-            } else if (layer.isInstanceOf[Unmergeable]) {
+            }
+          } else if (layer.isInstanceOf[Unmergeable]) {
             // an unmergeable object (which would be another
             // ConfigDelayedMergeObject) can't know that a key is
             // missing, so it can't return null; it can only return a
@@ -210,18 +211,21 @@ final class ConfigDelayedMergeObject(
             // looking for a value.
             break // continue
           }
-        } else if (layer.isInstanceOf[Unmergeable])
+        } else if (layer.isInstanceOf[Unmergeable]) {
           throw new ConfigException.NotResolved(
-            "Key '" + key + "' is not available at '" + origin.description + "' because value at '" + layer.origin.description + "' has not been resolved and may turn out to contain or hide '" + key + "'." + " Be sure to Config#resolve() before using a config object."
-          )
-        else if (layer.resolveStatus eq ResolveStatus.UNRESOLVED) {
+            s"Key '$key' is not available at '${origin.description}' because value at '${layer.origin.description}'" +
+              s" has not been resolved and may turn out to contain or hide '$key'." +
+              " Be sure to Config#resolve() before using a config object."
+              )
+        } else if (layer.resolveStatus eq ResolveStatus.UNRESOLVED) {
           // if the layer is not an object, and not a substitution or merge,
           // then it's something that's unresolved because it _contains_
           // an unresolved object... i.e. it's an array
-          if (!layer.isInstanceOf[ConfigList])
+          if (!layer.isInstanceOf[ConfigList]) {
             throw new ConfigException.BugOrBroken(
               "Expecting a list here, not " + layer
             )
+          }
           // all later objects will be hidden so we can say we won't find
           // the key
           return null
@@ -231,10 +235,11 @@ final class ConfigDelayedMergeObject(
           // we would only have this in the stack in case something
           // else "looks back" to it due to a cycle.
           // anyway at this point we know we can't find the key anymore.
-          if (!layer.ignoresFallbacks)
+          if (!layer.ignoresFallbacks) {
             throw new ConfigException.BugOrBroken(
               "resolved non-object should ignore fallbacks"
             )
+          }
           return null
         }
       }

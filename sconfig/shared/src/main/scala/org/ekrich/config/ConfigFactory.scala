@@ -1025,17 +1025,19 @@ object ConfigFactory {
   private def getConfigLoadingStrategy = {
     val className =
       System.getProperties.getProperty(STRATEGY_PROPERTY_NAME)
-    if (className != null)
-      try classOf[ConfigLoadingStrategy].cast(
-        Class.forName(className).getConstructor().newInstance()
-      )
-      catch {
+    if (className != null) {
+      try {
+        classOf[ConfigLoadingStrategy].cast(
+          Class.forName(className).getConstructor().newInstance())
+      } catch {
         case e: Throwable =>
           throw new ConfigException.BugOrBroken(
             "Failed to load strategy: " + className,
-            e
-          )
-      } else new DefaultConfigLoadingStrategy
+            e)
+      }
+    } else {
+      new DefaultConfigLoadingStrategy()
+    }
   }
 }
 

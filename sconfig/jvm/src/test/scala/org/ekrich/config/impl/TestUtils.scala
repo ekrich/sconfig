@@ -604,24 +604,16 @@ abstract trait TestUtils {
       validInJsonParser: Boolean
   ): Seq[ParseTest] = {
     val variations = List(
-      { s: String =>
-        s
-      }, // identity
-      { s: String =>
-        " " + s
-      }, { s: String =>
-        s + " "
-      }, { s: String =>
-        " " + s + " "
-      }, { s: String =>
-        s.replace(" ", "")
-      }, // this would break with whitespace in a key or value
-      { s: String =>
-        s.replace(":", " : ")
-      }, // could break with : in a key or value
-      { s: String =>
-        s.replace(",", " , ")
-      } // could break with , in a key or value
+      (s: String) => s, // identity
+      (s: String) => " " + s,
+      (s: String) => s + " ",
+      (s: String) => " " + s + " ",
+      (s: String) =>
+        s.replace(" ", ""), // this would break with whitespace in a key or value
+      (s: String) =>
+        s.replace(":", " : "), // could break with : in a key or value
+      (s: String) =>
+        s.replace(",", " , ") // could break with , in a key or value
     )
     tests flatMap { t =>
       if (t.whitespaceMatters) {

@@ -29,21 +29,24 @@ object SimpleConfigObject {
     @throws[NotPossibleToResolve]
     override def modifyChildMayThrow(
         key: String,
-        v: AbstractConfigValue
-    ): AbstractConfigValue =
-      if (context.isRestrictedToChild)
+        v: AbstractConfigValue): AbstractConfigValue =
+      if (context.isRestrictedToChild) {
         if (key == context.restrictToChild.first) {
           val remainder = context.restrictToChild.remainder
           if (remainder != null) {
             val result = context.restrict(remainder).resolve(v, source)
             context = result.context.unrestricted.restrict(originalRestrict)
             result.value
-          } else { // we don't want to resolve the leaf child.
+          } else {
+            // we don't want to resolve the leaf child.
             v
           }
-        } else { // not in the restrictToChild path
+        } else {
+          // not in the restrictToChild path
           v
-        } else { // no restrictToChild, resolve everything
+        }
+      } else {
+        // no restrictToChild, resolve everything
         val result = context.unrestricted.resolve(v, source)
         context = result.context.unrestricted.restrict(originalRestrict)
         result.value
