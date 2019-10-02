@@ -39,7 +39,7 @@ object ConfigImpl {
         key: String,
         updater: Callable[Config]
     ): Config =
-      synchronized {
+      this.synchronized {
         if (loader != currentLoader.get) {
           // reset the cache if we start using a different loader
           cache.clear()
@@ -61,17 +61,21 @@ object ConfigImpl {
             case e: Exception =>
               throw new ConfigException.Generic(e.getMessage, e)
           }
-          if (config == null)
+          if (config != null) {
+            cache.put(key, config)
+          } else {
             throw new ConfigException.BugOrBroken(
               "null config from cache updater"
             )
-          cache.put(key, config)
+          }
         }
         config
       }
   }
+
   private object LoaderCacheHolder {
     private[impl] val cache = new ConfigImpl.LoaderCache()
+
     private[impl] def invalidate(): Unit = cache.synchronized {
       cache.currentSystemProperties = null
     }
@@ -91,6 +95,7 @@ object ConfigImpl {
     }
     cache.getOrElseUpdate(loader, key, updater)
   }
+
   private[impl] class FileNameSource extends SimpleIncluder.NameSource {
     override def nameToParseable(
         name: String,
@@ -98,6 +103,7 @@ object ConfigImpl {
     ): ConfigParseable =
       Parseable.newFile(new File(name), parseOptions)
   }
+
   private[impl] class ClasspathNameSource extends SimpleIncluder.NameSource {
     override def nameToParseable(
         name: String,
@@ -105,6 +111,7 @@ object ConfigImpl {
     ): ConfigParseable =
       Parseable.newResources(name, parseOptions)
   }
+
   private[impl] class ClasspathNameSourceWithClass(val klass: Class[_])
       extends SimpleIncluder.NameSource {
     override def nameToParseable(
@@ -113,6 +120,7 @@ object ConfigImpl {
     ): ConfigParseable =
       Parseable.newResources(klass, name, parseOptions)
   }
+
   def parseResourcesAnySyntax(
       klass: Class[_],
       resourceBasename: String,
@@ -122,6 +130,7 @@ object ConfigImpl {
       new ConfigImpl.ClasspathNameSourceWithClass(klass)
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
+
   def parseResourcesAnySyntax(
       resourceBasename: String,
       baseOptions: ConfigParseOptions
@@ -129,6 +138,7 @@ object ConfigImpl {
     val source = new ConfigImpl.ClasspathNameSource
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
+
   def parseFileAnySyntax(
       basename: File,
       baseOptions: ConfigParseOptions
@@ -136,6 +146,7 @@ object ConfigImpl {
     val source = new ConfigImpl.FileNameSource
     SimpleIncluder.fromBasename(source, basename.getPath, baseOptions)
   }
+
   private[impl] def emptyObject(
       originDescription: String
   ): AbstractConfigObject = {
@@ -145,11 +156,13 @@ object ConfigImpl {
       else null
     emptyObject(origin)
   }
+
   def emptyConfig(originDescription: String): Config =
     emptyObject(originDescription).toConfig
 
   private[impl] def empty(origin: ConfigOrigin): AbstractConfigObject =
     emptyObject(origin)
+
   // default origin for values created with fromAnyRef and no origin specified
   private val defaultValueOrigin =
     SimpleConfigOrigin.newSimple("hardcoded value")
@@ -164,6 +177,7 @@ object ConfigImpl {
   )
   private val defaultEmptyObject =
     SimpleConfigObject.empty(defaultValueOrigin)
+
   private def emptyList(origin: ConfigOrigin): SimpleConfigList =
     if (origin == null || (origin == defaultValueOrigin)) defaultEmptyList
     else
@@ -177,9 +191,11 @@ object ConfigImpl {
     if (origin == defaultValueOrigin) defaultEmptyObject
     else SimpleConfigObject.empty(origin)
   }
+
   private def valueOrigin(originDescription: String): ConfigOrigin =
     if (originDescription == null) defaultValueOrigin
     else SimpleConfigOrigin.newSimple(originDescription)
+
   def fromAnyRef(`object`: AnyRef, originDescription: String): ConfigValue = {
     val origin = valueOrigin(originDescription)
     fromAnyRef(`object`, origin, FromMapMode.KEYS_ARE_KEYS)
@@ -274,9 +290,11 @@ object ConfigImpl {
       )
     }
   }
+
   private object DefaultIncluderHolder {
     private[impl] val defaultIncluder = new SimpleIncluder(null)
   }
+
   private[impl] def defaultIncluder: ConfigIncluder =
     // this calls a simple constructor - not sure why we are catching this
     try DefaultIncluderHolder.defaultIncluder
@@ -284,6 +302,7 @@ object ConfigImpl {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
+
   private def getSystemProperties: ju.Properties = {
     // Avoid ConcurrentModificationException due to parallel setting of system properties by copying properties
     val systemProperties     = System.getProperties
@@ -299,6 +318,7 @@ object ConfigImpl {
     }
     systemPropertiesCopy
   }
+
   private def loadSystemProperties: AbstractConfigObject =
     Parseable
       .newProperties(
@@ -307,11 +327,13 @@ object ConfigImpl {
       )
       .parse()
       .asInstanceOf[AbstractConfigObject]
+
   private object SystemPropertiesHolder {
     // this isn't final due to the reloadSystemPropertiesConfig() hack below
     @volatile private[impl] var systemProperties: AbstractConfigObject =
       loadSystemProperties
   }
+
   private[impl] def systemPropertiesAsConfigObject: AbstractConfigObject =
     try {
       SystemPropertiesHolder.systemProperties
@@ -319,8 +341,10 @@ object ConfigImpl {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
+
   def systemPropertiesAsConfig: Config =
     systemPropertiesAsConfigObject.toConfig
+
   def reloadSystemPropertiesConfig(): Unit = {
     // ConfigFactory.invalidateCaches() relies on this having the side
     // effect that it drops all caches
@@ -328,6 +352,7 @@ object ConfigImpl {
     LoaderCacheHolder.invalidate()
     SystemPropertiesHolder.systemProperties = loadSystemProperties
   }
+
   private def loadEnvVariables: AbstractConfigObject =
     PropertiesParser.fromStringMap(
       newSimpleOrigin("env variables"),
@@ -336,6 +361,7 @@ object ConfigImpl {
   private object EnvVariablesHolder {
     @volatile private[impl] var envVariables = loadEnvVariables
   }
+
   def envVariablesAsConfigObject: AbstractConfigObject =
     try {
       EnvVariablesHolder.envVariables
@@ -343,32 +369,34 @@ object ConfigImpl {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
+
   def envVariablesAsConfig: Config = envVariablesAsConfigObject.toConfig
+
   def reloadEnvVariablesConfig(): Unit = {
     // ConfigFactory.invalidateCaches() relies on this having the side
     // effect that it drops all caches
     EnvVariablesHolder.envVariables = loadEnvVariables
   }
-  def defaultReference(loader: ClassLoader): Config =
-    computeCachedConfig(
-      loader,
-      "defaultReference",
-      new Callable[Config]() {
-        override def call(): Config = {
-          val unresolvedResources = Parseable
-            .newResources(
-              "reference.conf",
-              ConfigParseOptions.defaults.setClassLoader(loader)
-            )
-            .parse()
-            .toConfig
-          val config = systemPropertiesAsConfig
-            .withFallback(unresolvedResources)
-            .resolve()
-          config
-        }
+
+  def defaultReference(loader: ClassLoader): Config = {
+    val updater = new Callable[Config]() {
+      override def call(): Config = {
+        val unresolvedResources = Parseable
+          .newResources(
+            "reference.conf",
+            ConfigParseOptions.defaults.setClassLoader(loader)
+          )
+          .parse()
+          .toConfig
+        val config = systemPropertiesAsConfig
+          .withFallback(unresolvedResources)
+          .resolve()
+        config
       }
-    )
+    }
+    computeCachedConfig(loader, "defaultReference", updater)
+  }
+
   private object DebugHolder {
     private val LOADS         = "loads"
     private val SUBSTITUTIONS = "substitutions"
