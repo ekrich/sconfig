@@ -196,9 +196,9 @@ object ConfigImpl {
     if (originDescription == null) defaultValueOrigin
     else SimpleConfigOrigin.newSimple(originDescription)
 
-  def fromAnyRef(`object`: AnyRef, originDescription: String): ConfigValue = {
+  def fromAnyRef(obj: AnyRef, originDescription: String): ConfigValue = {
     val origin = valueOrigin(originDescription)
-    fromAnyRef(`object`, origin, FromMapMode.KEYS_ARE_KEYS)
+    fromAnyRef(obj, origin, FromMapMode.KEYS_ARE_KEYS)
   }
   def fromPathMap(
       pathMap: ju.Map[String, _],
@@ -208,52 +208,53 @@ object ConfigImpl {
     fromAnyRef(pathMap, origin, FromMapMode.KEYS_ARE_PATHS)
       .asInstanceOf[ConfigObject]
   }
+
   def fromAnyRef(
-      `object`: Any,
+      obj: Any,
       origin: ConfigOrigin,
       mapMode: FromMapMode
   ): AbstractConfigValue = {
     if (origin == null)
       throw new ConfigException.BugOrBroken("origin not supposed to be null")
-    if (`object` == null)
+    if (obj == null)
       if (origin != defaultValueOrigin)
         new ConfigNull(origin)
       else defaultNullValue
-    else if (`object`.isInstanceOf[AbstractConfigValue])
-      `object`.asInstanceOf[AbstractConfigValue]
-    else if (`object`.isInstanceOf[jl.Boolean])
+    else if (obj.isInstanceOf[AbstractConfigValue])
+      obj.asInstanceOf[AbstractConfigValue]
+    else if (obj.isInstanceOf[jl.Boolean])
       if (origin != defaultValueOrigin)
-        new ConfigBoolean(origin, `object`.asInstanceOf[jl.Boolean])
-      else if (`object`.asInstanceOf[jl.Boolean]) defaultTrueValue
+        new ConfigBoolean(origin, obj.asInstanceOf[jl.Boolean])
+      else if (obj.asInstanceOf[jl.Boolean]) defaultTrueValue
       else defaultFalseValue
-    else if (`object`.isInstanceOf[String])
-      new ConfigString.Quoted(origin, `object`.asInstanceOf[String])
-    else if (`object`.isInstanceOf[Number]) {
+    else if (obj.isInstanceOf[String])
+      new ConfigString.Quoted(origin, obj.asInstanceOf[String])
+    else if (obj.isInstanceOf[Number]) {
       // here we always keep the same type that was passed to us,
       // rather than figuring out if a Long would fit in an Int
       // or a Double has no fractional part. i.e. deliberately
       // not using ConfigNumber.newNumber() when we have a
       // Double, Integer, or Long.
-      if (`object`.isInstanceOf[jl.Double])
-        new ConfigDouble(origin, `object`.asInstanceOf[jl.Double], null)
-      else if (`object`.isInstanceOf[Integer])
-        new ConfigInt(origin, `object`.asInstanceOf[Integer], null)
-      else if (`object`.isInstanceOf[jl.Long])
-        new ConfigLong(origin, `object`.asInstanceOf[jl.Long], null)
+      if (obj.isInstanceOf[jl.Double])
+        new ConfigDouble(origin, obj.asInstanceOf[jl.Double], null)
+      else if (obj.isInstanceOf[Integer])
+        new ConfigInt(origin, obj.asInstanceOf[Integer], null)
+      else if (obj.isInstanceOf[jl.Long])
+        new ConfigLong(origin, obj.asInstanceOf[jl.Long], null)
       else
         ConfigNumber.newNumber(
           origin,
-          `object`.asInstanceOf[Number].doubleValue,
+          obj.asInstanceOf[Number].doubleValue,
           null
         )
-    } else if (`object`.isInstanceOf[Duration]) {
-      new ConfigLong(origin, `object`.asInstanceOf[Duration].toMillis, null)
-    } else if (`object`.isInstanceOf[ju.Map[_, _]]) {
-      if (`object`.asInstanceOf[ju.Map[_, _]].isEmpty)
+    } else if (obj.isInstanceOf[Duration]) {
+      new ConfigLong(origin, obj.asInstanceOf[Duration].toMillis, null)
+    } else if (obj.isInstanceOf[ju.Map[_, _]]) {
+      if (obj.asInstanceOf[ju.Map[_, _]].isEmpty)
         return emptyObject(origin)
       if (mapMode == FromMapMode.KEYS_ARE_KEYS) {
         val values = new ju.HashMap[String, AbstractConfigValue]
-        for (entry <- `object`.asInstanceOf[ju.Map[_, _]].entrySet.asScala) {
+        for (entry <- obj.asInstanceOf[ju.Map[_, _]].entrySet.asScala) {
           val key = entry.getKey
           if (!key.isInstanceOf[String])
             throw new ConfigException.BugOrBroken(
@@ -264,13 +265,10 @@ object ConfigImpl {
         }
         new SimpleConfigObject(origin, values)
       } else {
-        PropertiesParser.fromPathMap(
-          origin,
-          `object`.asInstanceOf[ju.Map[_, _]]
-        )
+        PropertiesParser.fromPathMap(origin, obj.asInstanceOf[ju.Map[_, _]])
       }
-    } else if (`object`.isInstanceOf[jl.Iterable[_]]) {
-      val i = `object`.asInstanceOf[jl.Iterable[_]].iterator
+    } else if (obj.isInstanceOf[jl.Iterable[_]]) {
+      val i = obj.asInstanceOf[jl.Iterable[_]].iterator
       if (!i.hasNext) return emptyList(origin)
       val values = new ju.ArrayList[AbstractConfigValue]
       while (i.hasNext) {
@@ -278,15 +276,11 @@ object ConfigImpl {
         values.add(v)
       }
       new SimpleConfigList(origin, values)
-    } else if (`object`.isInstanceOf[ConfigMemorySize]) {
-      new ConfigLong(
-        origin,
-        `object`.asInstanceOf[ConfigMemorySize].toBytes,
-        null
-      )
+    } else if (obj.isInstanceOf[ConfigMemorySize]) {
+      new ConfigLong(origin, obj.asInstanceOf[ConfigMemorySize].toBytes, null)
     } else {
       throw new ConfigException.BugOrBroken(
-        "bug in method caller: not valid to create ConfigValue from: " + `object`
+        "bug in method caller: not valid to create ConfigValue from: " + obj
       )
     }
   }
