@@ -33,9 +33,9 @@ ThisBuild / Test / scalacOptions := {
 }
 
 val scala211 = "2.11.12"
-val scala212 = "2.12.8"
-val scala213 = "2.13.0"
-val dotty    = "0.18.1-RC1"
+val scala212 = "2.12.10"
+val scala213 = "2.13.1"
+val dotty    = "0.19.0-RC1"
 
 val versionsBase   = Seq(scala211, scala212, scala213)
 val versionsJVM    = versionsBase //:+ dotty
