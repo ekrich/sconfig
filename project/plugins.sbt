@@ -2,14 +2,14 @@
 val crossVer = "0.6.1"
 val scalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
   .filter(_.nonEmpty)
-  .getOrElse("0.6.28")
+  .getOrElse("0.6.29")
 val scalaNativeVersion = Option(System.getenv("SCALANATIVE_VERSION"))
   .filter(_.nonEmpty)
-  .getOrElse("0.3.9")
+  .getOrElse("0.3.10")
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
-addSbtPlugin("com.geirsson" % "sbt-ci-release"  % "1.3.1")
-addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "0.6.0")
+addSbtPlugin("com.geirsson" % "sbt-ci-release"  % "1.4.31")
+addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "0.6.1")
 
 // Scala Native support
 addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % crossVer)
