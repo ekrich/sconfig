@@ -5,7 +5,7 @@ val scalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
   .getOrElse("0.6.29")
 val scalaNativeVersion = Option(System.getenv("SCALANATIVE_VERSION"))
   .filter(_.nonEmpty)
-  .getOrElse("0.3.10")
+  .getOrElse("0.3.9")
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
 addSbtPlugin("com.geirsson" % "sbt-ci-release"  % "1.4.31")
