@@ -13,9 +13,10 @@ import org.ekrich.config.ConfigValueType
 @SerialVersionUID(2L)
 object ConfigString {
 
-  final private[impl] class Quoted private[impl] (origin: ConfigOrigin,
-                                                  value: String)
-      extends ConfigString(origin, value) {
+  final private[impl] class Quoted private[impl] (
+      origin: ConfigOrigin,
+      value: String
+  ) extends ConfigString(origin, value) {
 
     override def newCopy(origin: ConfigOrigin) =
       new ConfigString.Quoted(origin, value)
@@ -33,9 +34,10 @@ object ConfigString {
   // quoted-ness matters. If we later make ConfigOrigin point
   // to the original token range, we could use that to implement
   // wasQuoted()
-  final private[impl] class Unquoted private[impl] (origin: ConfigOrigin,
-                                                    value: String)
-      extends ConfigString(origin, value) {
+  final private[impl] class Unquoted private[impl] (
+      origin: ConfigOrigin,
+      value: String
+  ) extends ConfigString(origin, value) {
 
     override def newCopy(origin: ConfigOrigin) =
       new ConfigString.Unquoted(origin, value)
@@ -58,10 +60,12 @@ abstract class ConfigString(origin: ConfigOrigin, val value: String)
 
   override def transformToString: String = value
 
-  override def render(sb: jl.StringBuilder,
-                      indent: Int,
-                      atRoot: Boolean,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
     var rendered =
       if (options.getJson) ConfigImplUtil.renderJsonString(value)
       else ConfigImplUtil.renderStringUnquotedIfPossible(value)

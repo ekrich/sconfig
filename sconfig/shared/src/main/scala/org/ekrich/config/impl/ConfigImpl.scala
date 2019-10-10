@@ -34,9 +34,11 @@ object ConfigImpl {
 
     // for now, caching as long as the loader remains the same,
     // drop entire cache if it changes.
-    private[impl] def getOrElseUpdate(loader: ClassLoader,
-                                      key: String,
-                                      updater: Callable[Config]): Config =
+    private[impl] def getOrElseUpdate(
+        loader: ClassLoader,
+        key: String,
+        updater: Callable[Config]
+    ): Config =
       synchronized {
         if (loader != currentLoader.get) {
           // reset the cache if we start using a different loader
@@ -60,7 +62,8 @@ object ConfigImpl {
           }
           if (config == null)
             throw new ConfigException.BugOrBroken(
-              "null config from cache updater")
+              "null config from cache updater"
+            )
           cache.put(key, config)
         }
         config
@@ -73,9 +76,11 @@ object ConfigImpl {
     }
   }
 
-  def computeCachedConfig(loader: ClassLoader,
-                          key: String,
-                          updater: Callable[Config]): Config = {
+  def computeCachedConfig(
+      loader: ClassLoader,
+      key: String,
+      updater: Callable[Config]
+  ): Config = {
     var cache: LoaderCache = null
     try cache = LoaderCacheHolder.cache
     catch {
@@ -87,41 +92,51 @@ object ConfigImpl {
   private[impl] class FileNameSource extends SimpleIncluder.NameSource {
     override def nameToParseable(
         name: String,
-        parseOptions: ConfigParseOptions): ConfigParseable =
+        parseOptions: ConfigParseOptions
+    ): ConfigParseable =
       Parseable.newFile(new File(name), parseOptions)
   }
   private[impl] class ClasspathNameSource extends SimpleIncluder.NameSource {
     override def nameToParseable(
         name: String,
-        parseOptions: ConfigParseOptions): ConfigParseable =
+        parseOptions: ConfigParseOptions
+    ): ConfigParseable =
       Parseable.newResources(name, parseOptions)
   }
   private[impl] class ClasspathNameSourceWithClass(val klass: Class[_])
       extends SimpleIncluder.NameSource {
     override def nameToParseable(
         name: String,
-        parseOptions: ConfigParseOptions): ConfigParseable =
+        parseOptions: ConfigParseOptions
+    ): ConfigParseable =
       Parseable.newResources(klass, name, parseOptions)
   }
-  def parseResourcesAnySyntax(klass: Class[_],
-                              resourceBasename: String,
-                              baseOptions: ConfigParseOptions): ConfigObject = {
+  def parseResourcesAnySyntax(
+      klass: Class[_],
+      resourceBasename: String,
+      baseOptions: ConfigParseOptions
+  ): ConfigObject = {
     val source =
       new ConfigImpl.ClasspathNameSourceWithClass(klass)
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
-  def parseResourcesAnySyntax(resourceBasename: String,
-                              baseOptions: ConfigParseOptions): ConfigObject = {
+  def parseResourcesAnySyntax(
+      resourceBasename: String,
+      baseOptions: ConfigParseOptions
+  ): ConfigObject = {
     val source = new ConfigImpl.ClasspathNameSource
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
-  def parseFileAnySyntax(basename: File,
-                         baseOptions: ConfigParseOptions): ConfigObject = {
+  def parseFileAnySyntax(
+      basename: File,
+      baseOptions: ConfigParseOptions
+  ): ConfigObject = {
     val source = new ConfigImpl.FileNameSource
     SimpleIncluder.fromBasename(source, basename.getPath, baseOptions)
   }
   private[impl] def emptyObject(
-      originDescription: String): AbstractConfigObject = {
+      originDescription: String
+  ): AbstractConfigObject = {
     val origin =
       if (originDescription != null)
         SimpleConfigOrigin.newSimple(originDescription)
@@ -143,14 +158,17 @@ object ConfigImpl {
   private val defaultNullValue = new ConfigNull(defaultValueOrigin)
   private val defaultEmptyList = new SimpleConfigList(
     defaultValueOrigin,
-    ju.Collections.emptyList[AbstractConfigValue])
+    ju.Collections.emptyList[AbstractConfigValue]
+  )
   private val defaultEmptyObject =
     SimpleConfigObject.empty(defaultValueOrigin)
   private def emptyList(origin: ConfigOrigin): SimpleConfigList =
     if (origin == null || (origin == defaultValueOrigin)) defaultEmptyList
     else
-      new SimpleConfigList(origin,
-                           ju.Collections.emptyList[AbstractConfigValue])
+      new SimpleConfigList(
+        origin,
+        ju.Collections.emptyList[AbstractConfigValue]
+      )
   private def emptyObject(origin: ConfigOrigin): AbstractConfigObject = {
     // we want null origin to go to SimpleConfigObject.empty() to get the
     // origin "empty config" rather than "hardcoded value"
@@ -164,15 +182,19 @@ object ConfigImpl {
     val origin = valueOrigin(originDescription)
     fromAnyRef(`object`, origin, FromMapMode.KEYS_ARE_KEYS)
   }
-  def fromPathMap(pathMap: ju.Map[String, _],
-                  originDescription: String): ConfigObject = {
+  def fromPathMap(
+      pathMap: ju.Map[String, _],
+      originDescription: String
+  ): ConfigObject = {
     val origin = valueOrigin(originDescription)
     fromAnyRef(pathMap, origin, FromMapMode.KEYS_ARE_PATHS)
       .asInstanceOf[ConfigObject]
   }
-  def fromAnyRef(`object`: Any,
-                 origin: ConfigOrigin,
-                 mapMode: FromMapMode): AbstractConfigValue = {
+  def fromAnyRef(
+      `object`: Any,
+      origin: ConfigOrigin,
+      mapMode: FromMapMode
+  ): AbstractConfigValue = {
     if (origin == null)
       throw new ConfigException.BugOrBroken("origin not supposed to be null")
     if (`object` == null)
@@ -201,9 +223,11 @@ object ConfigImpl {
       else if (`object`.isInstanceOf[jl.Long])
         new ConfigLong(origin, `object`.asInstanceOf[jl.Long], null)
       else
-        ConfigNumber.newNumber(origin,
-                               `object`.asInstanceOf[Number].doubleValue,
-                               null)
+        ConfigNumber.newNumber(
+          origin,
+          `object`.asInstanceOf[Number].doubleValue,
+          null
+        )
     } else if (`object`.isInstanceOf[Duration]) {
       new ConfigLong(origin, `object`.asInstanceOf[Duration].toMillis, null)
     } else if (`object`.isInstanceOf[ju.Map[_, _]]) {
@@ -215,14 +239,17 @@ object ConfigImpl {
           val key = entry.getKey
           if (!key.isInstanceOf[String])
             throw new ConfigException.BugOrBroken(
-              "bug in method caller: not valid to create ConfigObject from map with non-String key: " + key)
+              "bug in method caller: not valid to create ConfigObject from map with non-String key: " + key
+            )
           val value = fromAnyRef(entry.getValue, origin, mapMode)
           values.put(key.asInstanceOf[String], value)
         }
         new SimpleConfigObject(origin, values)
       } else {
-        PropertiesParser.fromPathMap(origin,
-                                     `object`.asInstanceOf[ju.Map[_, _]])
+        PropertiesParser.fromPathMap(
+          origin,
+          `object`.asInstanceOf[ju.Map[_, _]]
+        )
       }
     } else if (`object`.isInstanceOf[jl.Iterable[_]]) {
       val i = `object`.asInstanceOf[jl.Iterable[_]].iterator
@@ -234,12 +261,15 @@ object ConfigImpl {
       }
       new SimpleConfigList(origin, values)
     } else if (`object`.isInstanceOf[ConfigMemorySize]) {
-      new ConfigLong(origin,
-                     `object`.asInstanceOf[ConfigMemorySize].toBytes,
-                     null)
+      new ConfigLong(
+        origin,
+        `object`.asInstanceOf[ConfigMemorySize].toBytes,
+        null
+      )
     } else {
       throw new ConfigException.BugOrBroken(
-        "bug in method caller: not valid to create ConfigValue from: " + `object`)
+        "bug in method caller: not valid to create ConfigValue from: " + `object`
+      )
     }
   }
   private object DefaultIncluderHolder {
@@ -271,7 +301,8 @@ object ConfigImpl {
     Parseable
       .newProperties(
         getSystemProperties,
-        ConfigParseOptions.defaults.setOriginDescription("system properties"))
+        ConfigParseOptions.defaults.setOriginDescription("system properties")
+      )
       .parse()
       .asInstanceOf[AbstractConfigObject]
   private object SystemPropertiesHolder {
@@ -295,8 +326,10 @@ object ConfigImpl {
     SystemPropertiesHolder.systemProperties = loadSystemProperties
   }
   private def loadEnvVariables: AbstractConfigObject =
-    PropertiesParser.fromStringMap(newSimpleOrigin("env variables"),
-                                   System.getenv)
+    PropertiesParser.fromStringMap(
+      newSimpleOrigin("env variables"),
+      System.getenv
+    )
   private object EnvVariablesHolder {
     @volatile private[impl] var envVariables = loadEnvVariables
   }
@@ -319,8 +352,10 @@ object ConfigImpl {
       new Callable[Config]() {
         override def call: Config = {
           val unresolvedResources = Parseable
-            .newResources("reference.conf",
-                          ConfigParseOptions.defaults.setClassLoader(loader))
+            .newResources(
+              "reference.conf",
+              ConfigParseOptions.defaults.setClassLoader(loader)
+            )
             .parse()
             .toConfig
           systemPropertiesAsConfig
@@ -348,7 +383,8 @@ object ConfigImpl {
             result.put(SUBSTITUTIONS, true)
           else
             System.err.println(
-              "config.trace property contains unknown trace topic '" + k + "'")
+              "config.trace property contains unknown trace topic '" + k + "'"
+            )
         }
         result
       }
@@ -387,7 +423,8 @@ object ConfigImpl {
   // further down on the stack.
   def improveNotResolved(
       what: Path,
-      original: ConfigException.NotResolved): ConfigException.NotResolved = {
+      original: ConfigException.NotResolved
+  ): ConfigException.NotResolved = {
     val newMessage = what.render +
       " has not been resolved, you need to call Config#resolve()," +
       " see API docs for Config#resolve()"

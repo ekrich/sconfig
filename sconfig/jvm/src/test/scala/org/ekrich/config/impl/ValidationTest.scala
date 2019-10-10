@@ -17,9 +17,12 @@ class ValidationTest extends TestUtils {
   def validation(): Unit = {
     val reference = ConfigFactory.parseFile(
       resourceFile("validate-reference.conf"),
-      ConfigParseOptions.defaults)
-    val conf = ConfigFactory.parseFile(resourceFile("validate-invalid.conf"),
-                                       ConfigParseOptions.defaults)
+      ConfigParseOptions.defaults
+    )
+    val conf = ConfigFactory.parseFile(
+      resourceFile("validate-invalid.conf"),
+      ConfigParseOptions.defaults
+    )
     val e = intercept[ConfigException.ValidationFailed] {
       conf.checkValid(reference)
     }
@@ -49,11 +52,15 @@ class ValidationTest extends TestUtils {
   def validationWithRoot(): Unit = {
     val objectWithB = parseObject("""{ b : c }""")
     val reference = ConfigFactory
-      .parseFile(resourceFile("validate-reference.conf"),
-                 ConfigParseOptions.defaults)
+      .parseFile(
+        resourceFile("validate-reference.conf"),
+        ConfigParseOptions.defaults
+      )
       .withFallback(objectWithB)
-    val conf = ConfigFactory.parseFile(resourceFile("validate-invalid.conf"),
-                                       ConfigParseOptions.defaults)
+    val conf = ConfigFactory.parseFile(
+      resourceFile("validate-invalid.conf"),
+      ConfigParseOptions.defaults
+    )
     val e = intercept[ConfigException.ValidationFailed] {
       conf.checkValid(reference, "a", "b")
     }
@@ -75,8 +82,10 @@ class ValidationTest extends TestUtils {
     val e = intercept[ConfigException.NotResolved] {
       conf.checkValid(reference)
     }
-    assertTrue("expected different message, got: " + e.getMessage,
-               e.getMessage.contains("resolve"))
+    assertTrue(
+      "expected different message, got: " + e.getMessage,
+      e.getMessage.contains("resolve")
+    )
   }
 
   @Test
@@ -145,8 +154,10 @@ class ValidationTest extends TestUtils {
     val reference = parseConfig("""{ a : [a,b,c] }""")
     val conf      = parseConfig("""{ a : { "0" : x, "1" : y } }""")
     conf.checkValid(reference)
-    assertEquals("got the sequence from overriding list with indexed object",
-                 Seq("x", "y"),
-                 conf.getStringList("a").asScala)
+    assertEquals(
+      "got the sequence from overriding list with indexed object",
+      Seq("x", "y"),
+      conf.getStringList("a").asScala
+    )
   }
 }

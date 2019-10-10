@@ -21,8 +21,10 @@ class ConfigSubstitutionTest extends TestUtils {
       .asInstanceOf[AbstractConfigObject]
       .toConfig
   }
-  private def resolveWithoutFallbacks(s: AbstractConfigValue,
-                                      root: AbstractConfigObject) = {
+  private def resolveWithoutFallbacks(
+      s: AbstractConfigValue,
+      root: AbstractConfigObject
+  ) = {
     val options = ConfigResolveOptions.noSystem
     ResolveContext.resolve(s, root, options)
   }
@@ -109,8 +111,10 @@ class ConfigSubstitutionTest extends TestUtils {
       val s = subst("bar.missing")
       val v = resolveWithoutFallbacks(s, simpleObject)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               !e.getMessage.contains("cycle"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      !e.getMessage.contains("cycle")
+    )
   }
 
   @Test
@@ -183,7 +187,8 @@ class ConfigSubstitutionTest extends TestUtils {
     val obj = parseObject(
       """
     a : ${?missing}, b : ${?also.missing}, c : ${?b}, d : ${?c}
-""")
+"""
+    )
 
     val resolved = resolve(obj)
 
@@ -220,10 +225,14 @@ class ConfigSubstitutionTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       val v = resolveWithoutFallbacks(s, parseObject("a: ${a}"))
     }
-    assertTrue("Wrong exception: " + e.getMessage,
-               e.getMessage().contains("cycle"))
-    assertTrue("Wrong exception: " + e.getMessage,
-               e.getMessage().contains("${a}"))
+    assertTrue(
+      "Wrong exception: " + e.getMessage,
+      e.getMessage().contains("cycle")
+    )
+    assertTrue(
+      "Wrong exception: " + e.getMessage,
+      e.getMessage().contains("${a}")
+    )
   }
 
   private val substCycleObject = {
@@ -242,10 +251,14 @@ class ConfigSubstitutionTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       val v = resolveWithoutFallbacks(s, substCycleObject)
     }
-    assertTrue("Wrong exception: " + e.getMessage,
-               e.getMessage().contains("cycle"))
-    assertTrue("Wrong exception: " + e.getMessage,
-               e.getMessage().contains("${foo}, ${bar}, ${a.b.c}, ${foo}"))
+    assertTrue(
+      "Wrong exception: " + e.getMessage,
+      e.getMessage().contains("cycle")
+    )
+    assertTrue(
+      "Wrong exception: " + e.getMessage,
+      e.getMessage().contains("${foo}, ${bar}, ${a.b.c}, ${foo}")
+    )
   }
 
   @Test
@@ -256,8 +269,10 @@ class ConfigSubstitutionTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       val v = resolveWithoutFallbacks(s, substCycleObject)
     }
-    assertTrue("Wrong exception: " + e.getMessage,
-               e.getMessage().contains("cycle"))
+    assertTrue(
+      "Wrong exception: " + e.getMessage,
+      e.getMessage().contains("cycle")
+    )
   }
 
   // ALL the links have to be optional here for the cycle to be ignored
@@ -277,7 +292,8 @@ class ConfigSubstitutionTest extends TestUtils {
     val v = resolveWithoutFallbacks(s, substCycleObjectOptionalLink)
     assertNull(
       "Cycle with optional links in it resolves to null if it's a cycle",
-      v)
+      v
+    )
   }
 
   @Test
@@ -286,8 +302,10 @@ class ConfigSubstitutionTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
     }
-    assertTrue("Wrong exception: " + e.getMessage,
-               e.getMessage().contains("cycle"))
+    assertTrue(
+      "Wrong exception: " + e.getMessage,
+      e.getMessage().contains("cycle")
+    )
   }
 
   @Test
@@ -296,8 +314,10 @@ class ConfigSubstitutionTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
     }
-    assertTrue("Wrong exception: " + e.getMessage,
-               e.getMessage().contains("cycle"))
+    assertTrue(
+      "Wrong exception: " + e.getMessage,
+      e.getMessage().contains("cycle")
+    )
   }
 
   @Test
@@ -348,8 +368,10 @@ class ConfigSubstitutionTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("Could not resolve"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("Could not resolve")
+    )
   }
 
   @Test
@@ -383,7 +405,8 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       delayedMergeObjectResolveProblem1
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[ConfigDelayedMergeObject])
+        .isInstanceOf[ConfigDelayedMergeObject]
+    )
 
     val resolved = resolveWithoutFallbacks(delayedMergeObjectResolveProblem1)
 
@@ -413,7 +436,8 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       delayedMergeObjectResolveProblem2
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[ConfigDelayedMergeObject])
+        .isInstanceOf[ConfigDelayedMergeObject]
+    )
 
     val resolved = resolveWithoutFallbacks(delayedMergeObjectResolveProblem2)
 
@@ -452,7 +476,8 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       delayedMergeObjectResolveProblem3
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[ConfigDelayedMergeObject])
+        .isInstanceOf[ConfigDelayedMergeObject]
+    )
 
     val resolved = resolveWithoutFallbacks(delayedMergeObjectResolveProblem3)
 
@@ -484,7 +509,8 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       delayedMergeObjectResolveProblem4
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[ConfigDelayedMerge])
+        .isInstanceOf[ConfigDelayedMerge]
+    )
 
     val resolved = resolveWithoutFallbacks(delayedMergeObjectResolveProblem4)
 
@@ -515,7 +541,8 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       delayedMergeObjectResolveProblem5
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[ConfigDelayedMerge])
+        .isInstanceOf[ConfigDelayedMerge]
+    )
 
     val resolved = resolveWithoutFallbacks(delayedMergeObjectResolveProblem5)
 
@@ -557,7 +584,8 @@ class ConfigSubstitutionTest extends TestUtils {
   // be sure we can resolve a substitution to a value in
   // a delayed-merge object.
   item2.b = ${item1.b}
-""")
+"""
+    )
   }
 
   @Test
@@ -565,14 +593,17 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       delayedMergeObjectResolveProblem6
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[ConfigDelayedMergeObject])
+        .isInstanceOf[ConfigDelayedMergeObject]
+    )
 
     // should be able to attemptPeekWithPartialResolve() a known non-object without resolving
-    assertEquals(101,
-                 delayedMergeObjectResolveProblem6.toConfig
-                   .getObject("item1")
-                   .attemptPeekWithPartialResolve("xyz")
-                   .unwrapped)
+    assertEquals(
+      101,
+      delayedMergeObjectResolveProblem6.toConfig
+        .getObject("item1")
+        .attemptPeekWithPartialResolve("xyz")
+        .unwrapped
+    )
 
     val resolved = resolveWithoutFallbacks(delayedMergeObjectResolveProblem6)
 
@@ -602,11 +633,13 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       delayedMergeObjectWithKnownValue
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[ConfigDelayedMergeObject])
+        .isInstanceOf[ConfigDelayedMergeObject]
+    )
 
     assertEquals(
       3,
-      delayedMergeObjectWithKnownValue.toConfig.getConfig("item1").getInt("b"))
+      delayedMergeObjectWithKnownValue.toConfig.getConfig("item1").getInt("b")
+    )
   }
 
   private val delayedMergeObjectNeedsFullResolve = {
@@ -620,7 +653,8 @@ class ConfigSubstitutionTest extends TestUtils {
   // because b is an object, fetching it requires resolving ${defaults} above
   // to see if there are more keys to merge with b.
   item1.b = { c : 41 }
-""")
+"""
+    )
   }
 
   @Test
@@ -628,14 +662,17 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       delayedMergeObjectWithKnownValue
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[ConfigDelayedMergeObject])
+        .isInstanceOf[ConfigDelayedMergeObject]
+    )
 
     val e = intercept[ConfigException.NotResolved] {
       delayedMergeObjectNeedsFullResolve.toConfig.getObject("item1.b")
     }
 
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("item1.b"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("item1.b")
+    )
   }
 
   // objects that mutually refer to each other
@@ -657,7 +694,8 @@ class ConfigSubstitutionTest extends TestUtils {
   // item2.d refers to a field in item1
   item2.d = ${item1.a}
   item2.y = 15
-""")
+"""
+    )
   }
 
   @Test
@@ -665,11 +703,13 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       delayedMergeObjectEmbrace
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[ConfigDelayedMergeObject])
+        .isInstanceOf[ConfigDelayedMergeObject]
+    )
     assertTrue(
       delayedMergeObjectEmbrace
         .attemptPeekWithPartialResolve("item2")
-        .isInstanceOf[ConfigDelayedMergeObject])
+        .isInstanceOf[ConfigDelayedMergeObject]
+    )
 
     val resolved = delayedMergeObjectEmbrace.toConfig.resolve()
     assertEquals(1, resolved.getInt("item1.c"))
@@ -695,11 +735,13 @@ class ConfigSubstitutionTest extends TestUtils {
     assertTrue(
       plainObjectEmbrace
         .attemptPeekWithPartialResolve("item1")
-        .isInstanceOf[SimpleConfigObject])
+        .isInstanceOf[SimpleConfigObject]
+    )
     assertTrue(
       plainObjectEmbrace
         .attemptPeekWithPartialResolve("item2")
-        .isInstanceOf[SimpleConfigObject])
+        .isInstanceOf[SimpleConfigObject]
+    )
 
     val resolved = plainObjectEmbrace.toConfig.resolve()
     assertEquals(14, resolved.getInt("item1.b"))
@@ -754,7 +796,8 @@ class ConfigSubstitutionTest extends TestUtils {
     "ptrToArr" : ${arr},
     "x" : { "y" : { "ptrToPtrToArr" : ${ptrToArr} } }
 }
-""")
+"""
+    )
   }
 
   @Test
@@ -767,12 +810,18 @@ class ConfigSubstitutionTest extends TestUtils {
     assertEquals(57, resolved.getInt("a.b.c"))
     assertEquals(57, resolved.getInt("a.b.d"))
     assertEquals(57, resolved.getInt("objB.d"))
-    assertEquals(Seq(57, 57, 37, 57, 57, 57),
-                 resolved.getIntList("arr").asScala)
-    assertEquals(Seq(57, 57, 37, 57, 57, 57),
-                 resolved.getIntList("ptrToArr").asScala)
-    assertEquals(Seq(57, 57, 37, 57, 57, 57),
-                 resolved.getIntList("x.y.ptrToPtrToArr").asScala)
+    assertEquals(
+      Seq(57, 57, 37, 57, 57, 57),
+      resolved.getIntList("arr").asScala
+    )
+    assertEquals(
+      Seq(57, 57, 37, 57, 57, 57),
+      resolved.getIntList("ptrToArr").asScala
+    )
+    assertEquals(
+      Seq(57, 57, 37, 57, 57, 57),
+      resolved.getIntList("x.y.ptrToPtrToArr").asScala
+    )
   }
 
   private val substSystemPropsObject =
@@ -802,7 +851,8 @@ class ConfigSubstitutionTest extends TestUtils {
         .systemProperties()
         .withFallback(props)
         .root
-        .asInstanceOf[AbstractConfigObject])
+        .asInstanceOf[AbstractConfigObject]
+    )
 
     assertEquals(List("0", "1"), resolved.getList("a").unwrapped.asScala)
   }
@@ -833,7 +883,8 @@ class ConfigSubstitutionTest extends TestUtils {
         .systemProperties()
         .withFallback(substSystemPropsObject)
         .root
-        .asInstanceOf[AbstractConfigObject])
+        .asInstanceOf[AbstractConfigObject]
+    )
 
     assertEquals("1234", resolved.getString("a"))
     assertEquals("5678", resolved.getString("b"))
@@ -853,7 +904,8 @@ class ConfigSubstitutionTest extends TestUtils {
     "key_Path" : ${?Path}, // many windows machines use Path rather than PATH
     "key_NOT_HERE" : ${?NOT_HERE}
 }
-""")
+"""
+    )
   }
 
   @Test
@@ -874,7 +926,8 @@ class ConfigSubstitutionTest extends TestUtils {
     }
     if (existed == 0) {
       throw new Exception(
-        "None of the env vars we tried to use for testing were set")
+        "None of the env vars we tried to use for testing were set"
+      )
     }
   }
 
@@ -922,7 +975,8 @@ class ConfigSubstitutionTest extends TestUtils {
     }
     if (existed == 0) {
       throw new Exception(
-        "None of the env vars we tried to use for testing were set")
+        "None of the env vars we tried to use for testing were set"
+      )
     }
   }
 
@@ -990,8 +1044,10 @@ class ConfigSubstitutionTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("cycle"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("cycle")
+    )
   }
 
   @Test
@@ -1058,9 +1114,11 @@ class ConfigSubstitutionTest extends TestUtils {
     val resolved = resolve(obj)
     val option1  = parseObject(""" b={c=5}, a={c=5} """).toConfig
     val option2  = parseObject(""" b=1, a=1 """).toConfig
-    assertTrue("not an expected possibility: " + resolved +
-                 " expected 1: " + option1 + " or 2: " + option2,
-               resolved == option1 || resolved == option2)
+    assertTrue(
+      "not an expected possibility: " + resolved +
+        " expected 1: " + option1 + " or 2: " + option2,
+      resolved == option1 || resolved == option2
+    )
   }
 
   @Test
@@ -1098,9 +1156,11 @@ class ConfigSubstitutionTest extends TestUtils {
         Right(e)
     }
     val option1 = Left(parseObject("""a:1foo,b:1foo""").toConfig)
-    assertTrue("not an expected possibility: " + either +
-                 " expected value " + option1 + " or an exception",
-               either == option1 || either.isRight)
+    assertTrue(
+      "not an expected possibility: " + either +
+        " expected value " + option1 + " or an exception",
+      either == option1 || either.isRight
+    )
   }
 
   @Test
@@ -1317,8 +1377,10 @@ class ConfigSubstitutionTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("cycle") && e.getMessage.contains("${a}"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("cycle") && e.getMessage.contains("${a}")
+    )
   }
 
   @Test
@@ -1328,8 +1390,10 @@ class ConfigSubstitutionTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       resolve(obj)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("cycle") && e.getMessage.contains("${a}"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("cycle") && e.getMessage.contains("${a}")
+    )
   }
 
   @Test
@@ -1339,14 +1403,18 @@ class ConfigSubstitutionTest extends TestUtils {
     // an earlier object.
     val obj      = parseObject("""a={ x : 42, y : ${a.x} }""")
     val resolved = resolve(obj)
-    assertEquals(parseObject("{ x : 42, y : 42 }"),
-                 resolved.getConfig("a").root)
+    assertEquals(
+      parseObject("{ x : 42, y : 42 }"),
+      resolved.getConfig("a").root
+    )
 
     // this is expected because if adding "a=1" here affects the outcome,
     // it would be flat-out bizarre.
     val obj2      = parseObject("""a=1, a={ x : 42, y : ${a.x} }""")
     val resolved2 = resolve(obj2)
-    assertEquals(parseObject("{ x : 42, y : 42 }"),
-                 resolved2.getConfig("a").root)
+    assertEquals(
+      parseObject("{ x : 42, y : 42 }"),
+      resolved2.getConfig("a").root
+    )
   }
 }

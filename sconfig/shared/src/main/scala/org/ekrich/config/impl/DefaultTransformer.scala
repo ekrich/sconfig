@@ -16,8 +16,10 @@ import org.ekrich.config.ConfigValueType._
  * Default automatic type transformations.
  */
 object DefaultTransformer {
-  def transform(value: AbstractConfigValue,
-                requested: ConfigValueType): AbstractConfigValue = {
+  def transform(
+      value: AbstractConfigValue,
+      requested: ConfigValueType
+  ): AbstractConfigValue = {
     var retVal: AbstractConfigValue = value
     if (value.valueType == STRING) {
       val s = value.unwrapped.asInstanceOf[String]
@@ -95,14 +97,16 @@ object DefaultTransformer {
       if (!values.isEmpty) {
         val entryList =
           new ju.ArrayList[ju.Map.Entry[Integer, AbstractConfigValue]](
-            values.entrySet)
+            values.entrySet
+          )
         // sort by numeric index
         Collections.sort(
           entryList,
           new Comparator[ju.Map.Entry[Integer, AbstractConfigValue]]() {
             override def compare(
                 a: ju.Map.Entry[Integer, AbstractConfigValue],
-                b: ju.Map.Entry[Integer, AbstractConfigValue]): Int =
+                b: ju.Map.Entry[Integer, AbstractConfigValue]
+            ): Int =
               Integer.compare(a.getKey, b.getKey)
           }
         )

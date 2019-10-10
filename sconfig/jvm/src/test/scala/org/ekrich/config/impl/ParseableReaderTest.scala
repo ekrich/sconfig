@@ -13,10 +13,13 @@ class ParseableReaderTest extends TestUtils {
   def parse(): Unit = {
     val filename = "/test01.properties"
     val configInput = new InputStreamReader(
-      getClass.getResourceAsStream(filename))
-    val config = ConfigFactory.parseReader(configInput,
-                                           ConfigParseOptions.defaults
-                                             .setSyntaxFromFilename(filename))
+      getClass.getResourceAsStream(filename)
+    )
+    val config = ConfigFactory.parseReader(
+      configInput,
+      ConfigParseOptions.defaults
+        .setSyntaxFromFilename(filename)
+    )
     assertEquals("hello^^", config.getString("fromProps.specialChars"))
   }
 
@@ -24,11 +27,14 @@ class ParseableReaderTest extends TestUtils {
   def parseIncorrectFormat(): Unit = {
     val filename = "/test01.properties"
     val configInput = new InputStreamReader(
-      getClass.getResourceAsStream(filename))
+      getClass.getResourceAsStream(filename)
+    )
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseReader(configInput)
     }
-    assertThat(e.getMessage,
-               containsString("Expecting end of input or a comma, got '^'"))
+    assertThat(
+      e.getMessage,
+      containsString("Expecting end of input or a comma, got '^'")
+    )
   }
 }

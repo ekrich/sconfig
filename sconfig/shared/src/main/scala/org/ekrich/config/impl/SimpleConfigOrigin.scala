@@ -18,13 +18,15 @@ import org.ekrich.config.ConfigOrigin
 object SimpleConfigOrigin {
   // Needed for ConfigImpl.java
   private[impl] def newSimple(description: String) =
-    new SimpleConfigOrigin(description,
-                           -1,
-                           -1,
-                           OriginType.GENERIC,
-                           null,
-                           null,
-                           null)
+    new SimpleConfigOrigin(
+      description,
+      -1,
+      -1,
+      OriginType.GENERIC,
+      null,
+      null,
+      null
+    )
   private[impl] def newFile(filename: String): SimpleConfigOrigin = {
     var url: String = null
     try {
@@ -40,23 +42,29 @@ object SimpleConfigOrigin {
     val u = url.toExternalForm
     new SimpleConfigOrigin(u, -1, -1, OriginType.URL, u, null, null)
   }
-  private[impl] def newResource(resource: String,
-                                url: URL): SimpleConfigOrigin = {
+  private[impl] def newResource(
+      resource: String,
+      url: URL
+  ): SimpleConfigOrigin = {
     val desc: String =
       if (url != null) resource + " @ " + url.toExternalForm else resource
-    new SimpleConfigOrigin(desc,
-                           -1,
-                           -1,
-                           OriginType.RESOURCE,
-                           if (url != null) url.toExternalForm else null,
-                           resource,
-                           null)
+    new SimpleConfigOrigin(
+      desc,
+      -1,
+      -1,
+      OriginType.RESOURCE,
+      if (url != null) url.toExternalForm else null,
+      resource,
+      null
+    )
   }
   private[impl] def newResource(resource: String): SimpleConfigOrigin =
     newResource(resource, null)
   private[impl] val MERGE_OF_PREFIX = "merge of "
-  private def mergeTwo(a: SimpleConfigOrigin,
-                       b: SimpleConfigOrigin): SimpleConfigOrigin = {
+  private def mergeTwo(
+      a: SimpleConfigOrigin,
+      b: SimpleConfigOrigin
+  ): SimpleConfigOrigin = {
     var mergedDesc: String              = null
     var mergedStartLine                 = 0
     var mergedEndLine                   = 0
@@ -114,13 +122,15 @@ object SimpleConfigOrigin {
       if (b.commentsOrNull != null) mergedComments.addAll(b.commentsOrNull)
     }
 
-    new SimpleConfigOrigin(mergedDesc,
-                           mergedStartLine,
-                           mergedEndLine,
-                           mergedType,
-                           mergedURL,
-                           mergedResource,
-                           mergedComments)
+    new SimpleConfigOrigin(
+      mergedDesc,
+      mergedStartLine,
+      mergedEndLine,
+      mergedType,
+      mergedURL,
+      mergedResource,
+      mergedComments
+    )
   }
   private def similarity(a: SimpleConfigOrigin, b: SimpleConfigOrigin): Int = {
     var count = 0
@@ -143,21 +153,28 @@ object SimpleConfigOrigin {
   // common. we want to merge two lines in the same file rather than something
   // else with one of the lines; because two lines in the same file can be
   // better consolidated.
-  private def mergeThree(a: SimpleConfigOrigin,
-                         b: SimpleConfigOrigin,
-                         c: SimpleConfigOrigin): SimpleConfigOrigin =
+  private def mergeThree(
+      a: SimpleConfigOrigin,
+      b: SimpleConfigOrigin,
+      c: SimpleConfigOrigin
+  ): SimpleConfigOrigin =
     if (similarity(a, b) >= similarity(b, c))
       mergeTwo(mergeTwo(a, b), c)
     else
       mergeTwo(a, mergeTwo(b, c))
 
-  private[impl] def mergeOrigins(a: ConfigOrigin,
-                                 b: ConfigOrigin): SimpleConfigOrigin =
-    mergeTwo(a.asInstanceOf[SimpleConfigOrigin],
-             b.asInstanceOf[SimpleConfigOrigin])
+  private[impl] def mergeOrigins(
+      a: ConfigOrigin,
+      b: ConfigOrigin
+  ): SimpleConfigOrigin =
+    mergeTwo(
+      a.asInstanceOf[SimpleConfigOrigin],
+      b.asInstanceOf[SimpleConfigOrigin]
+    )
 
   private[impl] def mergeOrigins(
-      stack: ju.List[_ <: AbstractConfigValue]): ConfigOrigin = {
+      stack: ju.List[_ <: AbstractConfigValue]
+  ): ConfigOrigin = {
     val origins = new ju.ArrayList[ConfigOrigin](stack.size)
     for (v <- stack.asScala) {
       origins.add(v.origin)
@@ -165,15 +182,18 @@ object SimpleConfigOrigin {
     mergeOrigins(origins)
   }
   private[impl] def mergeOrigins(
-      stack: ju.Collection[_ <: ConfigOrigin]): ConfigOrigin =
+      stack: ju.Collection[_ <: ConfigOrigin]
+  ): ConfigOrigin =
     if (stack.isEmpty)
       throw new ConfigException.BugOrBroken("can't merge empty list of origins")
     else if (stack.size == 1)
       stack.iterator.next
     else if (stack.size == 2) {
       val i = stack.iterator
-      mergeTwo(i.next.asInstanceOf[SimpleConfigOrigin],
-               i.next.asInstanceOf[SimpleConfigOrigin])
+      mergeTwo(
+        i.next.asInstanceOf[SimpleConfigOrigin],
+        i.next.asInstanceOf[SimpleConfigOrigin]
+      )
     } else {
       val remaining =
         new ju.ArrayList[SimpleConfigOrigin]
@@ -198,15 +218,17 @@ object SimpleConfigOrigin {
   // in the common case that child objects have the same origin fields
   // as their parent objects. e.g. we don't need to store the source
   // filename with every single value.
-  private[impl] def fieldsDelta(base: ju.Map[SerializedField, AnyRef],
-                                child: ju.Map[SerializedField, AnyRef])
-    : ju.Map[SerializedField, AnyRef] = {
+  private[impl] def fieldsDelta(
+      base: ju.Map[SerializedField, AnyRef],
+      child: ju.Map[SerializedField, AnyRef]
+  ): ju.Map[SerializedField, AnyRef] = {
     val m = new ju.TreeMap[SerializedField, AnyRef](child) // was EnumMap
     for (baseEntry <- base.entrySet.asScala) {
       val f = baseEntry.getKey
       if (m.containsKey(f) && ConfigImplUtil.equalsHandlingNull(
             baseEntry.getValue,
-            m.get(f))) {
+            m.get(f)
+          )) {
         // if field is unchanged, just remove it so we inherit
         m.remove(f)
       } else if (!m.containsKey(f)) {
@@ -214,14 +236,16 @@ object SimpleConfigOrigin {
         f match {
           case SerializedField.ORIGIN_DESCRIPTION =>
             throw new ConfigException.BugOrBroken(
-              "origin missing description field? " + child)
+              "origin missing description field? " + child
+            )
           case SerializedField.ORIGIN_LINE_NUMBER =>
             m.put(SerializedField.ORIGIN_LINE_NUMBER, -1: jl.Integer)
           case SerializedField.ORIGIN_END_LINE_NUMBER =>
             m.put(SerializedField.ORIGIN_END_LINE_NUMBER, -1: jl.Integer)
           case SerializedField.ORIGIN_TYPE =>
             throw new ConfigException.BugOrBroken(
-              "should always be an ORIGIN_TYPE field")
+              "should always be an ORIGIN_TYPE field"
+            )
           case SerializedField.ORIGIN_URL =>
             m.put(SerializedField.ORIGIN_NULL_URL, "")
           case SerializedField.ORIGIN_RESOURCE =>
@@ -232,12 +256,14 @@ object SimpleConfigOrigin {
               SerializedField.ORIGIN_NULL_RESOURCE |
               SerializedField.ORIGIN_NULL_COMMENTS =>
             throw new ConfigException.BugOrBroken(
-              "computing delta, base object should not contain " + f + " " + base)
+              "computing delta, base object should not contain " + f + " " + base
+            )
           case SerializedField.END_MARKER | SerializedField.ROOT_VALUE |
               SerializedField.ROOT_WAS_CONFIG | SerializedField.UNKNOWN |
               SerializedField.VALUE_DATA | SerializedField.VALUE_ORIGIN =>
             throw new ConfigException.BugOrBroken(
-              "should not appear here: " + f)
+              "should not appear here: " + f
+            )
         }
       } else {
         // field is in base and child, but differs, so leave it
@@ -247,7 +273,8 @@ object SimpleConfigOrigin {
   }
   @throws[IOException]
   private[impl] def fromFields(
-      m: ju.Map[SerializedField, AnyRef]): SimpleConfigOrigin = {
+      m: ju.Map[SerializedField, AnyRef]
+  ): SimpleConfigOrigin = {
     // we represent a null origin as one with no fields at all
     if (m.isEmpty) return null
     val description =
@@ -271,18 +298,21 @@ object SimpleConfigOrigin {
     // Older versions did not have a resource field, they stuffed it into the description.
     if ((originType eq OriginType.RESOURCE) && resourceOrNull == null)
       resourceOrNull = description
-    new SimpleConfigOrigin(description,
-                           if (lineNumber != null) lineNumber else -1,
-                           if (endLineNumber != null) endLineNumber else -1,
-                           originType,
-                           urlOrNull,
-                           resourceOrNull,
-                           commentsOrNull)
+    new SimpleConfigOrigin(
+      description,
+      if (lineNumber != null) lineNumber else -1,
+      if (endLineNumber != null) endLineNumber else -1,
+      originType,
+      urlOrNull,
+      resourceOrNull,
+      commentsOrNull
+    )
   }
   @throws[IOException]
-  private[impl] def applyFieldsDelta(base: ju.Map[SerializedField, AnyRef],
-                                     delta: ju.Map[SerializedField, AnyRef])
-    : ju.Map[SerializedField, AnyRef] = {
+  private[impl] def applyFieldsDelta(
+      base: ju.Map[SerializedField, AnyRef],
+      delta: ju.Map[SerializedField, AnyRef]
+  ): ju.Map[SerializedField, AnyRef] = {
     val m = new ju.TreeMap[SerializedField, AnyRef](delta) // was EnumMap
     for (baseEntry <- base.entrySet.asScala) {
       val f = baseEntry.getKey
@@ -313,7 +343,8 @@ object SimpleConfigOrigin {
             // base objects shouldn't contain these, should just
             // lack the field. these are only in deltas.
             throw new ConfigException.BugOrBroken(
-              "applying fields, base object should not contain " + f + " " + base)
+              "applying fields, base object should not contain " + f + " " + base
+            )
           case SerializedField.ORIGIN_END_LINE_NUMBER |
               SerializedField.ORIGIN_LINE_NUMBER |
               SerializedField.ORIGIN_TYPE =>
@@ -322,7 +353,8 @@ object SimpleConfigOrigin {
               SerializedField.ROOT_WAS_CONFIG | SerializedField.UNKNOWN |
               SerializedField.VALUE_DATA | SerializedField.VALUE_ORIGIN =>
             throw new ConfigException.BugOrBroken(
-              "should not appear here: " + f)
+              "should not appear here: " + f
+            )
         }
       }
     }
@@ -331,7 +363,8 @@ object SimpleConfigOrigin {
   @throws[IOException]
   private[impl] def fromBase(
       baseOrigin: SimpleConfigOrigin,
-      delta: ju.Map[SerializedField, AnyRef]): SimpleConfigOrigin = {
+      delta: ju.Map[SerializedField, AnyRef]
+  ): SimpleConfigOrigin = {
     var baseFields =
       if (baseOrigin != null) baseOrigin.toFields
       else ju.Collections.emptyMap[SerializedField, AnyRef]
@@ -339,47 +372,55 @@ object SimpleConfigOrigin {
     fromFields(fields)
   }
 }
-final class SimpleConfigOrigin protected (val _description: String,
-                                          val _lineNumber: Int,
-                                          val endLineNumber: Int,
-                                          val originType: OriginType,
-                                          val urlOrNull: String,
-                                          val resourceOrNull: String,
-                                          val commentsOrNull: ju.List[String])
-    extends ConfigOrigin {
+final class SimpleConfigOrigin protected (
+    val _description: String,
+    val _lineNumber: Int,
+    val endLineNumber: Int,
+    val originType: OriginType,
+    val urlOrNull: String,
+    val resourceOrNull: String,
+    val commentsOrNull: ju.List[String]
+) extends ConfigOrigin {
   if (_description == null)
     throw new ConfigException.BugOrBroken("description may not be null")
 
   override def withLineNumber(lineNumber: Int): SimpleConfigOrigin =
     if (lineNumber == this.lineNumber && lineNumber == this.endLineNumber) this
     else
-      new SimpleConfigOrigin(this._description,
-                             lineNumber,
-                             lineNumber,
-                             this.originType,
-                             this.urlOrNull,
-                             this.resourceOrNull,
-                             this.commentsOrNull)
+      new SimpleConfigOrigin(
+        this._description,
+        lineNumber,
+        lineNumber,
+        this.originType,
+        this.urlOrNull,
+        this.resourceOrNull,
+        this.commentsOrNull
+      )
   private[impl] def addURL(url: URL) =
-    new SimpleConfigOrigin(this._description,
-                           this.lineNumber,
-                           this.endLineNumber,
-                           this.originType,
-                           if (url != null) url.toExternalForm else null,
-                           this.resourceOrNull,
-                           this.commentsOrNull)
+    new SimpleConfigOrigin(
+      this._description,
+      this.lineNumber,
+      this.endLineNumber,
+      this.originType,
+      if (url != null) url.toExternalForm else null,
+      this.resourceOrNull,
+      this.commentsOrNull
+    )
   override def withComments(comments: ju.List[String]): SimpleConfigOrigin =
     if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull)) this
     else
-      new SimpleConfigOrigin(this._description,
-                             this.lineNumber,
-                             this.endLineNumber,
-                             this.originType,
-                             this.urlOrNull,
-                             this.resourceOrNull,
-                             comments)
+      new SimpleConfigOrigin(
+        this._description,
+        this.lineNumber,
+        this.endLineNumber,
+        this.originType,
+        this.urlOrNull,
+        this.resourceOrNull,
+        comments
+      )
   private[impl] def prependComments(
-      comments: ju.List[String]): SimpleConfigOrigin =
+      comments: ju.List[String]
+  ): SimpleConfigOrigin =
     if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull) || comments == null)
       this
     else if (this.commentsOrNull == null) withComments(comments)
@@ -391,7 +432,8 @@ final class SimpleConfigOrigin protected (val _description: String,
       withComments(merged)
     }
   private[impl] def appendComments(
-      comments: ju.List[String]): SimpleConfigOrigin =
+      comments: ju.List[String]
+  ): SimpleConfigOrigin =
     if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull) || comments == null)
       this
     else if (this.commentsOrNull == null) withComments(comments)
@@ -413,8 +455,10 @@ final class SimpleConfigOrigin protected (val _description: String,
       this._description == otherOrigin._description && this.lineNumber == otherOrigin.lineNumber &&
       this.endLineNumber == otherOrigin.endLineNumber && (this.originType eq otherOrigin.originType) &&
       ConfigImplUtil.equalsHandlingNull(this.urlOrNull, otherOrigin.urlOrNull) &&
-      ConfigImplUtil.equalsHandlingNull(this.resourceOrNull,
-                                        otherOrigin.resourceOrNull)
+      ConfigImplUtil.equalsHandlingNull(
+        this.resourceOrNull,
+        otherOrigin.resourceOrNull
+      )
     } else false
 
   override def hashCode: Int = {
@@ -472,7 +516,8 @@ final class SimpleConfigOrigin protected (val _description: String,
     m
   }
   private[impl] def toFieldsDelta(
-      baseOrigin: SimpleConfigOrigin): ju.Map[SerializedField, AnyRef] = {
+      baseOrigin: SimpleConfigOrigin
+  ): ju.Map[SerializedField, AnyRef] = {
     var baseFields =
       if (baseOrigin != null) baseOrigin.toFields
       else ju.Collections.emptyMap[SerializedField, AnyRef]

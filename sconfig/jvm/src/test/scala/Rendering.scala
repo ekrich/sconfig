@@ -16,8 +16,9 @@ object RenderExample extends App {
     val conf = ConfigFactory
       .defaultOverrides()
       .withFallback(
-        ConfigFactory.parseResourcesAnySyntax(classOf[ConfigFactory],
-                                              "/" + what))
+        ConfigFactory
+          .parseResourcesAnySyntax(classOf[ConfigFactory], "/" + what)
+      )
       .withFallback(ConfigFactory.defaultReference())
 
     println("=== BEGIN UNRESOLVED toString() " + what)

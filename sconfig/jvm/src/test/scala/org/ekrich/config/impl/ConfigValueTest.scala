@@ -171,7 +171,8 @@ class ConfigValueTest extends TestUtils {
   }
 
   private def configMap(
-      pairs: (String, Int)*): java.util.Map[String, AbstractConfigValue] = {
+      pairs: (String, Int)*
+  ): java.util.Map[String, AbstractConfigValue] = {
     val m = new java.util.HashMap[String, AbstractConfigValue]()
     for (p <- pairs) {
       m.put(p._1, intValue(p._2))
@@ -377,13 +378,18 @@ class ConfigValueTest extends TestUtils {
   def configDelayedMergeEquality(): Unit = {
     val s1 = subst("foo")
     val s2 = subst("bar")
-    val a = new ConfigDelayedMerge(fakeOrigin(),
-                                   List[AbstractConfigValue](s1, s2).asJava)
+    val a = new ConfigDelayedMerge(
+      fakeOrigin(),
+      List[AbstractConfigValue](s1, s2).asJava
+    )
     val sameAsA = new ConfigDelayedMerge(
       fakeOrigin(),
-      List[AbstractConfigValue](s1, s2).asJava)
-    val b = new ConfigDelayedMerge(fakeOrigin(),
-                                   List[AbstractConfigValue](s2, s1).asJava)
+      List[AbstractConfigValue](s1, s2).asJava
+    )
+    val b = new ConfigDelayedMerge(
+      fakeOrigin(),
+      List[AbstractConfigValue](s2, s1).asJava
+    )
 
     checkEqualObjects(a, a)
     checkEqualObjects(a, sameAsA)
@@ -394,8 +400,10 @@ class ConfigValueTest extends TestUtils {
   def configDelayedMergeNotSerializable(): Unit = {
     val s1 = subst("foo")
     val s2 = subst("bar")
-    val a = new ConfigDelayedMerge(fakeOrigin(),
-                                   List[AbstractConfigValue](s1, s2).asJava)
+    val a = new ConfigDelayedMerge(
+      fakeOrigin(),
+      List[AbstractConfigValue](s1, s2).asJava
+    )
     checkNotSerializable(a)
   }
 
@@ -406,13 +414,16 @@ class ConfigValueTest extends TestUtils {
     val s2    = subst("bar")
     val a = new ConfigDelayedMergeObject(
       fakeOrigin(),
-      List[AbstractConfigValue](empty, s1, s2).asJava)
+      List[AbstractConfigValue](empty, s1, s2).asJava
+    )
     val sameAsA = new ConfigDelayedMergeObject(
       fakeOrigin(),
-      List[AbstractConfigValue](empty, s1, s2).asJava)
+      List[AbstractConfigValue](empty, s1, s2).asJava
+    )
     val b = new ConfigDelayedMergeObject(
       fakeOrigin(),
-      List[AbstractConfigValue](empty, s2, s1).asJava)
+      List[AbstractConfigValue](empty, s2, s1).asJava
+    )
 
     checkEqualObjects(a, a)
     checkEqualObjects(a, sameAsA)
@@ -426,7 +437,8 @@ class ConfigValueTest extends TestUtils {
     val s2    = subst("bar")
     val a = new ConfigDelayedMergeObject(
       fakeOrigin(),
-      List[AbstractConfigValue](empty, s1, s2).asJava)
+      List[AbstractConfigValue](empty, s1, s2).asJava
+    )
     checkNotSerializable(a)
   }
 
@@ -442,18 +454,21 @@ class ConfigValueTest extends TestUtils {
     boolValue(true).toString()
     val emptyObj = SimpleConfigObject.empty()
     emptyObj.toString()
-    (new SimpleConfigList(fakeOrigin(),
-                          Collections.emptyList[AbstractConfigValue]()))
-      .toString()
+    (new SimpleConfigList(
+      fakeOrigin(),
+      Collections.emptyList[AbstractConfigValue]()
+    )).toString()
     subst("a").toString()
     substInString("b").toString()
     val dm = new ConfigDelayedMerge(
       fakeOrigin(),
-      List[AbstractConfigValue](subst("a"), subst("b")).asJava)
+      List[AbstractConfigValue](subst("a"), subst("b")).asJava
+    )
     dm.toString()
     val dmo = new ConfigDelayedMergeObject(
       fakeOrigin(),
-      List[AbstractConfigValue](emptyObj, subst("a"), subst("b")).asJava)
+      List[AbstractConfigValue](emptyObj, subst("a"), subst("b")).asJava
+    )
     dmo.toString()
 
     fakeOrigin().toString()
@@ -467,8 +482,10 @@ class ConfigValueTest extends TestUtils {
 
   @Test
   def configObjectUnwraps(): Unit = {
-    val m = new SimpleConfigObject(fakeOrigin(),
-                                   configMap("a" -> 1, "b" -> 2, "c" -> 3))
+    val m = new SimpleConfigObject(
+      fakeOrigin(),
+      configMap("a" -> 1, "b" -> 2, "c" -> 3)
+    )
     assertEquals(Map("a" -> 1, "b" -> 2, "c" -> 3), m.unwrapped.asScala)
   }
 
@@ -476,7 +493,8 @@ class ConfigValueTest extends TestUtils {
   def configObjectImplementsMap(): Unit = {
     val m: ConfigObject = new SimpleConfigObject(
       fakeOrigin(),
-      configMap("a" -> 1, "b" -> 2, "c" -> 3))
+      configMap("a" -> 1, "b" -> 2, "c" -> 3)
+    )
 
     assertEquals(intValue(1), m.get("a"))
     assertEquals(intValue(2), m.get("b"))
@@ -518,9 +536,11 @@ class ConfigValueTest extends TestUtils {
 
   @Test
   def configListImplementsList(): Unit = {
-    val scalaSeq = Seq[AbstractConfigValue](stringValue("a"),
-                                            stringValue("b"),
-                                            stringValue("c"))
+    val scalaSeq = Seq[AbstractConfigValue](
+      stringValue("a"),
+      stringValue("b"),
+      stringValue("c")
+    )
     val l: ConfigList = new SimpleConfigList(fakeOrigin(), scalaSeq.asJava)
 
     assertEquals(scalaSeq(0), l.get(0))
@@ -530,9 +550,11 @@ class ConfigValueTest extends TestUtils {
     assertTrue(l.contains(stringValue("a")))
 
     assertTrue(
-      l.containsAll(List[AbstractConfigValue](stringValue("b")).asJava))
+      l.containsAll(List[AbstractConfigValue](stringValue("b")).asJava)
+    )
     assertFalse(
-      l.containsAll(List[AbstractConfigValue](stringValue("d")).asJava))
+      l.containsAll(List[AbstractConfigValue](stringValue("d")).asJava)
+    )
 
     assertEquals(1, l.indexOf(scalaSeq(1)))
 
@@ -605,7 +627,8 @@ class ConfigValueTest extends TestUtils {
     // ConfigDelayedMerge
     val dm = new ConfigDelayedMerge(
       fakeOrigin(),
-      List[AbstractConfigValue](subst("a"), subst("b")).asJava)
+      List[AbstractConfigValue](subst("a"), subst("b")).asJava
+    )
     unresolved { dm.valueType }
     unresolved { dm.unwrapped }
 
@@ -613,7 +636,8 @@ class ConfigValueTest extends TestUtils {
     val emptyObj = SimpleConfigObject.empty()
     val dmo = new ConfigDelayedMergeObject(
       fakeOrigin(),
-      List[AbstractConfigValue](emptyObj, subst("a"), subst("b")).asJava)
+      List[AbstractConfigValue](emptyObj, subst("a"), subst("b")).asJava
+    )
     assertEquals(ConfigValueType.OBJECT, dmo.valueType)
     unresolved { dmo.unwrapped }
     unresolved { dmo.get("foo") }
@@ -639,16 +663,20 @@ class ConfigValueTest extends TestUtils {
     val d = "1e100"
 
     val obj = parseConfig(
-      "{ a : " + a + ", b : " + b + ", c : " + c + ", d : " + d + "}")
+      "{ a : " + a + ", b : " + b + ", c : " + c + ", d : " + d + "}"
+    )
     assertEquals(Seq(a, b, c, d), Seq("a", "b", "c", "d") map {
       obj.getString(_)
     })
 
     // make sure it still works if we're doing concatenation
     val obj2 = parseConfig(
-      "{ a : xx " + a + " yy, b : xx " + b + " yy, c : xx " + c + " yy, d : xx " + d + " yy}")
-    assertEquals(Seq(a, b, c, d) map { "xx " + _ + " yy" },
-                 Seq("a", "b", "c", "d") map { obj2.getString(_) })
+      "{ a : xx " + a + " yy, b : xx " + b + " yy, c : xx " + c + " yy, d : xx " + d + " yy}"
+    )
+    assertEquals(
+      Seq(a, b, c, d) map { "xx " + _ + " yy" },
+      Seq("a", "b", "c", "d") map { obj2.getString(_) }
+    )
   }
 
   @Test
@@ -667,8 +695,10 @@ class ConfigValueTest extends TestUtils {
     assertEquals("merge of a,b", m(o("a", false), o("b", false)))
     // combine duplicate "merge of"
     assertEquals("merge of a,x,y", m(o("a", false), o("merge of x,y", false)))
-    assertEquals("merge of a,b,x,y",
-                 m(o("merge of a,b", false), o("merge of x,y", false)))
+    assertEquals(
+      "merge of a,b,x,y",
+      m(o("merge of a,b", false), o("merge of x,y", false))
+    )
     // ignore empty objects
     assertEquals("a", m(o("foo", true), o("a", false)))
     // unless they are all empty, pick the first one
@@ -676,8 +706,10 @@ class ConfigValueTest extends TestUtils {
     // merge just one
     assertEquals("foo", m(o("foo", false)))
     // merge three
-    assertEquals("merge of a,b,c",
-                 m(o("a", false), o("b", false), o("c", false)))
+    assertEquals(
+      "merge of a,b,c",
+      m(o("a", false), o("b", false), o("c", false))
+    )
   }
 
   @Test
@@ -784,36 +816,53 @@ class ConfigValueTest extends TestUtils {
   def withOnly(): Unit = {
     val obj = parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }")
     assertEquals("keep only a", parseObject("{ a=1 }"), obj.withOnlyKey("a"))
-    assertEquals("keep only e",
-                 parseObject("{ e.f.g=4 }"),
-                 obj.withOnlyKey("e"))
-    assertEquals("keep only c.d",
-                 parseObject("{ c.d.y=3, c.d.z=5 }"),
-                 obj.toConfig.withOnlyPath("c.d").root)
-    assertEquals("keep only c.d.z",
-                 parseObject("{ c.d.z=5 }"),
-                 obj.toConfig.withOnlyPath("c.d.z").root)
-    assertEquals("keep nonexistent key",
-                 parseObject("{ }"),
-                 obj.withOnlyKey("nope"))
-    assertEquals("keep nonexistent path",
-                 parseObject("{ }"),
-                 obj.toConfig.withOnlyPath("q.w.e.r.t.y").root)
-    assertEquals("keep only nonexistent underneath non-object",
-                 parseObject("{ }"),
-                 obj.toConfig.withOnlyPath("a.nonexistent").root)
-    assertEquals("keep only nonexistent underneath nested non-object",
-                 parseObject("{ }"),
-                 obj.toConfig.withOnlyPath("c.d.z.nonexistent").root)
+    assertEquals(
+      "keep only e",
+      parseObject("{ e.f.g=4 }"),
+      obj.withOnlyKey("e")
+    )
+    assertEquals(
+      "keep only c.d",
+      parseObject("{ c.d.y=3, c.d.z=5 }"),
+      obj.toConfig.withOnlyPath("c.d").root
+    )
+    assertEquals(
+      "keep only c.d.z",
+      parseObject("{ c.d.z=5 }"),
+      obj.toConfig.withOnlyPath("c.d.z").root
+    )
+    assertEquals(
+      "keep nonexistent key",
+      parseObject("{ }"),
+      obj.withOnlyKey("nope")
+    )
+    assertEquals(
+      "keep nonexistent path",
+      parseObject("{ }"),
+      obj.toConfig.withOnlyPath("q.w.e.r.t.y").root
+    )
+    assertEquals(
+      "keep only nonexistent underneath non-object",
+      parseObject("{ }"),
+      obj.toConfig.withOnlyPath("a.nonexistent").root
+    )
+    assertEquals(
+      "keep only nonexistent underneath nested non-object",
+      parseObject("{ }"),
+      obj.toConfig.withOnlyPath("c.d.z.nonexistent").root
+    )
   }
 
   @Test
   def withOnlyInvolvingUnresolved(): Unit = {
     val obj = parseObject(
-      "{ a = {}, a=${x}, b=${y}, b=${z}, x={asf:1}, y=2, z=3 }")
-    assertEquals("keep only a.asf",
-                 parseObject("{ a={asf:1} }"),
-                 obj.toConfig.resolve().withOnlyPath("a.asf").root)
+      "{ a = {}, a=${x}, b=${y}, b=${z}, x={asf:1}, y=2, z=3 }"
+    )
+    assertEquals(
+      "keep only a.asf",
+      parseObject("{ a={asf:1} }"),
+      obj.toConfig.resolve().withOnlyPath("a.asf").root
+    )
 
     intercept[ConfigException.UnresolvedSubstitution] {
       obj.withOnlyKey("a").toConfig.resolve()
@@ -830,36 +879,53 @@ class ConfigValueTest extends TestUtils {
   @Test
   def without(): Unit = {
     val obj = parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }")
-    assertEquals("without a",
-                 parseObject("{ b=2, c.d.y=3, e.f.g=4, c.d.z=5 }"),
-                 obj.withoutKey("a"))
-    assertEquals("without c",
-                 parseObject("{ a=1, b=2, e.f.g=4 }"),
-                 obj.withoutKey("c"))
-    assertEquals("without c.d",
-                 parseObject("{ a=1, b=2, e.f.g=4, c={} }"),
-                 obj.toConfig.withoutPath("c.d").root)
-    assertEquals("without c.d.z",
-                 parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4 }"),
-                 obj.toConfig.withoutPath("c.d.z").root)
-    assertEquals("without nonexistent key",
-                 parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }"),
-                 obj.withoutKey("nonexistent"))
-    assertEquals("without nonexistent path",
-                 parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }"),
-                 obj.toConfig.withoutPath("q.w.e.r.t.y").root)
-    assertEquals("without nonexistent path with existing prefix",
-                 parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }"),
-                 obj.toConfig.withoutPath("a.foo").root)
+    assertEquals(
+      "without a",
+      parseObject("{ b=2, c.d.y=3, e.f.g=4, c.d.z=5 }"),
+      obj.withoutKey("a")
+    )
+    assertEquals(
+      "without c",
+      parseObject("{ a=1, b=2, e.f.g=4 }"),
+      obj.withoutKey("c")
+    )
+    assertEquals(
+      "without c.d",
+      parseObject("{ a=1, b=2, e.f.g=4, c={} }"),
+      obj.toConfig.withoutPath("c.d").root
+    )
+    assertEquals(
+      "without c.d.z",
+      parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4 }"),
+      obj.toConfig.withoutPath("c.d.z").root
+    )
+    assertEquals(
+      "without nonexistent key",
+      parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }"),
+      obj.withoutKey("nonexistent")
+    )
+    assertEquals(
+      "without nonexistent path",
+      parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }"),
+      obj.toConfig.withoutPath("q.w.e.r.t.y").root
+    )
+    assertEquals(
+      "without nonexistent path with existing prefix",
+      parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }"),
+      obj.toConfig.withoutPath("a.foo").root
+    )
   }
 
   @Test
   def withoutInvolvingUnresolved(): Unit = {
     val obj = parseObject(
-      "{ a = {}, a=${x}, b=${y}, b=${z}, x={asf:1}, y=2, z=3 }")
-    assertEquals("without a.asf",
-                 parseObject("{ a={}, b=3, x={asf:1}, y=2, z=3 }"),
-                 obj.toConfig.resolve().withoutPath("a.asf").root)
+      "{ a = {}, a=${x}, b=${y}, b=${z}, x={asf:1}, y=2, z=3 }"
+    )
+    assertEquals(
+      "without a.asf",
+      parseObject("{ a={}, b=3, x={asf:1}, y=2, z=3 }"),
+      obj.toConfig.resolve().withoutPath("a.asf").root
+    )
 
     intercept[ConfigException.UnresolvedSubstitution] {
       obj.withoutKey("x").toConfig.resolve()
@@ -871,8 +937,10 @@ class ConfigValueTest extends TestUtils {
 
     assertEquals(ResolveStatus.UNRESOLVED, obj.resolveStatus)
     assertEquals(ResolveStatus.UNRESOLVED, obj.withoutKey("a").resolveStatus)
-    assertEquals(ResolveStatus.RESOLVED,
-                 obj.withoutKey("a").withoutKey("b").resolveStatus)
+    assertEquals(
+      ResolveStatus.RESOLVED,
+      obj.withoutKey("a").withoutKey("b").resolveStatus
+    )
   }
 
   @Test
@@ -991,13 +1059,17 @@ class ConfigValueTest extends TestUtils {
     )
     val combos = bases.flatMap({ base =>
       Seq(
-        (base,
-         base.withComments(Seq("this is a comment", "another one").asJava)),
+        (
+          base,
+          base.withComments(Seq("this is a comment", "another one").asJava)
+        ),
         (base, base.withComments(null)),
         (base, base.withLineNumber(41)),
-        (base,
-         SimpleConfigOrigin.mergeOrigins(base.withLineNumber(10),
-                                         base.withLineNumber(20)))
+        (
+          base,
+          SimpleConfigOrigin
+            .mergeOrigins(base.withLineNumber(10), base.withLineNumber(20))
+        )
       )
     }) ++
       bases
@@ -1022,17 +1094,19 @@ class ConfigValueTest extends TestUtils {
         // second inside first
         new SimpleConfigList(
           combo._1,
-          Seq[AbstractConfigValue](new ConfigInt(combo._2, 42, "42")).asJava),
+          Seq[AbstractConfigValue](new ConfigInt(combo._2, 42, "42")).asJava
+        ),
         // triple-nested means we have to null then un-null then null, which is a tricky case
         // in the origin-serialization code.
-        new SimpleConfigList(combo._1,
-                             Seq[AbstractConfigValue](
-                               new SimpleConfigList(combo._2,
-                                                    Seq[AbstractConfigValue](
-                                                      new ConfigInt(
-                                                        combo._1,
-                                                        42,
-                                                        "42")).asJava)).asJava)
+        new SimpleConfigList(
+          combo._1,
+          Seq[AbstractConfigValue](
+            new SimpleConfigList(
+              combo._2,
+              Seq[AbstractConfigValue](new ConfigInt(combo._1, 42, "42")).asJava
+            )
+          ).asJava
+        )
       )
     })
     def top(v: SimpleConfigList)    = v.origin
@@ -1057,10 +1131,12 @@ class ConfigValueTest extends TestUtils {
   def renderWithNewlinesInDescription(): Unit = {
     val v = ConfigValueFactory.fromAnyRef(
       89: Integer,
-      "this is a description\nwith some\nnewlines")
+      "this is a description\nwith some\nnewlines"
+    )
     val list = new SimpleConfigList(
       SimpleConfigOrigin.newSimple("\n5\n6\n7\n"),
-      java.util.Collections.singletonList(v.asInstanceOf[AbstractConfigValue]))
+      java.util.Collections.singletonList(v.asInstanceOf[AbstractConfigValue])
+    )
     val conf     = ConfigFactory.empty().withValue("bar", list)
     val rendered = conf.root.render
     def assertHas(s: String): Unit =
@@ -1083,6 +1159,7 @@ class ConfigValueTest extends TestUtils {
     val rendered = config.root.render(ConfigRenderOptions.concise)
     assertEquals(
       """{"0":"a","1":"b","2":"c","3":"d","10":"e","20":"f","30":"g"}""",
-      rendered)
+      rendered
+    )
   }
 }

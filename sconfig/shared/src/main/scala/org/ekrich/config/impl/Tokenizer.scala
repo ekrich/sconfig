@@ -50,39 +50,51 @@ object Tokenizer {
       var lastTokenWasSimpleValue = false
 
       private[impl] def add(c: Int): Unit = whitespace.appendCodePoint(c)
-      private[impl] def check(t: Token,
-                              baseOrigin: ConfigOrigin,
-                              lineNumber: Int) =
+      private[impl] def check(
+          t: Token,
+          baseOrigin: ConfigOrigin,
+          lineNumber: Int
+      ) =
         if (isSimpleValue(t)) nextIsASimpleValue(baseOrigin, lineNumber)
         else nextIsNotASimpleValue(baseOrigin, lineNumber)
 
       // called if the next token is not a simple value;
       // discards any whitespace we were saving between
       // simple values.
-      private def nextIsNotASimpleValue(baseOrigin: ConfigOrigin,
-                                        lineNumber: Int) = {
+      private def nextIsNotASimpleValue(
+          baseOrigin: ConfigOrigin,
+          lineNumber: Int
+      ) = {
         lastTokenWasSimpleValue = false
         createWhitespaceTokenFromSaver(baseOrigin, lineNumber)
       }
       // called if the next token IS a simple value,
       // so creates a whitespace token if the previous
       // token also was.
-      private def nextIsASimpleValue(baseOrigin: ConfigOrigin,
-                                     lineNumber: Int) = {
+      private def nextIsASimpleValue(
+          baseOrigin: ConfigOrigin,
+          lineNumber: Int
+      ) = {
         val t = createWhitespaceTokenFromSaver(baseOrigin, lineNumber)
         if (!lastTokenWasSimpleValue) lastTokenWasSimpleValue = true
         t
       }
-      private def createWhitespaceTokenFromSaver(baseOrigin: ConfigOrigin,
-                                                 lineNumber: Int): Token = {
+      private def createWhitespaceTokenFromSaver(
+          baseOrigin: ConfigOrigin,
+          lineNumber: Int
+      ): Token = {
         if (whitespace.length > 0) {
           var t: Token = null
           if (lastTokenWasSimpleValue)
-            t = Tokens.newUnquotedText(lineOrigin(baseOrigin, lineNumber),
-                                       whitespace.toString)
+            t = Tokens.newUnquotedText(
+              lineOrigin(baseOrigin, lineNumber),
+              whitespace.toString
+            )
           else
-            t = Tokens.newIgnoredWhitespace(lineOrigin(baseOrigin, lineNumber),
-                                            whitespace.toString)
+            t = Tokens.newIgnoredWhitespace(
+              lineOrigin(baseOrigin, lineNumber),
+              whitespace.toString
+            )
           whitespace.setLength(0) // reset
 
           return t
@@ -94,24 +106,32 @@ object Tokenizer {
       ConfigImplUtil.isWhitespace(c)
     private[impl] def isWhitespaceNotNewline(c: Int): Boolean =
       c != '\n' && ConfigImplUtil.isWhitespace(c)
-    private def problem(origin: ConfigOrigin,
-                        what: String,
-                        message: String,
-                        cause: Throwable): ProblemException =
+    private def problem(
+        origin: ConfigOrigin,
+        what: String,
+        message: String,
+        cause: Throwable
+    ): ProblemException =
       problem(origin, what, message, false, cause)
-    private def problem(origin: ConfigOrigin,
-                        what: String,
-                        message: String,
-                        suggestQuotes: Boolean,
-                        cause: Throwable): ProblemException = {
+    private def problem(
+        origin: ConfigOrigin,
+        what: String,
+        message: String,
+        suggestQuotes: Boolean,
+        cause: Throwable
+    ): ProblemException = {
       if (what == null || message == null)
         throw new ConfigException.BugOrBroken(
-          "internal error, creating bad ProblemException")
+          "internal error, creating bad ProblemException"
+        )
       new Tokenizer.ProblemException(
-        Tokens.newProblem(origin, what, message, suggestQuotes, cause))
+        Tokens.newProblem(origin, what, message, suggestQuotes, cause)
+      )
     }
-    private def problem(origin: ConfigOrigin,
-                        message: String): ProblemException =
+    private def problem(
+        origin: ConfigOrigin,
+        message: String
+    ): ProblemException =
       problem(origin, "", message, null)
     private def lineOrigin(baseOrigin: ConfigOrigin, lineNumber: Int) =
       baseOrigin
@@ -129,10 +149,11 @@ object Tokenizer {
       else false
   }
 
-  class TokenIterator(_origin: ConfigOrigin,
-                      val input: Reader,
-                      val allowComments: Boolean)
-      extends ju.Iterator[Token] {
+  class TokenIterator(
+      _origin: ConfigOrigin,
+      val input: Reader,
+      val allowComments: Boolean
+  ) extends ju.Iterator[Token] {
 
     val origin     = _origin.asInstanceOf[SimpleConfigOrigin]
     val buffer     = new ju.LinkedList[Integer]
@@ -151,9 +172,11 @@ object Tokenizer {
         try input.read
         catch {
           case e: IOException =>
-            throw new ConfigException.IO(origin,
-                                         "read error: " + e.getMessage,
-                                         e)
+            throw new ConfigException.IO(
+              origin,
+              "read error: " + e.getMessage,
+              e
+            )
         } else {
         val c = buffer.pop
         c
@@ -161,7 +184,8 @@ object Tokenizer {
     private def putBack(c: Int): Unit = {
       if (buffer.size > 2)
         throw new ConfigException.BugOrBroken(
-          "bug: putBack() three times, undesirable look-ahead")
+          "bug: putBack() three times, undesirable look-ahead"
+        )
       buffer.push(c)
     }
     private def startOfComment(c: Int) =
@@ -179,7 +203,8 @@ object Tokenizer {
     // get next char, skipping non-newline whitespace
     // needed to rewrite in a Scala fashion
     private def nextCharAfterWhitespace(
-        saver: TokenIterator.WhitespaceSaver): Int = {
+        saver: TokenIterator.WhitespaceSaver
+    ): Int = {
       @tailrec
       def consume(c: Int): Int =
         if (c == -1) -1
@@ -194,18 +219,24 @@ object Tokenizer {
       problem("", message, null)
     private def problem(what: String, message: String): ProblemException =
       problem(what, message, null)
-    private def problem(what: String,
-                        message: String,
-                        suggestQuotes: Boolean): ProblemException =
+    private def problem(
+        what: String,
+        message: String,
+        suggestQuotes: Boolean
+    ): ProblemException =
       problem(what, message, suggestQuotes, null)
-    private def problem(what: String,
-                        message: String,
-                        cause: Throwable): ProblemException =
+    private def problem(
+        what: String,
+        message: String,
+        cause: Throwable
+    ): ProblemException =
       TokenIterator.problem(lineOrigin, what, message, cause)
-    private def problem(what: String,
-                        message: String,
-                        suggestQuotes: Boolean,
-                        cause: Throwable): ProblemException =
+    private def problem(
+        what: String,
+        message: String,
+        suggestQuotes: Boolean,
+        cause: Throwable
+    ): ProblemException =
       TokenIterator.problem(lineOrigin, what, message, suggestQuotes, cause)
 
     // ONE char has always been consumed, either the # or the first /, but not both slashes
@@ -215,7 +246,8 @@ object Tokenizer {
         val discard = nextCharRaw
         if (discard != '/')
           throw new ConfigException.BugOrBroken(
-            "called pullComment but // not seen")
+            "called pullComment but // not seen"
+          )
         doubleSlash = true
       }
       val sb           = new jl.StringBuilder
@@ -254,7 +286,7 @@ object Tokenizer {
           else if (TokenIterator.notInUnquotedText.indexOf(c) >= 0)
             break // break
           else if (TokenIterator.isWhitespace(c))
-            break // break
+            break                           // break
           else if (startOfComment(c)) break // break
           else sb.appendCodePoint(c)
           // we parse true/false/null tokens as such no matter
@@ -326,12 +358,15 @@ object Tokenizer {
       }
     }
     @throws[ProblemException]
-    private def pullEscapeSequence(sb: jl.StringBuilder,
-                                   sbOrig: jl.StringBuilder): Unit = {
+    private def pullEscapeSequence(
+        sb: jl.StringBuilder,
+        sbOrig: jl.StringBuilder
+    ): Unit = {
       val escaped = nextCharRaw
       if (escaped == -1)
         throw problem(
-          "End of input but backslash in string had nothing after it")
+          "End of input but backslash in string had nothing after it"
+        )
       // This is needed so we return the unescaped escape characters back out when rendering the token
       sbOrig.appendCodePoint('\\')
       sbOrig.appendCodePoint(escaped)
@@ -352,7 +387,8 @@ object Tokenizer {
             val c = nextCharRaw
             if (c == -1)
               throw problem(
-                "End of input but expecting 4 hex digits for \\uXXXX escape")
+                "End of input but expecting 4 hex digits for \\uXXXX escape"
+              )
             a(i) = c.toChar
             i += 1
           }
@@ -364,8 +400,10 @@ object Tokenizer {
               throw problem(
                 digits,
                 "Malformed hex digits after \\u escape in string: '%s'".format(
-                  digits),
-                e)
+                  digits
+                ),
+                e
+              )
           }
         case _ =>
           throw problem(
@@ -376,8 +414,10 @@ object Tokenizer {
       }
     }
     @throws[ProblemException]
-    private def appendTripleQuotedString(sb: jl.StringBuilder,
-                                         sbOrig: jl.StringBuilder): Unit = {
+    private def appendTripleQuotedString(
+        sb: jl.StringBuilder,
+        sbOrig: jl.StringBuilder
+    ): Unit = {
       // we are after the opening triple quote and need to consume the close triple
       var consecutiveQuotes = 0
       breakable {
@@ -393,7 +433,8 @@ object Tokenizer {
             consecutiveQuotes = 0
             if (c == -1)
               throw problem(
-                "End of input but triple-quoted string was still open")
+                "End of input but triple-quoted string was still open"
+              )
             else if (c == '\n') { // keep the line number accurate
               lineNumber += 1
               lineOrigin = origin.withLineNumber(lineNumber)
@@ -427,7 +468,8 @@ object Tokenizer {
           } else if (ConfigImplUtil.isC0Control(c))
             throw problem(
               asString(c),
-              "JSON does not allow unescaped " + asString(c) + " in quoted strings, use a backslash escape")
+              "JSON does not allow unescaped " + asString(c) + " in quoted strings, use a backslash escape"
+            )
           else {
             sb.appendCodePoint(c)
             sbOrig.appendCodePoint(c)
@@ -453,7 +495,8 @@ object Tokenizer {
         throw problem(
           asString(c),
           "'+' not followed by =, '" + asString(c) + "' not allowed after '+'",
-          true)
+          true
+        )
       Tokens.PLUS_EQUALS
     }
     @throws[ProblemException]
@@ -465,7 +508,8 @@ object Tokenizer {
         throw problem(
           asString(c),
           "'$' not followed by {, '" + asString(c) + "' not allowed after '$'",
-          true)
+          true
+        )
       var optional = false
       c = nextCharRaw
       if (c == '?') optional = true else putBack(c)
@@ -480,11 +524,12 @@ object Tokenizer {
           // the substitution here; we even allow nested substitutions
           // in the tokenizer. The parser sorts it out.
           if (t eq Tokens.CLOSE_CURLY) { // end the loop, done!
-            break // break
+            break                        // break
           } else if (t eq Tokens.END) {
             throw TokenIterator.problem(
               origin,
-              "Substitution ${ was not closed with a }")
+              "Substitution ${ was not closed with a }"
+            )
           } else {
             val whitespace = saver.check(t, origin, lineNumber)
             if (whitespace != null) expression.add(whitespace)
@@ -528,7 +573,8 @@ object Tokenizer {
               throw problem(
                 asString(c),
                 "Reserved character '" + asString(c) + "' is not allowed outside quotes",
-                true)
+                true
+              )
             else {
               putBack(c)
               t = pullUnquotedText
@@ -536,7 +582,8 @@ object Tokenizer {
         }
         if (t == null)
           throw new ConfigException.BugOrBroken(
-            "bug: failed to generate next token")
+            "bug: failed to generate next token"
+          )
         t
       }
     }
@@ -558,13 +605,15 @@ object Tokenizer {
         }
         if (tokens.isEmpty)
           throw new ConfigException.BugOrBroken(
-            "bug: tokens queue should not be empty here")
+            "bug: tokens queue should not be empty here"
+          )
       }
       t
     }
     override def remove(): Unit = {
       throw new UnsupportedOperationException(
-        "Does not make sense to remove items from token stream")
+        "Does not make sense to remove items from token stream"
+      )
     }
   }
 }

@@ -6,10 +6,11 @@ import org.ekrich.config.ConfigValue
 import org.ekrich.config.ConfigValueType
 import org.ekrich.config.ConfigException
 
-final class SerializedValueType private (name: String,
-                                         ordinal: Int,
-                                         val configType: ConfigValueType)
-    extends jl.Enum[SerializedValueType](name, ordinal)
+final class SerializedValueType private (
+    name: String,
+    ordinal: Int,
+    val configType: ConfigValueType
+) extends jl.Enum[SerializedValueType](name, ordinal)
 
 object SerializedValueType {
   // the ordinals here are in the wire format, caution
@@ -34,7 +35,8 @@ object SerializedValueType {
   def valueOf(name: String): SerializedValueType = {
     _values.find(_.name == name).getOrElse {
       throw new IllegalArgumentException(
-        "No enum const SerializedValueType." + name)
+        "No enum const SerializedValueType." + name
+      )
     }
   }
 
@@ -54,6 +56,7 @@ object SerializedValueType {
       }
     }
     throw new ConfigException.BugOrBroken(
-      "don't know how to serialize " + value)
+      "don't know how to serialize " + value
+    )
   }
 }

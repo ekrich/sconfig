@@ -53,9 +53,11 @@ object ConfigResolveOptions {
   }
 }
 
-final class ConfigResolveOptions private (val useSystemEnvironment: Boolean,
-                                          val allowUnresolved: Boolean,
-                                          val resolver: ConfigResolver) {
+final class ConfigResolveOptions private (
+    val useSystemEnvironment: Boolean,
+    val allowUnresolved: Boolean,
+    val resolver: ConfigResolver
+) {
 
   /**
    * Returns options with use of environment variables set to the given value.
@@ -120,13 +122,16 @@ final class ConfigResolveOptions private (val useSystemEnvironment: Boolean,
   def appendResolver(value: ConfigResolver): ConfigResolveOptions =
     if (value == null) {
       throw new ConfigException.BugOrBroken(
-        "null resolver passed to appendResolver")
+        "null resolver passed to appendResolver"
+      )
     } else if (value eq this.resolver) {
       this
     } else {
-      new ConfigResolveOptions(useSystemEnvironment,
-                               allowUnresolved,
-                               this.resolver.withFallback(value))
+      new ConfigResolveOptions(
+        useSystemEnvironment,
+        allowUnresolved,
+        this.resolver.withFallback(value)
+      )
     }
 
   /**

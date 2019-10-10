@@ -25,8 +25,10 @@ class UtilTest extends TestUtils {
     assertEquals("a", ConfigImplUtil.unicodeTrim("a"))
     assertEquals("abc", ConfigImplUtil.unicodeTrim("abc"))
     assertEquals("", ConfigImplUtil.unicodeTrim("   \n   \n  \u00A0 "))
-    assertEquals(supplementaryChars,
-                 ConfigImplUtil.unicodeTrim(supplementaryChars))
+    assertEquals(
+      supplementaryChars,
+      ConfigImplUtil.unicodeTrim(supplementaryChars)
+    )
 
     val s            = " \u00A0 \n  " + supplementaryChars + "  \n  \u00A0 "
     val asciiTrimmed = s.trim()
@@ -98,20 +100,26 @@ class UtilTest extends TestUtils {
 
   @Test
   def syntaxFromExtensionConf(): Unit = {
-    assertEquals(ConfigSyntax.CONF,
-                 ConfigImplUtil.syntaxFromExtension("application.conf"))
+    assertEquals(
+      ConfigSyntax.CONF,
+      ConfigImplUtil.syntaxFromExtension("application.conf")
+    )
   }
 
   @Test
   def syntaxFromExtensionJson(): Unit = {
-    assertEquals(ConfigSyntax.JSON,
-                 ConfigImplUtil.syntaxFromExtension("application.json"))
+    assertEquals(
+      ConfigSyntax.JSON,
+      ConfigImplUtil.syntaxFromExtension("application.json")
+    )
   }
 
   @Test
   def syntaxFromExtensionProperties(): Unit = {
-    assertEquals(ConfigSyntax.PROPERTIES,
-                 ConfigImplUtil.syntaxFromExtension("application.properties"))
+    assertEquals(
+      ConfigSyntax.PROPERTIES,
+      ConfigImplUtil.syntaxFromExtension("application.properties")
+    )
   }
 
   @Test

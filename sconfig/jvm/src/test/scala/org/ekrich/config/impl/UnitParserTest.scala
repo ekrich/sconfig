@@ -101,15 +101,19 @@ class UnitParserTest extends TestUtils {
     val e = intercept[ConfigException.BadValue] {
       SimpleConfig.parsePeriod("100 dollars", fakeOrigin(), "test")
     }
-    assertTrue(s"${e.getMessage} was not the expected error message",
-               e.getMessage.contains("time unit"))
+    assertTrue(
+      s"${e.getMessage} was not the expected error message",
+      e.getMessage.contains("time unit")
+    )
 
     // bad number
     val e2 = intercept[ConfigException.BadValue] {
       SimpleConfig.parsePeriod("1 00 seconds", fakeOrigin(), "test")
     }
-    assertTrue(s"${e2.getMessage} was not the expected error message",
-               e2.getMessage.contains("time unit 'seconds'"))
+    assertTrue(
+      s"${e2.getMessage} was not the expected error message",
+      e2.getMessage.contains("time unit 'seconds'")
+    )
   }
 
   // https://github.com/lightbend/config/issues/117
@@ -121,15 +125,21 @@ class UnitParserTest extends TestUtils {
     assertEquals("could parse 1d", dayInNanos, result)
 
     val conf = parseConfig("foo = 1d")
-    assertEquals("could get 1d from conf as days",
-                 1L,
-                 conf.getDuration("foo", TimeUnit.DAYS))
-    assertEquals("could get 1d from conf as nanos",
-                 dayInNanos,
-                 conf.getDuration("foo", TimeUnit.NANOSECONDS))
-    assertEquals("could get 1d from conf as millis",
-                 TimeUnit.DAYS.toMillis(1),
-                 conf.getDuration("foo", TimeUnit.MILLISECONDS))
+    assertEquals(
+      "could get 1d from conf as days",
+      1L,
+      conf.getDuration("foo", TimeUnit.DAYS)
+    )
+    assertEquals(
+      "could get 1d from conf as nanos",
+      dayInNanos,
+      conf.getDuration("foo", TimeUnit.NANOSECONDS)
+    )
+    assertEquals(
+      "could get 1d from conf as millis",
+      TimeUnit.DAYS.toMillis(1),
+      conf.getDuration("foo", TimeUnit.MILLISECONDS)
+    )
   }
 
   @Test
@@ -249,9 +259,11 @@ class UnitParserTest extends TestUtils {
 
     import java.math.BigInteger
     assertOutOfRange(
-      s"${BigInteger.valueOf(Long.MaxValue).add(BigInteger.valueOf(1)).toString} bytes")
+      s"${BigInteger.valueOf(Long.MaxValue).add(BigInteger.valueOf(1)).toString} bytes"
+    )
     assertOutOfRange(
-      s"${BigInteger.valueOf(Long.MinValue).subtract(BigInteger.valueOf(1)).toString} bytes")
+      s"${BigInteger.valueOf(Long.MinValue).subtract(BigInteger.valueOf(1)).toString} bytes"
+    )
 
     var result = 1024L * 1024 * 1024
     for (unit <- Seq("zebi", "yobi")) {

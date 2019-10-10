@@ -35,8 +35,10 @@ class ConfigBeanFactoryTest extends TestUtils {
       .getClassLoader()
       .getResourceAsStream("beanconfig/beanconfig01.conf")
     val config: Config = ConfigFactory
-      .parseReader(new InputStreamReader(configIs),
-                   ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF))
+      .parseReader(
+        new InputStreamReader(configIs),
+        ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF)
+      )
       .resolve()
     val beanConfig: TestBeanConfig =
       ConfigBeanFactory.create(config, classOf[TestBeanConfig])
@@ -52,8 +54,10 @@ class ConfigBeanFactoryTest extends TestUtils {
       .getClassLoader()
       .getResourceAsStream("beanconfig/beanconfig01.conf")
     val config: Config = ConfigFactory
-      .parseReader(new InputStreamReader(configIs),
-                   ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF))
+      .parseReader(
+        new InputStreamReader(configIs),
+        ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF)
+      )
       .resolve()
       .getConfig("validation")
     val e = intercept[ConfigException.ValidationFailed] {
@@ -74,7 +78,8 @@ class ConfigBeanFactoryTest extends TestUtils {
   def testCreateBool(): Unit = {
     val beanConfig: BooleansConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("booleans"),
-      classOf[BooleansConfig])
+      classOf[BooleansConfig]
+    )
     assertNotNull(beanConfig)
     assertEquals(true, beanConfig.getTrueVal)
     assertEquals(false, beanConfig.getFalseVal)
@@ -84,7 +89,8 @@ class ConfigBeanFactoryTest extends TestUtils {
   def testCreateString(): Unit = {
     val beanConfig: StringsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("strings"),
-      classOf[StringsConfig])
+      classOf[StringsConfig]
+    )
     assertNotNull(beanConfig)
     assertEquals("abcd", beanConfig.getAbcd)
     assertEquals("yes", beanConfig.getYes)
@@ -94,18 +100,22 @@ class ConfigBeanFactoryTest extends TestUtils {
   def testCreateEnum(): Unit = {
     val beanConfig: EnumsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("enums"),
-      classOf[EnumsConfig])
+      classOf[EnumsConfig]
+    )
     assertNotNull(beanConfig)
     assertEquals(Problem.P1, beanConfig.getProblem)
-    assertEquals(ArrayBuffer(Solution.S1, Solution.S3),
-                 beanConfig.getSolutions.asScala)
+    assertEquals(
+      ArrayBuffer(Solution.S1, Solution.S3),
+      beanConfig.getSolutions.asScala
+    )
   }
 
   @Test
   def testCreateNumber(): Unit = {
     val beanConfig: NumbersConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("numbers"),
-      classOf[NumbersConfig])
+      classOf[NumbersConfig]
+    )
     assertNotNull(beanConfig)
 
     assertEquals(3, beanConfig.getIntVal)
@@ -122,7 +132,8 @@ class ConfigBeanFactoryTest extends TestUtils {
   def testCreateList(): Unit = {
     val beanConfig: ArraysConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("arrays"),
-      classOf[ArraysConfig])
+      classOf[ArraysConfig]
+    )
     assertNotNull(beanConfig)
     assertEquals(List().asJava, beanConfig.getEmpty)
     assertEquals(List(1, 2, 3).asJava, beanConfig.getOfInt)
@@ -138,15 +149,22 @@ class ConfigBeanFactoryTest extends TestUtils {
     assertTrue(beanConfig.getOfConfig.get(0).isInstanceOf[Config])
     assertEquals(3, beanConfig.getOfConfigObject.size)
     assertTrue(beanConfig.getOfConfigObject.get(0).isInstanceOf[ConfigObject])
-    assertEquals(List(intValue(1), intValue(2), stringValue("a")),
-                 beanConfig.getOfConfigValue.asScala)
+    assertEquals(
+      List(intValue(1), intValue(2), stringValue("a")),
+      beanConfig.getOfConfigValue.asScala
+    )
     assertEquals(
       List(Duration.ofMillis(1), Duration.ofHours(2), Duration.ofDays(3)),
-      beanConfig.getOfDuration.asScala)
-    assertEquals(List(ConfigMemorySize.ofBytes(1024),
-                      ConfigMemorySize.ofBytes(1048576),
-                      ConfigMemorySize.ofBytes(1073741824)),
-                 beanConfig.getOfMemorySize.asScala)
+      beanConfig.getOfDuration.asScala
+    )
+    assertEquals(
+      List(
+        ConfigMemorySize.ofBytes(1024),
+        ConfigMemorySize.ofBytes(1048576),
+        ConfigMemorySize.ofBytes(1073741824)
+      ),
+      beanConfig.getOfMemorySize.asScala
+    )
 
     val stringsConfigOne = new StringsConfig()
     stringsConfigOne.setAbcd("testAbcdOne")
@@ -155,15 +173,18 @@ class ConfigBeanFactoryTest extends TestUtils {
     stringsConfigTwo.setAbcd("testAbcdTwo")
     stringsConfigTwo.setYes("testYesTwo")
 
-    assertEquals(List(stringsConfigOne, stringsConfigTwo).asJava,
-                 beanConfig.getOfStringBean)
+    assertEquals(
+      List(stringsConfigOne, stringsConfigTwo).asJava,
+      beanConfig.getOfStringBean
+    )
   }
 
   @Test
   def testCreateSet(): Unit = {
     val beanConfig: SetsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("sets"),
-      classOf[SetsConfig])
+      classOf[SetsConfig]
+    )
     assertNotNull(beanConfig)
     assertEquals(Set().asJava, beanConfig.getEmpty)
     assertEquals(Set(1, 2, 3).asJava, beanConfig.getOfInt)
@@ -178,16 +199,24 @@ class ConfigBeanFactoryTest extends TestUtils {
       beanConfig.getOfConfigObject
         .iterator()
         .next()
-        .isInstanceOf[ConfigObject])
-    assertEquals(Set(intValue(1), intValue(2), stringValue("a")),
-                 beanConfig.getOfConfigValue.asScala)
+        .isInstanceOf[ConfigObject]
+    )
+    assertEquals(
+      Set(intValue(1), intValue(2), stringValue("a")),
+      beanConfig.getOfConfigValue.asScala
+    )
     assertEquals(
       Set(Duration.ofMillis(1), Duration.ofHours(2), Duration.ofDays(3)),
-      beanConfig.getOfDuration.asScala)
-    assertEquals(Set(ConfigMemorySize.ofBytes(1024),
-                     ConfigMemorySize.ofBytes(1048576),
-                     ConfigMemorySize.ofBytes(1073741824)),
-                 beanConfig.getOfMemorySize.asScala)
+      beanConfig.getOfDuration.asScala
+    )
+    assertEquals(
+      Set(
+        ConfigMemorySize.ofBytes(1024),
+        ConfigMemorySize.ofBytes(1048576),
+        ConfigMemorySize.ofBytes(1073741824)
+      ),
+      beanConfig.getOfMemorySize.asScala
+    )
 
     val stringsConfigOne = new StringsConfig()
     stringsConfigOne.setAbcd("testAbcdOne")
@@ -196,15 +225,18 @@ class ConfigBeanFactoryTest extends TestUtils {
     stringsConfigTwo.setAbcd("testAbcdTwo")
     stringsConfigTwo.setYes("testYesTwo")
 
-    assertEquals(Set(stringsConfigOne, stringsConfigTwo).asJava,
-                 beanConfig.getOfStringBean)
+    assertEquals(
+      Set(stringsConfigOne, stringsConfigTwo).asJava,
+      beanConfig.getOfStringBean
+    )
   }
 
   @Test
   def testCreateDuration(): Unit = {
     val beanConfig: DurationsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("durations"),
-      classOf[DurationsConfig])
+      classOf[DurationsConfig]
+    )
     assertNotNull(beanConfig)
     assertEquals(Duration.ofMillis(500), beanConfig.getHalfSecond)
     assertEquals(Duration.ofMillis(1000), beanConfig.getSecond)
@@ -215,7 +247,8 @@ class ConfigBeanFactoryTest extends TestUtils {
   def testCreateBytes(): Unit = {
     val beanConfig: BytesConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("bytes"),
-      classOf[BytesConfig])
+      classOf[BytesConfig]
+    )
     assertNotNull(beanConfig)
     assertEquals(ConfigMemorySize.ofBytes(1024), beanConfig.getKibibyte)
     assertEquals(ConfigMemorySize.ofBytes(1000), beanConfig.getKilobyte)
@@ -226,7 +259,8 @@ class ConfigBeanFactoryTest extends TestUtils {
   def testPreferCamelNames(): Unit = {
     val beanConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("preferCamelNames"),
-      classOf[PreferCamelNamesConfig])
+      classOf[PreferCamelNamesConfig]
+    )
     assertNotNull(beanConfig)
 
     assertEquals("yes", beanConfig.getFooBar)
@@ -235,8 +269,10 @@ class ConfigBeanFactoryTest extends TestUtils {
 
   @Test
   def testValues(): Unit = {
-    val beanConfig = ConfigBeanFactory.create(loadConfig().getConfig("values"),
-                                              classOf[ValuesConfig])
+    val beanConfig = ConfigBeanFactory.create(
+      loadConfig().getConfig("values"),
+      classOf[ValuesConfig]
+    )
     assertNotNull(beanConfig)
     assertEquals(42, beanConfig.getObj())
     assertEquals("abcd", beanConfig.getConfig.getString("abcd"))
@@ -251,7 +287,8 @@ class ConfigBeanFactoryTest extends TestUtils {
   def testOptionalProperties(): Unit = {
     val beanConfig: ObjectsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("objects"),
-      classOf[ObjectsConfig])
+      classOf[ObjectsConfig]
+    )
     assertNotNull(beanConfig)
     assertNotNull(beanConfig.getValueObject)
     assertNull(beanConfig.getValueObject.getOptionalValue)
@@ -262,81 +299,113 @@ class ConfigBeanFactoryTest extends TestUtils {
   @Test
   def testNotAnOptionalProperty(): Unit = {
     val e = intercept[ConfigException.ValidationFailed] {
-      ConfigBeanFactory.create(parseConfig("{valueObject: {}}"),
-                               classOf[ObjectsConfig])
+      ConfigBeanFactory.create(
+        parseConfig("{valueObject: {}}"),
+        classOf[ObjectsConfig]
+      )
     }
     assertTrue("missing value error", e.getMessage.contains("No setting"))
-    assertTrue("error about the right property",
-               e.getMessage.contains("mandatoryValue"))
+    assertTrue(
+      "error about the right property",
+      e.getMessage.contains("mandatoryValue")
+    )
 
   }
 
   @Test
   def testNotABeanField(): Unit = {
     val e = intercept[ConfigException.BadBean] {
-      ConfigBeanFactory.create(parseConfig("notBean=42"),
-                               classOf[NotABeanFieldConfig])
+      ConfigBeanFactory.create(
+        parseConfig("notBean=42"),
+        classOf[NotABeanFieldConfig]
+      )
     }
-    assertTrue("unsupported type error",
-               e.getMessage.contains("unsupported type"))
-    assertTrue("error about the right property",
-               e.getMessage.contains("notBean"))
+    assertTrue(
+      "unsupported type error",
+      e.getMessage.contains("unsupported type")
+    )
+    assertTrue(
+      "error about the right property",
+      e.getMessage.contains("notBean")
+    )
   }
 
   @Test
   def testNotAnEnumField(): Unit = {
     val e = intercept[ConfigException.BadValue] {
-      ConfigBeanFactory.create(parseConfig("{problem=P1,solutions=[S4]}"),
-                               classOf[EnumsConfig])
+      ConfigBeanFactory.create(
+        parseConfig("{problem=P1,solutions=[S4]}"),
+        classOf[EnumsConfig]
+      )
     }
     assertTrue("invalid value error", e.getMessage.contains("Invalid value"))
-    assertTrue("error about the right property",
-               e.getMessage.contains("solutions"))
-    assertTrue("error enumerates the enum constants",
-               e.getMessage.contains("should be one of [S1, S2, S3]"))
+    assertTrue(
+      "error about the right property",
+      e.getMessage.contains("solutions")
+    )
+    assertTrue(
+      "error enumerates the enum constants",
+      e.getMessage.contains("should be one of [S1, S2, S3]")
+    )
   }
 
   @Test
   def testUnsupportedListElement(): Unit = {
     val e = intercept[ConfigException.BadBean] {
-      ConfigBeanFactory.create(parseConfig("uri=[42]"),
-                               classOf[UnsupportedListElementConfig])
+      ConfigBeanFactory.create(
+        parseConfig("uri=[42]"),
+        classOf[UnsupportedListElementConfig]
+      )
     }
-    assertTrue("unsupported element type error",
-               e.getMessage.contains("unsupported list element type"))
+    assertTrue(
+      "unsupported element type error",
+      e.getMessage.contains("unsupported list element type")
+    )
     assertTrue("error about the right property", e.getMessage.contains("uri"))
   }
 
   @Test
   def testUnsupportedMapKey(): Unit = {
     val e = intercept[ConfigException.BadBean] {
-      ConfigBeanFactory.create(parseConfig("map={}"),
-                               classOf[UnsupportedMapKeyConfig])
+      ConfigBeanFactory.create(
+        parseConfig("map={}"),
+        classOf[UnsupportedMapKeyConfig]
+      )
     }
-    assertTrue("unsupported map type error",
-               e.getMessage.contains("unsupported Map"))
+    assertTrue(
+      "unsupported map type error",
+      e.getMessage.contains("unsupported Map")
+    )
     assertTrue("error about the right property", e.getMessage.contains("'map'"))
   }
 
   @Test
   def testUnsupportedMapValue(): Unit = {
     val e = intercept[ConfigException.BadBean] {
-      ConfigBeanFactory.create(parseConfig("map={}"),
-                               classOf[UnsupportedMapValueConfig])
+      ConfigBeanFactory.create(
+        parseConfig("map={}"),
+        classOf[UnsupportedMapValueConfig]
+      )
     }
-    assertTrue("unsupported map type error",
-               e.getMessage.contains("unsupported Map"))
+    assertTrue(
+      "unsupported map type error",
+      e.getMessage.contains("unsupported Map")
+    )
     assertTrue("error about the right property", e.getMessage.contains("'map'"))
   }
 
   @Test
   def testDifferentFieldNameFromAccessors(): Unit = {
     val e = intercept[ConfigException.ValidationFailed] {
-      ConfigBeanFactory.create(ConfigFactory.empty(),
-                               classOf[DifferentFieldNameFromAccessorsConfig])
+      ConfigBeanFactory.create(
+        ConfigFactory.empty(),
+        classOf[DifferentFieldNameFromAccessorsConfig]
+      )
     }
-    assertTrue("only one missing value error",
-               e.getMessage.contains("No setting"))
+    assertTrue(
+      "only one missing value error",
+      e.getMessage.contains("No setting")
+    )
   }
 
   private def loadConfig(): Config = {
@@ -346,8 +415,10 @@ class ConfigBeanFactoryTest extends TestUtils {
       .getResourceAsStream("beanconfig/beanconfig01.conf")
     try {
       val config: Config = ConfigFactory
-        .parseReader(new InputStreamReader(configIs),
-                     ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF))
+        .parseReader(
+          new InputStreamReader(configIs),
+          ConfigParseOptions.defaults.setSyntax(ConfigSyntax.CONF)
+        )
         .resolve()
       config
     } finally {

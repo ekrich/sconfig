@@ -57,7 +57,8 @@ object SerializedField {
   def valueOf(name: String): SerializedField = {
     _values.find(_.name == name).getOrElse {
       throw new IllegalArgumentException(
-        "No enum const SerializedField." + name)
+        "No enum const SerializedField." + name
+      )
     }
   }
 

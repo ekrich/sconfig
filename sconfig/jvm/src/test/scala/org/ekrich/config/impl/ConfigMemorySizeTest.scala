@@ -13,10 +13,12 @@ class ConfigMemorySizeTest extends TestUtils {
   def testEquals(): Unit = {
     assertTrue(
       "Equal ConfigMemorySize are equal",
-      ConfigMemorySize.ofBytes(10).equals(ConfigMemorySize.ofBytes(10)))
+      ConfigMemorySize.ofBytes(10).equals(ConfigMemorySize.ofBytes(10))
+    )
     assertTrue(
       "Different ConfigMemorySize are not equal",
-      !ConfigMemorySize.ofBytes(10).equals(ConfigMemorySize.ofBytes(11)))
+      !ConfigMemorySize.ofBytes(10).equals(ConfigMemorySize.ofBytes(11))
+    )
   }
 
   @Test

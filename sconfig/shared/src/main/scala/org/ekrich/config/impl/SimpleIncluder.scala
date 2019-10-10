@@ -34,8 +34,10 @@ object SimpleIncluder {
   }
 
   // the heuristic includer in static form
-  private[impl] def includeWithoutFallback(context: ConfigIncludeContext,
-                                           name: String) = {
+  private[impl] def includeWithoutFallback(
+      context: ConfigIncludeContext,
+      name: String
+  ) = {
     // the heuristic is valid URL then URL, else relative to including file;
     // relativeTo in a file falls back to classpath inside relativeTo().
     var url: URL = null
@@ -52,38 +54,48 @@ object SimpleIncluder {
     }
   }
 
-  private[impl] def includeURLWithoutFallback(context: ConfigIncludeContext,
-                                              url: URL) =
+  private[impl] def includeURLWithoutFallback(
+      context: ConfigIncludeContext,
+      url: URL
+  ) =
     ConfigFactory.parseURL(url, context.parseOptions).root
 
-  private[impl] def includeFileWithoutFallback(context: ConfigIncludeContext,
-                                               file: File) =
+  private[impl] def includeFileWithoutFallback(
+      context: ConfigIncludeContext,
+      file: File
+  ) =
     ConfigFactory.parseFileAnySyntax(file, context.parseOptions).root
 
   private[impl] def includeResourceWithoutFallback(
       context: ConfigIncludeContext,
-      resource: String) =
+      resource: String
+  ) =
     ConfigFactory
       .parseResourcesAnySyntax(resource, context.parseOptions)
       .root
 
   private[impl] trait NameSource {
-    def nameToParseable(name: String,
-                        parseOptions: ConfigParseOptions): ConfigParseable
+    def nameToParseable(
+        name: String,
+        parseOptions: ConfigParseOptions
+    ): ConfigParseable
   }
 
   private[impl] class RelativeNameSource private[impl] (
-      val context: ConfigIncludeContext)
-      extends SimpleIncluder.NameSource {
+      val context: ConfigIncludeContext
+  ) extends SimpleIncluder.NameSource {
 
     override def nameToParseable(
         name: String,
-        options: ConfigParseOptions): ConfigParseable = {
+        options: ConfigParseOptions
+    ): ConfigParseable = {
       val p = context.relativeTo(name)
       if (p == null) { // avoid returning null
-        Parseable.newNotFound(name,
-                              "include was not found: '" + name + "'",
-                              options)
+        Parseable.newNotFound(
+          name,
+          "include was not found: '" + name + "'",
+          options
+        )
       } else p
     }
   }
@@ -92,13 +104,16 @@ object SimpleIncluder {
   // trying to use it; for 'include "basename"' in a .conf file, for
   // loading app.{conf,json,properties} from classpath, and for
   // loading app.{conf,json,properties} from the filesystem.
-  private[impl] def fromBasename(source: SimpleIncluder.NameSource,
-                                 name: String,
-                                 options: ConfigParseOptions) = {
+  private[impl] def fromBasename(
+      source: SimpleIncluder.NameSource,
+      name: String,
+      options: ConfigParseOptions
+  ) = {
 
     var obj: ConfigObject = null
     if (name.endsWith(".conf") || name.endsWith(".json") || name.endsWith(
-          ".properties")) {
+          ".properties"
+        )) {
       val p = source.nameToParseable(name, options)
       obj = p.parse(p.options().setAllowMissing(options.getAllowMissing))
     } else {
@@ -117,7 +132,8 @@ object SimpleIncluder {
           confHandle
             .options()
             .setAllowMissing(false)
-            .setSyntax(ConfigSyntax.CONF))
+            .setSyntax(ConfigSyntax.CONF)
+        )
         gotSomething = true
       } catch {
         case e: ConfigException.IO =>
@@ -128,7 +144,8 @@ object SimpleIncluder {
           jsonHandle
             .options()
             .setAllowMissing(false)
-            .setSyntax(ConfigSyntax.JSON))
+            .setSyntax(ConfigSyntax.JSON)
+        )
         obj = obj.withFallback(parsed)
         gotSomething = true
       } catch {
@@ -140,7 +157,8 @@ object SimpleIncluder {
           propsHandle
             .options()
             .setAllowMissing(false)
-            .setSyntax(ConfigSyntax.PROPERTIES))
+            .setSyntax(ConfigSyntax.PROPERTIES)
+        )
         obj = obj.withFallback(parsed)
         gotSomething = true
       } catch {
@@ -151,11 +169,13 @@ object SimpleIncluder {
         if (ConfigImpl.traceLoadsEnabled) {
           // the individual exceptions should have been logged already with tracing enabled
           ConfigImpl.trace(
-            "Did not find '" + name + "' with any extension (.conf, .json, .properties); " + "exceptions should have been logged above.")
+            "Did not find '" + name + "' with any extension (.conf, .json, .properties); " + "exceptions should have been logged above."
+          )
         }
         if (fails.isEmpty) { // this should not happen
           throw new ConfigException.BugOrBroken(
-            "should not be reached: nothing found but no exceptions thrown")
+            "should not be reached: nothing found but no exceptions thrown"
+          )
         } else {
           val sb = new StringBuilder
           for (t <- fails.asScala) {
@@ -163,14 +183,17 @@ object SimpleIncluder {
             sb.append(", ")
           }
           sb.setLength(sb.length - 2)
-          throw new ConfigException.IO(SimpleConfigOrigin.newSimple(name),
-                                       sb.toString,
-                                       fails.get(0))
+          throw new ConfigException.IO(
+            SimpleConfigOrigin.newSimple(name),
+            sb.toString,
+            fails.get(0)
+          )
         }
       } else if (!gotSomething)
         if (ConfigImpl.traceLoadsEnabled)
           ConfigImpl.trace(
-            "Did not find '" + name + "' with any extension (.conf, .json, .properties); but '" + name + "' is allowed to be missing. Exceptions from load attempts should have been logged above.")
+            "Did not find '" + name + "' with any extension (.conf, .json, .properties); but '" + name + "' is allowed to be missing. Exceptions from load attempts should have been logged above."
+          )
     }
     obj
   }
@@ -185,28 +208,36 @@ object SimpleIncluder {
       this
     }
 
-    override def include(context: ConfigIncludeContext,
-                         what: String): ConfigObject =
+    override def include(
+        context: ConfigIncludeContext,
+        what: String
+    ): ConfigObject =
       delegater.include(context, what)
 
-    override def includeResources(context: ConfigIncludeContext,
-                                  what: String): ConfigObject =
+    override def includeResources(
+        context: ConfigIncludeContext,
+        what: String
+    ): ConfigObject =
       if (delegater.isInstanceOf[ConfigIncluderClasspath])
         delegater
           .asInstanceOf[ConfigIncluderClasspath]
           .includeResources(context, what)
       else includeResourceWithoutFallback(context, what)
 
-    override def includeURL(context: ConfigIncludeContext,
-                            what: URL): ConfigObject =
+    override def includeURL(
+        context: ConfigIncludeContext,
+        what: URL
+    ): ConfigObject =
       if (delegater.isInstanceOf[ConfigIncluderURL])
         delegater
           .asInstanceOf[ConfigIncluderURL]
           .includeURL(context, what)
       else includeURLWithoutFallback(context, what)
 
-    override def includeFile(context: ConfigIncludeContext,
-                             what: File): ConfigObject =
+    override def includeFile(
+        context: ConfigIncludeContext,
+        what: File
+    ): ConfigObject =
       if (delegater.isInstanceOf[ConfigIncluderFile])
         delegater
           .asInstanceOf[ConfigIncluderFile]
@@ -224,8 +255,10 @@ class SimpleIncluder private[impl] (var fallback: ConfigIncluder)
     extends FullIncluder {
 
   // this is the heuristic includer
-  override def include(context: ConfigIncludeContext,
-                       name: String): ConfigObject = {
+  override def include(
+      context: ConfigIncludeContext,
+      name: String
+  ): ConfigObject = {
     val obj = SimpleIncluder.includeWithoutFallback(context, name)
     // now use the fallback includer if any and merge
     // its result.
@@ -233,35 +266,44 @@ class SimpleIncluder private[impl] (var fallback: ConfigIncluder)
     else obj
   }
 
-  override def includeURL(context: ConfigIncludeContext,
-                          url: URL): ConfigObject = {
+  override def includeURL(
+      context: ConfigIncludeContext,
+      url: URL
+  ): ConfigObject = {
     val obj =
       SimpleIncluder.includeURLWithoutFallback(context, url)
     if (fallback != null && fallback.isInstanceOf[ConfigIncluderURL])
       obj.withFallback(
-        fallback.asInstanceOf[ConfigIncluderURL].includeURL(context, url))
+        fallback.asInstanceOf[ConfigIncluderURL].includeURL(context, url)
+      )
     else obj
   }
 
-  override def includeFile(context: ConfigIncludeContext,
-                           file: File): ConfigObject = {
+  override def includeFile(
+      context: ConfigIncludeContext,
+      file: File
+  ): ConfigObject = {
     val obj =
       SimpleIncluder.includeFileWithoutFallback(context, file)
     if (fallback != null && fallback.isInstanceOf[ConfigIncluderFile])
       obj.withFallback(
-        fallback.asInstanceOf[ConfigIncluderFile].includeFile(context, file))
+        fallback.asInstanceOf[ConfigIncluderFile].includeFile(context, file)
+      )
     else obj
   }
 
-  override def includeResources(context: ConfigIncludeContext,
-                                resource: String): ConfigObject = {
+  override def includeResources(
+      context: ConfigIncludeContext,
+      resource: String
+  ): ConfigObject = {
     val obj =
       SimpleIncluder.includeResourceWithoutFallback(context, resource)
     if (fallback != null && fallback.isInstanceOf[ConfigIncluderClasspath])
       obj.withFallback(
         fallback
           .asInstanceOf[ConfigIncluderClasspath]
-          .includeResources(context, resource))
+          .includeResources(context, resource)
+      )
     else obj
   }
 

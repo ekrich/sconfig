@@ -9,9 +9,11 @@ import scala.annotation.tailrec
 
 object Util {
   @tailrec
-  def timeHelper(body: () => Unit,
-                 iterations: Int,
-                 retried: Boolean): Double = {
+  def timeHelper(
+      body: () => Unit,
+      iterations: Int,
+      retried: Boolean
+  ): Double = {
     // warm up
     for (i <- 1 to Math.max(20, iterations / 10)) {
       body()
@@ -29,12 +31,14 @@ object Util {
 
     if (elapsed < (1000 * nanosInMillisecond)) {
       System.err.println(
-        s"Total time for $iterations was less than a second; trying with more iterations")
+        s"Total time for $iterations was less than a second; trying with more iterations"
+      )
       timeHelper(body, iterations * 10, true)
     } else {
       if (retried)
         System.out.println(
-          s"with $iterations we got a long enough sample (${elapsed.toDouble / nanosInMillisecond}ms)")
+          s"with $iterations we got a long enough sample (${elapsed.toDouble / nanosInMillisecond}ms)"
+        )
       (elapsed.toDouble / iterations) / nanosInMillisecond
     }
   }
@@ -101,7 +105,8 @@ object GetExistingPath extends App {
 object GetSeveralExistingPaths extends App {
   val conf = ConfigFactory
     .parseString(
-      "aaaaa { bbbbb.ccccc.d=42, qqqqq.rrrrr = 43 }, xxxxx.yyyyy.zzzzz = 44 ")
+      "aaaaa { bbbbb.ccccc.d=42, qqqqq.rrrrr = 43 }, xxxxx.yyyyy.zzzzz = 44 "
+    )
     .resolve()
 
   def task(): Unit = {

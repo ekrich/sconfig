@@ -38,9 +38,11 @@ class ConcatenationTest extends TestUtils {
       parseConfig(""" a : ${x}
                 foo, x = 1 """)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("not be followed") &&
-                 e.getMessage.contains("','"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("not be followed") &&
+        e.getMessage.contains("','")
+    )
   }
 
   @Test
@@ -48,10 +50,12 @@ class ConcatenationTest extends TestUtils {
     val e = intercept[ConfigException.WrongType] {
       parseConfig(""" a : abc { x : y } """)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("Cannot concatenate") &&
-                 e.getMessage.contains("abc") &&
-                 e.getMessage.contains("""{"x":"y"}"""))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("Cannot concatenate") &&
+        e.getMessage.contains("abc") &&
+        e.getMessage.contains("""{"x":"y"}""")
+    )
   }
 
   @Test
@@ -59,10 +63,12 @@ class ConcatenationTest extends TestUtils {
     val e = intercept[ConfigException.WrongType] {
       parseConfig(""" a : null { x : y } """)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("Cannot concatenate") &&
-                 e.getMessage.contains("null") &&
-                 e.getMessage.contains("""{"x":"y"}"""))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("Cannot concatenate") &&
+        e.getMessage.contains("null") &&
+        e.getMessage.contains("""{"x":"y"}""")
+    )
   }
 
   @Test
@@ -70,10 +76,12 @@ class ConcatenationTest extends TestUtils {
     val e = intercept[ConfigException.WrongType] {
       parseConfig(""" a : abc [1, 2] """)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("Cannot concatenate") &&
-                 e.getMessage.contains("abc") &&
-                 e.getMessage.contains("[1,2]"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("Cannot concatenate") &&
+        e.getMessage.contains("abc") &&
+        e.getMessage.contains("[1,2]")
+    )
   }
 
   @Test
@@ -81,9 +89,11 @@ class ConcatenationTest extends TestUtils {
     val e = intercept[ConfigException.WrongType] {
       parseConfig(""" a : abc ${x}, x : { y : z } """).resolve()
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("Cannot concatenate") &&
-                 e.getMessage.contains("abc"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("Cannot concatenate") &&
+        e.getMessage.contains("abc")
+    )
   }
 
   @Test
@@ -91,9 +101,11 @@ class ConcatenationTest extends TestUtils {
     val e = intercept[ConfigException.WrongType] {
       parseConfig(""" a : abc ${x}, x : [1,2] """).resolve()
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("Cannot concatenate") &&
-                 e.getMessage.contains("abc"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("Cannot concatenate") &&
+        e.getMessage.contains("abc")
+    )
   }
 
   @Test
@@ -122,9 +134,11 @@ class ConcatenationTest extends TestUtils {
       parseConfig(""" a :  [1,2]
                 [3,4]  """)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("expecting") &&
-                 e.getMessage.contains("'['"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("expecting") &&
+        e.getMessage.contains("'['")
+    )
   }
 
   @Test
@@ -137,8 +151,10 @@ class ConcatenationTest extends TestUtils {
   @Test
   def noSubstitutionsObjectConcat(): Unit = {
     val conf = parseConfig(""" a : { b : c } { x : y }  """)
-    assertEquals(Map("b" -> "c", "x" -> "y"),
-                 conf.getObject("a").unwrapped.asScala)
+    assertEquals(
+      Map("b" -> "c", "x" -> "y"),
+      conf.getObject("a").unwrapped.asScala
+    )
   }
 
   @Test
@@ -150,17 +166,23 @@ class ConcatenationTest extends TestUtils {
   @Test
   def objectConcatWithSubstitutions(): Unit = {
     val conf = parseConfig(
-      """ a : ${x} { b : 1 } ${y}, x : { a : 0 }, y : { c : 2 } """).resolve()
-    assertEquals(Map("a" -> 0, "b" -> 1, "c" -> 2),
-                 conf.getObject("a").unwrapped.asScala)
+      """ a : ${x} { b : 1 } ${y}, x : { a : 0 }, y : { c : 2 } """
+    ).resolve()
+    assertEquals(
+      Map("a" -> 0, "b" -> 1, "c" -> 2),
+      conf.getObject("a").unwrapped.asScala
+    )
   }
 
   @Test
   def objectConcatSelfReferential(): Unit = {
     val conf = parseConfig(
-      """ a : { a : 0 }, a : ${a} { b : 1 }, a : ${a} { c : 2 } """).resolve()
-    assertEquals(Map("a" -> 0, "b" -> 1, "c" -> 2),
-                 conf.getObject("a").unwrapped.asScala)
+      """ a : { a : 0 }, a : ${a} { b : 1 }, a : ${a} { c : 2 } """
+    ).resolve()
+    assertEquals(
+      Map("a" -> 0, "b" -> 1, "c" -> 2),
+      conf.getObject("a").unwrapped.asScala
+    )
   }
 
   @Test
@@ -175,17 +197,21 @@ class ConcatenationTest extends TestUtils {
       parseConfig(""" a :  { b : c }
                     { x : y }""")
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("expecting") &&
-                 e.getMessage.contains("'{'"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("expecting") &&
+        e.getMessage.contains("'{'")
+    )
   }
 
   @Test
   def objectConcatCanSpanLinesInsideBraces(): Unit = {
     val conf = parseConfig(""" a :  { b : c
     } { x : y }  """)
-    assertEquals(Map("b" -> "c", "x" -> "y"),
-                 conf.getObject("a").unwrapped.asScala)
+    assertEquals(
+      Map("b" -> "c", "x" -> "y"),
+      conf.getObject("a").unwrapped.asScala
+    )
   }
 
   @Test
@@ -205,29 +231,35 @@ class ConcatenationTest extends TestUtils {
   @Test
   def objectConcatInsideArrayValue(): Unit = {
     val conf = parseConfig(""" a : [ { b : c } { x : y } ] """)
-    assertEquals(Seq(Map("b" -> "c", "x" -> "y")),
-                 conf.getObjectList("a").asScala.map(_.unwrapped.asScala))
+    assertEquals(
+      Seq(Map("b" -> "c", "x" -> "y")),
+      conf.getObjectList("a").asScala.map(_.unwrapped.asScala)
+    )
   }
 
   @Test
   def objectNonConcatInsideArrayValue(): Unit = {
     val conf = parseConfig(""" a : [ { b : c }
                 { x : y } ] """)
-    assertEquals(Seq(Map("b" -> "c"), Map("x" -> "y")),
-                 conf.getObjectList("a").asScala.map(_.unwrapped.asScala))
+    assertEquals(
+      Seq(Map("b" -> "c"), Map("x" -> "y")),
+      conf.getObjectList("a").asScala.map(_.unwrapped.asScala)
+    )
   }
 
   @Test
   def listConcatInsideArrayValue(): Unit = {
     val conf = parseConfig(""" a : [ [1, 2] [3, 4] ] """)
-    assertEquals(List(List(1, 2, 3, 4)),
-                 // well that's a little silly
-                 conf
-                   .getList("a")
-                   .unwrapped
-                   .asScala
-                   .toList
-                   .map(_.asInstanceOf[java.util.List[_]].asScala.toList))
+    assertEquals(
+      List(List(1, 2, 3, 4)),
+      // well that's a little silly
+      conf
+        .getList("a")
+        .unwrapped
+        .asScala
+        .toList
+        .map(_.asInstanceOf[java.util.List[_]].asScala.toList)
+    )
   }
 
   @Test
@@ -260,7 +292,8 @@ class ConcatenationTest extends TestUtils {
     assertTrue(
       "wrong exception: " + e.getMessage,
       e.getMessage.contains("expecting a close parentheses") && e.getMessage
-        .contains("'{'"))
+        .contains("'{'")
+    )
   }
 
   @Test
@@ -271,7 +304,8 @@ class ConcatenationTest extends TestUtils {
     assertTrue(
       "wrong exception: " + e.getMessage,
       e.getMessage.contains("expecting a close parentheses") && e.getMessage
-        .contains("'['"))
+        .contains("'['")
+    )
   }
 
   @Test
@@ -297,10 +331,12 @@ class ConcatenationTest extends TestUtils {
     val e = intercept[ConfigException.WrongType] {
       val conf = parseConfig(""" a = 10, a += 2 """).resolve()
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("Cannot concatenate") &&
-                 e.getMessage.contains("10") &&
-                 e.getMessage.contains("[2]"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("Cannot concatenate") &&
+        e.getMessage.contains("10") &&
+        e.getMessage.contains("[2]")
+    )
   }
 
   @Test
@@ -308,10 +344,12 @@ class ConcatenationTest extends TestUtils {
     val e = intercept[ConfigException.WrongType] {
       parseConfig(""" a = abc, a += 2 """).resolve()
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("Cannot concatenate") &&
-                 e.getMessage.contains("abc") &&
-                 e.getMessage.contains("[2]"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("Cannot concatenate") &&
+        e.getMessage.contains("abc") &&
+        e.getMessage.contains("[2]")
+    )
   }
 
   @Test
@@ -319,10 +357,12 @@ class ConcatenationTest extends TestUtils {
     val e = intercept[ConfigException.WrongType] {
       parseConfig(""" a = { x : y }, a += 2 """).resolve()
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("Cannot concatenate") &&
-                 e.getMessage.contains("\"x\":\"y\"") &&
-                 e.getMessage.contains("[2]"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("Cannot concatenate") &&
+        e.getMessage.contains("\"x\":\"y\"") &&
+        e.getMessage.contains("[2]")
+    )
   }
 
   @Test
@@ -334,7 +374,8 @@ class ConcatenationTest extends TestUtils {
   @Test
   def plusEqualsNestedObjects(): Unit = {
     val conf = parseConfig(
-      """ a : { b : { c : [1] } }, a : { b : { c += 2 } }""").resolve()
+      """ a : { b : { c : [1] } }, a : { b : { c += 2 } }"""
+    ).resolve()
     assertEquals(Seq(1, 2), conf.getIntList("a.b.c").asScala.toList)
   }
 
@@ -369,16 +410,19 @@ class ConcatenationTest extends TestUtils {
       parseConfig(""" a += { b: 1 }, a += { b: 2 }, a += { b: 3 } """).resolve()
     assertEquals(
       Seq(1, 2, 3),
-      conf.getObjectList("a").asScala.toList.map(_.toConfig.getInt("b")))
+      conf.getObjectList("a").asScala.toList.map(_.toConfig.getInt("b"))
+    )
   }
 
   @Test
   def plusEqualsAnObjectMultipleTimesNested(): Unit = {
     val conf = parseConfig(
-      """ x { a += { b: 1 }, a += { b: 2 }, a += { b: 3 } } """).resolve()
+      """ x { a += { b: 1 }, a += { b: 2 }, a += { b: 3 } } """
+    ).resolve()
     assertEquals(
       Seq(1, 2, 3),
-      conf.getObjectList("x.a").asScala.toList.map(_.toConfig.getInt("b")))
+      conf.getObjectList("x.a").asScala.toList.map(_.toConfig.getInt("b"))
+    )
   }
 
   // We would ideally make this case NOT throw an exception but we need to do some work
@@ -388,15 +432,17 @@ class ConcatenationTest extends TestUtils {
     val e = intercept[ConfigException.Parse] {
       val conf =
         parseConfig("""x = [ { a += 1, a += 2, a += 3 } ] """).resolve()
-      assertEquals(Seq(1, 2, 3),
-                   conf
-                     .getObjectList("x")
-                     .asScala
-                     .toVector(0)
-                     .toConfig
-                     .getIntList("a")
-                     .asScala
-                     .toList)
+      assertEquals(
+        Seq(1, 2, 3),
+        conf
+          .getObjectList("x")
+          .asScala
+          .toVector(0)
+          .toConfig
+          .getIntList("a")
+          .asScala
+          .toList
+      )
     }
     assertTrue(e.getMessage.contains("limitation"))
   }
@@ -407,15 +453,17 @@ class ConcatenationTest extends TestUtils {
   def plusEqualsMultipleTimesNestedInPlusEquals(): Unit = {
     val e = intercept[ConfigException.Parse] {
       val conf = parseConfig("""x += { a += 1, a += 2, a += 3 } """).resolve()
-      assertEquals(Seq(1, 2, 3),
-                   conf
-                     .getObjectList("x")
-                     .asScala
-                     .toVector(0)
-                     .toConfig
-                     .getIntList("a")
-                     .asScala
-                     .toList)
+      assertEquals(
+        Seq(1, 2, 3),
+        conf
+          .getObjectList("x")
+          .asScala
+          .toVector(0)
+          .toConfig
+          .getIntList("a")
+          .asScala
+          .toList
+      )
     }
     assertTrue(e.getMessage.contains("limitation"))
   }
@@ -424,7 +472,8 @@ class ConcatenationTest extends TestUtils {
   @Test
   def arrayConcatenationInDoubleNestedDelayedMerge(): Unit = {
     val unresolved = parseConfig(
-      """d { x = [] }, c : ${d}, c { x += 1, x += 2 }""")
+      """d { x = [] }, c : ${d}, c { x += 1, x += 2 }"""
+    )
     val conf = unresolved.resolve()
     assertEquals(Seq(1, 2), conf.getIntList("c.x").asScala)
   }
@@ -433,7 +482,8 @@ class ConcatenationTest extends TestUtils {
   @Test
   def arrayConcatenationAsPartOfDelayedMerge(): Unit = {
     val unresolved = parseConfig(
-      """ c { x: [], x : ${c.x}[1], x : ${c.x}[2] }""")
+      """ c { x: [], x : ${c.x}[1], x : ${c.x}[2] }"""
+    )
     val conf = unresolved.resolve()
     assertEquals(Seq(1, 2), conf.getIntList("c.x").asScala)
   }
@@ -442,7 +492,8 @@ class ConcatenationTest extends TestUtils {
   @Test
   def arrayConcatenationInDoubleNestedDelayedMerge2(): Unit = {
     val unresolved = parseConfig(
-      """d { x = [] }, c : ${d}, c { x : ${c.x}[1], x : ${c.x}[2] }""")
+      """d { x = [] }, c : ${d}, c { x : ${c.x}[1], x : ${c.x}[2] }"""
+    )
     val conf = unresolved.resolve()
     assertEquals(Seq(1, 2), conf.getIntList("c.x").asScala)
   }
@@ -451,7 +502,8 @@ class ConcatenationTest extends TestUtils {
   @Test
   def arrayConcatenationInTripleNestedDelayedMerge(): Unit = {
     val unresolved = parseConfig(
-      """{ r: { d.x=[] }, q: ${r}, q : { d { x = [] }, c : ${q.d}, c { x : ${q.c.x}[1], x : ${q.c.x}[2] } } }""")
+      """{ r: { d.x=[] }, q: ${r}, q : { d { x = [] }, c : ${q.d}, c { x : ${q.c.x}[1], x : ${q.c.x}[2] } } }"""
+    )
     val conf = unresolved.resolve()
     assertEquals(Seq(1, 2), conf.getIntList("q.c.x").asScala)
   }
@@ -527,7 +579,8 @@ class ConcatenationTest extends TestUtils {
   @Test
   def concatSubstitutionsThatAreObjectsWithNoSpace(): Unit = {
     val conf = parseConfig(
-      """foo = { a : 1}, bar = { b : 2 }, x = ${foo}${bar}""").resolve()
+      """foo = { a : 1}, bar = { b : 2 }, x = ${foo}${bar}"""
+    ).resolve()
     assertEquals(1, conf.getInt("x.a"))
     assertEquals(2, conf.getInt("x.b"))
   }
@@ -536,7 +589,8 @@ class ConcatenationTest extends TestUtils {
   @Test
   def concatSubstitutionsThatAreObjectsWithSpace(): Unit = {
     val conf = parseConfig(
-      """foo = { a : 1}, bar = { b : 2 }, x = ${foo} ${bar}""").resolve()
+      """foo = { a : 1}, bar = { b : 2 }, x = ${foo} ${bar}"""
+    ).resolve()
     assertEquals(1, conf.getInt("x.a"))
     assertEquals(2, conf.getInt("x.b"))
   }

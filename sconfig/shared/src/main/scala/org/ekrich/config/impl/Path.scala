@@ -147,7 +147,8 @@ final class Path(val first: String, val remainder: Path) {
       from = from.remainder
       if (from == null)
         throw new ConfigException.BugOrBroken(
-          "subPath lastIndex out of range " + lastIndex)
+          "subPath lastIndex out of range " + lastIndex
+        )
     }
     pb.result
   }
@@ -171,7 +172,8 @@ final class Path(val first: String, val remainder: Path) {
       val that = other.asInstanceOf[Path]
       this.first == that.first && ConfigImplUtil.equalsHandlingNull(
         this.remainder,
-        that.remainder)
+        that.remainder
+      )
     } else false
 
   override def hashCode: Int =

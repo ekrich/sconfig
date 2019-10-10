@@ -25,7 +25,8 @@ object ResolveStatus {
     }
 
   def fromValues(
-      values: ju.Collection[_ <: AbstractConfigValue]): ResolveStatus = {
+      values: ju.Collection[_ <: AbstractConfigValue]
+  ): ResolveStatus = {
     import scala.jdk.CollectionConverters._
     values.asScala.find(_.resolveStatus == ResolveStatus.UNRESOLVED) match {
       case Some(_) => ResolveStatus.UNRESOLVED

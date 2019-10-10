@@ -65,10 +65,12 @@ class EquivalentsTest extends TestUtils {
       })
       if (originals.isEmpty)
         throw new RuntimeException(
-          "Need a file named 'original' in " + equiv.getPath())
+          "Need a file named 'original' in " + equiv.getPath()
+        )
       if (originals.size > 1)
         throw new RuntimeException(
-          "Multiple 'original' files in " + equiv.getPath() + ": " + originals)
+          "Multiple 'original' files in " + equiv.getPath() + ": " + originals
+        )
       val original = parse(originals(0))
 
       for (testFile <- others) {

@@ -909,8 +909,10 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException.WrongType
    * if value is not convertible to a list of { @code Enum}
    */
-  def getEnumList[T <: jl.Enum[T]](enumClass: Class[T],
-                                   path: String): ju.List[T]
+  def getEnumList[T <: jl.Enum[T]](
+      enumClass: Class[T],
+      path: String
+  ): ju.List[T]
 
   /**
    * Gets a list value with object elements.  Throws if the

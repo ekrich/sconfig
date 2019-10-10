@@ -37,9 +37,11 @@ import org.ekrich.config.ConfigValueType
  */
 @SerialVersionUID(1L)
 object SimpleConfig {
-  private def findPaths(entries: ju.Set[ju.Map.Entry[String, ConfigValue]],
-                        parent: Path,
-                        obj: AbstractConfigObject): Unit = {
+  private def findPaths(
+      entries: ju.Set[ju.Map.Entry[String, ConfigValue]],
+      parent: Path,
+      obj: AbstractConfigObject
+  ): Unit = {
     for (entry <- obj.entrySet.asScala) {
       val elem = entry.getKey
       val v    = entry.getValue
@@ -53,46 +55,61 @@ object SimpleConfig {
         entries.add(
           new ju.AbstractMap.SimpleImmutableEntry[String, ConfigValue](
             path.render,
-            v))
+            v
+          )
+        )
     }
   }
-  private def throwIfNull(v: AbstractConfigValue,
-                          expected: ConfigValueType,
-                          originalPath: Path): AbstractConfigValue =
+  private def throwIfNull(
+      v: AbstractConfigValue,
+      expected: ConfigValueType,
+      originalPath: Path
+  ): AbstractConfigValue =
     if (v.valueType eq ConfigValueType.NULL)
       throw new ConfigException.Null(
         v.origin,
         originalPath.render,
-        if (expected != null) expected.name else null)
+        if (expected != null) expected.name else null
+      )
     else v
-  private def findKey(self: AbstractConfigObject,
-                      key: String,
-                      expected: ConfigValueType,
-                      originalPath: Path): AbstractConfigValue =
-    throwIfNull(findKeyOrNull(self, key, expected, originalPath),
-                expected,
-                originalPath)
+  private def findKey(
+      self: AbstractConfigObject,
+      key: String,
+      expected: ConfigValueType,
+      originalPath: Path
+  ): AbstractConfigValue =
+    throwIfNull(
+      findKeyOrNull(self, key, expected, originalPath),
+      expected,
+      originalPath
+    )
 
-  private def findKeyOrNull(self: AbstractConfigObject,
-                            key: String,
-                            expected: ConfigValueType,
-                            originalPath: Path): AbstractConfigValue = {
+  private def findKeyOrNull(
+      self: AbstractConfigObject,
+      key: String,
+      expected: ConfigValueType,
+      originalPath: Path
+  ): AbstractConfigValue = {
     var v = self.peekAssumingResolved(key, originalPath)
     if (v == null)
       throw new ConfigException.Missing(self.origin, originalPath.render)
     if (expected != null) v = DefaultTransformer.transform(v, expected)
     if (expected != null && ((v.valueType ne expected) && (v.valueType ne ConfigValueType.NULL)))
-      throw new ConfigException.WrongType(v.origin,
-                                          originalPath.render,
-                                          expected.name,
-                                          v.valueType.name)
+      throw new ConfigException.WrongType(
+        v.origin,
+        originalPath.render,
+        expected.name,
+        v.valueType.name
+      )
     else v
   }
 
-  private def findOrNull(self: AbstractConfigObject,
-                         path: Path,
-                         expected: ConfigValueType,
-                         originalPath: Path): AbstractConfigValue =
+  private def findOrNull(
+      self: AbstractConfigObject,
+      path: Path,
+      expected: ConfigValueType,
+      originalPath: Path
+  ): AbstractConfigValue =
     try {
       val key  = path.first
       val next = path.remainder
@@ -102,8 +119,8 @@ object SimpleConfig {
           self,
           key,
           ConfigValueType.OBJECT,
-          originalPath.subPath(0, originalPath.length - next.length))
-          .asInstanceOf[AbstractConfigObject]
+          originalPath.subPath(0, originalPath.length - next.length)
+        ).asInstanceOf[AbstractConfigObject]
         assert(o != null) // missing was supposed to throw
         findOrNull(o, next, expected, originalPath)
       }
@@ -139,9 +156,11 @@ object SimpleConfig {
    * @throws ConfigException
    *             if string is invalid
    */
-  def parsePeriod(input: String,
-                  originForException: ConfigOrigin,
-                  pathForException: String) = {
+  def parsePeriod(
+      input: String,
+      originForException: ConfigOrigin,
+      pathForException: String
+  ) = {
     val s                  = ConfigImplUtil.unicodeTrim(input)
     val originalUnitString = getUnits(s)
     var unitString         = originalUnitString
@@ -154,7 +173,8 @@ object SimpleConfig {
       throw new ConfigException.BadValue(
         originForException,
         pathForException,
-        "No number in period value '" + input + "'")
+        "No number in period value '" + input + "'"
+      )
     if (unitString.length > 2 && !unitString.endsWith("s"))
       unitString = unitString + "s"
     // note that this is deliberately case-sensitive
@@ -170,20 +190,23 @@ object SimpleConfig {
       throw new ConfigException.BadValue(
         originForException,
         pathForException,
-        "Could not parse time unit '" + originalUnitString + "' (try d, w, mo, y)")
+        "Could not parse time unit '" + originalUnitString + "' (try d, w, mo, y)"
+      )
     try periodOf(numberString.toInt, units)
     catch {
       case e: NumberFormatException =>
         throw new ConfigException.BadValue(
           originForException,
           pathForException,
-          "Could not parse duration number '" + numberString + "'")
+          "Could not parse duration number '" + numberString + "'"
+        )
     }
   }
   private def periodOf(n: Int, unit: ChronoUnit): Period = {
     if (unit.isTimeBased)
       throw new DateTimeException(
-        s"$unit cannot be converted to a java.time.Period")
+        s"$unit cannot be converted to a java.time.Period"
+      )
     unit match {
       case ChronoUnit.DAYS =>
         return Period.ofDays(n)
@@ -195,7 +218,8 @@ object SimpleConfig {
         return Period.ofYears(n)
       case _ =>
         throw new DateTimeException(
-          s"$unit cannot be converted to a java.time.Period")
+          s"$unit cannot be converted to a java.time.Period"
+        )
     }
   }
 
@@ -215,9 +239,11 @@ object SimpleConfig {
    * @throws ConfigException
    *             if string is invalid
    */
-  def parseDuration(input: String,
-                    originForException: ConfigOrigin,
-                    pathForException: String): Long = {
+  def parseDuration(
+      input: String,
+      originForException: ConfigOrigin,
+      pathForException: String
+  ): Long = {
     val s                  = ConfigImplUtil.unicodeTrim(input)
     val originalUnitString = getUnits(s)
     var unitString         = originalUnitString
@@ -231,7 +257,8 @@ object SimpleConfig {
       throw new ConfigException.BadValue(
         originForException,
         pathForException,
-        "No number in duration value '" + input + "'")
+        "No number in duration value '" + input + "'"
+      )
     if (unitString.length > 2 && !unitString.endsWith("s"))
       unitString = unitString + "s"
 
@@ -252,7 +279,8 @@ object SimpleConfig {
       throw new ConfigException.BadValue(
         originForException,
         pathForException,
-        "Could not parse time unit '" + originalUnitString + "' (try ns, us, ms, s, m, h, d)")
+        "Could not parse time unit '" + originalUnitString + "' (try ns, us, ms, s, m, h, d)"
+      )
     }
     try {
       // if the string is purely digits, parse as an integer to avoid
@@ -269,7 +297,8 @@ object SimpleConfig {
         throw new ConfigException.BadValue(
           originForException,
           pathForException,
-          "Could not parse duration number '" + numberString + "'")
+          "Could not parse duration number '" + numberString + "'"
+        )
     }
   }
 
@@ -289,9 +318,11 @@ object SimpleConfig {
    * @throws ConfigException
    *             if string is invalid
    */
-  def parseBytes(input: String,
-                 originForException: ConfigOrigin,
-                 pathForException: String): Long = {
+  def parseBytes(
+      input: String,
+      originForException: ConfigOrigin,
+      pathForException: String
+  ): Long = {
     val s          = ConfigImplUtil.unicodeTrim(input)
     val unitString = getUnits(s)
     val numberString =
@@ -300,13 +331,15 @@ object SimpleConfig {
       throw new ConfigException.BadValue(
         originForException,
         pathForException,
-        "No number in size-in-bytes value '" + input + "'")
+        "No number in size-in-bytes value '" + input + "'"
+      )
     val units = MemoryUnit.parseUnit(unitString)
     if (units == null)
       throw new ConfigException.BadValue(
         originForException,
         pathForException,
-        "Could not parse size-in-bytes unit '" + unitString + "' (try k, K, kB, KiB, kilobytes, kibibytes)")
+        "Could not parse size-in-bytes unit '" + unitString + "' (try k, K, kB, KiB, kilobytes, kibibytes)"
+      )
     try {
       var result: BigInteger = null
       // possible precision loss; otherwise as a double.
@@ -322,22 +355,26 @@ object SimpleConfig {
         throw new ConfigException.BadValue(
           originForException,
           pathForException,
-          "size-in-bytes value is out of range for a 64-bit long: '" + input + "'")
+          "size-in-bytes value is out of range for a 64-bit long: '" + input + "'"
+        )
     } catch {
       case e: NumberFormatException =>
         throw new ConfigException.BadValue(
           originForException,
           pathForException,
-          "Could not parse size-in-bytes number '" + numberString + "'")
+          "Could not parse size-in-bytes number '" + numberString + "'"
+        )
     }
   }
   private def addProblem(
       accumulator: ju.List[ConfigException.ValidationProblem],
       path: Path,
       origin: ConfigOrigin,
-      problem: String): Unit = {
+      problem: String
+  ): Unit = {
     accumulator.add(
-      new ConfigException.ValidationProblem(path.render, origin, problem))
+      new ConfigException.ValidationProblem(path.render, origin, problem)
+    )
   }
   private def getDesc(`type`: ConfigValueType): String = {
     return `type`.name.toLowerCase
@@ -353,17 +390,21 @@ object SimpleConfig {
       accumulator: ju.List[ConfigException.ValidationProblem],
       refDesc: String,
       path: Path,
-      origin: ConfigOrigin): Unit = {
-    addProblem(accumulator,
-               path,
-               origin,
-               "No setting at '" + path.render + "', expecting: " + refDesc)
+      origin: ConfigOrigin
+  ): Unit = {
+    addProblem(
+      accumulator,
+      path,
+      origin,
+      "No setting at '" + path.render + "', expecting: " + refDesc
+    )
   }
   private def addMissing(
       accumulator: ju.List[ConfigException.ValidationProblem],
       refValue: ConfigValue,
       path: Path,
-      origin: ConfigOrigin): Unit = {
+      origin: ConfigOrigin
+  ): Unit = {
     addMissing(accumulator, getDesc(refValue), path, origin)
   }
   // JavaBean stuff uses this
@@ -371,33 +412,39 @@ object SimpleConfig {
       accumulator: ju.List[ConfigException.ValidationProblem],
       refType: ConfigValueType,
       path: Path,
-      origin: ConfigOrigin): Unit = {
+      origin: ConfigOrigin
+  ): Unit = {
     addMissing(accumulator, getDesc(refType), path, origin)
   }
   private def addWrongType(
       accumulator: ju.List[ConfigException.ValidationProblem],
       refDesc: String,
       actual: AbstractConfigValue,
-      path: Path): Unit = {
+      path: Path
+  ): Unit = {
     addProblem(
       accumulator,
       path,
       actual.origin,
       "Wrong value type at '" + path.render + "', expecting: " + refDesc + " but got: " + getDesc(
-        actual))
+        actual
+      )
+    )
   }
   private def addWrongType(
       accumulator: ju.List[ConfigException.ValidationProblem],
       refValue: ConfigValue,
       actual: AbstractConfigValue,
-      path: Path): Unit = {
+      path: Path
+  ): Unit = {
     addWrongType(accumulator, getDesc(refValue), actual, path)
   }
   private def addWrongType(
       accumulator: ju.List[ConfigException.ValidationProblem],
       refType: ConfigValueType,
       actual: AbstractConfigValue,
-      path: Path): Unit = {
+      path: Path
+  ): Unit = {
     addWrongType(accumulator, getDesc(refType), actual, path)
   }
   private def couldBeNull(v: AbstractConfigValue): Boolean = {
@@ -405,15 +452,19 @@ object SimpleConfig {
       .transform(v, ConfigValueType.NULL)
       .valueType eq ConfigValueType.NULL
   }
-  private def haveCompatibleTypes(reference: ConfigValue,
-                                  value: AbstractConfigValue): Boolean = {
+  private def haveCompatibleTypes(
+      reference: ConfigValue,
+      value: AbstractConfigValue
+  ): Boolean = {
     if (couldBeNull(reference.asInstanceOf[AbstractConfigValue])) {
       // we allow any setting to be null
       return true
     } else return haveCompatibleTypes(reference.valueType, value)
   }
-  private def haveCompatibleTypes(referenceType: ConfigValueType,
-                                  value: AbstractConfigValue): Boolean = {
+  private def haveCompatibleTypes(
+      referenceType: ConfigValueType,
+      value: AbstractConfigValue
+  ): Boolean = {
     if ((referenceType eq ConfigValueType.NULL) || couldBeNull(value))
       return true
     else if (referenceType eq ConfigValueType.OBJECT)
@@ -439,7 +490,8 @@ object SimpleConfig {
       path: Path,
       reference: AbstractConfigObject,
       value: AbstractConfigObject,
-      accumulator: ju.List[ConfigException.ValidationProblem]): Unit = {
+      accumulator: ju.List[ConfigException.ValidationProblem]
+  ): Unit = {
     for (entry <- reference.entrySet.asScala) {
       val key = entry.getKey
       val childPath: Path =
@@ -454,7 +506,8 @@ object SimpleConfig {
       path: Path,
       listRef: SimpleConfigList,
       listValue: SimpleConfigList,
-      accumulator: ju.List[ConfigException.ValidationProblem]): Unit = {
+      accumulator: ju.List[ConfigException.ValidationProblem]
+  ): Unit = {
     if (listRef.isEmpty || listValue.isEmpty) {
       // can't verify type, leave alone
     } else {
@@ -468,7 +521,8 @@ object SimpleConfig {
               path,
               e.origin,
               "List at '" + path.render + "' contains wrong value type, expecting list of " + getDesc(
-                refElement) + " but got element of type " + getDesc(e)
+                refElement
+              ) + " but got element of type " + getDesc(e)
             )
             // don't add a problem for every last array element
             break // break
@@ -482,7 +536,8 @@ object SimpleConfig {
       path: Path,
       referenceType: ConfigValueType,
       value: AbstractConfigValue,
-      accumulator: ju.List[ConfigException.ValidationProblem]): Unit = {
+      accumulator: ju.List[ConfigException.ValidationProblem]
+  ): Unit = {
     if (haveCompatibleTypes(referenceType, value)) {
       if ((referenceType eq ConfigValueType.LIST) && value
             .isInstanceOf[SimpleConfigObject]) {
@@ -501,16 +556,19 @@ object SimpleConfig {
       path: Path,
       reference: ConfigValue,
       value: AbstractConfigValue,
-      accumulator: ju.List[ConfigException.ValidationProblem]): Unit = {
+      accumulator: ju.List[ConfigException.ValidationProblem]
+  ): Unit = {
     // Unmergeable is supposed to be impossible to encounter in here
     // because we check for resolve status up front.
     if (haveCompatibleTypes(reference, value)) {
       if (reference.isInstanceOf[AbstractConfigObject] && value
             .isInstanceOf[AbstractConfigObject]) {
-        checkValidObject(path,
-                         reference.asInstanceOf[AbstractConfigObject],
-                         value.asInstanceOf[AbstractConfigObject],
-                         accumulator)
+        checkValidObject(
+          path,
+          reference.asInstanceOf[AbstractConfigObject],
+          value.asInstanceOf[AbstractConfigObject],
+          accumulator
+        )
       } else if (reference.isInstanceOf[SimpleConfigList] && value
                    .isInstanceOf[SimpleConfigList]) {
         val listRef   = reference.asInstanceOf[SimpleConfigList]
@@ -522,10 +580,12 @@ object SimpleConfig {
         val listValue =
           DefaultTransformer.transform(value, ConfigValueType.LIST)
         if (listValue.isInstanceOf[SimpleConfigList])
-          checkListCompatibility(path,
-                                 listRef,
-                                 listValue.asInstanceOf[SimpleConfigList],
-                                 accumulator)
+          checkListCompatibility(
+            path,
+            listRef,
+            listValue.asInstanceOf[SimpleConfigList],
+            accumulator
+          )
         else
           addWrongType(accumulator, reference, value, path)
       }
@@ -547,12 +607,15 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     resolveWith(this, options)
   override def resolveWith(source: Config): SimpleConfig =
     resolveWith(source, ConfigResolveOptions.defaults)
-  override def resolveWith(source: Config,
-                           options: ConfigResolveOptions): SimpleConfig = {
+  override def resolveWith(
+      source: Config,
+      options: ConfigResolveOptions
+  ): SimpleConfig = {
     val resolved = ResolveContext.resolve(
       `object`,
       source.asInstanceOf[SimpleConfig].`object`,
-      options)
+      options
+    )
     if (resolved eq `object`) this
     else new SimpleConfig(resolved.asInstanceOf[AbstractConfigObject])
   }
@@ -580,24 +643,33 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     SimpleConfig.findPaths(entries, null, `object`)
     entries
   }
-  private[impl] def find(pathExpression: Path,
-                         expected: ConfigValueType,
-                         originalPath: Path): AbstractConfigValue =
+  private[impl] def find(
+      pathExpression: Path,
+      expected: ConfigValueType,
+      originalPath: Path
+  ): AbstractConfigValue =
     SimpleConfig.throwIfNull(
       SimpleConfig.findOrNull(`object`, pathExpression, expected, originalPath),
       expected,
-      originalPath)
-  private[impl] def find(pathExpression: String,
-                         expected: ConfigValueType): AbstractConfigValue = {
+      originalPath
+    )
+  private[impl] def find(
+      pathExpression: String,
+      expected: ConfigValueType
+  ): AbstractConfigValue = {
     val path = Path.newPath(pathExpression)
     find(path, expected, path)
   }
-  private def findOrNull(pathExpression: Path,
-                         expected: ConfigValueType,
-                         originalPath: Path): AbstractConfigValue =
+  private def findOrNull(
+      pathExpression: Path,
+      expected: ConfigValueType,
+      originalPath: Path
+  ): AbstractConfigValue =
     SimpleConfig.findOrNull(`object`, pathExpression, expected, originalPath)
-  private def findOrNull(pathExpression: String,
-                         expected: ConfigValueType): AbstractConfigValue = {
+  private def findOrNull(
+      pathExpression: String,
+      expected: ConfigValueType
+  ): AbstractConfigValue = {
     val path = Path.newPath(pathExpression)
     findOrNull(path, expected, path)
   }
@@ -650,9 +722,11 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     catch {
       case e: ConfigException.WrongType =>
         val v = find(path, ConfigValueType.STRING)
-        size = SimpleConfig.parseBytes(v.unwrapped.asInstanceOf[String],
-                                       v.origin,
-                                       path)
+        size = SimpleConfig.parseBytes(
+          v.unwrapped.asInstanceOf[String],
+          v.origin,
+          path
+        )
     }
     size
   }
@@ -661,17 +735,19 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
   override def getDuration(path: String, unit: TimeUnit): Long = {
     val v = find(path, ConfigValueType.STRING)
     val result = unit.convert(
-      SimpleConfig.parseDuration(v.unwrapped.asInstanceOf[String],
-                                 v.origin,
-                                 path),
-      TimeUnit.NANOSECONDS)
+      SimpleConfig
+        .parseDuration(v.unwrapped.asInstanceOf[String], v.origin, path),
+      TimeUnit.NANOSECONDS
+    )
     result
   }
   override def getDuration(path: String): Duration = {
     val v = find(path, ConfigValueType.STRING)
-    val nanos = SimpleConfig.parseDuration(v.unwrapped.asInstanceOf[String],
-                                           v.origin,
-                                           path)
+    val nanos = SimpleConfig.parseDuration(
+      v.unwrapped.asInstanceOf[String],
+      v.origin,
+      path
+    )
     Duration.ofNanos(nanos)
   }
   override def getPeriod(path: String): Period = {
@@ -687,7 +763,8 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
   @SuppressWarnings(Array("unchecked"))
   private def getHomogeneousUnwrappedList[T](
       path: String,
-      expected: ConfigValueType): ju.List[T] = {
+      expected: ConfigValueType
+  ): ju.List[T] = {
     val l    = new ju.ArrayList[T]
     val list = getList(path)
     for (cv <- list.asScala) {
@@ -696,10 +773,12 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
       if (expected != null)
         v = DefaultTransformer.transform(v, expected)
       if (v.valueType ne expected)
-        throw new ConfigException.WrongType(v.origin,
-                                            path,
-                                            "list of " + expected.name,
-                                            "list of " + v.valueType.name)
+        throw new ConfigException.WrongType(
+          v.origin,
+          path,
+          "list of " + expected.name,
+          "list of " + v.valueType.name
+        )
       l.add(v.unwrapped.asInstanceOf[T])
     }
     l
@@ -736,8 +815,10 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
   override def getStringList(path: String): ju.List[String] =
     getHomogeneousUnwrappedList(path, ConfigValueType.STRING)
 
-  def getEnumList[T <: jl.Enum[T]](enumClass: Class[T],
-                                   path: String): ju.List[T] = {
+  def getEnumList[T <: jl.Enum[T]](
+      enumClass: Class[T],
+      path: String
+  ): ju.List[T] = {
     val enumNames = getHomogeneousWrappedList(path, ConfigValueType.STRING)
       .asInstanceOf[ju.List[ConfigString]]
     val enumList = new ju.ArrayList[T]
@@ -748,9 +829,11 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     enumList
   }
 
-  private def getEnumValue[T <: jl.Enum[T]](path: String,
-                                            enumClass: Class[T],
-                                            enumConfigValue: ConfigValue): T = {
+  private def getEnumValue[T <: jl.Enum[T]](
+      path: String,
+      enumClass: Class[T],
+      enumConfigValue: ConfigValue
+  ): T = {
     val enumName = enumConfigValue.unwrapped.asInstanceOf[String]
     try {
       jl.Enum.valueOf(enumClass, enumName)
@@ -768,24 +851,28 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
             "The enum class %s has no constant of the name '%s' (should be one of %s.)",
             enumClass.getSimpleName,
             enumName,
-            enumNames)
+            enumNames
+          )
         )
     }
   }
 
   private def getHomogeneousWrappedList[T <: ConfigValue](
       path: String,
-      expected: ConfigValueType): ju.List[T] = {
+      expected: ConfigValueType
+  ): ju.List[T] = {
     val l    = new ju.ArrayList[T]
     val list = getList(path)
     for (cv <- list.asScala) {
       var v = cv.asInstanceOf[AbstractConfigValue]
       if (expected != null) v = DefaultTransformer.transform(v, expected)
       if (v.valueType ne expected)
-        throw new ConfigException.WrongType(v.origin,
-                                            path,
-                                            "list of " + expected.name,
-                                            "list of " + v.valueType.name)
+        throw new ConfigException.WrongType(
+          v.origin,
+          path,
+          "list of " + expected.name,
+          "list of " + v.valueType.name
+        )
       l.add(v.asInstanceOf[T])
     }
     l
@@ -823,7 +910,8 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
           v.origin,
           path,
           "memory size string or number of bytes",
-          v.valueType.name)
+          v.valueType.name
+        )
       }
     }
     l
@@ -836,26 +924,33 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     }
     builder
   }
-  override def getDurationList(path: String,
-                               unit: TimeUnit): ju.List[jl.Long] = {
+  override def getDurationList(
+      path: String,
+      unit: TimeUnit
+  ): ju.List[jl.Long] = {
     val l    = new ju.ArrayList[jl.Long]
     val list = getList(path)
     for (v <- list.asScala) {
       if (v.valueType eq ConfigValueType.NUMBER) {
-        val n = unit.convert(v.unwrapped.asInstanceOf[Number].longValue,
-                             TimeUnit.MILLISECONDS)
+        val n = unit.convert(
+          v.unwrapped.asInstanceOf[Number].longValue,
+          TimeUnit.MILLISECONDS
+        )
         l.add(n)
       } else if (v.valueType eq ConfigValueType.STRING) {
         val s = v.unwrapped.asInstanceOf[String]
-        val n = unit.convert(SimpleConfig.parseDuration(s, v.origin, path),
-                             TimeUnit.NANOSECONDS)
+        val n = unit.convert(
+          SimpleConfig.parseDuration(s, v.origin, path),
+          TimeUnit.NANOSECONDS
+        )
         l.add(n)
       } else {
         throw new ConfigException.WrongType(
           v.origin,
           path,
           "duration string or number of milliseconds",
-          v.valueType.name)
+          v.valueType.name
+        )
       }
     }
     l
@@ -879,7 +974,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     else false
 
   override final def hashCode
-    : Int = { // we do the "41*" just so our hash code won't match that of the
+      : Int = { // we do the "41*" just so our hash code won't match that of the
     // underlying object. there's no real reason it can't match, but
     // making it not match might catch some kinds of bug.
     41 * `object`.hashCode
@@ -902,12 +997,14 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     // unresolved reference config is a bug in the caller of checkValid
     if (ref.root.resolveStatus ne ResolveStatus.RESOLVED)
       throw new ConfigException.BugOrBroken(
-        "do not call checkValid() with an unresolved reference config, call Config#resolve(), see Config#resolve() API docs")
+        "do not call checkValid() with an unresolved reference config, call Config#resolve(), see Config#resolve() API docs"
+      )
     // unresolved config under validation is a bug in something,
     // NotResolved is a more specific subclass of BugOrBroken
     if (root.resolveStatus ne ResolveStatus.RESOLVED)
       throw new ConfigException.NotResolved(
-        "need to Config#resolve() each config before using it, see the API docs for Config#resolve()")
+        "need to Config#resolve() each config before using it, see the API docs for Config#resolve()"
+      )
     // Now we know that both reference and this config are resolved
     val problems = new ju.ArrayList[ConfigException.ValidationProblem]
     if (restrictToPaths.length == 0)
@@ -933,8 +1030,10 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     val path = Path.newPath(pathExpression)
     new SimpleConfig(root.withoutPath(path))
   }
-  override def withValue(pathExpression: String,
-                         v: ConfigValue): SimpleConfig = {
+  override def withValue(
+      pathExpression: String,
+      v: ConfigValue
+  ): SimpleConfig = {
     val path = Path.newPath(pathExpression)
     new SimpleConfig(root.withValue(path, v))
   }

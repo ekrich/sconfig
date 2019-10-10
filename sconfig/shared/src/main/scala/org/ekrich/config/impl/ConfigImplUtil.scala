@@ -184,9 +184,11 @@ object ConfigImplUtil {
 
   @throws[IOException]
   def writeOrigin(out: ObjectOutputStream, origin: ConfigOrigin): Unit =
-    SerializedConfigValue.writeOrigin(new DataOutputStream(out),
-                                      origin.asInstanceOf[SimpleConfigOrigin],
-                                      null)
+    SerializedConfigValue.writeOrigin(
+      new DataOutputStream(out),
+      origin.asInstanceOf[SimpleConfigOrigin],
+      null
+    )
 
   private[impl] def toCamelCase(originalName: String): String = {
     val words       = originalName.split("-+")

@@ -46,14 +46,16 @@ object AbstractConfigValue {
   def replaceChildInList(
       list: ju.List[AbstractConfigValue],
       child: AbstractConfigValue,
-      replacement: AbstractConfigValue): ju.List[AbstractConfigValue] = {
+      replacement: AbstractConfigValue
+  ): ju.List[AbstractConfigValue] = {
     var i = 0
     while (i < list.size && (list.get(i) != child)) {
       i += 1
     }
     if (i == list.size)
       throw new ConfigException.BugOrBroken(
-        "tried to replace " + child + " which is not in " + list)
+        "tried to replace " + child + " which is not in " + list
+      )
     val newStack =
       new ju.ArrayList[AbstractConfigValue](list)
     if (replacement != null) newStack.set(i, replacement)
@@ -61,8 +63,10 @@ object AbstractConfigValue {
     if (newStack.isEmpty) null else newStack
   }
 
-  def hasDescendantInList(list: ju.List[AbstractConfigValue],
-                          descendant: AbstractConfigValue): Boolean = {
+  def hasDescendantInList(
+      list: ju.List[AbstractConfigValue],
+      descendant: AbstractConfigValue
+  ): Boolean = {
     import scala.jdk.CollectionConverters._
     for (v <- list.asScala) {
       if (v == descendant) return true
@@ -76,9 +80,11 @@ object AbstractConfigValue {
     false
   }
 
-  def indent(sb: jl.StringBuilder,
-             indent: Int,
-             options: ConfigRenderOptions): Unit = {
+  def indent(
+      sb: jl.StringBuilder,
+      indent: Int,
+      options: ConfigRenderOptions
+  ): Unit = {
     if (options.getFormatted) {
       var remaining = indent
       while (remaining > 0) {
@@ -91,8 +97,10 @@ object AbstractConfigValue {
   private[impl] trait Modifier {
     // keyOrNull is null for non-objects
     @throws[Exception]
-    def modifyChildMayThrow(keyOrNull: String,
-                            v: AbstractConfigValue): AbstractConfigValue
+    def modifyChildMayThrow(
+        keyOrNull: String,
+        v: AbstractConfigValue
+    ): AbstractConfigValue
   }
 
   private[impl] abstract class NoExceptionsModifier
@@ -101,7 +109,8 @@ object AbstractConfigValue {
     @throws[Exception]
     override final def modifyChildMayThrow(
         keyOrNull: String,
-        v: AbstractConfigValue): AbstractConfigValue =
+        v: AbstractConfigValue
+    ): AbstractConfigValue =
       try modifyChild(keyOrNull, v)
       catch {
         case e: RuntimeException =>
@@ -110,8 +119,10 @@ object AbstractConfigValue {
           throw new ConfigException.BugOrBroken("Unexpected exception", e)
       }
 
-    private[impl] def modifyChild(keyOrNull: String,
-                                  v: AbstractConfigValue): AbstractConfigValue
+    private[impl] def modifyChild(
+        keyOrNull: String,
+        v: AbstractConfigValue
+    ): AbstractConfigValue
 
   }
 }
@@ -136,7 +147,8 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
   @throws[NotPossibleToResolve]
   def resolveSubstitutions(
       context: ResolveContext,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigValue] =
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigValue] =
     ResolveResult.make(context, this)
 
   private[impl] def resolveStatus = ResolveStatus.RESOLVED
@@ -163,7 +175,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
   // really need to store the boolean, and they may be able to pack it
   // with another boolean to save space.
   private[impl] def ignoresFallbacks
-    : Boolean = { // if we are not resolved, then somewhere in this value there's
+      : Boolean = { // if we are not resolved, then somewhere in this value there's
     // a substitution that may need to look at the fallbacks.
     resolveStatus == ResolveStatus.RESOLVED
   }
@@ -172,24 +184,28 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     if (ignoresFallbacks) this
     else
       throw new ConfigException.BugOrBroken(
-        "value class doesn't implement forced fallback-ignoring " + this)
+        "value class doesn't implement forced fallback-ignoring " + this
+      )
 
   // the withFallback() implementation is supposed to avoid calling
   // mergedWith* if we're ignoring fallbacks.
   final protected def requireNotIgnoringFallbacks(): Unit = {
     if (ignoresFallbacks)
       throw new ConfigException.BugOrBroken(
-        "method should not have been called with ignoresFallbacks=true " + getClass.getSimpleName)
+        "method should not have been called with ignoresFallbacks=true " + getClass.getSimpleName
+      )
   }
 
   protected def constructDelayedMerge(
       origin: ConfigOrigin,
-      stack: ju.List[AbstractConfigValue]): AbstractConfigValue =
+      stack: ju.List[AbstractConfigValue]
+  ): AbstractConfigValue =
     new ConfigDelayedMerge(origin, stack)
 
   final protected def mergedWithTheUnmergeable(
       stack: ju.Collection[AbstractConfigValue],
-      fallback: Unmergeable): AbstractConfigValue = {
+      fallback: Unmergeable
+  ): AbstractConfigValue = {
     requireNotIgnoringFallbacks()
     // if we turn out to be an object, and the fallback also does,
     // then a merge may be required; delay until we resolve.
@@ -201,7 +217,8 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
 
   final private def delayMerge(
       stack: ju.Collection[AbstractConfigValue],
-      fallback: AbstractConfigValue) = { // then a merge may be required.
+      fallback: AbstractConfigValue
+  ) = { // then a merge may be required.
     // if we contain a substitution, resolving it may need to look
     // back to the fallback.
     val newStack = new ju.ArrayList[AbstractConfigValue]
@@ -212,17 +229,20 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
 
   final protected def mergedWithObject(
       stack: ju.Collection[AbstractConfigValue],
-      fallback: AbstractConfigObject): AbstractConfigValue = {
+      fallback: AbstractConfigObject
+  ): AbstractConfigValue = {
     requireNotIgnoringFallbacks()
     if (this.isInstanceOf[AbstractConfigObject])
       throw new ConfigException.BugOrBroken(
-        "Objects must reimplement mergedWithObject")
+        "Objects must reimplement mergedWithObject"
+      )
     mergedWithNonObject(stack, fallback)
   }
 
   final protected def mergedWithNonObject(
       stack: ju.Collection[AbstractConfigValue],
-      fallback: AbstractConfigValue): AbstractConfigValue = {
+      fallback: AbstractConfigValue
+  ): AbstractConfigValue = {
     requireNotIgnoringFallbacks()
     if (resolveStatus == ResolveStatus.RESOLVED) {
       // falling back to a non-object doesn't merge anything, and also
@@ -236,19 +256,22 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
   }
 
   protected def mergedWithTheUnmergeable(
-      fallback: Unmergeable): AbstractConfigValue = {
+      fallback: Unmergeable
+  ): AbstractConfigValue = {
     requireNotIgnoringFallbacks()
     mergedWithTheUnmergeable(Collections.singletonList(this), fallback)
   }
 
   protected def mergedWithObject(
-      fallback: AbstractConfigObject): AbstractConfigValue = {
+      fallback: AbstractConfigObject
+  ): AbstractConfigValue = {
     requireNotIgnoringFallbacks()
     mergedWithObject(Collections.singletonList(this), fallback)
   }
 
   protected def mergedWithNonObject(
-      fallback: AbstractConfigValue): AbstractConfigValue = {
+      fallback: AbstractConfigValue
+  ): AbstractConfigValue = {
     requireNotIgnoringFallbacks()
     mergedWithNonObject(Collections.singletonList(this), fallback)
   }
@@ -278,7 +301,8 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
         .asInstanceOf[ConfigValue])
         .valueType && ConfigImplUtil.equalsHandlingNull(
         this.unwrapped,
-        other.asInstanceOf[ConfigValue].unwrapped)
+        other.asInstanceOf[ConfigValue].unwrapped
+      )
     else false
   }
 
@@ -289,19 +313,23 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
 
   override def toString: String = {
     val sb = new jl.StringBuilder
-    render(sb,
-           0,
-           true /* atRoot */,
-           null /* atKey */,
-           ConfigRenderOptions.concise)
+    render(
+      sb,
+      0,
+      true /* atRoot */,
+      null /* atKey */,
+      ConfigRenderOptions.concise
+    )
     getClass.getSimpleName + "(" + sb.toString + ")"
   }
 
-  private[impl] def render(sb: jl.StringBuilder,
-                           indent: Int,
-                           atRoot: Boolean,
-                           atKey: String,
-                           options: ConfigRenderOptions): Unit = {
+  private[impl] def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      atKey: String,
+      options: ConfigRenderOptions
+  ): Unit = {
     if (atKey != null) {
       val renderedKey =
         if (options.getJson) ConfigImplUtil.renderJsonString(atKey)
@@ -322,10 +350,12 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     }
     render(sb, indent, atRoot, options)
   }
-  def render(sb: jl.StringBuilder,
-             indent: Int,
-             atRoot: Boolean,
-             options: ConfigRenderOptions): Unit = {
+  def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
     val u = unwrapped
     sb.append(u.toString)
   }

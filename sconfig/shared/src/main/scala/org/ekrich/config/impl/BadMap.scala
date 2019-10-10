@@ -7,10 +7,12 @@ import scala.annotation.tailrec
  * and get cranky.
  */
 object BadMap {
-  final private[impl] class Entry private[impl] (val hash: Int,
-                                                 val key: Any,
-                                                 val value: Any,
-                                                 val next: BadMap.Entry) {
+  final private[impl] class Entry private[impl] (
+      val hash: Int,
+      val key: Any,
+      val value: Any,
+      val next: BadMap.Entry
+  ) {
     @tailrec
     private[impl] def find(k: Any): Any =
       if (key == k) value
@@ -18,10 +20,12 @@ object BadMap {
       else null
   }
   private[impl] val emptyEntries = Array[Entry]()
-  private def store[K, V](entries: Array[Entry],
-                          hash: Int,
-                          k: K,
-                          v: V): Unit = {
+  private def store[K, V](
+      entries: Array[Entry],
+      hash: Int,
+      k: K,
+      v: V
+  ): Unit = {
     val i   = hash % entries.length
     val old = entries(i) // old may be null
     entries(i) = new Entry(hash, k, v, old)
@@ -81,8 +85,10 @@ object BadMap {
   }
 }
 
-final class BadMap[K, V] private (val size: Int,
-                                  val entries: Array[BadMap.Entry]) {
+final class BadMap[K, V] private (
+    val size: Int,
+    val entries: Array[BadMap.Entry]
+) {
   def this() = this(0, BadMap.emptyEntries)
 
   private[impl] def copyingPut(k: K, v: V) = {

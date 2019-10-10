@@ -4,12 +4,13 @@ import java.{lang => jl}
 import java.{math => jm}
 import java.{util => ju}
 
-private[impl] final class MemoryUnit private[impl] (name: String,
-                                                    ordinal: Int,
-                                                    val prefix: String,
-                                                    val powerOf: Int,
-                                                    val power: Int)
-    extends jl.Enum[MemoryUnit](name, ordinal) {
+private[impl] final class MemoryUnit private[impl] (
+    name: String,
+    ordinal: Int,
+    val prefix: String,
+    val powerOf: Int,
+    val power: Int
+) extends jl.Enum[MemoryUnit](name, ordinal) {
   val bytes = jm.BigInteger.valueOf(powerOf.toLong).pow(power)
 }
 
@@ -82,7 +83,7 @@ private object MemoryUnit {
           map.put(firstUpper + "iB", unit) // 512MiB
         } else if (unit.powerOf == 1000) {
           if (unit.power == 1) map.put(first + "B", unit) // 512kB
-          else map.put(firstUpper + "B", unit) // 512MB
+          else map.put(firstUpper + "B", unit)            // 512MB
         } else throw new RuntimeException("broken MemoryUnit enum")
       }
     }

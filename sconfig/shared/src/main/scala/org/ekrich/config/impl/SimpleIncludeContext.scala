@@ -20,13 +20,16 @@ class SimpleIncludeContext(parseable: Parseable, options: ConfigParseOptions)
   override def relativeTo(filename: String): ConfigParseable = {
     if (ConfigImpl.traceLoadsEnabled)
       ConfigImpl.trace(
-        "Looking for '" + filename + "' relative to " + parseable)
+        "Looking for '" + filename + "' relative to " + parseable
+      )
     if (parseable != null) parseable.relativeTo(filename) else null
   }
 
   override def parseOptions: ConfigParseOptions = options
 
   override def setParseOptions(options: ConfigParseOptions) =
-    new SimpleIncludeContext(parseable,
-                             options.setSyntax(null).setOriginDescription(null))
+    new SimpleIncludeContext(
+      parseable,
+      options.setSyntax(null).setOriginDescription(null)
+    )
 }

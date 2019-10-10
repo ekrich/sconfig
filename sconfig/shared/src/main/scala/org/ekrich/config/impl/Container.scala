@@ -18,8 +18,10 @@ trait Container extends ConfigValue {
    * child, which may also delete the parent, or make the parent into a
    * non-container.
    */
-  def replaceChild(child: AbstractConfigValue,
-                   replacement: AbstractConfigValue): AbstractConfigValue
+  def replaceChild(
+      child: AbstractConfigValue,
+      replacement: AbstractConfigValue
+  ): AbstractConfigValue
 
   /**
    * Super-expensive full traversal to see if descendant is anywhere

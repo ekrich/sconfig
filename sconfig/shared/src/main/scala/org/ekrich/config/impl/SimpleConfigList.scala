@@ -17,19 +17,21 @@ object SimpleConfigList {
 
   private[impl] class ResolveModifier private[impl] (
       var context: ResolveContext,
-      val source: ResolveSource)
-      extends AbstractConfigValue.Modifier {
+      val source: ResolveSource
+  ) extends AbstractConfigValue.Modifier {
     @throws[AbstractConfigValue.NotPossibleToResolve]
     override def modifyChildMayThrow(
         key: String,
-        v: AbstractConfigValue): AbstractConfigValue = {
+        v: AbstractConfigValue
+    ): AbstractConfigValue = {
       val result = context.resolve(v, source)
       context = result.context
       result.value
     }
   }
   private def wrapListIterator(
-      i: ju.ListIterator[AbstractConfigValue]): ju.ListIterator[ConfigValue] =
+      i: ju.ListIterator[AbstractConfigValue]
+  ): ju.ListIterator[ConfigValue] =
     new ju.ListIterator[ConfigValue]() {
       override def hasNext: Boolean  = i.hasNext
       override def next: ConfigValue = i.next
@@ -47,14 +49,16 @@ object SimpleConfigList {
     }
   private def weAreImmutable(method: String) =
     new UnsupportedOperationException(
-      "ConfigList is immutable, you can't call List.'" + method + "'")
+      "ConfigList is immutable, you can't call List.'" + method + "'"
+    )
 }
 
 @SerialVersionUID(2L)
-final class SimpleConfigList(_origin: ConfigOrigin,
-                             val value: ju.List[AbstractConfigValue],
-                             status: ResolveStatus)
-    extends AbstractConfigValue(_origin)
+final class SimpleConfigList(
+    _origin: ConfigOrigin,
+    val value: ju.List[AbstractConfigValue],
+    status: ResolveStatus
+) extends AbstractConfigValue(_origin)
     with ConfigList
     with Container
     with Serializable {
@@ -62,7 +66,8 @@ final class SimpleConfigList(_origin: ConfigOrigin,
   // kind of an expensive debug check (makes this constructor pointless)
   if (status != ResolveStatus.fromValues(value))
     throw new ConfigException.BugOrBroken(
-      "SimpleConfigList created with wrong resolve status: " + this)
+      "SimpleConfigList created with wrong resolve status: " + this
+    )
 
   def this(_origin: ConfigOrigin, value: ju.List[AbstractConfigValue]) =
     this(_origin, value, ResolveStatus.fromValues(value))
@@ -80,7 +85,8 @@ final class SimpleConfigList(_origin: ConfigOrigin,
     ResolveStatus.fromBoolean(resolved)
   override def replaceChild(
       child: AbstractConfigValue,
-      replacement: AbstractConfigValue): SimpleConfigList = {
+      replacement: AbstractConfigValue
+  ): SimpleConfigList = {
     val newList =
       AbstractConfigValue.replaceChildInList(value, child, replacement)
     if (newList == null) null
@@ -91,8 +97,10 @@ final class SimpleConfigList(_origin: ConfigOrigin,
   }
   override def hasDescendant(descendant: AbstractConfigValue): Boolean =
     AbstractConfigValue.hasDescendantInList(value, descendant)
-  private def modify(modifier: AbstractConfigValue.NoExceptionsModifier,
-                     newResolveStatus: ResolveStatus): SimpleConfigList =
+  private def modify(
+      modifier: AbstractConfigValue.NoExceptionsModifier,
+      newResolveStatus: ResolveStatus
+  ): SimpleConfigList =
     try modifyMayThrow(modifier, newResolveStatus)
     catch {
       case e: RuntimeException =>
@@ -103,7 +111,8 @@ final class SimpleConfigList(_origin: ConfigOrigin,
   @throws[Exception]
   private def modifyMayThrow(
       modifier: AbstractConfigValue.Modifier,
-      newResolveStatus: ResolveStatus): SimpleConfigList = {
+      newResolveStatus: ResolveStatus
+  ): SimpleConfigList = {
     // lazy-create for optimization
     var changed: ju.List[AbstractConfigValue] = null
     var i                                     = 0
@@ -133,7 +142,8 @@ final class SimpleConfigList(_origin: ConfigOrigin,
   @throws[AbstractConfigValue.NotPossibleToResolve]
   override def resolveSubstitutions(
       context: ResolveContext,
-      source: ResolveSource): ResolveResult[_ <: SimpleConfigList] = {
+      source: ResolveSource
+  ): ResolveResult[_ <: SimpleConfigList] = {
     if (resolved) return ResolveResult.make(context, this)
     if (context.isRestrictedToChild) {
       // if a list restricts to a child path, then it has no child paths, so nothing to do.
@@ -142,9 +152,11 @@ final class SimpleConfigList(_origin: ConfigOrigin,
       try {
         val modifier =
           new SimpleConfigList.ResolveModifier(context, source.pushParent(this))
-        val value = modifyMayThrow(modifier,
-                                   if (context.options.getAllowUnresolved) null
-                                   else ResolveStatus.RESOLVED)
+        val value = modifyMayThrow(
+          modifier,
+          if (context.options.getAllowUnresolved) null
+          else ResolveStatus.RESOLVED
+        )
         ResolveResult.make(modifier.context, value)
       } catch {
         case e: AbstractConfigValue.NotPossibleToResolve =>
@@ -152,14 +164,18 @@ final class SimpleConfigList(_origin: ConfigOrigin,
         case e: RuntimeException =>
           throw e
         case e: Exception =>
-          throw new ConfigException.BugOrBroken("unexpected checked exception",
-                                                e)
+          throw new ConfigException.BugOrBroken(
+            "unexpected checked exception",
+            e
+          )
       }
   }
   override def relativized(prefix: Path): SimpleConfigList =
     modify(new NoExceptionsModifier() {
-      override def modifyChild(key: String,
-                               v: AbstractConfigValue): AbstractConfigValue =
+      override def modifyChild(
+          key: String,
+          v: AbstractConfigValue
+      ): AbstractConfigValue =
         v.relativized(prefix)
     }, resolveStatus)
   override def canEqual(other: Any): Boolean =
@@ -175,10 +191,12 @@ final class SimpleConfigList(_origin: ConfigOrigin,
     } else false
   }
   override def hashCode: Int = value.hashCode
-  override def render(sb: jl.StringBuilder,
-                      indentVal: Int,
-                      atRoot: Boolean,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indentVal: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
     if (value.isEmpty) sb.append("[]")
     else {
       sb.append("[")

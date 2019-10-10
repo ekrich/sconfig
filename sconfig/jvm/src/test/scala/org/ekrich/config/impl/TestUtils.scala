@@ -46,10 +46,12 @@ abstract trait TestUtils {
       case Some(t) =>
         throw new Exception(
           s"Expected exception ${expectedClass.getName} was not thrown, got $t",
-          t)
+          t
+        )
       case None =>
         throw new Exception(
-          s"Expected exception ${expectedClass.getName} was not thrown, no exception was thrown and got result $result")
+          s"Expected exception ${expectedClass.getName} was not thrown, no exception was thrown and got result $result"
+        )
     }
   }
 
@@ -165,7 +167,8 @@ abstract trait TestUtils {
   protected def checkSerializationCompat[T: ClassTag](
       expectedHex: String,
       o: T,
-      changedOK: Boolean = false): Unit = {
+      changedOK: Boolean = false
+  ): Unit = {
     // be sure we can still deserialize the old one
     val inStream                          = new ByteArrayInputStream(decodeLegibleBinary(expectedHex))
     var failure: Option[Exception]        = None
@@ -205,7 +208,8 @@ abstract trait TestUtils {
           }
         }
         System.err.println(
-          "Correct result literal for " + o.getClass.getSimpleName + " serialization:")
+          "Correct result literal for " + o.getClass.getSimpleName + " serialization:"
+        )
         System.err.println("\"\" + ") // line up all the lines by using empty string on first line
         outputStringLiteral(hex)
       }
@@ -215,14 +219,16 @@ abstract trait TestUtils {
       assertEquals(
         "Can no longer deserialize the old format of " + o.getClass.getSimpleName + why,
         o,
-        deserialized)
+        deserialized
+      )
       assertFalse(failure.isDefined) // should have thrown if we had a failure
 
       if (!changedOK)
         assertEquals(
           o.getClass.getSimpleName + " serialization has changed (though we still deserialized the old serialization)",
           expectedHex,
-          hex)
+          hex
+        )
     } catch {
       case e: Throwable =>
         showCorrectResult()
@@ -245,16 +251,20 @@ abstract trait TestUtils {
     t
   }
 
-  protected def checkSerializableOldFormat[T: ClassTag](expectedHex: String,
-                                                        o: T): T = {
+  protected def checkSerializableOldFormat[T: ClassTag](
+      expectedHex: String,
+      o: T
+  ): T = {
     val t = checkSerializable(o)
     checkSerializationCompat(expectedHex, o, changedOK = true)
     t
   }
 
   protected def checkSerializableNoMeaningfulEquals[T: ClassTag](o: T): T = {
-    assertTrue(o.getClass.getSimpleName + " not an instance of Serializable",
-               o.isInstanceOf[java.io.Serializable])
+    assertTrue(
+      o.getClass.getSimpleName + " not an instance of Serializable",
+      o.isInstanceOf[java.io.Serializable]
+    )
 
     val a = o.asInstanceOf[java.io.Serializable]
 
@@ -265,7 +275,8 @@ abstract trait TestUtils {
         throw new AssertionError(
           "failed to make a copy via serialization, " +
             "possibly caused by http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6446627",
-          nf)
+          nf
+        )
       case e: Exception =>
         e.printStackTrace(System.err)
         throw new AssertionError("failed to make a copy via serialization", e)
@@ -282,8 +293,10 @@ abstract trait TestUtils {
   protected def checkSerializable[T: ClassTag](o: T): T = {
     checkEqualObjects(o, o)
 
-    assertTrue(o.getClass.getSimpleName + " not an instance of Serializable",
-               o.isInstanceOf[java.io.Serializable])
+    assertTrue(
+      o.getClass.getSimpleName + " not an instance of Serializable",
+      o.isInstanceOf[java.io.Serializable]
+    )
 
     val b = checkSerializableNoMeaningfulEquals(o)
 
@@ -319,9 +332,11 @@ abstract trait TestUtils {
     ConfigImpl.defaultIncluder
   }
 
-  case class ParseTest(jsonBehaviorUnexpected: Boolean,
-                       whitespaceMatters: Boolean,
-                       test: String)
+  case class ParseTest(
+      jsonBehaviorUnexpected: Boolean,
+      whitespaceMatters: Boolean,
+      test: String
+  )
   object ParseTest {
     def apply(jsonBehaviorUnexpected: Boolean, test: String): ParseTest = {
       ParseTest(jsonBehaviorUnexpected, false, test)
@@ -339,55 +354,55 @@ abstract trait TestUtils {
     "[",
     "]",
     ",",
-    ParseTest(true, "10"), // value not in array or object
-    ParseTest(true, "\"foo\""), // value not in array or object
-    "\"", // single quote by itself
-    ParseTest(false, "[,]"), // array with just a comma in it
-    ParseTest(false, "[,,]"), // array with just two commas in it
-    ParseTest(false, "[1,2,,]"), // array with two trailing commas
-    ParseTest(false, "[,1,2]"), // array with initial comma
-    ParseTest(false, "{ , }"), // object with just a comma in it
-    ParseTest(false, "{ , , }"), // object with just two commas in it
-    "{ 1,2 }", // object with single values not key-value pair
-    ParseTest(false, "{ , \"foo\" : 10 }"), // object starts with comma
+    ParseTest(true, "10"),                   // value not in array or object
+    ParseTest(true, "\"foo\""),              // value not in array or object
+    "\"",                                    // single quote by itself
+    ParseTest(false, "[,]"),                 // array with just a comma in it
+    ParseTest(false, "[,,]"),                // array with just two commas in it
+    ParseTest(false, "[1,2,,]"),             // array with two trailing commas
+    ParseTest(false, "[,1,2]"),              // array with initial comma
+    ParseTest(false, "{ , }"),               // object with just a comma in it
+    ParseTest(false, "{ , , }"),             // object with just two commas in it
+    "{ 1,2 }",                               // object with single values not key-value pair
+    ParseTest(false, "{ , \"foo\" : 10 }"),  // object starts with comma
     ParseTest(false, "{ \"foo\" : 10 ,, }"), // object has two trailing commas
-    " \"a\" : 10 ,, ", // two trailing commas for braceless root object
-    "{ \"foo\" : }", // no value in object
-    "{ : 10 }", // no key in object
-    ParseTest(false, " \"foo\" : "), // no value in object with no braces
-    ParseTest(false, " : 10 "), // no key in object with no braces
-    " \"foo\" : 10 } ", // close brace but no open
-    " \"foo\" : 10 [ ", // no-braces object with trailing gunk
-    "{ \"foo\" }", // no value or colon
-    "{ \"a\" : [ }", // [ is not a valid value
-    "{ \"foo\" : 10, true }", // non-key after comma
-    "{ foo \n bar : 10 }", // newline in the middle of the unquoted key
-    "[ 1, \\",             // ends with backslash
+    " \"a\" : 10 ,, ",                       // two trailing commas for braceless root object
+    "{ \"foo\" : }",                         // no value in object
+    "{ : 10 }",                              // no key in object
+    ParseTest(false, " \"foo\" : "),         // no value in object with no braces
+    ParseTest(false, " : 10 "),              // no key in object with no braces
+    " \"foo\" : 10 } ",                      // close brace but no open
+    " \"foo\" : 10 [ ",                      // no-braces object with trailing gunk
+    "{ \"foo\" }",                           // no value or colon
+    "{ \"a\" : [ }",                         // [ is not a valid value
+    "{ \"foo\" : 10, true }",                // non-key after comma
+    "{ foo \n bar : 10 }",                   // newline in the middle of the unquoted key
+    "[ 1, \\",                               // ends with backslash
     // these two problems are ignored by the json tokenizer
-    "[:\"foo\", \"bar\"]", // colon in an array
-    "[\"foo\" : \"bar\"]", // colon in an array another way
-    "[ \"hello ]", // unterminated string
-    ParseTest(false, "{ \"foo\" , true }"), // comma instead of colon
+    "[:\"foo\", \"bar\"]",                                  // colon in an array
+    "[\"foo\" : \"bar\"]",                                  // colon in an array another way
+    "[ \"hello ]",                                          // unterminated string
+    ParseTest(false, "{ \"foo\" , true }"),                 // comma instead of colon
     ParseTest(false, "{ \"foo\" : true \"bar\" : false }"), // missing comma between fields
-    "[ 10, }]", // array with } as an element
-    "[ 10, {]", // array with { as an element
-    "{}x", // trailing invalid token after the root object
-    "[]x", // trailing invalid token after the root array
-    ParseTest(false, "{}{}"), // trailing token after the root object
-    ParseTest(false, "{}true"), // trailing token after the root object
-    ParseTest(false, "[]{}"), // trailing valid token after the root array
-    ParseTest(false, "[]true"), // trailing valid token after the root array
-    "[${]", // unclosed substitution
-    "[$]", // '$' by itself
-    "[$  ]", // '$' by itself with spaces after
-    "[${}]", // empty substitution (no path)
-    "[${?}]", // no path with ? substitution
-    ParseTest(false, true, "[${ ?foo}]"), // space before ? not allowed
-    """{ "a" : [1,2], "b" : y${a}z }""", // trying to interpolate an array in a string
-    """{ "a" : { "c" : 2 }, "b" : y${a}z }""", // trying to interpolate an object in a string
-    """{ "a" : ${a} }""", // simple cycle
-    """[ { "a" : 2, "b" : ${${a}} } ]""", // nested substitution
-    "[ = ]", // = is not a valid token in unquoted text
+    "[ 10, }]",                                             // array with } as an element
+    "[ 10, {]",                                             // array with { as an element
+    "{}x",                                                  // trailing invalid token after the root object
+    "[]x",                                                  // trailing invalid token after the root array
+    ParseTest(false, "{}{}"),                               // trailing token after the root object
+    ParseTest(false, "{}true"),                             // trailing token after the root object
+    ParseTest(false, "[]{}"),                               // trailing valid token after the root array
+    ParseTest(false, "[]true"),                             // trailing valid token after the root array
+    "[${]",                                                 // unclosed substitution
+    "[$]",                                                  // '$' by itself
+    "[$  ]",                                                // '$' by itself with spaces after
+    "[${}]",                                                // empty substitution (no path)
+    "[${?}]",                                               // no path with ? substitution
+    ParseTest(false, true, "[${ ?foo}]"),                   // space before ? not allowed
+    """{ "a" : [1,2], "b" : y${a}z }""",                    // trying to interpolate an array in a string
+    """{ "a" : { "c" : 2 }, "b" : y${a}z }""",              // trying to interpolate an object in a string
+    """{ "a" : ${a} }""",                                   // simple cycle
+    """[ { "a" : 2, "b" : ${${a}} } ]""",                   // nested substitution
+    "[ = ]",                                                // = is not a valid token in unquoted text
     "[ + ]",
     "[ # ]",
     "[ ` ]",
@@ -402,20 +417,20 @@ abstract trait TestUtils {
     "[ += ]",
     "+= 10",
     "10 +=",
-    "[ 10e+3e ]", // "+" not allowed in unquoted strings, and not a valid number
+    "[ 10e+3e ]",                         // "+" not allowed in unquoted strings, and not a valid number
     ParseTest(false, "[ \"foo\nbar\" ]"), // unescaped newline in quoted string
     "[ # comment ]",
     "${ #comment }",
     "[ // comment ]",
     "${ // comment }",
-    "{ include \"bar\" : 10 }", // include with a value after it
-    "{ include foo }", // include with unquoted string
+    "{ include \"bar\" : 10 }",    // include with a value after it
+    "{ include foo }",             // include with unquoted string
     "{ include : { \"a\" : 1 } }", // include used as unquoted key
-    "a=", // no value
-    "a:", // no value with colon
-    "a= ", // no value with whitespace after
-    "a.b=", // no value with path
-    "{ a= }", // no value inside braces
+    "a=",                          // no value
+    "a:",                          // no value with colon
+    "a= ",                         // no value with whitespace after
+    "a.b=",                        // no value with path
+    "{ a= }",                      // no value inside braces
     "{ a: }"
   ) // no value with colon inside braces
 
@@ -427,7 +442,7 @@ abstract trait TestUtils {
     """{ "foo" : "bar" }""",
     """["foo", "bar"]""",
     """{ "foo" : 42 }""",
-    "{ \"foo\"\n : 42 }", // newline after key
+    "{ \"foo\"\n : 42 }",  // newline after key
     "{ \"foo\" : \n 42 }", // newline after colon
     """[10, 11]""",
     """[10,"foo"]""",
@@ -449,57 +464,57 @@ abstract trait TestUtils {
 
   // spray-json throws so change to false
   private val validConfInvalidJson = List[ParseTest](
-    "", // empty document
-    " ", // empty document single space
-    "\n", // empty document single newline
-    " \n \n   \n\n\n", // complicated empty document
-    "# foo", // just a comment
-    "# bar\n", // just a comment with a newline
-    "# foo\n//bar", // comment then another with no newline
-    """{ "foo" = 42 }""", // equals rather than colon
-    """{ "foo" = (42) }""", // value with round braces
-    """{ foo { "bar" : 42 } }""", // omit the colon for object value
-    """{ foo baz { "bar" : 42 } }""", // omit the colon with unquoted key with spaces
-    """ "foo" : 42 """, // omit braces on root object
-    """{ "foo" : bar }""", // no quotes on value
-    """{ "foo" : null bar 42 baz true 3.14 "hi" }""", // bunch of values to concat into a string
-    "{ foo : \"bar\" }", // no quotes on key
-    "{ foo : bar }", // no quotes on key or value
-    "{ foo.bar : bar }", // path expression in key
-    "{ foo.\"hello world\".baz : bar }", // partly-quoted path expression in key
-    "{ foo.bar \n : bar }", // newline after path expression in key
-    "{ foo  bar : bar }", // whitespace in the key
-    "{ true : bar }", // key is a non-string token
+    "",                                                       // empty document
+    " ",                                                      // empty document single space
+    "\n",                                                     // empty document single newline
+    " \n \n   \n\n\n",                                        // complicated empty document
+    "# foo",                                                  // just a comment
+    "# bar\n",                                                // just a comment with a newline
+    "# foo\n//bar",                                           // comment then another with no newline
+    """{ "foo" = 42 }""",                                     // equals rather than colon
+    """{ "foo" = (42) }""",                                   // value with round braces
+    """{ foo { "bar" : 42 } }""",                             // omit the colon for object value
+    """{ foo baz { "bar" : 42 } }""",                         // omit the colon with unquoted key with spaces
+    """ "foo" : 42 """,                                       // omit braces on root object
+    """{ "foo" : bar }""",                                    // no quotes on value
+    """{ "foo" : null bar 42 baz true 3.14 "hi" }""",         // bunch of values to concat into a string
+    "{ foo : \"bar\" }",                                      // no quotes on key
+    "{ foo : bar }",                                          // no quotes on key or value
+    "{ foo.bar : bar }",                                      // path expression in key
+    "{ foo.\"hello world\".baz : bar }",                      // partly-quoted path expression in key
+    "{ foo.bar \n : bar }",                                   // newline after path expression in key
+    "{ foo  bar : bar }",                                     // whitespace in the key
+    "{ true : bar }",                                         // key is a non-string token
     ParseTest(true, """{ "foo" : "bar", "foo" : "bar2" }"""), // dup keys
-    ParseTest(false, "[ 1, 2, 3, ]"), // single trailing comma
-    ParseTest(false, "[1,2,3  , ]"), // single trailing comma with whitespace
-    ParseTest(false, "[1,2,3\n\n , \n]"), // single trailing comma with newlines
-    ParseTest(false, "[1,]"), // single trailing comma with one-element array
-    ParseTest(false, "{ \"foo\" : 10, }"), // extra trailing comma
-    ParseTest(false, "{ \"a\" : \"b\", }"), // single trailing comma in object
-    "{ a : b, }", // single trailing comma in object (unquoted strings)
-    "{ a : b  \n  , \n }", // single trailing comma in object with newlines
-    "a : b, c : d,", // single trailing comma in object with no root braces
-    "{ a : b\nc : d }", // skip comma if there's a newline
-    "a : b\nc : d", // skip comma if there's a newline and no root braces
-    "a : b\nc : d,", // skip one comma but still have one at the end
-    "[ foo ]", // not a known token in JSON
-    "[ t ]", // start of "true" but ends wrong in JSON
+    ParseTest(false, "[ 1, 2, 3, ]"),                         // single trailing comma
+    ParseTest(false, "[1,2,3  , ]"),                          // single trailing comma with whitespace
+    ParseTest(false, "[1,2,3\n\n , \n]"),                     // single trailing comma with newlines
+    ParseTest(false, "[1,]"),                                 // single trailing comma with one-element array
+    ParseTest(false, "{ \"foo\" : 10, }"),                    // extra trailing comma
+    ParseTest(false, "{ \"a\" : \"b\", }"),                   // single trailing comma in object
+    "{ a : b, }",                                             // single trailing comma in object (unquoted strings)
+    "{ a : b  \n  , \n }",                                    // single trailing comma in object with newlines
+    "a : b, c : d,",                                          // single trailing comma in object with no root braces
+    "{ a : b\nc : d }",                                       // skip comma if there's a newline
+    "a : b\nc : d",                                           // skip comma if there's a newline and no root braces
+    "a : b\nc : d,",                                          // skip one comma but still have one at the end
+    "[ foo ]",                                                // not a known token in JSON
+    "[ t ]",                                                  // start of "true" but ends wrong in JSON
     "[ tx ]",
     "[ tr ]",
     "[ trx ]",
     "[ tru ]",
     "[ trux ]",
     "[ truex ]",
-    "[ 10x ]", // number token with trailing junk
-    "[ / ]", // unquoted string "slash"
-    "{ include \"foo\" }", // valid include
-    "{ include\n\"foo\" }", // include with just a newline separating from string
-    "{ include\"foo\" }", // include with no whitespace after it
-    "[ include ]", // include can be a string value in an array
-    "{ foo : include }", // include can be a field value also
+    "[ 10x ]",                            // number token with trailing junk
+    "[ / ]",                              // unquoted string "slash"
+    "{ include \"foo\" }",                // valid include
+    "{ include\n\"foo\" }",               // include with just a newline separating from string
+    "{ include\"foo\" }",                 // include with no whitespace after it
+    "[ include ]",                        // include can be a string value in an array
+    "{ foo : include }",                  // include can be a field value also
     "{ include \"foo\", \"a\" : \"b\" }", // valid include followed by comma and field
-    "{ foo include : 42 }", // valid to have a key not starting with include
+    "{ foo include : 42 }",               // valid to have a key not starting with include
     "[ ${foo} ]",
     "[ ${?foo} ]",
     "[ ${\"foo\"} ]",
@@ -529,21 +544,21 @@ abstract trait TestUtils {
 , 11]""",
     """[ 10 // comment
 , 11]""",
-    """{ /a/b/c : 10 }""", // key has a slash in it
-    ParseTest(false, true, "[${ foo.bar}]"), // substitution with leading spaces
-    ParseTest(false, true, "[${foo.bar }]"), // substitution with trailing spaces
+    """{ /a/b/c : 10 }""",                       // key has a slash in it
+    ParseTest(false, true, "[${ foo.bar}]"),     // substitution with leading spaces
+    ParseTest(false, true, "[${foo.bar }]"),     // substitution with trailing spaces
     ParseTest(false, true, "[${ \"foo.bar\"}]"), // substitution with leading spaces and quoted
     ParseTest(false, true, "[${\"foo.bar\" }]"), // substitution with trailing spaces and quoted
-    """[ ${"foo""bar"} ]""", // multiple strings in substitution
-    """[ ${foo  "bar"  baz} ]""", // multiple strings and whitespace in substitution
-    "[${true}]", // substitution with unquoted true token
-    "a = [], a += b", // += operator with previous init
-    "{ a = [], a += 10 }", // += in braces object with previous init
-    "a += b", // += operator without previous init
-    "{ a += 10 }", // += in braces object without previous init
-    "[ 10e3e3 ]", // two exponents. this should parse to a number plus string "e3"
-    "[ 1-e3 ]", // malformed number should end up as a string instead
-    "[ 1.0.0 ]", // two decimals, should end up as a string
+    """[ ${"foo""bar"} ]""",                     // multiple strings in substitution
+    """[ ${foo  "bar"  baz} ]""",                // multiple strings and whitespace in substitution
+    "[${true}]",                                 // substitution with unquoted true token
+    "a = [], a += b",                            // += operator with previous init
+    "{ a = [], a += 10 }",                       // += in braces object with previous init
+    "a += b",                                    // += operator without previous init
+    "{ a += 10 }",                               // += in braces object without previous init
+    "[ 10e3e3 ]",                                // two exponents. this should parse to a number plus string "e3"
+    "[ 1-e3 ]",                                  // malformed number should end up as a string instead
+    "[ 1.0.0 ]",                                 // two decimals, should end up as a string
     "[ 1.0. ]"
   ) // trailing decimal should end up as a string
 
@@ -555,7 +570,8 @@ abstract trait TestUtils {
   protected val validConf = validConfInvalidJson ++ validJson
 
   protected def addOffendingJsonToException[R](parserName: String, s: String)(
-      body: => R) = {
+      body: => R
+  ) = {
     try {
       body
     } catch {
@@ -570,13 +586,15 @@ abstract trait TestUtils {
         // from showing the causing exception in JUnit view for some reason
         throw new Exception(
           parserName + " parser did wrong thing on '" + s + "', " + tokens,
-          t)
+          t
+        )
     }
   }
 
   protected def whitespaceVariations(
       tests: Seq[ParseTest],
-      validInJsonParser: Boolean): Seq[ParseTest] = {
+      validInJsonParser: Boolean
+  ): Seq[ParseTest] = {
     val variations = List(
       { s: String =>
         s
@@ -638,20 +656,26 @@ abstract trait TestUtils {
 
   protected def subst(ref: String, optional: Boolean): ConfigReference = {
     val path = Path.newPath(ref)
-    new ConfigReference(fakeOrigin(),
-                        new SubstitutionExpression(path, optional))
+    new ConfigReference(
+      fakeOrigin(),
+      new SubstitutionExpression(path, optional)
+    )
   }
 
   protected def subst(ref: String): ConfigReference = {
     subst(ref, false)
   }
 
-  protected def substInString(ref: String,
-                              optional: Boolean): ConfigConcatenation = {
+  protected def substInString(
+      ref: String,
+      optional: Boolean
+  ): ConfigConcatenation = {
     val path = Path.newPath(ref)
-    val pieces = List[AbstractConfigValue](stringValue("start<"),
-                                           subst(ref, optional),
-                                           stringValue(">end"))
+    val pieces = List[AbstractConfigValue](
+      stringValue("start<"),
+      subst(ref, optional),
+      stringValue(">end")
+    )
     new ConfigConcatenation(fakeOrigin(), pieces.asJava)
   }
 
@@ -676,8 +700,10 @@ abstract trait TestUtils {
   def tokenWhitespace(text: String) =
     Tokens.newIgnoredWhitespace(fakeOrigin(), text)
 
-  private def tokenMaybeOptionalSubstitution(optional: Boolean,
-                                             expression: Token*) = {
+  private def tokenMaybeOptionalSubstitution(
+      optional: Boolean,
+      expression: Token*
+  ) = {
     val l = new java.util.ArrayList[Token]
     for (t <- expression) {
       l.add(t)
@@ -696,8 +722,10 @@ abstract trait TestUtils {
   // quoted string substitution (no interpretation of periods)
   def tokenKeySubstitution(s: String) = tokenSubstitution(tokenString(s))
 
-  def tokenize(origin: ConfigOrigin,
-               input: Reader): java.util.Iterator[Token] = {
+  def tokenize(
+      origin: ConfigOrigin,
+      input: Reader
+  ): java.util.Iterator[Token] = {
     Tokenizer.tokenize(origin, input, ConfigSyntax.CONF)
   }
 
@@ -796,7 +824,8 @@ abstract trait TestUtils {
       val here = new File(".").getAbsolutePath
       throw new Exception(
         s"Tests must be run from the root project directory containing ${f
-          .getPath()}, however the current directory is $here")
+          .getPath()}, however the current directory is $here"
+      )
     }
     f
   }
@@ -807,9 +836,10 @@ abstract trait TestUtils {
   protected def jsonQuotedResourceFile(filename: String): String =
     quoteJsonString(resourceFile(filename).toString)
 
-  protected class TestClassLoader(parent: ClassLoader,
-                                  val additions: Map[String, URL])
-      extends ClassLoader(parent) {
+  protected class TestClassLoader(
+      parent: ClassLoader,
+      val additions: Map[String, URL]
+  ) extends ClassLoader(parent) {
     override def findResources(name: String) = {
       val other = super.findResources(name).asScala
       additions
@@ -825,8 +855,9 @@ abstract trait TestUtils {
     }
   }
 
-  protected def withContextClassLoader[T](loader: ClassLoader)(
-      body: => T): T = {
+  protected def withContextClassLoader[T](
+      loader: ClassLoader
+  )(body: => T): T = {
     val executor = Executors.newSingleThreadExecutor()
     val f = executor.submit(new Callable[T] {
       override def call(): T = {
@@ -850,9 +881,11 @@ abstract trait TestUtils {
     System.err.println(s)
   }
 
-  protected def showDiff(a: ConfigValue,
-                         b: ConfigValue,
-                         indent: Int = 0): Unit = {
+  protected def showDiff(
+      a: ConfigValue,
+      b: ConfigValue,
+      indent: Int = 0
+  ): Unit = {
     if (a != b) {
       if (a.valueType != b.valueType) {
         printIndented(indent, "- " + a.valueType)
@@ -889,11 +922,14 @@ abstract trait TestUtils {
       assertEquals("matching line for " + path, line, p.origin.lineNumber)
     }
 
-    protected def assertMessage(p: ConfigException.ValidationProblem,
-                                re: String): Unit = {
+    protected def assertMessage(
+        p: ConfigException.ValidationProblem,
+        re: String
+    ): Unit = {
       assertTrue(
         "didn't get expected message for " + path + ": got '" + p.problem + "'",
-        p.problem.matches(re))
+        p.problem.matches(re)
+      )
     }
   }
 
@@ -915,11 +951,12 @@ abstract trait TestUtils {
     }
   }
 
-  case class WrongElementType(path: String,
-                              line: Int,
-                              expected: String,
-                              got: String)
-      extends Problem(path, line) {
+  case class WrongElementType(
+      path: String,
+      line: Int,
+      expected: String,
+      got: String
+  ) extends Problem(path, line) {
     override def check(p: ConfigException.ValidationProblem): Unit = {
       super.check(p)
       val re = "List at.*" + path + ".*wrong value type.*expecting.*" + expected + ".*got.*element of.*" + got + ".*"
@@ -927,8 +964,10 @@ abstract trait TestUtils {
     }
   }
 
-  protected def checkValidationException(e: ConfigException.ValidationFailed,
-                                         expecteds: Seq[Problem]): Unit = {
+  protected def checkValidationException(
+      e: ConfigException.ValidationFailed,
+      expecteds: Seq[Problem]
+  ): Unit = {
     val problems =
       e.problems.asScala.toIndexedSeq
         .sortBy(_.path)
@@ -943,7 +982,8 @@ abstract trait TestUtils {
     assertEquals(
       "found expected validation problems, got '" + problems + "' and expected '" + expecteds + "'",
       expecteds.size,
-      problems.size)
+      problems.size
+    )
   }
 
   protected def writeFile(f: File, content: String): Unit = {
@@ -965,8 +1005,9 @@ abstract trait TestUtils {
     }
   }
 
-  protected def withScratchDirectory[T](testcase: String)(
-      body: File => T): Unit = {
+  protected def withScratchDirectory[T](
+      testcase: String
+  )(body: File => T): Unit = {
     val target = new File("target")
     if (!target.isDirectory)
       throw new RuntimeException(s"Expecting $target to exist")

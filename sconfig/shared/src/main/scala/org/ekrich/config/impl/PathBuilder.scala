@@ -16,7 +16,8 @@ final class PathBuilder private[impl] () {
   private def checkCanAppend(): Unit = {
     if (resultPath != null)
       throw new ConfigException.BugOrBroken(
-        "Adding to PathBuilder after getting result")
+        "Adding to PathBuilder after getting result"
+      )
   }
 
   private[impl] def appendKey(key: String): Unit = {

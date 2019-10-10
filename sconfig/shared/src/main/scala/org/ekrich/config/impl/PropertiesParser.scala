@@ -44,23 +44,29 @@ object PropertiesParser {
   // Scala Port: Reworked the following a bit from the original to get it to compile
   // The types seems to be pretty much fixed so the generics were removed
 
-  private[impl] def fromProperties(origin: ConfigOrigin,
-                                   props: Properties): AbstractConfigObject =
+  private[impl] def fromProperties(
+      origin: ConfigOrigin,
+      props: Properties
+  ): AbstractConfigObject =
     fromEntrySet(origin, props.asInstanceOf[ju.Map[String, String]])
 
-  def fromStringMap(origin: ConfigOrigin,
-                    stringMap: ju.Map[String, String]): AbstractConfigObject =
+  def fromStringMap(
+      origin: ConfigOrigin,
+      stringMap: ju.Map[String, String]
+  ): AbstractConfigObject =
     fromEntrySet(origin, stringMap)
 
   private def fromEntrySet(
       origin: ConfigOrigin,
-      entries: ju.Map[String, String]): AbstractConfigObject = {
+      entries: ju.Map[String, String]
+  ): AbstractConfigObject = {
     val pathMap: ju.Map[Path, AnyRef] = getPathMap(entries)
     fromPathMap(origin, pathMap, true /* from properties */ )
   }
 
   def getPathMap(
-      map: ju.Map[_ <: AnyRef, _ <: AnyRef]): ju.Map[Path, AnyRef] = {
+      map: ju.Map[_ <: AnyRef, _ <: AnyRef]
+  ): ju.Map[Path, AnyRef] = {
     val pathMap = new ju.HashMap[Path, AnyRef]
     for (entry <- map.entrySet().asScala) {
       val key = entry.getKey
@@ -72,23 +78,28 @@ object PropertiesParser {
     pathMap
   }
 
-  def fromPathMap(origin: ConfigOrigin,
-                  pathExpressionMap: ju.Map[_, _]): AbstractConfigObject = {
+  def fromPathMap(
+      origin: ConfigOrigin,
+      pathExpressionMap: ju.Map[_, _]
+  ): AbstractConfigObject = {
     val pathMap = new ju.HashMap[Path, AnyRef]
     for (entry <- pathExpressionMap.entrySet.asScala) {
       val keyObj = entry.getKey
       if (!keyObj.isInstanceOf[String])
         throw new ConfigException.BugOrBroken(
-          "Map has a non-string as a key, expecting a path expression as a String")
+          "Map has a non-string as a key, expecting a path expression as a String"
+        )
       val path = Path.newPath(keyObj.asInstanceOf[String])
       pathMap.put(path, entry.getValue.asInstanceOf[AnyRef])
     }
     fromPathMap(origin, pathMap, false)
   }
 
-  def fromPathMap(origin: ConfigOrigin,
-                  pathMap: ju.Map[Path, AnyRef],
-                  convertedFromProperties: Boolean): AbstractConfigObject = {
+  def fromPathMap(
+      origin: ConfigOrigin,
+      pathMap: ju.Map[Path, AnyRef],
+      convertedFromProperties: Boolean
+  ): AbstractConfigObject = {
     /*
      * First, build a list of paths that will have values, either string or
      * object values.
@@ -116,7 +127,8 @@ object PropertiesParser {
         if (scopePaths.contains(path))
           throw new ConfigException.BugOrBroken(
             "In the map, path '" + path.render + "' occurs as both the parent object of a value and as a value. " +
-              "Because Map has no defined ordering, this is a broken situation.")
+              "Because Map has no defined ordering, this is a broken situation."
+          )
       }
     }
     /*
@@ -142,9 +154,11 @@ object PropertiesParser {
         } else { // silently ignore non-string values in Properties
           value = null
         } else
-        value = ConfigImpl.fromAnyRef(pathMap.get(path),
-                                      origin,
-                                      FromMapMode.KEYS_ARE_PATHS)
+        value = ConfigImpl.fromAnyRef(
+          pathMap.get(path),
+          origin,
+          FromMapMode.KEYS_ARE_PATHS
+        )
       if (value != null) parent.put(last, value)
     }
     /*

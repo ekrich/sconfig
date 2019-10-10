@@ -24,8 +24,10 @@ import java.util.concurrent.TimeUnit.{
 
 class ConfigTest extends TestUtils {
 
-  private def resolveNoSystem(v: AbstractConfigValue,
-                              root: AbstractConfigObject) = {
+  private def resolveNoSystem(
+      v: AbstractConfigValue,
+      root: AbstractConfigObject
+  ) = {
     ResolveContext.resolve(v, root, ConfigResolveOptions.noSystem)
   }
 
@@ -53,10 +55,12 @@ class ConfigTest extends TestUtils {
 
   // Merging should always be associative (same results however the values are grouped,
   // as long as they remain in the same order)
-  private def associativeMerge(allObjects: Seq[AbstractConfigObject])(
-      assertions: SimpleConfig => Unit): Unit = {
+  private def associativeMerge(
+      allObjects: Seq[AbstractConfigObject]
+  )(assertions: SimpleConfig => Unit): Unit = {
     def makeTrees(
-        objects: Seq[AbstractConfigObject]): Iterator[AbstractConfigObject] = {
+        objects: Seq[AbstractConfigObject]
+    ): Iterator[AbstractConfigObject] = {
       objects.length match {
         case 0 => Iterator.empty
         case 1 => {
@@ -91,7 +95,8 @@ class ConfigTest extends TestUtils {
           "Merge was not associative, " +
             "verify that it should not be, then don't use associativeMerge " +
             "for this one. two results were: \none: " + trees(0) + "\ntwo: " +
-            tree + "\noriginal list: " + allObjects)
+            tree + "\noriginal list: " + allObjects
+        )
     }
 
     for (tree <- trees) {
@@ -267,7 +272,8 @@ class ConfigTest extends TestUtils {
     val obj1 = parseObject("""{ "a" : { "b" : ${f} } }""")
     val obj2 = parseObject("""{ "a" : 2 }""")
     val obj3 = parseObject(
-      """{ "a" : { "b" : ${d}, "c" : ${e} }, "d" : 43, "e" : 44, "f" : 42 }""")
+      """{ "a" : { "b" : ${d}, "c" : ${e} }, "d" : 43, "e" : 44, "f" : 42 }"""
+    )
 
     associativeMerge(Seq(obj1, obj2, obj3)) { unresolved =>
       val merged = resolveNoSystem(unresolved, unresolved)
@@ -329,7 +335,8 @@ class ConfigTest extends TestUtils {
   @Test
   def mergeObjectWithSubstituted(): Unit = {
     val obj1 = parseObject(
-      """{ "a" : { "x" : 1, "z" : 4 }, "c" : { "z" : 42 } }""")
+      """{ "a" : { "x" : 1, "z" : 4 }, "c" : { "z" : 42 } }"""
+    )
     val obj2 = parseObject("""{ "b" : { "y" : 2, "z" : 5 }, "c" : ${b} }""")
 
     val resolved = merge(obj1, obj2).toConfig
@@ -363,8 +370,10 @@ class ConfigTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       val v = resolveNoSystem(subst("foo"), cycleObject)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage().contains("cycle"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage().contains("cycle")
+    )
 
     val fixUpCycle = parseObject(""" { "a" : { "b" : { "c" : 57 } } } """)
     val merged     = mergeUnresolved(fixUpCycle, cycleObject)
@@ -380,11 +389,14 @@ class ConfigTest extends TestUtils {
     val e = intercept[ConfigException.UnresolvedSubstitution] {
       val v = resolveNoSystem(subst("foo"), cycleObject)
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage().contains("cycle"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage().contains("cycle")
+    )
 
     val fixUpCycle = parseObject(
-      """ { "a" : { "b" : { "c" : { "q" : "u" } } } } """)
+      """ { "a" : { "b" : { "c" : { "q" : "u" } } } } """
+    )
     val merged = mergeUnresolved(fixUpCycle, cycleObject)
     val e2 = intercept[ConfigException.UnresolvedSubstitution] {
       val v = resolveNoSystem(subst("foo"), merged)
@@ -509,15 +521,18 @@ class ConfigTest extends TestUtils {
 
     // falling back again from an ignoreFallbacks should be a no-op, return this
     assertTrue(
-      nonEmptyIgnoringFallbacks eq nonEmptyIgnoringFallbacks.withFallback(
-        empty))
+      nonEmptyIgnoringFallbacks eq nonEmptyIgnoringFallbacks.withFallback(empty)
+    )
     assertTrue(
-      nonEmptyIgnoringFallbacks eq nonEmptyIgnoringFallbacks.withFallback(
-        primitive))
+      nonEmptyIgnoringFallbacks eq nonEmptyIgnoringFallbacks
+        .withFallback(primitive)
+    )
     assertTrue(
-      emptyIgnoringFallbacks eq emptyIgnoringFallbacks.withFallback(empty))
+      emptyIgnoringFallbacks eq emptyIgnoringFallbacks.withFallback(empty)
+    )
     assertTrue(
-      emptyIgnoringFallbacks eq emptyIgnoringFallbacks.withFallback(primitive))
+      emptyIgnoringFallbacks eq emptyIgnoringFallbacks.withFallback(primitive)
+    )
   }
 
   @Test
@@ -562,7 +577,8 @@ class ConfigTest extends TestUtils {
   @Test
   def integerRangeChecks(): Unit = {
     val conf = parseConfig(
-      "{ tooNegative: " + (Integer.MIN_VALUE - 1L) + ", tooPositive: " + (Integer.MAX_VALUE + 1L) + "}")
+      "{ tooNegative: " + (Integer.MIN_VALUE - 1L) + ", tooPositive: " + (Integer.MAX_VALUE + 1L) + "}"
+    )
     val en = intercept[ConfigException.WrongType] {
       conf.getInt("tooNegative")
     }
@@ -588,8 +604,10 @@ class ConfigTest extends TestUtils {
     assertEquals(0.33, conf.getDouble("floats.pointThirtyThreeAgain"), 1e-6)
     assertEquals("abcd", conf.getString("strings.abcd"))
     assertEquals("abcd", conf.getString("strings.abcdAgain"))
-    assertEquals("null bar 42 baz true 3.14 hi",
-                 conf.getString("strings.concatenated"))
+    assertEquals(
+      "null bar 42 baz true 3.14 hi",
+      conf.getString("strings.concatenated")
+    )
     assertEquals(true, conf.getBoolean("booleans.trueAgain"))
     assertEquals(false, conf.getBoolean("booleans.falseAgain"))
 
@@ -622,34 +640,51 @@ class ConfigTest extends TestUtils {
     // get typed arrays
     assertEquals(Seq(1, 2, 3), conf.getIntList("arrays.ofInt").asScala)
     assertEquals(Seq(1L, 2L, 3L), conf.getLongList("arrays.ofInt").asScala)
-    assertEquals(Seq("a", "b", "c"),
-                 conf.getStringList("arrays.ofString").asScala)
-    assertEquals(Seq(3.14, 4.14, 5.14),
-                 conf.getDoubleList("arrays.ofDouble").asScala)
-    assertEquals(Seq(null, null, null),
-                 conf.getAnyRefList("arrays.ofNull").asScala)
-    assertEquals(Seq(true, false),
-                 conf.getBooleanList("arrays.ofBoolean").asScala)
+    assertEquals(
+      Seq("a", "b", "c"),
+      conf.getStringList("arrays.ofString").asScala
+    )
+    assertEquals(
+      Seq(3.14, 4.14, 5.14),
+      conf.getDoubleList("arrays.ofDouble").asScala
+    )
+    assertEquals(
+      Seq(null, null, null),
+      conf.getAnyRefList("arrays.ofNull").asScala
+    )
+    assertEquals(
+      Seq(true, false),
+      conf.getBooleanList("arrays.ofBoolean").asScala
+    )
     val listOfLists = conf.getAnyRefList("arrays.ofArray").asScala map {
       _.asInstanceOf[java.util.List[_]].asScala
     }
     assertEquals(
       Seq(Seq("a", "b", "c"), Seq("a", "b", "c"), Seq("a", "b", "c")),
-      listOfLists)
+      listOfLists
+    )
     assertEquals(3, conf.getObjectList("arrays.ofObject").asScala.length)
 
-    assertEquals(Seq("a", "b"),
-                 conf.getStringList("arrays.firstElementNotASubst").asScala)
+    assertEquals(
+      Seq("a", "b"),
+      conf.getStringList("arrays.firstElementNotASubst").asScala
+    )
 
     // plain getList should work
-    assertEquals(Seq(intValue(1), intValue(2), intValue(3)),
-                 conf.getList("arrays.ofInt").asScala)
-    assertEquals(Seq(stringValue("a"), stringValue("b"), stringValue("c")),
-                 conf.getList("arrays.ofString").asScala)
+    assertEquals(
+      Seq(intValue(1), intValue(2), intValue(3)),
+      conf.getList("arrays.ofInt").asScala
+    )
+    assertEquals(
+      Seq(stringValue("a"), stringValue("b"), stringValue("c")),
+      conf.getList("arrays.ofString").asScala
+    )
 
     // make sure floats starting with a '.' are parsed as strings (they will be converted to double on demand)
-    assertEquals(ConfigValueType.STRING,
-                 conf.getValue("floats.pointThirtyThree").valueType)
+    assertEquals(
+      ConfigValueType.STRING,
+      conf.getValue("floats.pointThirtyThree").valueType
+    )
   }
 
   @Test
@@ -798,57 +833,80 @@ class ConfigTest extends TestUtils {
 
     // should get durations
     def asNanos(secs: Int) = TimeUnit.SECONDS.toNanos(secs.toLong)
-    assertEquals(1000L,
-                 conf.getDuration("durations.second", TimeUnit.MILLISECONDS))
-    assertEquals(asNanos(1),
-                 conf.getDuration("durations.second", TimeUnit.NANOSECONDS))
     assertEquals(
       1000L,
-      conf.getDuration("durations.secondAsNumber", TimeUnit.MILLISECONDS))
+      conf.getDuration("durations.second", TimeUnit.MILLISECONDS)
+    )
     assertEquals(
       asNanos(1),
-      conf.getDuration("durations.secondAsNumber", TimeUnit.NANOSECONDS))
+      conf.getDuration("durations.second", TimeUnit.NANOSECONDS)
+    )
+    assertEquals(
+      1000L,
+      conf.getDuration("durations.secondAsNumber", TimeUnit.MILLISECONDS)
+    )
+    assertEquals(
+      asNanos(1),
+      conf.getDuration("durations.secondAsNumber", TimeUnit.NANOSECONDS)
+    )
     assertEquals(
       Seq(1000L, 2000L, 3000L, 4000L),
       conf
         .getDurationList("durations.secondsList", TimeUnit.MILLISECONDS)
-        .asScala)
+        .asScala
+    )
     assertEquals(
       Seq(asNanos(1), asNanos(2), asNanos(3), asNanos(4)),
       conf
         .getDurationList("durations.secondsList", TimeUnit.NANOSECONDS)
-        .asScala)
+        .asScala
+    )
     assertEquals(
       500L,
-      conf.getDuration("durations.halfSecond", TimeUnit.MILLISECONDS))
-    assertEquals(4878955355435272204L,
-                 conf.getDuration("durations.largeNanos", TimeUnit.NANOSECONDS))
+      conf.getDuration("durations.halfSecond", TimeUnit.MILLISECONDS)
+    )
     assertEquals(
       4878955355435272204L,
-      conf.getDuration("durations.plusLargeNanos", TimeUnit.NANOSECONDS))
+      conf.getDuration("durations.largeNanos", TimeUnit.NANOSECONDS)
+    )
+    assertEquals(
+      4878955355435272204L,
+      conf.getDuration("durations.plusLargeNanos", TimeUnit.NANOSECONDS)
+    )
     assertEquals(
       -4878955355435272204L,
-      conf.getDuration("durations.minusLargeNanos", TimeUnit.NANOSECONDS))
+      conf.getDuration("durations.minusLargeNanos", TimeUnit.NANOSECONDS)
+    )
 
     // get durations as java.time.Duration
     assertEquals(1000L, conf.getDuration("durations.second").toMillis)
     assertEquals(asNanos(1), conf.getDuration("durations.second").toNanos)
     assertEquals(1000L, conf.getDuration("durations.secondAsNumber").toMillis)
-    assertEquals(asNanos(1),
-                 conf.getDuration("durations.secondAsNumber").toNanos)
+    assertEquals(
+      asNanos(1),
+      conf.getDuration("durations.secondAsNumber").toNanos
+    )
     assertEquals(
       Seq(1000L, 2000L, 3000L, 4000L),
-      conf.getDurationList("durations.secondsList").asScala.map(_.toMillis))
+      conf.getDurationList("durations.secondsList").asScala.map(_.toMillis)
+    )
     assertEquals(
       Seq(asNanos(1), asNanos(2), asNanos(3), asNanos(4)),
-      conf.getDurationList("durations.secondsList").asScala.map(_.toNanos))
+      conf.getDurationList("durations.secondsList").asScala.map(_.toNanos)
+    )
     assertEquals(500L, conf.getDuration("durations.halfSecond").toMillis)
-    assertEquals(4878955355435272204L,
-                 conf.getDuration("durations.largeNanos").toNanos)
-    assertEquals(4878955355435272204L,
-                 conf.getDuration("durations.plusLargeNanos").toNanos)
-    assertEquals(-4878955355435272204L,
-                 conf.getDuration("durations.minusLargeNanos").toNanos)
+    assertEquals(
+      4878955355435272204L,
+      conf.getDuration("durations.largeNanos").toNanos
+    )
+    assertEquals(
+      4878955355435272204L,
+      conf.getDuration("durations.plusLargeNanos").toNanos
+    )
+    assertEquals(
+      -4878955355435272204L,
+      conf.getDuration("durations.minusLargeNanos").toNanos
+    )
 
     def assertDurationAsTimeUnit(unit: TimeUnit): Unit = {
       def ns2unit(l: Long) = unit.convert(l, NANOSECONDS)
@@ -856,24 +914,40 @@ class ConfigTest extends TestUtils {
       def s2unit(i: Int)   = unit.convert(i.toLong, SECONDS)
       assertEquals(ms2unit(1000L), conf.getDuration("durations.second", unit))
       assertEquals(s2unit(1), conf.getDuration("durations.second", unit))
-      assertEquals(ms2unit(1000L),
-                   conf.getDuration("durations.secondAsNumber", unit))
-      assertEquals(s2unit(1),
-                   conf.getDuration("durations.secondAsNumber", unit))
-      assertEquals(Seq(1000L, 2000L, 3000L, 4000L) map ms2unit,
-                   conf.getDurationList("durations.secondsList", unit).asScala)
-      assertEquals(Seq(1, 2, 3, 4) map s2unit,
-                   conf.getDurationList("durations.secondsList", unit).asScala)
-      assertEquals(ms2unit(500L),
-                   conf.getDuration("durations.halfSecond", unit))
+      assertEquals(
+        ms2unit(1000L),
+        conf.getDuration("durations.secondAsNumber", unit)
+      )
+      assertEquals(
+        s2unit(1),
+        conf.getDuration("durations.secondAsNumber", unit)
+      )
+      assertEquals(
+        Seq(1000L, 2000L, 3000L, 4000L) map ms2unit,
+        conf.getDurationList("durations.secondsList", unit).asScala
+      )
+      assertEquals(
+        Seq(1, 2, 3, 4) map s2unit,
+        conf.getDurationList("durations.secondsList", unit).asScala
+      )
+      assertEquals(
+        ms2unit(500L),
+        conf.getDuration("durations.halfSecond", unit)
+      )
       assertEquals(ms2unit(1L), conf.getDuration("durations.millis", unit))
       assertEquals(ms2unit(2L), conf.getDuration("durations.micros", unit))
-      assertEquals(ns2unit(4878955355435272204L),
-                   conf.getDuration("durations.largeNanos", unit))
-      assertEquals(ns2unit(4878955355435272204L),
-                   conf.getDuration("durations.plusLargeNanos", unit))
-      assertEquals(ns2unit(-4878955355435272204L),
-                   conf.getDuration("durations.minusLargeNanos", unit))
+      assertEquals(
+        ns2unit(4878955355435272204L),
+        conf.getDuration("durations.largeNanos", unit)
+      )
+      assertEquals(
+        ns2unit(4878955355435272204L),
+        conf.getDuration("durations.plusLargeNanos", unit)
+      )
+      assertEquals(
+        ns2unit(-4878955355435272204L),
+        conf.getDuration("durations.minusLargeNanos", unit)
+      )
     }
 
     assertDurationAsTimeUnit(NANOSECONDS)
@@ -894,17 +968,22 @@ class ConfigTest extends TestUtils {
     // should get size in bytes
     assertEquals(1024 * 1024L, conf.getBytes("memsizes.meg"))
     assertEquals(1024 * 1024L, conf.getBytes("memsizes.megAsNumber"))
-    assertEquals(Seq(1024 * 1024L, 1024 * 1024L, 1024L * 1024L),
-                 conf.getBytesList("memsizes.megsList").asScala)
+    assertEquals(
+      Seq(1024 * 1024L, 1024 * 1024L, 1024L * 1024L),
+      conf.getBytesList("memsizes.megsList").asScala
+    )
     assertEquals(512 * 1024L, conf.getBytes("memsizes.halfMeg"))
 
     // should get size as a ConfigMemorySize
     assertEquals(1024 * 1024L, conf.getMemorySize("memsizes.meg").toBytes)
-    assertEquals(1024 * 1024L,
-                 conf.getMemorySize("memsizes.megAsNumber").toBytes)
+    assertEquals(
+      1024 * 1024L,
+      conf.getMemorySize("memsizes.megAsNumber").toBytes
+    )
     assertEquals(
       Seq(1024 * 1024L, 1024 * 1024L, 1024L * 1024L),
-      conf.getMemorySizeList("memsizes.megsList").asScala.map(_.toBytes))
+      conf.getMemorySizeList("memsizes.megsList").asScala.map(_.toBytes)
+    )
     assertEquals(512 * 1024L, conf.getMemorySize("memsizes.halfMeg").toBytes)
   }
 
@@ -952,38 +1031,53 @@ class ConfigTest extends TestUtils {
 
     val o1 = conf.getValue("ints.fortyTwo").origin
     // the checkout directory would be in between this startsWith and endsWith
-    assertTrue("description starts with resource '" + o1.description + "'",
-               o1.description.startsWith("test01.conf @"))
-    assertTrue("description ends with url and line '" + o1.description + "'",
-               o1.description.endsWith(s"$path/test01.conf: 3"))
+    assertTrue(
+      "description starts with resource '" + o1.description + "'",
+      o1.description.startsWith("test01.conf @")
+    )
+    assertTrue(
+      "description ends with url and line '" + o1.description + "'",
+      o1.description.endsWith(s"$path/test01.conf: 3")
+    )
     assertEquals("test01.conf", o1.resource)
-    assertTrue("url ends with resource file",
-               o1.url.getPath.endsWith(s"$path/test01.conf"))
+    assertTrue(
+      "url ends with resource file",
+      o1.url.getPath.endsWith(s"$path/test01.conf")
+    )
     assertEquals(3, o1.lineNumber)
 
     val o2 = conf.getValue("fromJson1").origin
     // the checkout directory would be in between this startsWith and endsWith
-    assertTrue("description starts with json resource '" + o2.description + "'",
-               o2.description.startsWith("test01.json @"))
+    assertTrue(
+      "description starts with json resource '" + o2.description + "'",
+      o2.description.startsWith("test01.json @")
+    )
     assertTrue(
       "description of json resource ends with url and line '" + o2.description + "'",
-      o2.description.endsWith(s"$path/test01.json: 2"))
+      o2.description.endsWith(s"$path/test01.json: 2")
+    )
     assertEquals("test01.json", o2.resource)
-    assertTrue("url ends with json resource file",
-               o2.url.getPath.endsWith(s"$path/test01.json"))
+    assertTrue(
+      "url ends with json resource file",
+      o2.url.getPath.endsWith(s"$path/test01.json")
+    )
     assertEquals(2, o2.lineNumber)
 
     val o3 = conf.getValue("fromProps.bool").origin
     // the checkout directory would be in between this startsWith and endsWith
     assertTrue(
       "description starts with props resource '" + o3.description + "'",
-      o3.description.startsWith("test01.properties @"))
+      o3.description.startsWith("test01.properties @")
+    )
     assertTrue(
       "description of props resource ends with url '" + o3.description + "'",
-      o3.description.endsWith(s"$path/test01.properties"))
+      o3.description.endsWith(s"$path/test01.properties")
+    )
     assertEquals("test01.properties", o3.resource)
-    assertTrue("url ends with props resource file",
-               o3.url.getPath.endsWith(s"$path/test01.properties"))
+    assertTrue(
+      "url ends with props resource file",
+      o3.url.getPath.endsWith(s"$path/test01.properties")
+    )
     // we don't have line numbers for properties files
     assertEquals(-1, o3.lineNumber)
   }
@@ -1051,8 +1145,10 @@ class ConfigTest extends TestUtils {
 
     // Now check that substitutions still work
     assertEquals(42, conf.getInt("test01.ints.fortyTwoAgain"))
-    assertEquals(Seq("a", "b", "c"),
-                 conf.getStringList("test01.arrays.ofString").asScala)
+    assertEquals(
+      Seq("a", "b", "c"),
+      conf.getStringList("test01.arrays.ofString").asScala
+    )
     assertEquals(103, conf.getInt("test02.103_a"))
 
     // and system fallbacks still work
@@ -1091,7 +1187,8 @@ class ConfigTest extends TestUtils {
     assertEquals(8, conf.getInt("akka.event-handler-dispatcher.max-pool-size"))
     assertEquals(
       "round-robin",
-      conf.getString("akka.actor.deployment.\"/app/service-ping\".router"))
+      conf.getString("akka.actor.deployment.\"/app/service-ping\".router")
+    )
     assertEquals(true, conf.getBoolean("akka.stm.quick-release"))
   }
 
@@ -1119,21 +1216,27 @@ class ConfigTest extends TestUtils {
     val fromClasspath =
       ConfigFactory.parseResources(classOf[ConfigTest], "/test07.conf")
 
-    assertEquals("This is to test classpath searches.",
-                 fromClasspath.getString("test-lib.description"))
+    assertEquals(
+      "This is to test classpath searches.",
+      fromClasspath.getString("test-lib.description")
+    )
 
     // second, check that when loading from a file it falls back to classpath
     val fromFile = ConfigFactory.parseFile(resourceFile("test07.conf"))
 
-    assertEquals("This is to test classpath searches.",
-                 fromFile.getString("test-lib.description"))
+    assertEquals(
+      "This is to test classpath searches.",
+      fromFile.getString("test-lib.description")
+    )
 
     // third, check that a file: URL is the same
     val fromURL =
       ConfigFactory.parseURL(resourceFile("test07.conf").toURI.toURL)
 
-    assertEquals("This is to test classpath searches.",
-                 fromURL.getString("test-lib.description"))
+    assertEquals(
+      "This is to test classpath searches.",
+      fromURL.getString("test-lib.description")
+    )
   }
 
   @Test
@@ -1142,31 +1245,41 @@ class ConfigTest extends TestUtils {
     val fromClasspath =
       ConfigFactory.parseResources(classOf[ConfigTest], "/test08.conf")
 
-    assertEquals("This is to test classpath searches.",
-                 fromClasspath.getString("test-lib.description"))
+    assertEquals(
+      "This is to test classpath searches.",
+      fromClasspath.getString("test-lib.description")
+    )
 
     // second, check that when loading from a file it falls back to classpath
     val fromFile = ConfigFactory.parseFile(resourceFile("test08.conf"))
 
-    assertEquals("This is to test classpath searches.",
-                 fromFile.getString("test-lib.description"))
+    assertEquals(
+      "This is to test classpath searches.",
+      fromFile.getString("test-lib.description")
+    )
 
     // third, check that a file: URL is the same
     val fromURL =
       ConfigFactory.parseURL(resourceFile("test08.conf").toURI.toURL)
 
-    assertEquals("This is to test classpath searches.",
-                 fromURL.getString("test-lib.description"))
+    assertEquals(
+      "This is to test classpath searches.",
+      fromURL.getString("test-lib.description")
+    )
   }
 
   @Test
   def test09DelayedMerge(): Unit = {
     val conf =
       ConfigFactory.parseResources(classOf[ConfigTest], "/test09.conf")
-    assertEquals(classOf[ConfigDelayedMergeObject].getSimpleName,
-                 conf.root.get("a").getClass.getSimpleName)
-    assertEquals(classOf[ConfigDelayedMerge].getSimpleName,
-                 conf.root.get("b").getClass.getSimpleName)
+    assertEquals(
+      classOf[ConfigDelayedMergeObject].getSimpleName,
+      conf.root.get("a").getClass.getSimpleName
+    )
+    assertEquals(
+      classOf[ConfigDelayedMerge].getSimpleName,
+      conf.root.get("b").getClass.getSimpleName
+    )
 
     // a.c should work without resolving because no more merging is needed to compute it
     assertEquals(3, conf.getInt("a.c"))
@@ -1204,12 +1317,11 @@ class ConfigTest extends TestUtils {
            originComments <- allBooleans;
            comments       <- allBooleans;
            json           <- allBooleans)
-        yield
-          ConfigRenderOptions.defaults
-            .setFormatted(formatted)
-            .setOriginComments(originComments)
-            .setComments(comments)
-            .setJson(json)
+        yield ConfigRenderOptions.defaults
+          .setFormatted(formatted)
+          .setOriginComments(originComments)
+          .setComments(comments)
+          .setJson(json)
     }.toSeq
 
     for (i <- 1 to 10) {
@@ -1218,23 +1330,29 @@ class ConfigTest extends TestUtils {
       val conf = ConfigFactory.parseResourcesAnySyntax(
         classOf[ConfigTest],
         name,
-        ConfigParseOptions.defaults.setAllowMissing(false))
+        ConfigParseOptions.defaults.setAllowMissing(false)
+      )
       for (renderOptions <- optionsCombos) {
         val unresolvedRender = conf.root.render(renderOptions)
         val resolved         = conf.resolve()
         val resolvedRender   = resolved.root.render(renderOptions)
         val unresolvedParsed = ConfigFactory.parseString(
           unresolvedRender,
-          ConfigParseOptions.defaults)
+          ConfigParseOptions.defaults
+        )
         val resolvedParsed =
           ConfigFactory.parseString(resolvedRender, ConfigParseOptions.defaults)
         try {
-          assertEquals("unresolved options=" + renderOptions,
-                       conf.root,
-                       unresolvedParsed.root)
-          assertEquals("resolved options=" + renderOptions,
-                       resolved.root,
-                       resolvedParsed.root)
+          assertEquals(
+            "unresolved options=" + renderOptions,
+            conf.root,
+            unresolvedParsed.root
+          )
+          assertEquals(
+            "resolved options=" + renderOptions,
+            resolved.root,
+            resolvedParsed.root
+          )
         } catch {
           case e: Throwable =>
             System.err.println("UNRESOLVED diff:")
@@ -1248,11 +1366,13 @@ class ConfigTest extends TestUtils {
           val json = try {
             ConfigFactory.parseString(
               resolvedRender,
-              ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON))
+              ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON)
+            )
           } catch {
             case e: Exception =>
               System.err.println(
-                "resolvedRender is not valid json: " + resolvedRender)
+                "resolvedRender is not valid json: " + resolvedRender
+              )
               throw e
           }
         }
@@ -1263,9 +1383,11 @@ class ConfigTest extends TestUtils {
           // TODO the strings should be THE SAME not just the same length,
           // but there's a bug right now that sometimes object keys seem to
           // be re-ordered. Need to fix.
-          assertEquals("render changed, resolved options=" + renderOptions,
-                       resolvedRender.length,
-                       renderedAgain.length)
+          assertEquals(
+            "render changed, resolved options=" + renderOptions,
+            resolvedRender.length,
+            renderedAgain.length
+          )
         }
       }
     }
@@ -1279,7 +1401,8 @@ class ConfigTest extends TestUtils {
       val conf = ConfigFactory.parseResourcesAnySyntax(
         classOf[ConfigTest],
         name,
-        ConfigParseOptions.defaults.setAllowMissing(false))
+        ConfigParseOptions.defaults.setAllowMissing(false)
+      )
       val resolved = conf.resolve()
       checkSerializable(resolved)
     }
@@ -1288,11 +1411,15 @@ class ConfigTest extends TestUtils {
   @Test
   def isResolvedWorks(): Unit = {
     val resolved = ConfigFactory.parseString("foo = 1")
-    assertTrue("config with no substitutions starts as resolved",
-               resolved.isResolved)
+    assertTrue(
+      "config with no substitutions starts as resolved",
+      resolved.isResolved
+    )
     val unresolved = ConfigFactory.parseString("foo = ${a}, a=42")
-    assertFalse("config with substitutions starts as not resolved",
-                unresolved.isResolved)
+    assertFalse(
+      "config with substitutions starts as not resolved",
+      unresolved.isResolved
+    )
     val resolved2 = unresolved.resolve()
     assertTrue("after resolution, config is now resolved", resolved2.isResolved)
   }
@@ -1301,7 +1428,8 @@ class ConfigTest extends TestUtils {
   def allowUnresolvedDoesAllowUnresolvedArrayElements(): Unit = {
     val values = ConfigFactory.parseString("unknown = [someVal], known = 42")
     val unresolved = ConfigFactory.parseString(
-      "concat = [${unknown}[]], sibling = [${unknown}, ${known}]")
+      "concat = [${unknown}[]], sibling = [${unknown}, ${known}]"
+    )
     unresolved.resolve(ConfigResolveOptions.defaults.setAllowUnresolved(true))
     unresolved.withFallback(values).resolve()
     unresolved.resolveWith(values)
@@ -1310,12 +1438,17 @@ class ConfigTest extends TestUtils {
   @Test
   def allowUnresolvedDoesAllowUnresolved(): Unit = {
     val values = ConfigFactory.parseString("{ foo = 1, bar = 2, m = 3, n = 4}")
-    assertTrue("config with no substitutions starts as resolved",
-               values.isResolved)
+    assertTrue(
+      "config with no substitutions starts as resolved",
+      values.isResolved
+    )
     val unresolved = ConfigFactory.parseString(
-      "a = ${foo}, b = ${bar}, c { x = ${m}, y = ${n}, z = foo${m}bar }, alwaysResolveable=${alwaysValue}, alwaysValue=42")
-    assertFalse("config with substitutions starts as not resolved",
-                unresolved.isResolved)
+      "a = ${foo}, b = ${bar}, c { x = ${m}, y = ${n}, z = foo${m}bar }, alwaysResolveable=${alwaysValue}, alwaysValue=42"
+    )
+    assertFalse(
+      "config with substitutions starts as not resolved",
+      unresolved.isResolved
+    )
 
     // resolve() by default throws with unresolveable substs
     intercept[ConfigException.UnresolvedSubstitution] {
@@ -1328,9 +1461,11 @@ class ConfigTest extends TestUtils {
     val allowedUnresolved =
       unresolved.resolve(ConfigResolveOptions.defaults.setAllowUnresolved(true))
     // when we partially-resolve we should still resolve what we can
-    assertEquals("we resolved the resolveable",
-                 42,
-                 allowedUnresolved.getInt("alwaysResolveable"))
+    assertEquals(
+      "we resolved the resolveable",
+      42,
+      allowedUnresolved.getInt("alwaysResolveable")
+    )
     // but unresolved should still all throw
     for (k <- Seq("a", "b", "c.x", "c.y")) {
       intercept[ConfigException.NotResolved] { allowedUnresolved.getInt(k) }
@@ -1340,8 +1475,10 @@ class ConfigTest extends TestUtils {
     }
 
     // and the partially-resolved thing is not resolved
-    assertFalse("partially-resolved object is not resolved",
-                allowedUnresolved.isResolved)
+    assertFalse(
+      "partially-resolved object is not resolved",
+      allowedUnresolved.isResolved
+    )
 
     // scope "val resolved"
     {
@@ -1379,10 +1516,11 @@ class ConfigTest extends TestUtils {
    * A resolver that replaces paths that start with a particular prefix with
    * strings where that prefix has been replaced with another prefix.
    */
-  class DummyResolver(prefix: String,
-                      newPrefix: String,
-                      fallback: ConfigResolver)
-      extends ConfigResolver {
+  class DummyResolver(
+      prefix: String,
+      newPrefix: String,
+      fallback: ConfigResolver
+  ) extends ConfigResolver {
 
     override def lookup(path: String): ConfigValue = {
       if (path.startsWith(prefix))
@@ -1402,38 +1540,50 @@ class ConfigTest extends TestUtils {
 
   }
 
-  private def runFallbackTest(expected: String,
-                              source: String,
-                              allowUnresolved: Boolean,
-                              resolvers: ConfigResolver*) = {
+  private def runFallbackTest(
+      expected: String,
+      source: String,
+      allowUnresolved: Boolean,
+      resolvers: ConfigResolver*
+  ) = {
     val unresolved = ConfigFactory.parseString(source)
     var options =
       ConfigResolveOptions.defaults.setAllowUnresolved(allowUnresolved)
     for (resolver <- resolvers)
       options = options.appendResolver(resolver)
     val obj = unresolved.resolve(options).root
-    assertEquals(expected,
-                 obj.render(ConfigRenderOptions.concise.setJson(false)))
+    assertEquals(
+      expected,
+      obj.render(ConfigRenderOptions.concise.setJson(false))
+    )
   }
 
   @Test
   def resolveFallback(): Unit = {
-    runFallbackTest("x=a,y=b",
-                    "x=${a},y=${b}",
-                    false,
-                    new DummyResolver("", "", null))
-    runFallbackTest("x=\"a.b.c\",y=\"a.b.d\"",
-                    "x=${a.b.c},y=${a.b.d}",
-                    false,
-                    new DummyResolver("", "", null))
-    runFallbackTest("x=${a.b.c},y=${a.b.d}",
-                    "x=${a.b.c},y=${a.b.d}",
-                    true,
-                    new DummyResolver("x.", "", null))
-    runFallbackTest("x=${a.b.c},y=\"e.f\"",
-                    "x=${a.b.c},y=${d.e.f}",
-                    true,
-                    new DummyResolver("d.", "", null))
+    runFallbackTest(
+      "x=a,y=b",
+      "x=${a},y=${b}",
+      false,
+      new DummyResolver("", "", null)
+    )
+    runFallbackTest(
+      "x=\"a.b.c\",y=\"a.b.d\"",
+      "x=${a.b.c},y=${a.b.d}",
+      false,
+      new DummyResolver("", "", null)
+    )
+    runFallbackTest(
+      "x=${a.b.c},y=${a.b.d}",
+      "x=${a.b.c},y=${a.b.d}",
+      true,
+      new DummyResolver("x.", "", null)
+    )
+    runFallbackTest(
+      "x=${a.b.c},y=\"e.f\"",
+      "x=${a.b.c},y=${d.e.f}",
+      true,
+      new DummyResolver("d.", "", null)
+    )
     runFallbackTest(
       "w=\"Y.c.d\",x=${a},y=\"X.b\",z=\"Y.c\"",
       "x=${a},y=${a.b},z=${a.b.c},w=${a.b.c.d}",
@@ -1442,15 +1592,19 @@ class ConfigTest extends TestUtils {
       new DummyResolver("a.", "X.", null)
     )
 
-    runFallbackTest("x=${a.b.c}",
-                    "x=${a.b.c}",
-                    true,
-                    new DummyResolver("x.", "", null))
+    runFallbackTest(
+      "x=${a.b.c}",
+      "x=${a.b.c}",
+      true,
+      new DummyResolver("x.", "", null)
+    )
     val e = intercept[ConfigException.UnresolvedSubstitution] {
-      runFallbackTest("x=${a.b.c}",
-                      "x=${a.b.c}",
-                      false,
-                      new DummyResolver("x.", "", null))
+      runFallbackTest(
+        "x=${a.b.c}",
+        "x=${a.b.c}",
+        false,
+        new DummyResolver("x.", "", null)
+      )
     }
     assertTrue(e.getMessage.contains("${a.b.c}"))
   }

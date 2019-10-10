@@ -51,10 +51,12 @@ object Parseable {
     if (value.isInstanceOf[AbstractConfigObject])
       value.asInstanceOf[AbstractConfigObject]
     else
-      throw new ConfigException.WrongType(value.origin,
-                                          "",
-                                          "object at file root",
-                                          value.valueType.name)
+      throw new ConfigException.WrongType(
+        value.origin,
+        "",
+        "object at file root",
+        value.valueType.name
+      )
   private def readerFromStream(input: InputStream): Reader =
     readerFromStream(input, "UTF-8")
   private def readerFromStream(input: InputStream, encoding: String): Reader =
@@ -68,7 +70,8 @@ object Parseable {
       case e: UnsupportedEncodingException =>
         throw new ConfigException.BugOrBroken(
           "Java runtime does not support UTF-8",
-          e)
+          e
+        )
     }
   private def doNotClose(input: Reader) = new FilterReader(input) {
     override def close(): Unit = {
@@ -107,8 +110,8 @@ object Parseable {
   final private[impl] class ParseableNotFound private[impl] (
       val what: String,
       val message: String,
-      options: ConfigParseOptions)
-      extends Parseable(options) {
+      options: ConfigParseOptions
+  ) extends Parseable(options) {
     postConstruct(options)
     @throws[IOException]
     override protected def reader() = throw new FileNotFoundException(message)
@@ -116,15 +119,17 @@ object Parseable {
       SimpleConfigOrigin.newSimple(what)
   }
 
-  def newNotFound(whatNotFound: String,
-                  message: String,
-                  options: ConfigParseOptions) =
+  def newNotFound(
+      whatNotFound: String,
+      message: String,
+      options: ConfigParseOptions
+  ) =
     new ParseableNotFound(whatNotFound, message, options)
 
   final private[impl] class ParseableReader private[impl] (
       _reader: Reader,
-      options: ConfigParseOptions)
-      extends Parseable(options) {
+      options: ConfigParseOptions
+  ) extends Parseable(options) {
     postConstruct(options)
     override protected def reader(): Reader = {
       if (ConfigImpl.traceLoadsEnabled)
@@ -141,8 +146,8 @@ object Parseable {
 
   final private[impl] class ParseableString private[impl] (
       val input: String,
-      options: ConfigParseOptions)
-      extends Parseable(options) {
+      options: ConfigParseOptions
+  ) extends Parseable(options) {
     postConstruct(options)
     override protected def reader(): Reader = {
       if (ConfigImpl.traceLoadsEnabled)
@@ -186,7 +191,8 @@ object Parseable {
     @throws[IOException]
     override protected def reader =
       throw new ConfigException.BugOrBroken(
-        "reader() without options should not be called on ParseableURL")
+        "reader() without options should not be called on ParseableURL"
+      )
     @throws[IOException]
     override protected def reader(options: ConfigParseOptions): Reader =
       try {
@@ -223,7 +229,8 @@ object Parseable {
         case e: IOException =>
           throw new ConfigException.BugOrBroken(
             "Cannot load config from URL: " + input.toExternalForm,
-            e)
+            e
+          )
       }
     override private[impl] def guessSyntax: ConfigSyntax =
       ConfigImplUtil.syntaxFromExtension(input.getPath)
@@ -257,8 +264,8 @@ object Parseable {
   }
   final private[impl] class ParseableFile private[impl] (
       val input: File,
-      options: ConfigParseOptions)
-      extends Parseable(options) {
+      options: ConfigParseOptions
+  ) extends Parseable(options) {
     postConstruct(options)
     @throws[IOException]
     override protected def reader(): Reader = {
@@ -295,18 +302,20 @@ object Parseable {
       input: URL,
       options: ConfigParseOptions,
       val resource: String,
-      val relativizer: Relativizer)
-      extends ParseableURL(input, options) {
+      val relativizer: Relativizer
+  ) extends ParseableURL(input, options) {
     postConstruct(options)
     override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newResource(resource, input)
     override private[impl] def relativeTo(filename: String) =
       relativizer.relativeTo(filename)
   }
-  private def newResourceURL(input: URL,
-                             options: ConfigParseOptions,
-                             resource: String,
-                             relativizer: Relativizer) =
+  private def newResourceURL(
+      input: URL,
+      options: ConfigParseOptions,
+      resource: String,
+      relativizer: Relativizer
+  ) =
     new ParseableResourceURL(input, options, resource, relativizer)
   private object ParseableResources {
     private[impl] def parent(resource: String) = { // the "resource" is not supposed to begin with a "/"
@@ -319,27 +328,31 @@ object Parseable {
   }
   final private[impl] class ParseableResources private[impl] (
       val resource: String,
-      options: ConfigParseOptions)
-      extends Parseable(options)
+      options: ConfigParseOptions
+  ) extends Parseable(options)
       with Relativizer {
     postConstruct(options)
     @throws[IOException]
     override protected def reader =
       throw new ConfigException.BugOrBroken(
-        "reader() should not be called on resources")
+        "reader() should not be called on resources"
+      )
     @throws[IOException]
     override protected def rawParseValue(
         origin: ConfigOrigin,
-        finalOptions: ConfigParseOptions): AbstractConfigObject = {
+        finalOptions: ConfigParseOptions
+    ): AbstractConfigObject = {
       val loader = finalOptions.getClassLoader
       if (loader == null)
         throw new ConfigException.BugOrBroken(
-          "null class loader; pass in a class loader or use Thread.currentThread().setContextClassLoader()")
+          "null class loader; pass in a class loader or use Thread.currentThread().setContextClassLoader()"
+        )
       val e = loader.getResources(resource)
       if (!e.hasMoreElements) {
         if (ConfigImpl.traceLoadsEnabled)
           trace(
-            "Loading config from class loader " + loader + " but there were no resources called " + resource)
+            "Loading config from class loader " + loader + " but there were no resources called " + resource
+          )
         throw new IOException("resource not found on classpath: " + resource)
       }
       var merged: AbstractConfigObject = SimpleConfigObject.empty(origin)
@@ -347,7 +360,8 @@ object Parseable {
         val url = e.nextElement
         if (ConfigImpl.traceLoadsEnabled)
           trace(
-            "Loading config from resource '" + resource + "' URL " + url.toExternalForm + " from class loader " + loader)
+            "Loading config from resource '" + resource + "' URL " + url.toExternalForm + " from class loader " + loader
+          )
         val element =
           newResourceURL(url, finalOptions, resource, this)
         val v = element.parseValue()
@@ -370,19 +384,25 @@ object Parseable {
         if (parent == null)
           newResources(sibling, options.setOriginDescription(null))
         else
-          newResources(parent + "/" + sibling,
-                       options.setOriginDescription(null))
+          newResources(
+            parent + "/" + sibling,
+            options.setOriginDescription(null)
+          )
       }
     override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newResource(resource)
     override def toString: String =
       getClass.getSimpleName + "(" + resource + ")"
   }
-  def newResources(klass: Class[_],
-                   resource: String,
-                   options: ConfigParseOptions): Parseable =
-    newResources(convertResourceName(klass, resource),
-                 options.setClassLoader(klass.getClassLoader))
+  def newResources(
+      klass: Class[_],
+      resource: String,
+      options: ConfigParseOptions
+  ): Parseable =
+    newResources(
+      convertResourceName(klass, resource),
+      options.setClassLoader(klass.getClassLoader)
+    )
   // this function is supposed to emulate the difference
   // between Class.getResource and ClassLoader.getResource
   // (unfortunately there doesn't seem to be public API for it).
@@ -406,21 +426,24 @@ object Parseable {
   def newResources(resource: String, options: ConfigParseOptions): Parseable = {
     if (options.getClassLoader == null)
       throw new ConfigException.BugOrBroken(
-        "null class loader; pass in a class loader or use Thread.currentThread().setContextClassLoader()")
+        "null class loader; pass in a class loader or use Thread.currentThread().setContextClassLoader()"
+      )
     new ParseableResources(resource, options)
   }
   final private[impl] class ParseableProperties private[impl] (
       val props: ju.Properties,
-      options: ConfigParseOptions)
-      extends Parseable(options) {
+      options: ConfigParseOptions
+  ) extends Parseable(options) {
     postConstruct(options)
     @throws[IOException]
     override protected def reader =
       throw new ConfigException.BugOrBroken(
-        "reader() should not be called on props")
+        "reader() should not be called on props"
+      )
     override protected def rawParseValue(
         origin: ConfigOrigin,
-        finalOptions: ConfigParseOptions): AbstractConfigObject = {
+        finalOptions: ConfigParseOptions
+    ): AbstractConfigObject = {
       if (ConfigImpl.traceLoadsEnabled)
         trace("Loading config from properties " + props)
       PropertiesParser.fromProperties(origin, props)
@@ -436,8 +459,8 @@ object Parseable {
 }
 
 abstract class Parseable protected (
-    private var initialOptions: ConfigParseOptions)
-    extends ConfigParseable {
+    private var initialOptions: ConfigParseOptions
+) extends ConfigParseable {
   private var includeContext: ConfigIncludeContext = null
   private var initialOrigin: ConfigOrigin          = null
   def this() = this(null)
@@ -488,7 +511,8 @@ abstract class Parseable protected (
     if (stack.size >= Parseable.MAX_INCLUDE_DEPTH)
       throw new ConfigException.Parse(
         initialOrigin,
-        "include statements nested more than " + Parseable.MAX_INCLUDE_DEPTH + " times, you probably have a cycle in your includes. Trace: " + stack)
+        "include statements nested more than " + Parseable.MAX_INCLUDE_DEPTH + " times, you probably have a cycle in your includes. Trace: " + stack
+      )
     stack.addFirst(this)
     try Parseable.forceParsedToObject(parseValue(baseOptions))
     finally {
@@ -496,8 +520,9 @@ abstract class Parseable protected (
       if (stack.isEmpty) Parseable.parseStack.remove()
     }
   }
-  final private[impl] def parseValue(baseOptions: ConfigParseOptions)
-    : AbstractConfigValue = { // note that we are NOT using our "initialOptions",
+  final private[impl] def parseValue(
+      baseOptions: ConfigParseOptions
+  ): AbstractConfigValue = { // note that we are NOT using our "initialOptions",
     // but using the ones from the passed-in options. The idea is that
     // callers can get our original options and then parse with different
     // ones if they want.
@@ -509,25 +534,32 @@ abstract class Parseable protected (
       else initialOrigin
     parseValue(origin, options)
   }
-  final private def parseValue(origin: ConfigOrigin,
-                               finalOptions: ConfigParseOptions) =
+  final private def parseValue(
+      origin: ConfigOrigin,
+      finalOptions: ConfigParseOptions
+  ) =
     try rawParseValue(origin, finalOptions)
     catch {
       case e: IOException =>
         if (finalOptions.getAllowMissing) {
           Parseable.trace(
-            e.getMessage + ". Allowing Missing File, this can be turned off by setting" + " ConfigParseOptions.allowMissing = false")
+            e.getMessage + ". Allowing Missing File, this can be turned off by setting" + " ConfigParseOptions.allowMissing = false"
+          )
           SimpleConfigObject.emptyMissing(origin)
         } else {
           Parseable.trace(
-            "exception loading " + origin.description + ": " + e.getClass.getName + ": " + e.getMessage)
-          throw new ConfigException.IO(origin,
-                                       e.getClass.getName + ": " + e.getMessage,
-                                       e)
+            "exception loading " + origin.description + ": " + e.getClass.getName + ": " + e.getMessage
+          )
+          throw new ConfigException.IO(
+            origin,
+            e.getClass.getName + ": " + e.getMessage,
+            e
+          )
         }
     }
   final private[impl] def parseDocument(
-      baseOptions: ConfigParseOptions): ConfigDocument = {
+      baseOptions: ConfigParseOptions
+  ): ConfigDocument = {
     val options = fixupOptions(baseOptions)
     var origin =
       if (options.getOriginDescription != null)
@@ -537,7 +569,8 @@ abstract class Parseable protected (
   }
   final private def parseDocument(
       origin: ConfigOrigin,
-      finalOptions: ConfigParseOptions): ConfigDocument =
+      finalOptions: ConfigParseOptions
+  ): ConfigDocument =
     try rawParseDocument(origin, finalOptions)
     catch {
       case e: IOException =>
@@ -545,15 +578,21 @@ abstract class Parseable protected (
           val children =
             new ju.ArrayList[AbstractConfigNode]
           children.add(
-            new ConfigNodeObject(new ju.ArrayList[AbstractConfigNode]))
-          new SimpleConfigDocument(new ConfigNodeRoot(children, origin),
-                                   finalOptions)
+            new ConfigNodeObject(new ju.ArrayList[AbstractConfigNode])
+          )
+          new SimpleConfigDocument(
+            new ConfigNodeRoot(children, origin),
+            finalOptions
+          )
         } else {
           Parseable.trace(
-            "exception loading " + origin.description + ": " + e.getClass.getName + ": " + e.getMessage)
-          throw new ConfigException.IO(origin,
-                                       e.getClass.getName + ": " + e.getMessage,
-                                       e)
+            "exception loading " + origin.description + ": " + e.getClass.getName + ": " + e.getMessage
+          )
+          throw new ConfigException.IO(
+            origin,
+            e.getClass.getName + ": " + e.getMessage,
+            e
+          )
         }
     }
   // this is parseValue without post-processing the IOException or handling
@@ -561,7 +600,8 @@ abstract class Parseable protected (
   @throws[IOException]
   protected def rawParseValue(
       origin: ConfigOrigin,
-      finalOptions: ConfigParseOptions): AbstractConfigValue = {
+      finalOptions: ConfigParseOptions
+  ): AbstractConfigValue = {
     val readerVal: Reader = reader(finalOptions)
     // after reader() we will have loaded the Content-Type.
     val contentTypeVal: ConfigSyntax = contentType
@@ -569,16 +609,19 @@ abstract class Parseable protected (
       if (contentType != null) {
         if (ConfigImpl.traceLoadsEnabled && finalOptions.getSyntax != null)
           Parseable.trace(
-            "Overriding syntax " + finalOptions.getSyntax + " with Content-Type which specified " + contentType)
+            "Overriding syntax " + finalOptions.getSyntax + " with Content-Type which specified " + contentType
+          )
         finalOptions.setSyntax(contentTypeVal)
       } else finalOptions
     try rawParseValue(readerVal, origin, optionsWithContentType)
     finally readerVal.close()
   }
   @throws[IOException]
-  private def rawParseValue(reader: Reader,
-                            origin: ConfigOrigin,
-                            finalOptions: ConfigParseOptions) =
+  private def rawParseValue(
+      reader: Reader,
+      origin: ConfigOrigin,
+      finalOptions: ConfigParseOptions
+  ) =
     if (finalOptions.getSyntax eq ConfigSyntax.PROPERTIES)
       PropertiesParser.parse(reader, origin)
     else {
@@ -592,28 +635,33 @@ abstract class Parseable protected (
   @throws[IOException]
   protected def rawParseDocument(
       origin: ConfigOrigin,
-      finalOptions: ConfigParseOptions): ConfigDocument = {
+      finalOptions: ConfigParseOptions
+  ): ConfigDocument = {
     val readerVal: Reader            = reader(finalOptions)
     val contentTypeVal: ConfigSyntax = contentType
     val optionsWithContentType =
       if (contentType != null) {
         if (ConfigImpl.traceLoadsEnabled && finalOptions.getSyntax != null)
           Parseable.trace(
-            "Overriding syntax " + finalOptions.getSyntax + " with Content-Type which specified " + contentType)
+            "Overriding syntax " + finalOptions.getSyntax + " with Content-Type which specified " + contentType
+          )
         finalOptions.setSyntax(contentTypeVal)
       } else finalOptions
     try rawParseDocument(readerVal, origin, optionsWithContentType)
     finally readerVal.close()
   }
   @throws[IOException]
-  private def rawParseDocument(reader: Reader,
-                               origin: ConfigOrigin,
-                               finalOptions: ConfigParseOptions) = {
+  private def rawParseDocument(
+      reader: Reader,
+      origin: ConfigOrigin,
+      finalOptions: ConfigParseOptions
+  ) = {
     val tokens =
       Tokenizer.tokenize(origin, reader, finalOptions.getSyntax)
     new SimpleConfigDocument(
       ConfigDocumentParser.parse(tokens, origin, finalOptions),
-      finalOptions)
+      finalOptions
+    )
   }
 
   def parse(): ConfigObject =

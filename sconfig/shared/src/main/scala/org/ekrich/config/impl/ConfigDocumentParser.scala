@@ -10,9 +10,11 @@ import scala.collection.mutable.ArrayStack
 import org.ekrich.config._
 
 object ConfigDocumentParser {
-  private[impl] def parse(tokens: ju.Iterator[Token],
-                          origin: ConfigOrigin,
-                          options: ConfigParseOptions): ConfigNodeRoot = {
+  private[impl] def parse(
+      tokens: ju.Iterator[Token],
+      origin: ConfigOrigin,
+      options: ConfigParseOptions
+  ): ConfigNodeRoot = {
     val syntax =
       if (options.getSyntax == null) ConfigSyntax.CONF else options.getSyntax
     val context =
@@ -22,7 +24,8 @@ object ConfigDocumentParser {
   private[impl] def parseValue(
       tokens: ju.Iterator[Token],
       origin: ConfigOrigin,
-      options: ConfigParseOptions): AbstractConfigNodeValue = {
+      options: ConfigParseOptions
+  ): AbstractConfigNodeValue = {
     val syntax =
       if (options.getSyntax == null) ConfigSyntax.CONF else options.getSyntax
     val context =
@@ -44,9 +47,11 @@ object ConfigDocumentParser {
       true
     }
   }
-  final private class ParseContext(val flavor: ConfigSyntax,
-                                   val baseOrigin: ConfigOrigin,
-                                   val tokens: ju.Iterator[Token]) {
+  final private class ParseContext(
+      val flavor: ConfigSyntax,
+      val baseOrigin: ConfigOrigin,
+      val tokens: ju.Iterator[Token]
+  ) {
 
     private var lineNumber   = 1
     final private var buffer = new ArrayStack[Token]
@@ -66,13 +71,15 @@ object ConfigDocumentParser {
               .isUnquotedWhitespace(t))
           throw parseError(
             "Token not allowed in valid JSON: '" + Tokens
-              .getUnquotedText(t) + "'")
+              .getUnquotedText(t) + "'"
+          )
         else if (Tokens.isSubstitution(t))
           throw parseError("Substitutions (${} syntax) not allowed in JSON")
       t
     }
     private def nextTokenCollectingWhitespace(
-        nodes: ju.Collection[AbstractConfigNode]): Token = {
+        nodes: ju.Collection[AbstractConfigNode]
+    ): Token = {
       var retToken: Token = null // added for Scala
 
       breakable {
@@ -106,7 +113,8 @@ object ConfigDocumentParser {
     // either a newline or a comma. The iterator
     // is left just after the comma or the newline.
     private def checkElementSeparator(
-        nodes: ju.Collection[AbstractConfigNode]): Boolean = {
+        nodes: ju.Collection[AbstractConfigNode]
+    ): Boolean = {
       if (flavor eq ConfigSyntax.JSON) {
         val t = nextTokenCollectingWhitespace(nodes)
         if (t eq Tokens.COMMA) {
@@ -151,7 +159,8 @@ object ConfigDocumentParser {
     }
     // parse a concatenation. If there is no concatenation, return the next value
     private def consolidateValues(
-        nodes: ju.Collection[AbstractConfigNode]): AbstractConfigNodeValue = {
+        nodes: ju.Collection[AbstractConfigNode]
+    ): AbstractConfigNodeValue = {
       // this trick is not done in JSON
       if (flavor eq ConfigSyntax.JSON) return null
       // create only if we have value tokens
@@ -232,15 +241,19 @@ object ConfigDocumentParser {
     private def parseError(message: String): ConfigException =
       parseError(message, null)
     private def parseError(message: String, cause: Throwable): ConfigException =
-      new ConfigException.Parse(baseOrigin.withLineNumber(lineNumber),
-                                message,
-                                cause)
+      new ConfigException.Parse(
+        baseOrigin.withLineNumber(lineNumber),
+        message,
+        cause
+      )
     private def addQuoteSuggestion(badToken: String, message: String): String =
       addQuoteSuggestion(null, equalsCount > 0, badToken, message)
-    private def addQuoteSuggestion(lastPath: Path,
-                                   insideEquals: Boolean,
-                                   badToken: String,
-                                   message: String): String = {
+    private def addQuoteSuggestion(
+        lastPath: Path,
+        insideEquals: Boolean,
+        badToken: String,
+        message: String
+    ): String = {
       val previousFieldName =
         if (lastPath != null) lastPath.render else null
       var part: String = null
@@ -265,11 +278,15 @@ object ConfigDocumentParser {
       else if (t eq Tokens.OPEN_SQUARE) v = parseArray
       else
         throw parseError(
-          addQuoteSuggestion(t.toString,
-                             "Expecting a value but got wrong token: " + t))
+          addQuoteSuggestion(
+            t.toString,
+            "Expecting a value but got wrong token: " + t
+          )
+        )
       if (equalsCount != startingEqualsCount)
         throw new ConfigException.BugOrBroken(
-          "Bug in config parser: unbalanced equals count")
+          "Bug in config parser: unbalanced equals count"
+        )
       v
     }
     private def parseKey(token: Token) =
@@ -277,10 +294,12 @@ object ConfigDocumentParser {
         if (Tokens.isValueWithType(token, ConfigValueType.STRING))
           PathParser.parsePathNodeExpression(
             ju.Collections.singletonList(token).iterator,
-            baseOrigin.withLineNumber(lineNumber))
+            baseOrigin.withLineNumber(lineNumber)
+          )
         else
           throw parseError(
-            "Expecting close brace } or a field name here, got " + token)
+            "Expecting close brace } or a field name here, got " + token
+          )
       else {
         val expression = new ju.ArrayList[Token]
         var t          = token
@@ -294,7 +313,8 @@ object ConfigDocumentParser {
 
         PathParser.parsePathNodeExpression(
           expression.iterator,
-          baseOrigin.withLineNumber(lineNumber))
+          baseOrigin.withLineNumber(lineNumber)
+        )
       }
     private def isKeyValueSeparatorToken(t: Token) =
       if (flavor eq ConfigSyntax.JSON) t eq Tokens.COLON
@@ -329,8 +349,10 @@ object ConfigDocumentParser {
         parseIncludeResource(children, false)
       }
     }
-    private def parseIncludeResource(children: ju.ArrayList[AbstractConfigNode],
-                                     isRequired: Boolean): ConfigNodeInclude = {
+    private def parseIncludeResource(
+        children: ju.ArrayList[AbstractConfigNode],
+        isRequired: Boolean
+    ): ConfigNodeInclude = {
       var t = nextTokenCollectingWhitespace(children)
       // we either have a quoted string or the "file()" syntax
       if (Tokens.isUnquotedText(t)) {
@@ -349,7 +371,8 @@ object ConfigDocumentParser {
           prefix = "classpath("
         } else
           throw parseError(
-            "expecting include parameter to be quoted filename, file(), classpath(), or url(). No spaces are allowed before the open paren. Not expecting: " + t)
+            "expecting include parameter to be quoted filename, file(), classpath(), or url(). No spaces are allowed before the open paren. Not expecting: " + t
+          )
         val r = kindText.replaceFirst("[^(]*\\(", "")
         if (r.length > 0) putBack(Tokens.newUnquotedText(t.origin, r))
         children.add(new ConfigNodeSingleToken(t))
@@ -358,7 +381,8 @@ object ConfigDocumentParser {
         // quoted string
         if (!Tokens.isValueWithType(t, ConfigValueType.STRING))
           throw parseError(
-            "expecting include " + prefix + ") parameter to be a quoted string, rather than: " + t)
+            "expecting include " + prefix + ") parameter to be a quoted string, rather than: " + t
+          )
         children.add(new ConfigNodeSimpleValue(t))
         // skip space after string, inside parens
         t = nextTokenCollectingWhitespace(children)
@@ -374,7 +398,8 @@ object ConfigDocumentParser {
         new ConfigNodeInclude(children, ConfigIncludeKind.HEURISTIC, isRequired)
       } else
         throw parseError(
-          "include keyword is not followed by a quoted string, but by: " + t)
+          "include keyword is not followed by a quoted string, but by: " + t
+        )
     }
     private def parseObject(hadOpenCurly: Boolean): ConfigNodeComplexValue = {
       // invoked just after the OPEN_CURLY (or START, if !hadOpenCurly)
@@ -395,12 +420,16 @@ object ConfigDocumentParser {
               throw parseError(
                 addQuoteSuggestion(
                   t.toString,
-                  "expecting a field name after a comma, got a close brace } instead"))
+                  "expecting a field name after a comma, got a close brace } instead"
+                )
+              )
             else if (!hadOpenCurly)
               throw parseError(
                 addQuoteSuggestion(
                   t.toString,
-                  "unbalanced close brace '}' with no open brace"))
+                  "unbalanced close brace '}' with no open brace"
+                )
+              )
             objectNodes.add(new ConfigNodeSingleToken(Tokens.CLOSE_CURLY))
             break // break
           } else if ((t eq Tokens.END) && !hadOpenCurly) {
@@ -429,7 +458,9 @@ object ConfigDocumentParser {
                 throw parseError(
                   addQuoteSuggestion(
                     afterKey.toString,
-                    "Key '" + path.render + "' may not be followed by token: " + afterKey))
+                    "Key '" + path.render + "' may not be followed by token: " + afterKey
+                  )
+                )
               keyValueNodes.add(new ConfigNodeSingleToken(afterKey))
               if (afterKey eq Tokens.EQUALS) {
                 insideEquals = true
@@ -454,13 +485,15 @@ object ConfigDocumentParser {
                 // could become an object).
                 if (flavor eq ConfigSyntax.JSON)
                   throw parseError(
-                    "JSON does not allow duplicate fields: '" + key + "' was already seen")
+                    "JSON does not allow duplicate fields: '" + key + "' was already seen"
+                  )
               }
               keys.put(key, true)
             } else {
               if (flavor eq ConfigSyntax.JSON)
                 throw new ConfigException.BugOrBroken(
-                  "somehow got multi-element path in JSON mode")
+                  "somehow got multi-element path in JSON mode"
+                )
               keys.put(key, true)
             }
             afterComma = false
@@ -478,7 +511,9 @@ object ConfigDocumentParser {
                     lastPath,
                     lastInsideEquals,
                     t.toString,
-                    "unbalanced close brace '}' with no open brace"))
+                    "unbalanced close brace '}' with no open brace"
+                  )
+                )
               objectNodes.add(new ConfigNodeSingleToken(t))
               break // break
             } else if (hadOpenCurly) {
@@ -487,7 +522,9 @@ object ConfigDocumentParser {
                   lastPath,
                   lastInsideEquals,
                   t.toString,
-                  "Expecting close brace } or a comma, got " + t))
+                  "Expecting close brace } or a comma, got " + t
+                )
+              )
             } else {
               if (t eq Tokens.END) {
                 putBack(t)
@@ -498,7 +535,9 @@ object ConfigDocumentParser {
                     lastPath,
                     lastInsideEquals,
                     t.toString,
-                    "Expecting end of input or a comma, got " + t))
+                    "Expecting end of input or a comma, got " + t
+                  )
+                )
             }
           }
         }
@@ -526,7 +565,8 @@ object ConfigDocumentParser {
           children.add(nextValue)
         } else
           throw parseError(
-            "List should have ] or a first element after the open [, instead had token: " + t + " (if you want " + t + " to be part of a string value, then double-quote it)")
+            "List should have ] or a first element after the open [, instead had token: " + t + " (if you want " + t + " to be part of a string value, then double-quote it)"
+          )
       }
       // now remaining elements
       breakable {
@@ -543,7 +583,8 @@ object ConfigDocumentParser {
             } else
               throw parseError(
                 "List should have ended with ] or had a comma, instead had token: " +
-                  t + " (if you want " + t + " to be part of a string value, then double-quote it)")
+                  t + " (if you want " + t + " to be part of a string value, then double-quote it)"
+              )
           }
           // now just after a comma
           nextValue = consolidateValues(children)
@@ -561,7 +602,8 @@ object ConfigDocumentParser {
               throw parseError(
                 "List should have had new element after a comma, instead had token: " +
                   t + " (if you want the comma or " +
-                  t + " to be part of a string value, then double-quote it)")
+                  t + " to be part of a string value, then double-quote it)"
+              )
           }
         }
       }
@@ -575,7 +617,8 @@ object ConfigDocumentParser {
         // OK
       } else
         throw new ConfigException.BugOrBroken(
-          "token stream did not begin with START, had " + t)
+          "token stream did not begin with START, had " + t
+        )
       t = nextTokenCollectingWhitespace(children)
       var result: AbstractConfigNode = null
       var missingCurly               = false
@@ -585,7 +628,8 @@ object ConfigDocumentParser {
         if (t eq Tokens.END) throw parseError("Empty document")
         else
           throw parseError(
-            "Document must have an object or array at root, unexpected token: " + t)
+            "Document must have an object or array at root, unexpected token: " + t
+          )
       else { // the root object can omit the surrounding braces.
         // this token should be the first field's key, or part
         // of it, so put it back.
@@ -604,12 +648,15 @@ object ConfigDocumentParser {
         if (missingCurly) { // If there were no braces, the entire document should be treated as a single object
           new ConfigNodeRoot(
             ju.Collections.singletonList(
-              new ConfigNodeObject(children).asInstanceOf[AbstractConfigNode]),
-            baseOrigin)
+              new ConfigNodeObject(children).asInstanceOf[AbstractConfigNode]
+            ),
+            baseOrigin
+          )
         } else new ConfigNodeRoot(children, baseOrigin)
       else
         throw parseError(
-          "Document has trailing tokens after first object or array: " + t)
+          "Document has trailing tokens after first object or array: " + t
+        )
     }
     // Parse a given input stream into a single value node. Used when doing a replace inside a ConfigDocument.
     private[impl] def parseSingleValue: AbstractConfigNodeValue = {
@@ -618,13 +665,15 @@ object ConfigDocumentParser {
         // OK
       } else {
         throw new ConfigException.BugOrBroken(
-          "token stream did not begin with START, had " + t)
+          "token stream did not begin with START, had " + t
+        )
       }
       t = nextToken
       if (Tokens.isIgnoredWhitespace(t) || Tokens.isNewline(t) || ParseContext
             .isUnquotedWhitespace(t) || Tokens.isComment(t))
         throw parseError(
-          "The value from withValueText cannot have leading or trailing newlines, whitespace, or comments")
+          "The value from withValueText cannot have leading or trailing newlines, whitespace, or comments"
+        )
       if (t eq Tokens.END) throw parseError("Empty value")
       if (flavor eq ConfigSyntax.JSON) {
         val node = parseValue(t)
@@ -632,7 +681,8 @@ object ConfigDocumentParser {
         if (t eq Tokens.END) return node
         else
           throw parseError(
-            "Parsing JSON and the value set in withValueText was either a concatenation or " + "had trailing whitespace, newlines, or comments")
+            "Parsing JSON and the value set in withValueText was either a concatenation or " + "had trailing whitespace, newlines, or comments"
+          )
       } else {
         putBack(t)
         val nodes = new ju.ArrayList[AbstractConfigNode]
@@ -641,7 +691,8 @@ object ConfigDocumentParser {
         if (t eq Tokens.END) return node
         else
           throw parseError(
-            "The value from withValueText cannot have leading or trailing newlines, whitespace, or comments")
+            "The value from withValueText cannot have leading or trailing newlines, whitespace, or comments"
+          )
       }
     }
   }

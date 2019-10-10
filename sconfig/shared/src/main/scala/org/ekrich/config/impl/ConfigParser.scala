@@ -18,18 +18,22 @@ object ConfigParser {
       document: ConfigNodeRoot,
       origin: ConfigOrigin,
       options: ConfigParseOptions,
-      includeContext: ConfigIncludeContext): AbstractConfigValue = {
-    val context = new ParseContext(options.getSyntax,
-                                   origin,
-                                   document,
-                                   SimpleIncluder.makeFull(options.getIncluder),
-                                   includeContext)
+      includeContext: ConfigIncludeContext
+  ): AbstractConfigValue = {
+    val context = new ParseContext(
+      options.getSyntax,
+      origin,
+      document,
+      SimpleIncluder.makeFull(options.getIncluder),
+      includeContext
+    )
     context.parse
   }
   private object ParseContext {
     private def createValueUnderPath(
         path: Path,
-        value: AbstractConfigValue): AbstractConfigObject = {
+        value: AbstractConfigValue
+    ): AbstractConfigObject = {
       // for path foo.bar, we are creating
       // { "foo" : { "bar" : value } }
       val keys      = new ju.ArrayList[String]
@@ -55,7 +59,8 @@ object ConfigParser {
       var o = new SimpleConfigObject(
         value.origin.withComments(null),
         ju.Collections
-          .singletonMap[String, AbstractConfigValue](deepest, value))
+          .singletonMap[String, AbstractConfigValue](deepest, value)
+      )
       while (i.hasPrevious) {
         val m =
           ju.Collections
@@ -71,7 +76,8 @@ object ConfigParser {
       val baseOrigin: ConfigOrigin,
       val document: ConfigNodeRoot,
       val includer: FullIncluder,
-      val includeContext: ConfigIncludeContext) {
+      val includeContext: ConfigIncludeContext
+  ) {
 
     private var lineNumber      = 1
     final private var pathStack = new ju.LinkedList[Path]
@@ -83,11 +89,13 @@ object ConfigParser {
     // value; change unquoted text into a string
     // value.
     private def parseConcatenation(
-        n: ConfigNodeConcatenation): AbstractConfigValue = {
+        n: ConfigNodeConcatenation
+    ): AbstractConfigValue = {
       // this trick is not done in JSON
       if (flavor eq ConfigSyntax.JSON)
         throw new ConfigException.BugOrBroken(
-          "Found a concatenation node in JSON")
+          "Found a concatenation node in JSON"
+        )
       val values = new ju.ArrayList[AbstractConfigValue]
       for (node <- n.children.asScala) {
         var v: AbstractConfigValue = null
@@ -104,19 +112,24 @@ object ConfigParser {
         .withLineNumber(lineNumber)
     private def parseError(message: String): ConfigException.Parse =
       parseError(message, null)
-    private def parseError(message: String,
-                           cause: Throwable): ConfigException.Parse =
+    private def parseError(
+        message: String,
+        cause: Throwable
+    ): ConfigException.Parse =
       new ConfigException.Parse(lineOrigin, message, cause)
     private def fullCurrentPath = {
       // pathStack has top of stack at front
       if (pathStack.isEmpty)
         throw new ConfigException.BugOrBroken(
-          "Bug in parser; tried to get current path when at root")
+          "Bug in parser; tried to get current path when at root"
+        )
       else new Path(pathStack.descendingIterator)
     }
 
-    private def parseValue(n: AbstractConfigNodeValue,
-                           comments: ju.List[String]): AbstractConfigValue = {
+    private def parseValue(
+        n: AbstractConfigNodeValue,
+        comments: ju.List[String]
+    ): AbstractConfigValue = {
       var v: AbstractConfigValue = null
       val startingArrayCount     = arrayCount
       if (n.isInstanceOf[ConfigNodeSimpleValue])
@@ -129,22 +142,28 @@ object ConfigParser {
         v = parseConcatenation(n.asInstanceOf[ConfigNodeConcatenation])
       else
         throw parseError(
-          "Expecting a value but got wrong node type: " + n.getClass)
+          "Expecting a value but got wrong node type: " + n.getClass
+        )
       if (comments != null && !comments.isEmpty) {
         v = v.withOrigin(
-          v.origin.prependComments(new ju.ArrayList[String](comments)))
+          v.origin.prependComments(new ju.ArrayList[String](comments))
+        )
         comments.clear()
       }
       if (arrayCount != startingArrayCount)
         throw new ConfigException.BugOrBroken(
-          "Bug in config parser: unbalanced array count")
+          "Bug in config parser: unbalanced array count"
+        )
       v
     }
-    private def parseInclude(values: ju.Map[String, AbstractConfigValue],
-                             n: ConfigNodeInclude): Unit = {
+    private def parseInclude(
+        values: ju.Map[String, AbstractConfigValue],
+        n: ConfigNodeInclude
+    ): Unit = {
       val isRequired = n.isRequired
       val cic = includeContext.setParseOptions(
-        includeContext.parseOptions.setAllowMissing(!isRequired))
+        includeContext.parseOptions.setAllowMissing(!isRequired)
+      )
       var obj: AbstractConfigObject = null
       n.kind.name match {
         case "URL" =>
@@ -154,7 +173,8 @@ object ConfigParser {
             case e: MalformedURLException =>
               throw parseError(
                 "include url() specifies an invalid URL: " + n.name,
-                e)
+                e
+              )
           }
           obj = includer.includeURL(cic, url).asInstanceOf[AbstractConfigObject]
         case "FILE" =>
@@ -175,7 +195,8 @@ object ConfigParser {
       // See https://github.com/lightbend/config/issues/160
       if (arrayCount > 0 && (obj.resolveStatus ne ResolveStatus.RESOLVED))
         throw parseError(
-          "Due to current limitations of the config parser, when an include statement is nested inside a list value, " + "${} substitutions inside the included file cannot be resolved correctly. Either move the include outside of the list value or " + "remove the ${} statements from the included file.")
+          "Due to current limitations of the config parser, when an include statement is nested inside a list value, " + "${} substitutions inside the included file cannot be resolved correctly. Either move the include outside of the list value or " + "remove the ${} statements from the included file."
+        )
       if (!pathStack.isEmpty) {
         val prefix = fullCurrentPath
         obj = obj.relativized(prefix)
@@ -204,7 +225,8 @@ object ConfigParser {
           comments.add(node.asInstanceOf[ConfigNodeComment].commentText)
         } else if (node
                      .isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
-                     node.asInstanceOf[ConfigNodeSingleToken].token)) {
+                     node.asInstanceOf[ConfigNodeSingleToken].token
+                   )) {
           lineNumber += 1
           if (lastWasNewline) { // Drop all comments if there was a blank line and start a new comment block
             comments.clear()
@@ -228,7 +250,8 @@ object ConfigParser {
             // https://github.com/lightbend/config/issues/160
             if (arrayCount > 0)
               throw parseError(
-                "Due to current limitations of the config parser, += does not work nested inside a list. " + "+= expands to a ${} substitution and the path in ${} cannot currently refer to list elements. " + "You might be able to move the += outside of the list and then refer to it from inside the list with ${}.")
+                "Due to current limitations of the config parser, += does not work nested inside a list. " + "+= expands to a ${} substitution and the path in ${} cannot currently refer to list elements. " + "You might be able to move the += outside of the list and then refer to it from inside the list with ${}."
+              )
             // because we will put it in an array after the fact so
             // we want this to be incremented during the parseValue
             // below in order to throw the above exception.
@@ -245,14 +268,17 @@ object ConfigParser {
             arrayCount -= 1
             val concat =
               new ju.ArrayList[AbstractConfigValue](2)
-            val previousRef = new ConfigReference(newValue.origin,
-                                                  new SubstitutionExpression(
-                                                    fullCurrentPath,
-                                                    true /* optional */
-                                                  ))
+            val previousRef = new ConfigReference(
+              newValue.origin,
+              new SubstitutionExpression(
+                fullCurrentPath,
+                true /* optional */
+              )
+            )
             val list = new SimpleConfigList(
               newValue.origin,
-              ju.Collections.singletonList(newValue))
+              ju.Collections.singletonList(newValue)
+            )
             concat.add(previousRef)
             concat.add(list)
             newValue = ConfigConcatenation.concatenate(concat)
@@ -268,7 +294,9 @@ object ConfigParser {
                   newValue = newValue.withOrigin(
                     newValue.origin
                       .appendComments(
-                        ju.Collections.singletonList(comment.commentText)))
+                        ju.Collections.singletonList(comment.commentText)
+                      )
+                  )
                   break // break
                 } else if (nodes.get(i).isInstanceOf[ConfigNodeSingleToken]) {
                   val curr =
@@ -299,14 +327,16 @@ object ConfigParser {
               // could become an object).
               if (flavor eq ConfigSyntax.JSON)
                 throw parseError(
-                  "JSON does not allow duplicate fields: '" + key + "' was already seen at " + existing.origin.description)
+                  "JSON does not allow duplicate fields: '" + key + "' was already seen at " + existing.origin.description
+                )
               else newValue = newValue.withFallback(existing)
             }
             values.put(key, newValue)
           } else {
             if (flavor eq ConfigSyntax.JSON)
               throw new ConfigException.BugOrBroken(
-                "somehow got multi-element path in JSON mode")
+                "somehow got multi-element path in JSON mode"
+              )
             var obj =
               ParseContext.createValueUnderPath(remaining, newValue)
             val existing = values.get(key)
@@ -332,13 +362,16 @@ object ConfigParser {
           lastWasNewLine = false
         } else if (node
                      .isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
-                     node.asInstanceOf[ConfigNodeSingleToken].token)) {
+                     node.asInstanceOf[ConfigNodeSingleToken].token
+                   )) {
           lineNumber += 1
           if (lastWasNewLine && v == null) comments.clear()
           else if (v != null) {
             values.add(
               v.withOrigin(
-                v.origin.appendComments(new ju.ArrayList[String](comments))))
+                v.origin.appendComments(new ju.ArrayList[String](comments))
+              )
+            )
             comments.clear()
             v = null
           }
@@ -348,7 +381,9 @@ object ConfigParser {
           if (v != null) {
             values.add(
               v.withOrigin(
-                v.origin.appendComments(new ju.ArrayList[String](comments))))
+                v.origin.appendComments(new ju.ArrayList[String](comments))
+              )
+            )
             comments.clear()
           }
           v = parseValue(node.asInstanceOf[AbstractConfigNodeValue], comments)
@@ -358,7 +393,9 @@ object ConfigParser {
       if (v != null)
         values.add(
           v.withOrigin(
-            v.origin.appendComments(new ju.ArrayList[String](comments))))
+            v.origin.appendComments(new ju.ArrayList[String](comments))
+          )
+        )
       arrayCount -= 1
       new SimpleConfigList(arrayOrigin, values)
     }
@@ -379,7 +416,8 @@ object ConfigParser {
               else if (result != null) {
                 result = result.withOrigin(
                   result.origin
-                    .appendComments(new ju.ArrayList[String](comments)))
+                    .appendComments(new ju.ArrayList[String](comments))
+                )
                 comments.clear()
                 break // break
               }

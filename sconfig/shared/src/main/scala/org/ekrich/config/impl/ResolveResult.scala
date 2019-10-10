@@ -8,15 +8,18 @@ object ResolveResult {
     new ResolveResult[V](context, value)
 }
 
-final class ResolveResult[V <: AbstractConfigValue](val context: ResolveContext,
-                                                    val value: V) {
+final class ResolveResult[V <: AbstractConfigValue](
+    val context: ResolveContext,
+    val value: V
+) {
 
   // better option? we don't have variance
   @SuppressWarnings(Array("unchecked"))
   private[impl] def asObjectResult: ResolveResult[AbstractConfigObject] = {
     if (!value.isInstanceOf[AbstractConfigObject])
       throw new ConfigException.BugOrBroken(
-        "Expecting a resolve result to be an object, but it was " + value)
+        "Expecting a resolve result to be an object, but it was " + value
+      )
     val o = this
     o.asInstanceOf[ResolveResult[AbstractConfigObject]]
   }

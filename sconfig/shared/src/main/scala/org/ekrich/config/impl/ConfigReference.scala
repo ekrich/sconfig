@@ -14,8 +14,8 @@ import org.ekrich.config.ConfigRenderOptions
 final class ConfigReference(
     _origin: ConfigOrigin,
     val expression: SubstitutionExpression, // the length of any prefixes added with relativized()
-    val prefixLength: Int)
-    extends AbstractConfigValue(_origin)
+    val prefixLength: Int
+) extends AbstractConfigValue(_origin)
     with Unmergeable {
 
   def this(_origin: ConfigOrigin, expr: SubstitutionExpression) =
@@ -23,7 +23,8 @@ final class ConfigReference(
 
   private def notResolved =
     new ConfigException.NotResolved(
-      "need to Config#resolve(), see the API docs for Config#resolve(); substitution not resolved: " + this)
+      "need to Config#resolve(), see the API docs for Config#resolve(); substitution not resolved: " + this
+    )
   override def valueType = throw notResolved
   override def unwrapped = throw notResolved
   override def newCopy(newOrigin: ConfigOrigin) =
@@ -37,7 +38,8 @@ final class ConfigReference(
   // any failure to resolve has to start with a ConfigReference.
   override def resolveSubstitutions(
       context: ResolveContext,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigValue] = {
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigValue] = {
     var newContext             = context.addCycleMarker(this)
     var v: AbstractConfigValue = null
     try {
@@ -49,14 +51,17 @@ final class ConfigReference(
           ConfigImpl.trace(
             newContext.depth,
             "recursively resolving " + resultWithPath + " which was the resolution of " +
-              expression + " against " + source)
+              expression + " against " + source
+          )
         val recursiveResolveSource = new ResolveSource(
           resultWithPath.pathFromRoot.last.asInstanceOf[AbstractConfigObject],
-          resultWithPath.pathFromRoot)
+          resultWithPath.pathFromRoot
+        )
         if (ConfigImpl.traceSubstitutionsEnabled)
           ConfigImpl.trace(
             newContext.depth,
-            "will recursively resolve against " + recursiveResolveSource)
+            "will recursively resolve against " + recursiveResolveSource
+          )
         val result = newContext
           .resolve(resultWithPath.result.value, recursiveResolveSource)
         v = result.value
@@ -71,20 +76,24 @@ final class ConfigReference(
         if (ConfigImpl.traceSubstitutionsEnabled)
           ConfigImpl.trace(
             newContext.depth,
-            "not possible to resolve " + expression + ", cycle involved: " + e.traceString)
+            "not possible to resolve " + expression + ", cycle involved: " + e.traceString
+          )
         if (expression.optional) v = null
         else
           throw new ConfigException.UnresolvedSubstitution(
             origin,
             s"$expression was part of a cycle of substitutions involving ${e.traceString}",
-            e)
+            e
+          )
     }
     if (v == null && !expression.optional)
       if (newContext.options.getAllowUnresolved)
         ResolveResult.make(newContext.removeCycleMarker(this), this)
       else
-        throw new ConfigException.UnresolvedSubstitution(origin,
-                                                         expression.toString)
+        throw new ConfigException.UnresolvedSubstitution(
+          origin,
+          expression.toString
+        )
     else ResolveResult.make(newContext.removeCycleMarker(this), v)
   }
   override def resolveStatus: ResolveStatus = ResolveStatus.UNRESOLVED
@@ -109,10 +118,12 @@ final class ConfigReference(
     else false
   }
   override def hashCode: Int = expression.hashCode
-  override def render(sb: jl.StringBuilder,
-                      indent: Int,
-                      atRoot: Boolean,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
     sb.append(expression.toString)
   }
 }

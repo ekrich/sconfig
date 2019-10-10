@@ -36,10 +36,12 @@ object ConfigRenderOptions {
   def concise = new ConfigRenderOptions(false, false, false, true)
 }
 
-final class ConfigRenderOptions private (val originComments: Boolean,
-                                         val comments: Boolean,
-                                         val formatted: Boolean,
-                                         val json: Boolean) {
+final class ConfigRenderOptions private (
+    val originComments: Boolean,
+    val comments: Boolean,
+    val formatted: Boolean,
+    val json: Boolean
+) {
 
   /**
    * Returns options with comments toggled. This controls human-written
