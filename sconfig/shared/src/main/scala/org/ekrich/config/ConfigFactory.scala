@@ -1029,12 +1029,14 @@ object ConfigFactory {
     if (className != null) {
       try {
         classOf[ConfigLoadingStrategy].cast(
-          Class.forName(className).getConstructor().newInstance())
+          Class.forName(className).getConstructor().newInstance()
+        )
       } catch {
         case e: Throwable =>
           throw new ConfigException.BugOrBroken(
             "Failed to load strategy: " + className,
-            e)
+            e
+          )
       }
     } else {
       new DefaultConfigLoadingStrategy()

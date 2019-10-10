@@ -21,12 +21,14 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
   else nextVersion + "-SNAPSHOT"
 }
 
-val scalacOpts = List("-unchecked",
-                      "-deprecation",
-                      "-feature",
-                      "-Ywarn-unused:imports",
-                      "-Xsource 2.14",
-                      "-Xlint:nonlocal-return")
+val scalacOpts = List(
+  "-unchecked",
+  "-deprecation",
+  "-feature",
+  "-Ywarn-unused:imports",
+  "-Xsource 2.14",
+  "-Xlint:nonlocal-return"
+)
 
 val dotcOpts = List("-Xdiags:verbose")
 
@@ -37,8 +39,10 @@ ThisBuild / Test / scalacOptions := {
   if (isDotty.value) dotcOpts else scalacOpts
 }
 
-scalacOptions in (Compile, console) --= Seq("-Ywarn-unused:imports",
-                                            "-Xfatal-warnings")
+scalacOptions in (Compile, console) --= Seq(
+  "-Ywarn-unused:imports",
+  "-Xfatal-warnings"
+)
 
 val scala211 = "2.11.12"
 val scala212 = "2.12.10"
@@ -136,7 +140,11 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       "testList.1"      -> "1",
       "testClassesPath" -> (Test / classDirectory).value.getPath
     ),
+<<<<<<< HEAD
     Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005",
+=======
+    //Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005",
+>>>>>>> Upgrade scalafmt
     // mima settings
     mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems

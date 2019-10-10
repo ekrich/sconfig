@@ -29,7 +29,8 @@ object SimpleConfigObject {
     @throws[NotPossibleToResolve]
     override def modifyChildMayThrow(
         key: String,
-        v: AbstractConfigValue): AbstractConfigValue =
+        v: AbstractConfigValue
+    ): AbstractConfigValue =
       if (context.isRestrictedToChild) {
         if (key == context.restrictToChild.first) {
           val remainder = context.restrictToChild.remainder

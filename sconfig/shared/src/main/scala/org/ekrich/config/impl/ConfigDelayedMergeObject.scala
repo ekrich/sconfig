@@ -206,7 +206,12 @@ final class ConfigDelayedMergeObject(
             throw new ConfigException.BugOrBroken(
               "should not be reached: unmergeable object returned null value"
             )
+<<<<<<< HEAD
           } else { // a non-unmergeable AbstractConfigObject that returned null
+=======
+          } else {
+            // a non-unmergeable AbstractConfigObject that returned null
+>>>>>>> Upgrade scalafmt
             // for the key in question is not relevant, we can keep
             // looking for a value.
             break // continue
@@ -216,7 +221,7 @@ final class ConfigDelayedMergeObject(
             s"Key '$key' is not available at '${origin.description}' because value at '${layer.origin.description}'" +
               s" has not been resolved and may turn out to contain or hide '$key'." +
               " Be sure to Config#resolve() before using a config object."
-              )
+          )
         } else if (layer.resolveStatus eq ResolveStatus.UNRESOLVED) {
           // if the layer is not an object, and not a substitution or merge,
           // then it's something that's unresolved because it _contains_

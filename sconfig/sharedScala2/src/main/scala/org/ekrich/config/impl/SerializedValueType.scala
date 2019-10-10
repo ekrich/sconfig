@@ -45,7 +45,8 @@ object SerializedValueType {
       values(b)
     else
       throw new IllegalArgumentException(
-        s"No enum SerializedValueType ordinal $b")
+        s"No enum SerializedValueType ordinal $b"
+      )
 
   private[impl] def forValue(value: ConfigValue): SerializedValueType = {
     val t = value.valueType
