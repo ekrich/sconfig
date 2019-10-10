@@ -206,12 +206,8 @@ final class ConfigDelayedMergeObject(
             throw new ConfigException.BugOrBroken(
               "should not be reached: unmergeable object returned null value"
             )
-<<<<<<< HEAD
-          } else { // a non-unmergeable AbstractConfigObject that returned null
-=======
           } else {
             // a non-unmergeable AbstractConfigObject that returned null
->>>>>>> Upgrade scalafmt
             // for the key in question is not relevant, we can keep
             // looking for a value.
             break // continue

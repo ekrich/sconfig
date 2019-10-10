@@ -185,10 +185,7 @@ object ConfigImpl {
         origin,
         ju.Collections.emptyList[AbstractConfigValue]
       )
-  <<<<<<< HEAD
-    =======
 
-  >>>>>>> Upgrade scalafmt
   private def emptyObject(origin: ConfigOrigin): AbstractConfigObject = {
     // we want null origin to go to SimpleConfigObject.empty() to get the
     // origin "empty config" rather than "hardcoded value"
@@ -204,10 +201,7 @@ object ConfigImpl {
     val origin = valueOrigin(originDescription)
     fromAnyRef(obj, origin, FromMapMode.KEYS_ARE_KEYS)
   }
-  <<<<<<< HEAD
-    =======
 
-  >>>>>>> Upgrade scalafmt
   def fromPathMap(
       pathMap: ju.Map[String, _],
       originDescription: String
