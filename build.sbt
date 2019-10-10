@@ -55,7 +55,8 @@ inThisBuild(
     organization := "org.ekrich",
     homepage := Some(url("https://github.com/ekrich/sconfig")),
     licenses := List(
-      "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+      "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
+    ),
     developers := List(
       Developer(
         id = "ekrich",
@@ -64,7 +65,8 @@ inThisBuild(
         url = url("http://github.ekrich.org/")
       )
     )
-  ))
+  )
+)
 
 ThisBuild / pomIncludeRepository := { _ =>
   false
@@ -105,12 +107,14 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     libraryDependencies := libraryDependencies.value
       .map(_.withDottyCompat(scalaVersion.value)),
-    Compile / compile / javacOptions ++= Seq("-source",
-                                             "1.8",
-                                             "-target",
-                                             "1.8",
-                                             "-g",
-                                             "-Xlint:unchecked"),
+    Compile / compile / javacOptions ++= Seq(
+      "-source",
+      "1.8",
+      "-target",
+      "1.8",
+      "-g",
+      "-Xlint:unchecked"
+    ),
     // because we test some global state such as singleton caches,
     // we have to run tests in serial.
     Test / parallelExecution := false,
@@ -122,7 +126,8 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     Test / envVars ++= Map(
       "testList.0"      -> "0",
       "testList.1"      -> "1",
-      "testClassesPath" -> (Test / classDirectory).value.getPath),
+      "testClassesPath" -> (Test / classDirectory).value.getPath
+    ),
     // replace with your old artifact id
     mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems
@@ -189,23 +194,29 @@ lazy val testLib = crossProject(JVMPlatform)
 
 lazy val simpleLibScala = proj(
   "sconfig-simple-lib-scala",
-  file("examples/scala/simple-lib")) dependsOn sconfigJVM
+  file("examples/scala/simple-lib")
+) dependsOn sconfigJVM
 lazy val simpleAppScala = proj(
   "sconfig-simple-app-scala",
-  file("examples/scala/simple-app")) dependsOn simpleLibScala
+  file("examples/scala/simple-app")
+) dependsOn simpleLibScala
 lazy val complexAppScala = proj(
   "sconfig-complex-app-scala",
-  file("examples/scala/complex-app")) dependsOn simpleLibScala
+  file("examples/scala/complex-app")
+) dependsOn simpleLibScala
 
 lazy val simpleLibJava = proj(
   "sconfig-simple-lib-java",
-  file("examples/java/simple-lib")) dependsOn sconfigJVM
+  file("examples/java/simple-lib")
+) dependsOn sconfigJVM
 lazy val simpleAppJava = proj(
   "sconfig-simple-app-java",
-  file("examples/java/simple-app")) dependsOn simpleLibJava
+  file("examples/java/simple-app")
+) dependsOn simpleLibJava
 lazy val complexAppJava = proj(
   "sconfig-complex-app-java",
-  file("examples/java/complex-app")) dependsOn simpleLibJava
+  file("examples/java/complex-app")
+) dependsOn simpleLibJava
 
 val skipPublish = Seq(
   // no artifacts in this project

@@ -22,6 +22,8 @@ trait ConfigIncluderClasspath {
    *            the include statement's argument
    * @return a non-null ConfigObject
    */
-  def includeResources(context: ConfigIncludeContext,
-                       what: String): ConfigObject
+  def includeResources(
+      context: ConfigIncludeContext,
+      what: String
+  ): ConfigObject
 }

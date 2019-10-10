@@ -92,8 +92,10 @@ object ConfigValueFactory {
    * @param originDescription description to use in {@link ConfigOrigin} of created values
    * @return a new {@link ConfigObject} value
    */
-  def fromMap(values: ju.Map[String, _],
-              originDescription: String): ConfigObject =
+  def fromMap(
+      values: ju.Map[String, _],
+      originDescription: String
+  ): ConfigObject =
     fromAnyRef(values, originDescription).asInstanceOf[ConfigObject]
 
   /**
@@ -105,8 +107,10 @@ object ConfigValueFactory {
    * @param originDescription description to use in {@link ConfigOrigin} of created values
    * @return a new {@link ConfigList} value
    */
-  def fromIterable(values: jl.Iterable[_],
-                   originDescription: String): ConfigList =
+  def fromIterable(
+      values: jl.Iterable[_],
+      originDescription: String
+  ): ConfigList =
     fromAnyRef(values, originDescription).asInstanceOf[ConfigList]
 
   /**

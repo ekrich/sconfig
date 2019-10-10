@@ -6,8 +6,8 @@ import scala.jdk.CollectionConverters._
 final class ConfigNodeInclude(
     final val children: ju.Collection[AbstractConfigNode],
     private[impl] val kind: ConfigIncludeKind,
-    private[impl] val isRequired: Boolean)
-    extends AbstractConfigNode {
+    private[impl] val isRequired: Boolean
+) extends AbstractConfigNode {
 
   override def tokens: ju.Collection[Token] = {
     val tokens = new ju.ArrayList[Token]

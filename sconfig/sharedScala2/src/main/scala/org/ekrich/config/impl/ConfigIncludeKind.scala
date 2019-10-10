@@ -20,6 +20,7 @@ object ConfigIncludeKind {
   def valueOf(name: String): ConfigIncludeKind =
     _values.find(_.name == name).getOrElse {
       throw new IllegalArgumentException(
-        "No enum const ConfigIncludeKind." + name)
+        "No enum const ConfigIncludeKind." + name
+      )
     }
 }

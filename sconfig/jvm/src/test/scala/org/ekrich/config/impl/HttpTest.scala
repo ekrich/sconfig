@@ -13,10 +13,12 @@ class HttpTest extends TestUtils {
   import HttpTest._
 
   private def foreachSyntax(body: Option[ConfigSyntax] => Unit): Unit = {
-    for (syntax <- Seq(Some(ConfigSyntax.JSON),
-                       Some(ConfigSyntax.CONF),
-                       Some(ConfigSyntax.PROPERTIES),
-                       None))
+    for (syntax <- Seq(
+           Some(ConfigSyntax.JSON),
+           Some(ConfigSyntax.CONF),
+           Some(ConfigSyntax.PROPERTIES),
+           None
+         ))
       body(syntax)
   }
 
@@ -52,40 +54,52 @@ class HttpTest extends TestUtils {
   @Test
   def notFoundThrowsIO(): Unit = {
     val e = intercept[ConfigException.IO] {
-      ConfigFactory.parseURL(url("notfound"),
-                             ConfigParseOptions.defaults.setAllowMissing(false))
+      ConfigFactory.parseURL(
+        url("notfound"),
+        ConfigParseOptions.defaults.setAllowMissing(false)
+      )
     }
-    assertTrue(s"expected different exception for notfound, got $e",
-               e.getMessage.contains("/notfound"))
+    assertTrue(
+      s"expected different exception for notfound, got $e",
+      e.getMessage.contains("/notfound")
+    )
   }
 
   @Test
   def internalErrorThrowsBroken(): Unit = {
     val e = intercept[ConfigException.BugOrBroken] {
-      ConfigFactory.parseURL(url("error"),
-                             ConfigParseOptions.defaults.setAllowMissing(false))
+      ConfigFactory.parseURL(
+        url("error"),
+        ConfigParseOptions.defaults.setAllowMissing(false)
+      )
     }
-    assertTrue(s"expected different exception for error url, got $e",
-               e.getMessage.contains("/error"))
+    assertTrue(
+      s"expected different exception for error url, got $e",
+      e.getMessage.contains("/error")
+    )
   }
 
   @Test
   def notFoundDoesNotThrowIfAllowingMissing(): Unit = {
     val conf = ConfigFactory.parseURL(
       url("notfound"),
-      ConfigParseOptions.defaults.setAllowMissing(true))
+      ConfigParseOptions.defaults.setAllowMissing(true)
+    )
     assertEquals(0, conf.root.size)
   }
 
   @Test
   def internalErrorThrowsEvenIfAllowingMissing(): Unit = {
     val e = intercept[ConfigException.BugOrBroken] {
-      ConfigFactory.parseURL(url("error"),
-                             ConfigParseOptions.defaults.setAllowMissing(true))
+      ConfigFactory.parseURL(
+        url("error"),
+        ConfigParseOptions.defaults.setAllowMissing(true)
+      )
     }
     assertTrue(
       s"expected different exception for error url when allowing missing, got $e",
-      e.getMessage.contains("/error"))
+      e.getMessage.contains("/error")
+    )
   }
 
   @Test
@@ -111,10 +125,12 @@ object HttpTest {
       .getOrElse(throw new Exception("http server isn't running"))
   def baseUrl = s"http://127.0.0.1:$port"
 
-  private def handleThreeTypes(request: Request,
-                               json: String,
-                               props: String,
-                               hocon: String): Response = {
+  private def handleThreeTypes(
+      request: Request,
+      json: String,
+      props: String,
+      hocon: String
+  ): Response = {
     request.headers.get("accept") match {
       case Some(`jsonContentType`) | None =>
         Response(200, jsonContentType, json)

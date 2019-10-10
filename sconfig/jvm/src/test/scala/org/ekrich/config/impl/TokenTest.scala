@@ -44,8 +44,10 @@ class TokenTest extends TestUtils {
 
     // key subst
     checkEqualObjects(tokenKeySubstitution("foo"), tokenKeySubstitution("foo"))
-    checkNotEqualObjects(tokenKeySubstitution("foo"),
-                         tokenKeySubstitution("bar"))
+    checkNotEqualObjects(
+      tokenKeySubstitution("foo"),
+      tokenKeySubstitution("bar")
+    )
 
     // null
     checkEqualObjects(tokenNull, tokenNull)

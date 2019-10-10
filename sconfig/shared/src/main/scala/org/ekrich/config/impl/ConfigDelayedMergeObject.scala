@@ -19,47 +19,58 @@ import org.ekrich.config.ConfigValue
 object ConfigDelayedMergeObject {
   private def notResolved =
     new ConfigException.NotResolved(
-      "need to Config#resolve() before using this object, see the API docs for Config#resolve()")
+      "need to Config#resolve() before using this object, see the API docs for Config#resolve()"
+    )
 }
 
-final class ConfigDelayedMergeObject(_origin: ConfigOrigin,
-                                     val stack: ju.List[AbstractConfigValue])
-    extends AbstractConfigObject(_origin)
+final class ConfigDelayedMergeObject(
+    _origin: ConfigOrigin,
+    val stack: ju.List[AbstractConfigValue]
+) extends AbstractConfigObject(_origin)
     with Unmergeable
     with ReplaceableMergeStack {
   if (stack.isEmpty)
     throw new ConfigException.BugOrBroken("creating empty delayed merge object")
   if (!stack.get(0).isInstanceOf[AbstractConfigObject])
     throw new ConfigException.BugOrBroken(
-      "created a delayed merge object not guaranteed to be an object")
+      "created a delayed merge object not guaranteed to be an object"
+    )
   for (v <- stack.asScala) {
     if (v.isInstanceOf[ConfigDelayedMerge] || v
           .isInstanceOf[ConfigDelayedMergeObject])
       throw new ConfigException.BugOrBroken(
-        "placed nested DelayedMerge in a ConfigDelayedMergeObject, should have consolidated stack")
+        "placed nested DelayedMerge in a ConfigDelayedMergeObject, should have consolidated stack"
+      )
   }
-  override def newCopy(status: ResolveStatus,
-                       origin: ConfigOrigin): ConfigDelayedMergeObject = {
+  override def newCopy(
+      status: ResolveStatus,
+      origin: ConfigOrigin
+  ): ConfigDelayedMergeObject = {
     if (status ne resolveStatus)
       throw new ConfigException.BugOrBroken(
-        "attempt to create resolved ConfigDelayedMergeObject")
+        "attempt to create resolved ConfigDelayedMergeObject"
+      )
     new ConfigDelayedMergeObject(origin, stack)
   }
   @throws[AbstractConfigValue.NotPossibleToResolve]
   override def resolveSubstitutions(
       context: ResolveContext,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigObject] = {
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigObject] = {
     val merged =
       ConfigDelayedMerge.resolveSubstitutions(this, stack, context, source)
     merged.asObjectResult
   }
-  override def makeReplacement(context: ResolveContext,
-                               skipping: Int): AbstractConfigValue =
+  override def makeReplacement(
+      context: ResolveContext,
+      skipping: Int
+  ): AbstractConfigValue =
     ConfigDelayedMerge.makeReplacement(context, stack, skipping)
   override def resolveStatus: ResolveStatus = ResolveStatus.UNRESOLVED
   override def replaceChild(
       child: AbstractConfigValue,
-      replacement: AbstractConfigValue): AbstractConfigValue = {
+      replacement: AbstractConfigValue
+  ): AbstractConfigValue = {
     val newStack =
       AbstractConfigValue.replaceChildInList(stack, child, replacement)
     if (newStack == null) null
@@ -77,22 +88,26 @@ final class ConfigDelayedMergeObject(_origin: ConfigOrigin,
   override def ignoresFallbacks: Boolean =
     ConfigDelayedMerge.stackIgnoresFallbacks(stack)
   override final def mergedWithTheUnmergeable(
-      fallback: Unmergeable): ConfigDelayedMergeObject = {
+      fallback: Unmergeable
+  ): ConfigDelayedMergeObject = {
     requireNotIgnoringFallbacks()
     mergedWithTheUnmergeable(stack, fallback)
       .asInstanceOf[ConfigDelayedMergeObject]
   }
   override final def mergedWithObject(
-      fallback: AbstractConfigObject): ConfigDelayedMergeObject =
+      fallback: AbstractConfigObject
+  ): ConfigDelayedMergeObject =
     mergedWithNonObject(fallback)
   override final def mergedWithNonObject(
-      fallback: AbstractConfigValue): ConfigDelayedMergeObject = {
+      fallback: AbstractConfigValue
+  ): ConfigDelayedMergeObject = {
     requireNotIgnoringFallbacks()
     mergedWithNonObject(stack, fallback)
       .asInstanceOf[ConfigDelayedMergeObject]
   }
   override def withFallback(
-      mergeable: ConfigMergeable): ConfigDelayedMergeObject =
+      mergeable: ConfigMergeable
+  ): ConfigDelayedMergeObject =
     super.withFallback(mergeable).asInstanceOf[ConfigDelayedMergeObject]
   override def withOnlyKey(key: String) =
     throw ConfigDelayedMergeObject.notResolved
@@ -121,17 +136,21 @@ final class ConfigDelayedMergeObject(_origin: ConfigOrigin,
     else false
   }
   override def hashCode: Int = stack.hashCode
-  override def render(sb: jl.StringBuilder,
-                      indent: Int,
-                      atRoot: Boolean,
-                      atKey: String,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      atKey: String,
+      options: ConfigRenderOptions
+  ): Unit = {
     ConfigDelayedMerge.render(stack, sb, indent, atRoot, atKey, options)
   }
-  override def render(sb: jl.StringBuilder,
-                      indent: Int,
-                      atRoot: Boolean,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
     render(sb, indent, atRoot, null, options)
   }
   override def unwrapped        = throw ConfigDelayedMergeObject.notResolved
@@ -147,7 +166,8 @@ final class ConfigDelayedMergeObject(_origin: ConfigOrigin,
   override def size     = throw ConfigDelayedMergeObject.notResolved
   override def values   = throw ConfigDelayedMergeObject.notResolved
   override def attemptPeekWithPartialResolve(
-      key: String): AbstractConfigValue = {
+      key: String
+  ): AbstractConfigValue = {
     // a partial resolve of a ConfigDelayedMergeObject always results in a
     // SimpleConfigObject because all the substitutions in the stack get
     // resolved in order to look up the partial.
@@ -183,7 +203,8 @@ final class ConfigDelayedMergeObject(_origin: ConfigOrigin,
             // missing, so it can't return null; it can only return a
             // value or throw NotPossibleToResolve
             throw new ConfigException.BugOrBroken(
-              "should not be reached: unmergeable object returned null value")
+              "should not be reached: unmergeable object returned null value"
+            )
           } else { // a non-unmergeable AbstractConfigObject that returned null
             // for the key in question is not relevant, we can keep
             // looking for a value.
@@ -191,14 +212,16 @@ final class ConfigDelayedMergeObject(_origin: ConfigOrigin,
           }
         } else if (layer.isInstanceOf[Unmergeable])
           throw new ConfigException.NotResolved(
-            "Key '" + key + "' is not available at '" + origin.description + "' because value at '" + layer.origin.description + "' has not been resolved and may turn out to contain or hide '" + key + "'." + " Be sure to Config#resolve() before using a config object.")
+            "Key '" + key + "' is not available at '" + origin.description + "' because value at '" + layer.origin.description + "' has not been resolved and may turn out to contain or hide '" + key + "'." + " Be sure to Config#resolve() before using a config object."
+          )
         else if (layer.resolveStatus eq ResolveStatus.UNRESOLVED) {
           // if the layer is not an object, and not a substitution or merge,
           // then it's something that's unresolved because it _contains_
           // an unresolved object... i.e. it's an array
           if (!layer.isInstanceOf[ConfigList])
             throw new ConfigException.BugOrBroken(
-              "Expecting a list here, not " + layer)
+              "Expecting a list here, not " + layer
+            )
           // all later objects will be hidden so we can say we won't find
           // the key
           return null
@@ -210,7 +233,8 @@ final class ConfigDelayedMergeObject(_origin: ConfigOrigin,
           // anyway at this point we know we can't find the key anymore.
           if (!layer.ignoresFallbacks)
             throw new ConfigException.BugOrBroken(
-              "resolved non-object should ignore fallbacks")
+              "resolved non-object should ignore fallbacks"
+            )
           return null
         }
       }
@@ -219,6 +243,7 @@ final class ConfigDelayedMergeObject(_origin: ConfigOrigin,
     // the ConfigDelayedMergeObject should not have existed. some
     // invariant was violated.
     throw new ConfigException.BugOrBroken(
-      "Delayed merge stack does not contain any unmergeable values")
+      "Delayed merge stack does not contain any unmergeable values"
+    )
   }
 }

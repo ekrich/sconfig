@@ -53,7 +53,8 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
         case e: IOException =>
           System.err.println(
             s"error handling http request: ${e.getClass.getName}: ${e.getMessage} ${e.getStackTrace
-              .mkString("\n")}")
+              .mkString("\n")}"
+          )
       }
       false
     } catch {
@@ -122,7 +123,8 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
     //val stuff = new java.io.ByteArrayOutputStream
     //val writer = new PrintWriter(new OutputStreamWriter(stuff, StandardCharsets.UTF_8))
     val writer = new PrintWriter(
-      new OutputStreamWriter(out, StandardCharsets.UTF_8))
+      new OutputStreamWriter(out, StandardCharsets.UTF_8)
+    )
     val dateFormat =
       new SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
     dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"))

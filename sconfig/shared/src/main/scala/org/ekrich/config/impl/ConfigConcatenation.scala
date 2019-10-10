@@ -29,8 +29,10 @@ object ConfigConcatenation {
   /**
    * Add left and right, or their merger, to builder.
    */
-  private def join(builder: ju.ArrayList[AbstractConfigValue],
-                   origRight: AbstractConfigValue): Unit = {
+  private def join(
+      builder: ju.ArrayList[AbstractConfigValue],
+      origRight: AbstractConfigValue
+  ): Unit = {
     var left  = builder.get(builder.size - 1)
     var right = origRight
     // check for an object which can be converted to a list
@@ -68,7 +70,8 @@ object ConfigConcatenation {
       if (s1 == null || s2 == null)
         throw new ConfigException.WrongType(
           left.origin,
-          "Cannot concatenate object or list with a non-object-or-list, " + left + " and " + right + " are not compatible")
+          "Cannot concatenate object or list with a non-object-or-list, " + left + " and " + right + " are not compatible"
+        )
       else {
         val joinedOrigin =
           SimpleConfigOrigin.mergeOrigins(left.origin, right.origin)
@@ -82,7 +85,8 @@ object ConfigConcatenation {
     }
   }
   private[impl] def consolidate(
-      pieces: ju.List[AbstractConfigValue]): ju.List[AbstractConfigValue] =
+      pieces: ju.List[AbstractConfigValue]
+  ): ju.List[AbstractConfigValue] =
     if (pieces.size < 2) pieces
     else {
       val flattened =
@@ -112,29 +116,34 @@ object ConfigConcatenation {
   }
 }
 
-final class ConfigConcatenation(_origin: ConfigOrigin,
-                                val pieces: ju.List[AbstractConfigValue])
-    extends AbstractConfigValue(_origin)
+final class ConfigConcatenation(
+    _origin: ConfigOrigin,
+    val pieces: ju.List[AbstractConfigValue]
+) extends AbstractConfigValue(_origin)
     with Unmergeable
     with Container {
 
   if (pieces.size < 2)
     throw new ConfigException.BugOrBroken(
-      "Created concatenation with less than 2 items: " + this)
+      "Created concatenation with less than 2 items: " + this
+    )
   var hadUnmergeable = false
   for (p <- pieces.asScala) {
     if (p.isInstanceOf[ConfigConcatenation])
       throw new ConfigException.BugOrBroken(
-        "ConfigConcatenation should never be nested: " + this)
+        "ConfigConcatenation should never be nested: " + this
+      )
     if (p.isInstanceOf[Unmergeable]) hadUnmergeable = true
   }
   if (!hadUnmergeable)
     throw new ConfigException.BugOrBroken(
-      "Created concatenation without an unmergeable in it: " + this)
+      "Created concatenation without an unmergeable in it: " + this
+    )
 
   private def notResolved =
     new ConfigException.NotResolved(
-      "need to Config#resolve(), see the API docs for Config#resolve(); substitution not resolved: " + this)
+      "need to Config#resolve(), see the API docs for Config#resolve(); substitution not resolved: " + this
+    )
 
   override def valueType = throw notResolved
 
@@ -156,12 +165,15 @@ final class ConfigConcatenation(_origin: ConfigOrigin,
   @throws[AbstractConfigValue.NotPossibleToResolve]
   override def resolveSubstitutions(
       context: ResolveContext,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigValue] = {
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigValue] = {
 
     if (ConfigImpl.traceSubstitutionsEnabled) {
       val indent = context.depth + 2
-      ConfigImpl.trace(indent - 1,
-                       "concatenation has " + pieces.size + " pieces:")
+      ConfigImpl.trace(
+        indent - 1,
+        "concatenation has " + pieces.size + " pieces:"
+      )
       var count = 0
       for (v <- pieces.asScala) {
         ConfigImpl.trace(indent, s"$count: $v")
@@ -194,19 +206,23 @@ final class ConfigConcatenation(_origin: ConfigOrigin,
     // if unresolved is allowed we can just become another
     // ConfigConcatenation
     if (joined.size > 1 && context.options.getAllowUnresolved)
-      ResolveResult.make(newContext,
-                         new ConfigConcatenation(this.origin, joined))
+      ResolveResult.make(
+        newContext,
+        new ConfigConcatenation(this.origin, joined)
+      )
     else if (joined.isEmpty) { // we had just a list of optional references using ${?}
       ResolveResult.make(newContext, null)
     } else if (joined.size == 1) ResolveResult.make(newContext, joined.get(0))
     else
       throw new ConfigException.BugOrBroken(
-        "Bug in the library; resolved list was joined to too many values: " + joined)
+        "Bug in the library; resolved list was joined to too many values: " + joined
+      )
   }
   override def resolveStatus: ResolveStatus = ResolveStatus.UNRESOLVED
   override def replaceChild(
       child: AbstractConfigValue,
-      replacement: AbstractConfigValue): ConfigConcatenation = {
+      replacement: AbstractConfigValue
+  ): ConfigConcatenation = {
     val newPieces =
       AbstractConfigValue.replaceChildInList(pieces, child, replacement)
     if (newPieces == null) null else new ConfigConcatenation(origin, newPieces)
@@ -240,10 +256,12 @@ final class ConfigConcatenation(_origin: ConfigOrigin,
 
   override def hashCode: Int = pieces.hashCode
 
-  override def render(sb: jl.StringBuilder,
-                      indent: Int,
-                      atRoot: Boolean,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
     for (p <- pieces.asScala) {
       p.render(sb, indent, atRoot, options)
     }

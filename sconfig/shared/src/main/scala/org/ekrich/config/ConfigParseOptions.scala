@@ -34,11 +34,13 @@ object ConfigParseOptions {
   def defaults = new ConfigParseOptions(null, null, true, null, null)
 }
 
-final class ConfigParseOptions private (val syntax: ConfigSyntax,
-                                        val originDescription: String,
-                                        val allowMissing: Boolean,
-                                        val includer: ConfigIncluder,
-                                        val classLoader: ClassLoader) {
+final class ConfigParseOptions private (
+    val syntax: ConfigSyntax,
+    val originDescription: String,
+    val allowMissing: Boolean,
+    val includer: ConfigIncluder,
+    val classLoader: ClassLoader
+) {
 
   /**
    * Set the file format. If set to null, try to guess from any available
@@ -51,11 +53,13 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
   def setSyntax(syntax: ConfigSyntax): ConfigParseOptions =
     if (this.syntax == syntax) this
     else
-      new ConfigParseOptions(syntax,
-                             this.originDescription,
-                             this.allowMissing,
-                             this.includer,
-                             this.classLoader)
+      new ConfigParseOptions(
+        syntax,
+        this.originDescription,
+        this.allowMissing,
+        this.includer,
+        this.classLoader
+      )
 
   /**
    * Set the file format. If set to null, assume {@link ConfigSyntax#CONF}.
@@ -91,11 +95,13 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
     else if (this.originDescription != null && originDescription != null && this.originDescription == originDescription)
       this
     else
-      new ConfigParseOptions(this.syntax,
-                             originDescription,
-                             this.allowMissing,
-                             this.includer,
-                             this.classLoader)
+      new ConfigParseOptions(
+        this.syntax,
+        originDescription,
+        this.allowMissing,
+        this.includer,
+        this.classLoader
+      )
   }
 
   /**
@@ -122,11 +128,13 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
   def setAllowMissing(allowMissing: Boolean): ConfigParseOptions =
     if (this.allowMissing == allowMissing) this
     else
-      new ConfigParseOptions(this.syntax,
-                             this.originDescription,
-                             allowMissing,
-                             this.includer,
-                             this.classLoader)
+      new ConfigParseOptions(
+        this.syntax,
+        this.originDescription,
+        allowMissing,
+        this.includer,
+        this.classLoader
+      )
 
   /**
    * Gets the current "allow missing" flag.
@@ -145,11 +153,13 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
   def setIncluder(includer: ConfigIncluder): ConfigParseOptions =
     if (this.includer == includer) this
     else
-      new ConfigParseOptions(this.syntax,
-                             this.originDescription,
-                             this.allowMissing,
-                             includer,
-                             this.classLoader)
+      new ConfigParseOptions(
+        this.syntax,
+        this.originDescription,
+        this.allowMissing,
+        includer,
+        this.classLoader
+      )
 
   /**
    * Prepends a {@link ConfigIncluder} which customizes how
@@ -205,11 +215,13 @@ final class ConfigParseOptions private (val syntax: ConfigSyntax,
   def setClassLoader(loader: ClassLoader): ConfigParseOptions =
     if (this.classLoader == loader) this
     else
-      new ConfigParseOptions(this.syntax,
-                             this.originDescription,
-                             this.allowMissing,
-                             this.includer,
-                             loader)
+      new ConfigParseOptions(
+        this.syntax,
+        this.originDescription,
+        this.allowMissing,
+        this.includer,
+        loader
+      )
 
   /**
    * Get the class loader; never returns {@code null}, if the class loader was

@@ -19,8 +19,10 @@ import scala.jdk.CollectionConverters._
 
 object AbstractConfigObject {
 
-  private def peekPath(self: AbstractConfigObject,
-                       path: Path): AbstractConfigValue =
+  private def peekPath(
+      self: AbstractConfigObject,
+      path: Path
+  ): AbstractConfigValue =
     try {
       // we'll fail if anything along the path can't
       // be looked at without resolving.
@@ -36,7 +38,8 @@ object AbstractConfigObject {
     }
 
   private[impl] def mergeOrigins(
-      stack: ju.Collection[_ <: AbstractConfigValue]): ConfigOrigin = {
+      stack: ju.Collection[_ <: AbstractConfigValue]
+  ): ConfigOrigin = {
     if (stack.isEmpty)
       throw new ConfigException.BugOrBroken("can't merge origins on empty list")
     val origins                   = new ju.ArrayList[ConfigOrigin]
@@ -64,7 +67,8 @@ object AbstractConfigObject {
   }
 
   @varargs private[impl] def mergeOrigins(
-      stack: AbstractConfigObject*): ConfigOrigin = {
+      stack: AbstractConfigObject*
+  ): ConfigOrigin = {
     val javaColl = stack.asJavaCollection
     mergeOrigins(javaColl)
     //throws NotPossibleToResolve
@@ -72,7 +76,8 @@ object AbstractConfigObject {
 
   private def weAreImmutable(method: String) =
     new UnsupportedOperationException(
-      "ConfigObject is immutable, you can't call Map." + method)
+      "ConfigObject is immutable, you can't call Map." + method
+    )
 }
 
 abstract class AbstractConfigObject(_origin: ConfigOrigin)
@@ -98,8 +103,10 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
 
   private[impl] def withoutPath(path: Path): AbstractConfigObject
 
-  private[impl] def withValue(path: Path,
-                              value: ConfigValue): AbstractConfigObject
+  private[impl] def withValue(
+      path: Path,
+      value: ConfigValue
+  ): AbstractConfigObject
 
   /**
    * This looks up the key with no transformation or type conversion of any
@@ -112,7 +119,8 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
    */
   final private[impl] def peekAssumingResolved(
       key: String,
-      originalPath: Path): AbstractConfigValue =
+      originalPath: Path
+  ): AbstractConfigValue =
     try {
       attemptPeekWithPartialResolve(key)
     } catch {
@@ -133,7 +141,8 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
    *             resolving
    */
   private[impl] def attemptPeekWithPartialResolve(
-      key: String): AbstractConfigValue
+      key: String
+  ): AbstractConfigValue
 
   /**
    * Looks up the path with no transformation or type conversion. Returns null
@@ -145,34 +154,42 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
 
   override def valueType: ConfigValueType = ConfigValueType.OBJECT
 
-  protected def newCopy(status: ResolveStatus,
-                        origin: ConfigOrigin): AbstractConfigObject
+  protected def newCopy(
+      status: ResolveStatus,
+      origin: ConfigOrigin
+  ): AbstractConfigObject
 
   override def newCopy(origin: ConfigOrigin): AbstractConfigObject =
     newCopy(resolveStatus, origin)
 
-  override def constructDelayedMerge(origin: ConfigOrigin,
-                                     stack: ju.List[AbstractConfigValue]) =
+  override def constructDelayedMerge(
+      origin: ConfigOrigin,
+      stack: ju.List[AbstractConfigValue]
+  ) =
     new ConfigDelayedMergeObject(origin, stack)
 
   override def mergedWithObject(
-      fallback: AbstractConfigObject): AbstractConfigObject = null
+      fallback: AbstractConfigObject
+  ): AbstractConfigObject = null
 
   override def withFallback(mergeable: ConfigMergeable): AbstractConfigObject =
     super.withFallback(mergeable).asInstanceOf[AbstractConfigObject]
 
   override def resolveSubstitutions(
       context: ResolveContext,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigObject] = null
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigObject] = null
 
   override def relativized(prefix: Path): AbstractConfigObject = null
 
   override def get(key: Any): AbstractConfigValue
 
-  override def render(sb: jl.StringBuilder,
-                      indent: Int,
-                      atRoot: Boolean,
-                      options: ConfigRenderOptions): Unit
+  override def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit
 
   override def clear(): Unit = {
     throw AbstractConfigObject.weAreImmutable("clear")

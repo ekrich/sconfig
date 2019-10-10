@@ -62,9 +62,11 @@ object ConfigFactory {
    * @return configuration for an application relative to context class loader
    */
   def load(resourceBasename: String): Config =
-    load(resourceBasename,
-         ConfigParseOptions.defaults,
-         ConfigResolveOptions.defaults)
+    load(
+      resourceBasename,
+      ConfigParseOptions.defaults,
+      ConfigResolveOptions.defaults
+    )
 
   /**
    * Like [[ConfigFactory.load(String)]] but uses the supplied class loader instead of
@@ -81,9 +83,11 @@ object ConfigFactory {
    * @return configuration for an application relative to given class loader
    */
   def load(loader: ClassLoader, resourceBasename: String): Config =
-    load(resourceBasename,
-         ConfigParseOptions.defaults.setClassLoader(loader),
-         ConfigResolveOptions.defaults)
+    load(
+      resourceBasename,
+      ConfigParseOptions.defaults.setClassLoader(loader),
+      ConfigResolveOptions.defaults
+    )
 
   /**
    * Like [[ConfigFactory.load(String)]] but allows you to specify parse and resolve
@@ -97,9 +101,11 @@ object ConfigFactory {
    *            options to use when resolving the stack
    * @return configuration for an application
    */
-  def load(resourceBasename: String,
-           parseOptions: ConfigParseOptions,
-           resolveOptions: ConfigResolveOptions): Config = {
+  def load(
+      resourceBasename: String,
+      parseOptions: ConfigParseOptions,
+      resolveOptions: ConfigResolveOptions
+  ): Config = {
     val withLoader = ensureClassLoader(parseOptions, "load")
     val appConfig =
       ConfigFactory.parseResourcesAnySyntax(resourceBasename, withLoader)
@@ -123,20 +129,25 @@ object ConfigFactory {
    *            options to use when resolving the stack
    * @return configuration for an application
    */
-  def load(loader: ClassLoader,
-           resourceBasename: String,
-           parseOptions: ConfigParseOptions,
-           resolveOptions: ConfigResolveOptions): Config =
+  def load(
+      loader: ClassLoader,
+      resourceBasename: String,
+      parseOptions: ConfigParseOptions,
+      resolveOptions: ConfigResolveOptions
+  ): Config =
     load(resourceBasename, parseOptions.setClassLoader(loader), resolveOptions)
   private def checkedContextClassLoader(methodName: String) = {
     val loader = Thread.currentThread.getContextClassLoader
     if (loader == null)
       throw new ConfigException.BugOrBroken(
-        "Context class loader is not set for the current thread; " + "if Thread.currentThread.getContextClassLoader returns null, you must pass a ClassLoader " + "explicitly to ConfigFactory." + methodName)
+        "Context class loader is not set for the current thread; " + "if Thread.currentThread.getContextClassLoader returns null, you must pass a ClassLoader " + "explicitly to ConfigFactory." + methodName
+      )
     else loader
   }
-  private def ensureClassLoader(options: ConfigParseOptions,
-                                methodName: String) =
+  private def ensureClassLoader(
+      options: ConfigParseOptions,
+      methodName: String
+  ) =
     if (options.getClassLoader == null)
       options.setClassLoader(checkedContextClassLoader(methodName))
     else options
@@ -193,9 +204,11 @@ object ConfigFactory {
    *            options for resolving the assembled config stack
    * @return resolved configuration with overrides and fallbacks added
    */
-  def load(loader: ClassLoader,
-           config: Config,
-           resolveOptions: ConfigResolveOptions): Config =
+  def load(
+      loader: ClassLoader,
+      config: Config,
+      resolveOptions: ConfigResolveOptions
+  ): Config =
     defaultOverrides(loader)
       .withFallback(config)
       .withFallback(defaultReference(loader))
@@ -282,9 +295,11 @@ object ConfigFactory {
    *            options for resolving the assembled config stack
    * @return configuration for an application
    */
-  def load(loader: ClassLoader,
-           parseOptions: ConfigParseOptions,
-           resolveOptions: ConfigResolveOptions): Config = {
+  def load(
+      loader: ClassLoader,
+      parseOptions: ConfigParseOptions,
+      resolveOptions: ConfigResolveOptions
+  ): Config = {
     val withLoader = ensureClassLoader(parseOptions, "load")
     load(loader, defaultApplication(withLoader), resolveOptions)
   }
@@ -300,8 +315,10 @@ object ConfigFactory {
    * @return configuration for an application
    * @since 1.3.0
    */
-  def load(parseOptions: ConfigParseOptions,
-           resolveOptions: ConfigResolveOptions): Config = {
+  def load(
+      parseOptions: ConfigParseOptions,
+      resolveOptions: ConfigResolveOptions
+  ): Config = {
     val withLoader = ensureClassLoader(parseOptions, "load")
     load(defaultApplication(withLoader), resolveOptions)
   }
@@ -433,7 +450,8 @@ object ConfigFactory {
    */
   def defaultApplication(options: ConfigParseOptions): Config =
     getConfigLoadingStrategy.parseApplicationConfig(
-      ensureClassLoader(options, "defaultApplication"))
+      ensureClassLoader(options, "defaultApplication")
+    )
 
   /**
    * Reloads any cached configs, picking up changes to system properties for
@@ -539,8 +557,10 @@ object ConfigFactory {
    *            the parse options
    * @return the parsed configuration
    */
-  def parseProperties(properties: Properties,
-                      options: ConfigParseOptions): Config =
+  def parseProperties(
+      properties: Properties,
+      options: ConfigParseOptions
+  ): Config =
     Parseable.newProperties(properties, options).parse().toConfig
 
   /**
@@ -675,8 +695,10 @@ object ConfigFactory {
    *            parse options
    * @return the parsed configuration
    */
-  def parseFileAnySyntax(fileBasename: File,
-                         options: ConfigParseOptions): Config =
+  def parseFileAnySyntax(
+      fileBasename: File,
+      options: ConfigParseOptions
+  ): Config =
     ConfigImpl.parseFileAnySyntax(fileBasename, options).toConfig
 
   /**
@@ -717,9 +739,11 @@ object ConfigFactory {
    *            parse options
    * @return the parsed configuration
    */
-  def parseResources(klass: Class[_],
-                     resource: String,
-                     options: ConfigParseOptions): Config =
+  def parseResources(
+      klass: Class[_],
+      resource: String,
+      options: ConfigParseOptions
+  ): Config =
     Parseable.newResources(klass, resource, options).parse().toConfig
 
   /**
@@ -767,9 +791,11 @@ object ConfigFactory {
    *            from klass)
    * @return the parsed configuration
    */
-  def parseResourcesAnySyntax(klass: Class[_],
-                              resourceBasename: String,
-                              options: ConfigParseOptions): Config =
+  def parseResourcesAnySyntax(
+      klass: Class[_],
+      resourceBasename: String,
+      options: ConfigParseOptions
+  ): Config =
     ConfigImpl
       .parseResourcesAnySyntax(klass, resourceBasename, options)
       .toConfig
@@ -787,11 +813,15 @@ object ConfigFactory {
    *            with or without extension
    * @return the parsed configuration
    */
-  def parseResourcesAnySyntax(klass: Class[_],
-                              resourceBasename: String): Config =
-    parseResourcesAnySyntax(klass,
-                            resourceBasename,
-                            ConfigParseOptions.defaults)
+  def parseResourcesAnySyntax(
+      klass: Class[_],
+      resourceBasename: String
+  ): Config =
+    parseResourcesAnySyntax(
+      klass,
+      resourceBasename,
+      ConfigParseOptions.defaults
+    )
 
   /**
    * Parses all resources on the classpath with the given name and merges them
@@ -813,9 +843,11 @@ object ConfigFactory {
    *            parse options (class loader is ignored)
    * @return the parsed configuration
    */
-  def parseResources(loader: ClassLoader,
-                     resource: String,
-                     options: ConfigParseOptions): Config =
+  def parseResources(
+      loader: ClassLoader,
+      resource: String,
+      options: ConfigParseOptions
+  ): Config =
     parseResources(resource, options.setClassLoader(loader))
 
   /**
@@ -853,9 +885,11 @@ object ConfigFactory {
    *            parse options (class loader ignored)
    * @return the parsed configuration
    */
-  def parseResourcesAnySyntax(loader: ClassLoader,
-                              resourceBasename: String,
-                              options: ConfigParseOptions): Config =
+  def parseResourcesAnySyntax(
+      loader: ClassLoader,
+      resourceBasename: String,
+      options: ConfigParseOptions
+  ): Config =
     ConfigImpl
       .parseResourcesAnySyntax(resourceBasename, options.setClassLoader(loader))
       .toConfig
@@ -872,11 +906,15 @@ object ConfigFactory {
    *            extension
    * @return the parsed configuration
    */
-  def parseResourcesAnySyntax(loader: ClassLoader,
-                              resourceBasename: String): Config =
-    parseResourcesAnySyntax(loader,
-                            resourceBasename,
-                            ConfigParseOptions.defaults)
+  def parseResourcesAnySyntax(
+      loader: ClassLoader,
+      resourceBasename: String
+  ): Config =
+    parseResourcesAnySyntax(
+      loader,
+      resourceBasename,
+      ConfigParseOptions.defaults
+    )
 
   /**
    * Like [[ConfigFactory#parseResources(ClassLoader,String,ConfigParseOptions)]] but
@@ -912,8 +950,10 @@ object ConfigFactory {
    * @param options parse options
    * @return the parsed configuration
    */
-  def parseResourcesAnySyntax(resourceBasename: String,
-                              options: ConfigParseOptions): Config =
+  def parseResourcesAnySyntax(
+      resourceBasename: String,
+      options: ConfigParseOptions
+  ): Config =
     ConfigImpl
       .parseResourcesAnySyntax(resourceBasename, options)
       .toConfig
@@ -987,12 +1027,14 @@ object ConfigFactory {
       System.getProperties.getProperty(STRATEGY_PROPERTY_NAME)
     if (className != null)
       try classOf[ConfigLoadingStrategy].cast(
-        Class.forName(className).getConstructor().newInstance())
+        Class.forName(className).getConstructor().newInstance()
+      )
       catch {
         case e: Throwable =>
           throw new ConfigException.BugOrBroken(
             "Failed to load strategy: " + className,
-            e)
+            e
+          )
       } else new DefaultConfigLoadingStrategy
   }
 }

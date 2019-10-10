@@ -21,15 +21,16 @@ object SimpleConfigObject {
 
   final private[impl] class ResolveModifier private[impl] (
       var context: ResolveContext,
-      val source: ResolveSource)
-      extends AbstractConfigValue.Modifier {
+      val source: ResolveSource
+  ) extends AbstractConfigValue.Modifier {
 
     final private[impl] var originalRestrict = context.restrictToChild
 
     @throws[NotPossibleToResolve]
     override def modifyChildMayThrow(
         key: String,
-        v: AbstractConfigValue): AbstractConfigValue =
+        v: AbstractConfigValue
+    ): AbstractConfigValue =
       if (context.isRestrictedToChild)
         if (key == context.restrictToChild.first) {
           val remainder = context.restrictToChild.remainder
@@ -92,8 +93,10 @@ object SimpleConfigObject {
     }
   }
 
-  private def mapEquals(a: ju.Map[String, ConfigValue],
-                        b: ju.Map[String, ConfigValue]): Boolean = {
+  private def mapEquals(
+      a: ju.Map[String, ConfigValue],
+      b: ju.Map[String, ConfigValue]
+  ): Boolean = {
     if (a eq b) return true
     val aKeys = a.keySet
     val bKeys = b.keySet
@@ -125,35 +128,41 @@ object SimpleConfigObject {
     else
       new SimpleConfigObject(
         origin,
-        ju.Collections.emptyMap[String, AbstractConfigValue])
+        ju.Collections.emptyMap[String, AbstractConfigValue]
+      )
   private[impl] def emptyMissing(baseOrigin: ConfigOrigin) =
     new SimpleConfigObject(
       SimpleConfigOrigin.newSimple(baseOrigin.description + " (not found)"),
-      ju.Collections.emptyMap[String, AbstractConfigValue])
+      ju.Collections.emptyMap[String, AbstractConfigValue]
+    )
 }
 
 @SerialVersionUID(2L)
-final class SimpleConfigObject(_origin: ConfigOrigin,
-                               // this map should never be modified - assume immutable
-                               val value: ju.Map[String, AbstractConfigValue],
-                               val status: ResolveStatus,
-                               override val ignoresFallbacks: Boolean)
-    extends AbstractConfigObject(_origin)
+final class SimpleConfigObject(
+    _origin: ConfigOrigin,
+    // this map should never be modified - assume immutable
+    val value: ju.Map[String, AbstractConfigValue],
+    val status: ResolveStatus,
+    override val ignoresFallbacks: Boolean
+) extends AbstractConfigObject(_origin)
     with Serializable {
 
   if (value == null)
     throw new ConfigException.BugOrBroken(
-      "creating config object with null map")
+      "creating config object with null map"
+    )
   final private var resolved = status eq ResolveStatus.RESOLVED
   // Kind of an expensive debug check. Comment out?
   if (status ne ResolveStatus.fromValues(value.values))
     throw new ConfigException.BugOrBroken("Wrong resolved status on " + this)
 
   def this(_origin: ConfigOrigin, value: ju.Map[String, AbstractConfigValue]) =
-    this(_origin,
-         value,
-         ResolveStatus.fromValues(value.values),
-         false /* ignoresFallbacks */ )
+    this(
+      _origin,
+      value,
+      ResolveStatus.fromValues(value.values),
+      false /* ignoresFallbacks */
+    )
 
   override def withOnlyKey(key: String): SimpleConfigObject =
     withOnlyPath(Path.newKey(key))
@@ -179,10 +188,12 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
     }
     if (v == null) null
     else
-      new SimpleConfigObject(origin,
-                             ju.Collections.singletonMap(key, v),
-                             v.resolveStatus,
-                             ignoresFallbacks)
+      new SimpleConfigObject(
+        origin,
+        ju.Collections.singletonMap(key, v),
+        v.resolveStatus,
+        ignoresFallbacks
+      )
   }
   override def withOnlyPath(path: Path): SimpleConfigObject = {
     val o = withOnlyPathOrNull(path)
@@ -191,7 +202,8 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
         origin,
         ju.Collections.emptyMap[String, AbstractConfigValue],
         ResolveStatus.RESOLVED,
-        ignoresFallbacks)
+        ignoresFallbacks
+      )
     else o
   }
   override def withoutPath(path: Path): SimpleConfigObject = {
@@ -202,10 +214,12 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
       v = v.asInstanceOf[AbstractConfigObject].withoutPath(next)
       val updated = new ju.HashMap[String, AbstractConfigValue](value)
       updated.put(key, v)
-      new SimpleConfigObject(origin,
-                             updated,
-                             ResolveStatus.fromValues(updated.values),
-                             ignoresFallbacks)
+      new SimpleConfigObject(
+        origin,
+        updated,
+        ResolveStatus.fromValues(updated.values),
+        ignoresFallbacks
+      )
     } else if (next != null || v == null) { // can't descend, nothing to remove
       this
     } else {
@@ -213,16 +227,19 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
       for (old <- value.entrySet.asScala) {
         if (!(old.getKey == key)) smaller.put(old.getKey, old.getValue)
       }
-      new SimpleConfigObject(origin,
-                             smaller,
-                             ResolveStatus.fromValues(smaller.values),
-                             ignoresFallbacks)
+      new SimpleConfigObject(
+        origin,
+        smaller,
+        ResolveStatus.fromValues(smaller.values),
+        ignoresFallbacks
+      )
     }
   }
   override def withValue(key: String, v: ConfigValue): SimpleConfigObject = {
     if (v == null)
       throw new ConfigException.BugOrBroken(
-        "Trying to store null ConfigValue in a ConfigObject")
+        "Trying to store null ConfigValue in a ConfigObject"
+      )
     var newMap: ju.Map[String, AbstractConfigValue] = null
     if (value.isEmpty)
       newMap =
@@ -231,10 +248,12 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
       newMap = new ju.HashMap[String, AbstractConfigValue](value)
       newMap.put(key, v.asInstanceOf[AbstractConfigValue])
     }
-    new SimpleConfigObject(origin,
-                           newMap,
-                           ResolveStatus.fromValues(newMap.values),
-                           ignoresFallbacks)
+    new SimpleConfigObject(
+      origin,
+      newMap,
+      ResolveStatus.fromValues(newMap.values),
+      ignoresFallbacks
+    )
   }
   override def withValue(path: Path, v: ConfigValue): SimpleConfigObject = {
     val key  = path.first
@@ -244,26 +263,33 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
       val child = value.get(key)
       if (child != null && child
             .isInstanceOf[AbstractConfigObject]) { // if we have an object, add to it
-        withValue(key,
-                  child.asInstanceOf[AbstractConfigObject].withValue(next, v))
+        withValue(
+          key,
+          child.asInstanceOf[AbstractConfigObject].withValue(next, v)
+        )
       } else { // as soon as we have a non-object, replace it entirely
         val subtree = v
           .asInstanceOf[AbstractConfigValue]
           .atPath(
             SimpleConfigOrigin.newSimple("withValue(" + next.render + ")"),
-            next)
+            next
+          )
         withValue(key, subtree.root)
       }
     }
   }
   override def attemptPeekWithPartialResolve(key: String): AbstractConfigValue =
     value.get(key)
-  private def newCopy(newStatus: ResolveStatus,
-                      newOrigin: ConfigOrigin,
-                      newIgnoresFallbacks: Boolean) =
+  private def newCopy(
+      newStatus: ResolveStatus,
+      newOrigin: ConfigOrigin,
+      newIgnoresFallbacks: Boolean
+  ) =
     new SimpleConfigObject(newOrigin, value, newStatus, newIgnoresFallbacks)
-  override def newCopy(newStatus: ResolveStatus,
-                       newOrigin: ConfigOrigin): SimpleConfigObject =
+  override def newCopy(
+      newStatus: ResolveStatus,
+      newOrigin: ConfigOrigin
+  ): SimpleConfigObject =
     newCopy(newStatus, newOrigin, ignoresFallbacks)
   override def withFallbacksIgnored(): SimpleConfigObject =
     if (ignoresFallbacks) this
@@ -272,7 +298,8 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
     ResolveStatus.fromBoolean(resolved)
   override def replaceChild(
       child: AbstractConfigValue,
-      replacement: AbstractConfigValue): SimpleConfigObject = {
+      replacement: AbstractConfigValue
+  ): SimpleConfigObject = {
     val newChildren = new ju.HashMap[String, AbstractConfigValue](value)
     for (old <- newChildren.entrySet.asScala) {
       if (old.getValue eq child) {
@@ -282,11 +309,13 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
           origin,
           newChildren,
           ResolveStatus.fromValues(newChildren.values),
-          ignoresFallbacks)
+          ignoresFallbacks
+        )
       }
     }
     throw new ConfigException.BugOrBroken(
-      "SimpleConfigObject.replaceChild did not find " + child + " in " + this)
+      "SimpleConfigObject.replaceChild did not find " + child + " in " + this
+    )
   }
   override def hasDescendant(descendant: AbstractConfigValue): Boolean = {
     for (child <- value.values.asScala) {
@@ -310,11 +339,13 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
     m
   }
   override def mergedWithObject(
-      abstractFallback: AbstractConfigObject): SimpleConfigObject = {
+      abstractFallback: AbstractConfigObject
+  ): SimpleConfigObject = {
     requireNotIgnoringFallbacks()
     if (!abstractFallback.isInstanceOf[SimpleConfigObject])
       throw new ConfigException.BugOrBroken(
-        "should not be reached (merging non-SimpleConfigObject)")
+        "should not be reached (merging non-SimpleConfigObject)"
+      )
     val fallback    = abstractFallback.asInstanceOf[SimpleConfigObject]
     var changed     = false
     var allResolved = true
@@ -337,10 +368,12 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
     val newResolveStatus    = ResolveStatus.fromBoolean(allResolved)
     val newIgnoresFallbacks = fallback.ignoresFallbacks
     if (changed)
-      new SimpleConfigObject(AbstractConfigObject.mergeOrigins(this, fallback),
-                             merged,
-                             newResolveStatus,
-                             newIgnoresFallbacks)
+      new SimpleConfigObject(
+        AbstractConfigObject.mergeOrigins(this, fallback),
+        merged,
+        newResolveStatus,
+        newIgnoresFallbacks
+      )
     else if ((newResolveStatus ne resolveStatus) || newIgnoresFallbacks != ignoresFallbacks)
       newCopy(newResolveStatus, origin, newIgnoresFallbacks)
     else this
@@ -388,17 +421,20 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
             sawUnresolved = true
         }
       }
-      new SimpleConfigObject(origin,
-                             modified,
-                             if (sawUnresolved) ResolveStatus.UNRESOLVED
-                             else ResolveStatus.RESOLVED,
-                             ignoresFallbacks)
+      new SimpleConfigObject(
+        origin,
+        modified,
+        if (sawUnresolved) ResolveStatus.UNRESOLVED
+        else ResolveStatus.RESOLVED,
+        ignoresFallbacks
+      )
     }
   }
   @throws[NotPossibleToResolve]
   override def resolveSubstitutions(
       context: ResolveContext,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigObject] = {
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigObject] = {
     if (resolveStatus eq ResolveStatus.RESOLVED)
       return ResolveResult.make(context, this)
     val sourceWithParent = source.pushParent(this)
@@ -418,14 +454,18 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
   }
   override def relativized(prefix: Path): SimpleConfigObject =
     modify(new AbstractConfigValue.NoExceptionsModifier() {
-      override def modifyChild(key: String,
-                               v: AbstractConfigValue): AbstractConfigValue =
+      override def modifyChild(
+          key: String,
+          v: AbstractConfigValue
+      ): AbstractConfigValue =
         v.relativized(prefix)
     })
-  override def render(sb: jl.StringBuilder,
-                      indentVal: Int,
-                      atRoot: Boolean,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indentVal: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
     if (isEmpty) sb.append("{}")
     else {
       val outerBraces = options.getJson || !atRoot
@@ -499,11 +539,12 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
       // which is what AbstractConfigValue does.
       canEqual(other) && SimpleConfigObject.mapEquals(
         this,
-        other.asInstanceOf[ConfigObject])
+        other.asInstanceOf[ConfigObject]
+      )
     } else false
   }
   override def hashCode
-    : Int = { // note that "origin" is deliberately NOT part of equality
+      : Int = { // note that "origin" is deliberately NOT part of equality
     SimpleConfigObject.mapHash(this)
   }
   override def containsKey(key: Any): Boolean = value.containsKey(key)
@@ -516,7 +557,9 @@ final class SimpleConfigObject(_origin: ConfigOrigin,
       entries.add(
         new ju.AbstractMap.SimpleImmutableEntry[String, ConfigValue](
           e.getKey,
-          e.getValue))
+          e.getValue
+        )
+      )
     }
     entries
   }

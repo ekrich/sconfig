@@ -100,11 +100,15 @@ class ConfParserTest extends TestUtils {
     }
 
     if (firstException == null && secondException != null)
-      throw new AssertionError("only the standalone path parser threw",
-                               secondException)
+      throw new AssertionError(
+        "only the standalone path parser threw",
+        secondException
+      )
     if (firstException != null && secondException == null)
-      throw new AssertionError("only the whole-document parser threw",
-                               firstException)
+      throw new AssertionError(
+        "only the whole-document parser threw",
+        firstException
+      )
 
     if (firstException != null)
       throw firstException
@@ -151,15 +155,17 @@ class ConfParserTest extends TestUtils {
     // multiple-decimal number
     assertEquals(path("1", "2", "3", "4"), parsePath("1.2.3.4"))
 
-    for (invalid <- Seq("",
-                        " ",
-                        "  \n   \n  ",
-                        "a.",
-                        ".b",
-                        "a..b",
-                        "a${b}c",
-                        "\"\".",
-                        ".\"\"")) {
+    for (invalid <- Seq(
+           "",
+           " ",
+           "  \n   \n  ",
+           "a.",
+           ".b",
+           "a..b",
+           "a${b}c",
+           "\"\".",
+           ".\"\""
+         )) {
       try {
         intercept[ConfigException.BadPath] {
           parsePath(invalid)
@@ -183,7 +189,8 @@ class ConfParserTest extends TestUtils {
   @Test
   def duplicateKeyObjectsMerged(): Unit = {
     val obj = parseConfig(
-      """{ "a" : { "x" : 1, "y" : 2 }, "a" : { "x" : 42, "z" : 100 } }""")
+      """{ "a" : { "x" : 1, "y" : 2 }, "a" : { "x" : 42, "z" : 100 } }"""
+    )
 
     assertEquals(1, obj.root.size())
     assertEquals(3, obj.getObject("a").size())
@@ -195,7 +202,8 @@ class ConfParserTest extends TestUtils {
   @Test
   def duplicateKeyObjectsMergedRecursively(): Unit = {
     val obj = parseConfig(
-      """{ "a" : { "b" : { "x" : 1, "y" : 2 } }, "a" : { "b" : { "x" : 42, "z" : 100 } } }""")
+      """{ "a" : { "b" : { "x" : 1, "y" : 2 } }, "a" : { "b" : { "x" : 42, "z" : 100 } } }"""
+    )
 
     assertEquals(1, obj.root.size())
     assertEquals(1, obj.getObject("a").size())
@@ -208,7 +216,8 @@ class ConfParserTest extends TestUtils {
   @Test
   def duplicateKeyObjectsMergedRecursivelyDeeper(): Unit = {
     val obj = parseConfig(
-      """{ "a" : { "b" : { "c" : { "x" : 1, "y" : 2 } } }, "a" : { "b" : { "c" : { "x" : 42, "z" : 100 } } } }""")
+      """{ "a" : { "b" : { "c" : { "x" : 1, "y" : 2 } } }, "a" : { "b" : { "c" : { "x" : 42, "z" : 100 } } } }"""
+    )
 
     assertEquals(1, obj.root.size())
     assertEquals(1, obj.getObject("a").size())
@@ -276,7 +285,8 @@ class ConfParserTest extends TestUtils {
       val last  = s.lastIndexOf('}')
       s.substring(0, first) + s.substring(first + 1, last) + s.substring(
         last + 1,
-        s.length())
+        s.length()
+      )
     }
 
     val changes = Seq(
@@ -316,9 +326,12 @@ class ConfParserTest extends TestUtils {
     assertEquals(Seq("1 2 3"), noNewlineInArray.getStringList("c").asScala)
 
     val noNewlineInArrayWithQuoted = parseConfig(
-      """ { c : [ "4" "5" "6" ] } """)
-    assertEquals(Seq("4 5 6"),
-                 noNewlineInArrayWithQuoted.getStringList("c").asScala)
+      """ { c : [ "4" "5" "6" ] } """
+    )
+    assertEquals(
+      Seq("4 5 6"),
+      noNewlineInArrayWithQuoted.getStringList("c").asScala
+    )
 
     val noNewlineInObject = parseConfig(" { a : b c } ")
     assertEquals("b c", noNewlineInObject.getString("a"))
@@ -350,7 +363,8 @@ class ConfParserTest extends TestUtils {
       throw new Exception(
         "error message did not contain line '" + num + "' '" + text
           .replace("\n", "\\n") + "'",
-        e)
+        e
+      )
   }
 
   @Test
@@ -402,16 +416,20 @@ class ConfParserTest extends TestUtils {
     assertEquals(comments, conf.root.origin.comments.asScala.toSeq)
   }
 
-  private def assertComments(comments: Seq[String],
-                             conf: Config,
-                             path: String): Unit = {
+  private def assertComments(
+      comments: Seq[String],
+      conf: Config,
+      path: String
+  ): Unit = {
     assertEquals(comments, conf.getValue(path).origin.comments.asScala.toSeq)
   }
 
-  private def assertComments(comments: Seq[String],
-                             conf: Config,
-                             path: String,
-                             index: Int): Unit = {
+  private def assertComments(
+      comments: Seq[String],
+      conf: Config,
+      path: String,
+      index: Int
+  ): Unit = {
     val v = conf.getList(path).get(index)
     assertEquals(comments, v.origin.comments.asScala.toSeq)
   }
@@ -521,13 +539,17 @@ class ConfParserTest extends TestUtils {
                 # AfterValueNewLine (should NOT be used)
                 }
                 """)
-    assertComments(Seq(" Before",
-                       " BeforeSep",
-                       " AfterSepSameLine",
-                       " AfterSepNextLine",
-                       " AfterValue"),
-                   conf11,
-                   "foo")
+    assertComments(
+      Seq(
+        " Before",
+        " BeforeSep",
+        " AfterSepSameLine",
+        " AfterSepNextLine",
+        " AfterValue"
+      ),
+      conf11,
+      "foo"
+    )
 
     // empty object
     val conf12 = parseConfig("""# BeforeEmpty
@@ -643,9 +665,11 @@ class ConfParserTest extends TestUtils {
              # ignored!
              """)
     assertComments(Seq(" Inner", " AfterInner"), conf5, "bar.baz.foo")
-    assertComments(Seq(" Middle", " two lines", " AfterMiddle"),
-                   conf5,
-                   "bar.baz")
+    assertComments(
+      Seq(" Middle", " two lines", " AfterMiddle"),
+      conf5,
+      "bar.baz"
+    )
     assertComments(Seq(" Outside", " AfterOutside"), conf5, "bar")
 
     // multiple fields
@@ -673,13 +697,18 @@ class ConfParserTest extends TestUtils {
     assertComments(
       Seq(" this is field B", " goes with field B which has no comma"),
       conf6,
-      "b")
-    assertComments(Seq(" this is field C", " goes with field C after comma"),
-                   conf6,
-                   "c")
-    assertComments(Seq(" this is with field D", " this is with field D also"),
-                   conf6,
-                   "d")
+      "b"
+    )
+    assertComments(
+      Seq(" this is field C", " goes with field C after comma"),
+      conf6,
+      "c"
+    )
+    assertComments(
+      Seq(" this is with field D", " this is with field D also"),
+      conf6,
+      "d"
+    )
 
     // array
     val conf7 = parseConfig("""
@@ -695,14 +724,18 @@ class ConfParserTest extends TestUtils {
                 ] # after entire array
                 """)
     assertComments(Seq(" goes with 0"), conf7, "array", 0)
-    assertComments(Seq(" goes with 1", " with 1 after comma"),
-                   conf7,
-                   "array",
-                   1)
+    assertComments(
+      Seq(" goes with 1", " with 1 after comma"),
+      conf7,
+      "array",
+      1
+    )
     assertComments(Seq(" goes with 2", " no comma after 2"), conf7, "array", 2)
-    assertComments(Seq(" before entire array", " after entire array"),
-                   conf7,
-                   "array")
+    assertComments(
+      Seq(" before entire array", " after entire array"),
+      conf7,
+      "array"
+    )
 
     // properties-like syntax
     val conf8 = parseConfig("""
@@ -736,7 +769,8 @@ class ConfParserTest extends TestUtils {
   @Test
   def includeFile(): Unit = {
     val conf = ConfigFactory.parseString(
-      "include file(" + jsonQuotedResourceFile("test01") + ")")
+      "include file(" + jsonQuotedResourceFile("test01") + ")"
+    )
 
     // should have loaded conf, json, properties
     assertEquals(42, conf.getInt("ints.fortyTwo"))
@@ -747,7 +781,8 @@ class ConfParserTest extends TestUtils {
   @Test
   def includeFileWithExtension(): Unit = {
     val conf = ConfigFactory.parseString(
-      "include file(" + jsonQuotedResourceFile("test01.conf") + ")")
+      "include file(" + jsonQuotedResourceFile("test01.conf") + ")"
+    )
 
     assertEquals(42, conf.getInt("ints.fortyTwo"))
     assertFalse(conf.hasPath("fromJson1"))
@@ -757,7 +792,8 @@ class ConfParserTest extends TestUtils {
   @Test
   def includeFileWhitespaceInsideParens(): Unit = {
     val conf = ConfigFactory.parseString(
-      "include file(  \n  " + jsonQuotedResourceFile("test01") + "  \n  )")
+      "include file(  \n  " + jsonQuotedResourceFile("test01") + "  \n  )"
+    )
 
     // should have loaded conf, json, properties
     assertEquals(42, conf.getInt("ints.fortyTwo"))
@@ -769,10 +805,13 @@ class ConfParserTest extends TestUtils {
   def includeFileNoWhitespaceOutsideParens(): Unit = {
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseString(
-        "include file (" + jsonQuotedResourceFile("test01") + ")")
+        "include file (" + jsonQuotedResourceFile("test01") + ")"
+      )
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("expecting include parameter"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("expecting include parameter")
+    )
   }
 
   @Test
@@ -781,9 +820,12 @@ class ConfParserTest extends TestUtils {
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseString("include file(" + f + ")")
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains(
-                 "expecting include file() parameter to be a quoted string"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains(
+        "expecting include file() parameter to be a quoted string"
+      )
+    )
   }
 
   @Test
@@ -795,17 +837,22 @@ class ConfParserTest extends TestUtils {
     assertTrue(
       "wrong exception: " + e.getMessage,
       e.getMessage.contains(
-        "expecting include file() parameter to be a quoted string, rather than: ':'"))
+        "expecting include file() parameter to be a quoted string, rather than: ':'"
+      )
+    )
   }
 
   @Test
   def includeFileUnclosedParens(): Unit = {
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseString(
-        "include file(" + jsonQuotedResourceFile("test01") + " something")
+        "include file(" + jsonQuotedResourceFile("test01") + " something"
+      )
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("expecting a close parentheses"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("expecting a close parentheses")
+    )
   }
 
   @Test
@@ -834,8 +881,10 @@ class ConfParserTest extends TestUtils {
     val e = intercept[ConfigException.Parse] {
       ConfigFactory.parseString("include url(\"junk:junk:junk\")")
     }
-    assertTrue("wrong exception: " + e.getMessage,
-               e.getMessage.contains("invalid URL"))
+    assertTrue(
+      "wrong exception: " + e.getMessage,
+      e.getMessage.contains("invalid URL")
+    )
   }
 
   @Test
@@ -856,13 +905,16 @@ class ConfParserTest extends TestUtils {
     val ex = intercept[Exception] {
       ConfigFactory.parseString(
         "include required(classpath( \"nonexistant\") )",
-        missing)
+        missing
+      )
     }
 
     val actual   = ex.getMessage
     val expected = ".*resource not found on classpath.*"
-    assertTrue(s"expected match for <$expected> but got <$actual>",
-               actual.matches(expected))
+    assertTrue(
+      s"expected match for <$expected> but got <$actual>",
+      actual.matches(expected)
+    )
   }
 
   @Test
@@ -873,12 +925,15 @@ class ConfParserTest extends TestUtils {
     // test03 has a missing include
     val conf = ConfigFactory.parseString(
       "include required(classpath( \"test03\") )",
-      missing)
+      missing
+    )
 
     val expected = "This is in the included file"
     val actual   = conf.getString("foo")
-    assertTrue(s"expected match for <$expected> but got <$actual>",
-               actual.matches(expected))
+    assertTrue(
+      s"expected match for <$expected> but got <$actual>",
+      actual.matches(expected)
+    )
   }
 
   @Test

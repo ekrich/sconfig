@@ -7,16 +7,20 @@ import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 
 object Token { // this is used for singleton tokens like COMMA or OPEN_CURLY
-  def newWithoutOrigin(tokenType: TokenType,
-                       debugString: String,
-                       tokenText: String) =
+  def newWithoutOrigin(
+      tokenType: TokenType,
+      debugString: String,
+      tokenText: String
+  ) =
     new Token(tokenType, null, tokenText, debugString)
 }
 
-class Token private[impl] (_tokenType: TokenType,
-                           _origin: ConfigOrigin,
-                           _tokenText: String,
-                           debugString: String) {
+class Token private[impl] (
+    _tokenType: TokenType,
+    _origin: ConfigOrigin,
+    _tokenText: String,
+    debugString: String
+) {
 
   def this(_tokenType: TokenType, _origin: ConfigOrigin, _tokenText: String) =
     this(_tokenType, _origin, _tokenText, null)
@@ -35,7 +39,8 @@ class Token private[impl] (_tokenType: TokenType,
     // are expected to have an origin.
     if (_origin == null)
       throw new ConfigException.BugOrBroken(
-        "tried to get origin from token that doesn't have one: " + this)
+        "tried to get origin from token that doesn't have one: " + this
+      )
     _origin
   }
 

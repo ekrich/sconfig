@@ -26,7 +26,8 @@ object ConfigMemorySize {
 final class ConfigMemorySize private (val bytes: Long) {
   if (bytes < 0)
     throw new IllegalArgumentException(
-      "Attempt to construct ConfigMemorySize with negative number: " + bytes)
+      "Attempt to construct ConfigMemorySize with negative number: " + bytes
+    )
 
   /**
    * Gets the size in bytes.

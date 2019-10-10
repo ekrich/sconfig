@@ -6,8 +6,8 @@ package org.ekrich.config.impl
 import java.{util => ju}
 
 abstract class ConfigNodeComplexValue(
-    _children: ju.Collection[AbstractConfigNode])
-    extends AbstractConfigNodeValue {
+    _children: ju.Collection[AbstractConfigNode]
+) extends AbstractConfigNodeValue {
   // why create ArrayList from Collection?
   val children: ju.List[AbstractConfigNode] =
     new ju.ArrayList[AbstractConfigNode](_children)
@@ -21,32 +21,39 @@ abstract class ConfigNodeComplexValue(
     tokens
   }
   private[impl] def indentText(
-      indentation: AbstractConfigNode): ConfigNodeComplexValue = {
+      indentation: AbstractConfigNode
+  ): ConfigNodeComplexValue = {
     val childrenCopy =
       new ju.ArrayList[AbstractConfigNode](children)
     var i = 0
     while (i < childrenCopy.size) {
       val child = childrenCopy.get(i)
       if (child.isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
-            child.asInstanceOf[ConfigNodeSingleToken].token)) {
+            child.asInstanceOf[ConfigNodeSingleToken].token
+          )) {
         childrenCopy.add(i + 1, indentation)
         i += 1
       } else if (child.isInstanceOf[ConfigNodeField]) {
         val value =
           child.asInstanceOf[ConfigNodeField].value
         if (value.isInstanceOf[ConfigNodeComplexValue])
-          childrenCopy.set(i,
-                           child
-                             .asInstanceOf[ConfigNodeField]
-                             .replaceValue(
-                               value
-                                 .asInstanceOf[ConfigNodeComplexValue]
-                                 .indentText(indentation)))
+          childrenCopy.set(
+            i,
+            child
+              .asInstanceOf[ConfigNodeField]
+              .replaceValue(
+                value
+                  .asInstanceOf[ConfigNodeComplexValue]
+                  .indentText(indentation)
+              )
+          )
       } else if (child.isInstanceOf[ConfigNodeComplexValue])
-        childrenCopy.set(i,
-                         child
-                           .asInstanceOf[ConfigNodeComplexValue]
-                           .indentText(indentation))
+        childrenCopy.set(
+          i,
+          child
+            .asInstanceOf[ConfigNodeComplexValue]
+            .indentText(indentation)
+        )
 
       i += 1
     }

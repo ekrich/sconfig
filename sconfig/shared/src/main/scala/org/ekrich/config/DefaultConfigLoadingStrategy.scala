@@ -12,11 +12,13 @@ import java.net.URL
 class DefaultConfigLoadingStrategy extends ConfigLoadingStrategy {
 
   override def parseApplicationConfig(
-      parseOptions: ConfigParseOptions): Config = {
+      parseOptions: ConfigParseOptions
+  ): Config = {
     val loader = parseOptions.getClassLoader
     if (loader == null)
       throw new ConfigException.BugOrBroken(
-        "ClassLoader should have been set here; bug in ConfigFactory. " + "(You can probably work around this bug by passing in a class loader or calling currentThread().setContextClassLoader() though.)")
+        "ClassLoader should have been set here; bug in ConfigFactory. " + "(You can probably work around this bug by passing in a class loader or calling currentThread().setContextClassLoader() though.)"
+      )
     var specified = 0
     // override application.conf with config.file, config.resource,
     // config.url if requested.
@@ -30,7 +32,8 @@ class DefaultConfigLoadingStrategy extends ConfigLoadingStrategy {
       ConfigFactory.parseResourcesAnySyntax("application", parseOptions)
     } else if (specified > 1) {
       throw new ConfigException.Generic(
-        "You set more than one of config.file='" + file + "', config.url='" + url + "', config.resource='" + resource + "'; don't know which one to use!")
+        "You set more than one of config.file='" + file + "', config.url='" + url + "', config.resource='" + resource + "'; don't know which one to use!"
+      )
     } else { // the override file/url/resource MUST be present or it's an error
       val overrideOptions =
         parseOptions.setAllowMissing(false)
@@ -47,7 +50,8 @@ class DefaultConfigLoadingStrategy extends ConfigLoadingStrategy {
           case e: MalformedURLException =>
             throw new ConfigException.Generic(
               "Bad URL in config.url system property: '" + url + "': " + e.getMessage,
-              e)
+              e
+            )
         }
       }
     }

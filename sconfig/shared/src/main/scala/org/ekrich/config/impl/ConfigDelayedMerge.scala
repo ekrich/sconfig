@@ -26,10 +26,13 @@ object ConfigDelayedMerge {
       replaceable: ReplaceableMergeStack,
       stack: ju.List[AbstractConfigValue],
       context: ResolveContext,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigValue] = {
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigValue] = {
     if (ConfigImpl.traceSubstitutionsEnabled) {
-      ConfigImpl.trace(context.depth,
-                       "delayed merge stack has " + stack.size + " items:")
+      ConfigImpl.trace(
+        context.depth,
+        "delayed merge stack has " + stack.size + " items:"
+      )
       var count = 0
       for (v <- stack.asScala) {
         ConfigImpl.trace(context.depth + 1, s"$count: $v")
@@ -48,7 +51,8 @@ object ConfigDelayedMerge {
       var sourceForEnd: ResolveSource = null
       if (end.isInstanceOf[ReplaceableMergeStack])
         throw new ConfigException.BugOrBroken(
-          "A delayed merge should not contain another one: " + replaceable)
+          "A delayed merge should not contain another one: " + replaceable
+        )
       else if (end.isInstanceOf[Unmergeable]) { // the remainder could be any kind of value, including another
         // ConfigDelayedMerge
         val remainder =
@@ -66,17 +70,20 @@ object ConfigDelayedMerge {
         // against a root which does NOT contain "end"
         sourceForEnd = source.replaceWithinCurrentParent(
           replaceable.asInstanceOf[AbstractConfigValue],
-          remainder)
+          remainder
+        )
         if (ConfigImpl.traceSubstitutionsEnabled)
           ConfigImpl.trace(
             newContext.depth,
-            "  sourceForEnd before reset parents but after replace: " + sourceForEnd)
+            "  sourceForEnd before reset parents but after replace: " + sourceForEnd
+          )
         sourceForEnd = sourceForEnd.resetParents
       } else {
         if (ConfigImpl.traceSubstitutionsEnabled)
           ConfigImpl.trace(
             newContext.depth,
-            "will resolve end against the original source with parent pushed")
+            "will resolve end against the original source with parent pushed"
+          )
         sourceForEnd = source.pushParent(replaceable)
       }
       if (ConfigImpl.traceSubstitutionsEnabled)
@@ -85,7 +92,8 @@ object ConfigDelayedMerge {
         ConfigImpl.trace(
           newContext.depth,
           "Resolving highest-priority item in delayed merge " + end
-            + " against " + sourceForEnd + " endWasRemoved=" + (source != sourceForEnd))
+            + " against " + sourceForEnd + " endWasRemoved=" + (source != sourceForEnd)
+        )
       val result =
         newContext.resolve(end, sourceForEnd)
       val resolvedEnd = result.value
@@ -96,7 +104,8 @@ object ConfigDelayedMerge {
           if (ConfigImpl.traceSubstitutionsEnabled)
             ConfigImpl.trace(
               newContext.depth + 1,
-              "merging " + merged + " with fallback " + resolvedEnd)
+              "merging " + merged + " with fallback " + resolvedEnd
+            )
           merged = merged.withFallback(resolvedEnd)
         }
       count += 1
@@ -106,15 +115,19 @@ object ConfigDelayedMerge {
     ResolveResult.make(newContext, merged)
   }
   // static method also used by ConfigDelayedMergeObject; end may be null
-  def makeReplacement(context: ResolveContext,
-                      stack: ju.List[AbstractConfigValue],
-                      skipping: Int): AbstractConfigValue = {
+  def makeReplacement(
+      context: ResolveContext,
+      stack: ju.List[AbstractConfigValue],
+      skipping: Int
+  ): AbstractConfigValue = {
     val subStack =
       stack.subList(skipping, stack.size)
     if (subStack.isEmpty) {
       if (ConfigImpl.traceSubstitutionsEnabled)
-        ConfigImpl.trace(context.depth,
-                         "Nothing else in the merge stack, replacing with null")
+        ConfigImpl.trace(
+          context.depth,
+          "Nothing else in the merge stack, replacing with null"
+        )
       null
     } else { // generate a new merge stack from only the remaining items
       var merged: AbstractConfigValue = null
@@ -130,22 +143,26 @@ object ConfigDelayedMerge {
     last.ignoresFallbacks
   }
   // static method also used by ConfigDelayedMergeObject.
-  def render(stack: ju.List[AbstractConfigValue],
-             sb: jl.StringBuilder,
-             indentVal: Int,
-             atRoot: Boolean,
-             atKey: String,
-             options: ConfigRenderOptions): Unit = {
+  def render(
+      stack: ju.List[AbstractConfigValue],
+      sb: jl.StringBuilder,
+      indentVal: Int,
+      atRoot: Boolean,
+      atKey: String,
+      options: ConfigRenderOptions
+  ): Unit = {
     val commentMerge = options.getComments
     if (commentMerge) {
       sb.append("# unresolved merge of " + stack.size + " values follows (\n")
       if (atKey == null) {
         indent(sb, indentVal, options)
         sb.append(
-          "# this unresolved merge will not be parseable because it's at the root of the object\n")
+          "# this unresolved merge will not be parseable because it's at the root of the object\n"
+        )
         indent(sb, indentVal, options)
         sb.append(
-          "# the HOCON format has no way to list multiple root objects in a single file\n")
+          "# the HOCON format has no way to list multiple root objects in a single file\n"
+        )
       }
     }
     val reversed = new ju.ArrayList[AbstractConfigValue]
@@ -158,7 +175,8 @@ object ConfigDelayedMerge {
         if (atKey != null)
           sb.append(
             "#     unmerged value " + i + " for key " + ConfigImplUtil
-              .renderJsonString(atKey) + " from ")
+              .renderJsonString(atKey) + " from "
+          )
         else sb.append("#     unmerged value " + i + " from ")
         i += 1
         sb.append(v.origin.description)
@@ -194,8 +212,8 @@ object ConfigDelayedMerge {
 
 final class ConfigDelayedMerge(
     _origin: ConfigOrigin, // earlier items in the stack win
-    val stack: ju.List[AbstractConfigValue])
-    extends AbstractConfigValue(_origin)
+    val stack: ju.List[AbstractConfigValue]
+) extends AbstractConfigValue(_origin)
     with Unmergeable
     with ReplaceableMergeStack {
 
@@ -206,32 +224,39 @@ final class ConfigDelayedMerge(
     if (v.isInstanceOf[ConfigDelayedMerge] || v
           .isInstanceOf[ConfigDelayedMergeObject])
       throw new ConfigException.BugOrBroken(
-        "placed nested DelayedMerge in a ConfigDelayedMerge, should have consolidated stack")
+        "placed nested DelayedMerge in a ConfigDelayedMerge, should have consolidated stack"
+      )
   }
 
   override def valueType =
     throw new ConfigException.NotResolved(
-      "called valueType() on value with unresolved substitutions, need to Config#resolve() first, see API docs")
+      "called valueType() on value with unresolved substitutions, need to Config#resolve() first, see API docs"
+    )
 
   override def unwrapped =
     throw new ConfigException.NotResolved(
-      "called unwrapped() on value with unresolved substitutions, need to Config#resolve() first, see API docs")
+      "called unwrapped() on value with unresolved substitutions, need to Config#resolve() first, see API docs"
+    )
 
   @throws[AbstractConfigValue.NotPossibleToResolve]
   override def resolveSubstitutions(
       context: ResolveContext,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigValue] =
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigValue] =
     ConfigDelayedMerge.resolveSubstitutions(this, stack, context, source)
 
-  override def makeReplacement(context: ResolveContext,
-                               skipping: Int): AbstractConfigValue =
+  override def makeReplacement(
+      context: ResolveContext,
+      skipping: Int
+  ): AbstractConfigValue =
     ConfigDelayedMerge.makeReplacement(context, stack, skipping)
 
   override def resolveStatus: ResolveStatus = ResolveStatus.UNRESOLVED
 
   override def replaceChild(
       child: AbstractConfigValue,
-      replacement: AbstractConfigValue): AbstractConfigValue = {
+      replacement: AbstractConfigValue
+  ): AbstractConfigValue = {
     val newStack =
       AbstractConfigValue.replaceChildInList(stack, child, replacement)
     if (newStack == null) null else new ConfigDelayedMerge(origin, newStack)
@@ -254,16 +279,19 @@ final class ConfigDelayedMerge(
     new ConfigDelayedMerge(newOrigin, stack)
 
   override final def mergedWithTheUnmergeable(
-      fallback: Unmergeable): ConfigDelayedMerge =
+      fallback: Unmergeable
+  ): ConfigDelayedMerge =
     mergedWithTheUnmergeable(stack, fallback)
       .asInstanceOf[ConfigDelayedMerge]
 
   override final def mergedWithObject(
-      fallback: AbstractConfigObject): ConfigDelayedMerge =
+      fallback: AbstractConfigObject
+  ): ConfigDelayedMerge =
     mergedWithObject(stack, fallback).asInstanceOf[ConfigDelayedMerge]
 
   override def mergedWithNonObject(
-      fallback: AbstractConfigValue): ConfigDelayedMerge =
+      fallback: AbstractConfigValue
+  ): ConfigDelayedMerge =
     mergedWithNonObject(stack, fallback).asInstanceOf[ConfigDelayedMerge]
 
   override def unmergedValues: ju.Collection[AbstractConfigValue] = stack
@@ -282,18 +310,22 @@ final class ConfigDelayedMerge(
 
   override def hashCode: Int = stack.hashCode
 
-  override def render(sb: jl.StringBuilder,
-                      indent: Int,
-                      atRoot: Boolean,
-                      atKey: String,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      atKey: String,
+      options: ConfigRenderOptions
+  ): Unit = {
     ConfigDelayedMerge.render(stack, sb, indent, atRoot, atKey, options)
   }
 
-  override def render(sb: jl.StringBuilder,
-                      indent: Int,
-                      atRoot: Boolean,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
     render(sb, indent, atRoot, null, options)
   }
 }

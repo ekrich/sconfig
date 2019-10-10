@@ -59,9 +59,11 @@ abstract class ConfigException(message: String, cause: Throwable)
 object ConfigException {
   // For deserialization - uses reflection to set the final origin field on the object
   @throws(classOf[IOException])
-  private def setOriginField[T](hasOriginField: T,
-                                clazz: Class[_ <: Serializable],
-                                origin: ConfigOrigin): Unit = {
+  private def setOriginField[T](
+      hasOriginField: T,
+      clazz: Class[_ <: Serializable],
+      origin: ConfigOrigin
+  ): Unit = {
     // circumvent "final"
     var f: Field = null
     try {
@@ -72,7 +74,8 @@ object ConfigException {
       case e: SecurityException =>
         throw new IOException(
           "unable to fill out origin field in " + clazz.getSimpleName,
-          e)
+          e
+        )
     }
 
     f.setAccessible(true)
@@ -98,19 +101,25 @@ object ConfigException {
   class WrongType(origin: ConfigOrigin, message: String, cause: Throwable)
       extends ConfigException(origin, message, cause) {
 
-    def this(origin: ConfigOrigin,
-             path: String,
-             expected: String,
-             actual: String,
-             cause: Throwable) =
-      this(origin,
-           path + " has type " + actual + " rather than " + expected,
-           cause)
+    def this(
+        origin: ConfigOrigin,
+        path: String,
+        expected: String,
+        actual: String,
+        cause: Throwable
+    ) =
+      this(
+        origin,
+        path + " has type " + actual + " rather than " + expected,
+        cause
+      )
 
-    def this(origin: ConfigOrigin,
-             path: String,
-             expected: String,
-             actual: String) =
+    def this(
+        origin: ConfigOrigin,
+        path: String,
+        expected: String,
+        actual: String
+    ) =
       this(origin, path, expected, actual, null)
 
     def this(origin: ConfigOrigin, message: String) =
@@ -156,13 +165,16 @@ object ConfigException {
   }
 
   @SerialVersionUID(1L)
-  class Null(origin: ConfigOrigin,
-             path: String,
-             expected: String,
-             cause: Throwable)
-      extends ConfigException.Missing(origin,
-                                      Null.makeMessage(path, expected),
-                                      cause) {
+  class Null(
+      origin: ConfigOrigin,
+      path: String,
+      expected: String,
+      cause: Throwable
+  ) extends ConfigException.Missing(
+        origin,
+        Null.makeMessage(path, expected),
+        cause
+      ) {
 
     def this(origin: ConfigOrigin, path: String, expected: String) =
       this(origin, path, expected, null)
@@ -177,19 +189,23 @@ object ConfigException {
   @SerialVersionUID(1L)
   class BadValue(origin: ConfigOrigin, message: String, cause: Throwable)
       extends ConfigException(origin, message, cause) {
-    def this(origin: ConfigOrigin,
-             path: String,
-             message: String,
-             cause: Throwable) =
+    def this(
+        origin: ConfigOrigin,
+        path: String,
+        message: String,
+        cause: Throwable
+    ) =
       this(origin, "Invalid value at '" + path + "': " + message, cause)
 
     def this(origin: ConfigOrigin, path: String, message: String) =
       this(origin, path, message, null)
 
     def this(path: String, message: String, cause: Throwable) =
-      this(null: ConfigOrigin,
-           "Invalid value at '" + path + "': " + message,
-           cause)
+      this(
+        null: ConfigOrigin,
+        "Invalid value at '" + path + "': " + message,
+        cause
+      )
 
     def this(path: String, message: String) = this(path, message, null)
   }
@@ -203,23 +219,29 @@ object ConfigException {
   class BadPath(origin: ConfigOrigin, message: String, cause: Throwable)
       extends ConfigException(origin, message, cause) {
 
-    def this(origin: ConfigOrigin,
-             path: String,
-             message: String,
-             cause: Throwable) =
-      this(origin,
-           if (path != null) "Invalid path '" + path + "': " + message
-           else message,
-           cause)
+    def this(
+        origin: ConfigOrigin,
+        path: String,
+        message: String,
+        cause: Throwable
+    ) =
+      this(
+        origin,
+        if (path != null) "Invalid path '" + path + "': " + message
+        else message,
+        cause
+      )
 
     def this(origin: ConfigOrigin, path: String, message: String) =
       this(origin, path, message, null)
 
     def this(path: String, message: String, cause: Throwable) =
-      this(null: ConfigOrigin,
-           if (path != null) "Invalid path '" + path + "': " + message
-           else message,
-           cause)
+      this(
+        null: ConfigOrigin,
+        if (path != null) "Invalid path '" + path + "': " + message
+        else message,
+        cause
+      )
 
     def this(path: String, message: String) = this(path, message, null)
 
@@ -270,13 +292,15 @@ object ConfigException {
    * Thrown by {@link Config#resolve}.
    */
   @SerialVersionUID(1L)
-  class UnresolvedSubstitution(origin: ConfigOrigin,
-                               detail: String,
-                               cause: Throwable)
-      extends ConfigException.Parse(
+  class UnresolvedSubstitution(
+      origin: ConfigOrigin,
+      detail: String,
+      cause: Throwable
+  ) extends ConfigException.Parse(
         origin,
         "Could not resolve substitution to a value: " + detail,
-        cause) {
+        cause
+      ) {
 
     def this(origin: ConfigOrigin, detail: String) = this(origin, detail, null)
   }
@@ -303,9 +327,10 @@ object ConfigException {
    */
   @SerialVersionUID(1L)
   class ValidationProblem(
-      val path: String, // the path of the problem setting
+      val path: String,                           // the path of the problem setting
       @transient val origin: ConfigOrigin = null, // the origin of the problem setting
-      val problem: String) // description of the problem
+      val problem: String
+  ) // description of the problem
       extends Serializable {
 
     // We customize serialization because ConfigOrigin isn't
@@ -337,7 +362,8 @@ object ConfigException {
   @SerialVersionUID(1L)
   object ValidationFailed {
     private def makeMessage(
-        problems: jl.Iterable[ConfigException.ValidationProblem]): String = {
+        problems: jl.Iterable[ConfigException.ValidationProblem]
+    ): String = {
       val sb = new StringBuilder
       import scala.jdk.CollectionConverters._
       for (p <- problems.asScala) {
@@ -350,15 +376,16 @@ object ConfigException {
       }
       if (sb.length == 0)
         throw new ConfigException.BugOrBroken(
-          "ValidationFailed must have a non-empty list of problems")
+          "ValidationFailed must have a non-empty list of problems"
+        )
       sb.setLength(sb.length - 2) // chop comma and space
       sb.toString
     }
   }
   @SerialVersionUID(1L)
   class ValidationFailed(
-      val problems: jl.Iterable[ConfigException.ValidationProblem])
-      extends ConfigException(ValidationFailed.makeMessage(problems))
+      val problems: jl.Iterable[ConfigException.ValidationProblem]
+  ) extends ConfigException(ValidationFailed.makeMessage(problems))
 
   /**
    * Some problem with a JavaBean we are trying to initialize.

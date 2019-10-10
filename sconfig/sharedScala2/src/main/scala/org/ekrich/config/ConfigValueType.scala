@@ -29,6 +29,7 @@ object ConfigValueType {
   def valueOf(name: String): ConfigValueType =
     _values.find(_.name == name).getOrElse {
       throw new IllegalArgumentException(
-        "No enum const ConfigValueType." + name)
+        "No enum const ConfigValueType." + name
+      )
     }
 }

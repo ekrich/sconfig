@@ -44,9 +44,10 @@ object Tokens {
   }
 
   // This is not a Value, because it requires special processing
-  private[Tokens] class UnquotedText private[impl] (origin: ConfigOrigin,
-                                                    val value: String)
-      extends Token(TokenType.UNQUOTED_TEXT, origin) {
+  private[Tokens] class UnquotedText private[impl] (
+      origin: ConfigOrigin,
+      val value: String
+  ) extends Token(TokenType.UNQUOTED_TEXT, origin) {
 
     override def toString(): String = "'" + value + "'"
     override def canEqual(other: Any): Boolean =
@@ -59,9 +60,10 @@ object Tokens {
     override def tokenText: String = value
   }
 
-  private[Tokens] class IgnoredWhitespace private[impl] (origin: ConfigOrigin,
-                                                         val value: String)
-      extends Token(TokenType.IGNORED_WHITESPACE, origin) {
+  private[Tokens] class IgnoredWhitespace private[impl] (
+      origin: ConfigOrigin,
+      val value: String
+  ) extends Token(TokenType.IGNORED_WHITESPACE, origin) {
     override def toString(): String = "'" + value + "' (WHITESPACE)"
     override def canEqual(other: Any): Boolean =
       other.isInstanceOf[Tokens.IgnoredWhitespace]
@@ -73,12 +75,13 @@ object Tokens {
     override def tokenText: String = value
   }
 
-  private[Tokens] class Problem private[impl] (origin: ConfigOrigin,
-                                               val what: String,
-                                               val message: String,
-                                               val suggestQuotes: Boolean,
-                                               val cause: Throwable)
-      extends Token(TokenType.PROBLEM, origin) {
+  private[Tokens] class Problem private[impl] (
+      origin: ConfigOrigin,
+      val what: String,
+      val message: String,
+      val suggestQuotes: Boolean,
+      val cause: Throwable
+  ) extends Token(TokenType.PROBLEM, origin) {
 
     override def toString(): String = {
       val sb = new StringBuilder
@@ -101,7 +104,8 @@ object Tokens {
         .asInstanceOf[Tokens.Problem]
         .suggestQuotes == suggestQuotes && ConfigImplUtil.equalsHandlingNull(
         other.asInstanceOf[Tokens.Problem].cause,
-        cause)
+        cause
+      )
     override def hashCode(): Int = {
       var h = 41 * (41 + super.hashCode)
       h = 41 * (h + what.hashCode)
@@ -115,20 +119,22 @@ object Tokens {
   private[Tokens] object Comment {
     final private[Tokens] class DoubleSlashComment private[impl] (
         origin: ConfigOrigin,
-        text: String)
-        extends Tokens.Comment(origin, text) {
+        text: String
+    ) extends Tokens.Comment(origin, text) {
       override def tokenText: String = "//" + text
     }
-    final private[impl] class HashComment private[impl] (origin: ConfigOrigin,
-                                                         text: String)
-        extends Tokens.Comment(origin, text) {
+    final private[impl] class HashComment private[impl] (
+        origin: ConfigOrigin,
+        text: String
+    ) extends Tokens.Comment(origin, text) {
       override def tokenText: String = "#" + text
     }
   }
 
-  abstract private[impl] class Comment private[impl] (origin: ConfigOrigin,
-                                                      val text: String)
-      extends Token(TokenType.COMMENT, origin) {
+  abstract private[impl] class Comment private[impl] (
+      origin: ConfigOrigin,
+      val text: String
+  ) extends Token(TokenType.COMMENT, origin) {
 
     override def toString(): String = {
       val sb = new StringBuilder
@@ -150,14 +156,16 @@ object Tokens {
     }
   }
 
-  class Substitution(origin: ConfigOrigin,
-                     val optional: Boolean,
-                     val value: ju.List[Token])
-      extends Token(TokenType.SUBSTITUTION, origin) {
+  class Substitution(
+      origin: ConfigOrigin,
+      val optional: Boolean,
+      val value: ju.List[Token]
+  ) extends Token(TokenType.SUBSTITUTION, origin) {
 
     override def tokenText: String =
       "${" + (if (this.optional) "?" else "") + Tokenizer.render(
-        this.value.iterator) + "}"
+        this.value.iterator
+      ) + "}"
     override def toString(): String = {
       val sb = new StringBuilder
       import scala.jdk.CollectionConverters._
@@ -181,7 +189,8 @@ object Tokens {
       token.asInstanceOf[Tokens.Value].value
     else
       throw new ConfigException.BugOrBroken(
-        "tried to get value of non-value token " + token)
+        "tried to get value of non-value token " + token
+      )
   def isValueWithType(t: Token, valueType: ConfigValueType) =
     isValue(t) && (getValue(t).valueType eq valueType)
   def isNewline(token: Token) = token.isInstanceOf[Tokens.Line]
@@ -191,32 +200,37 @@ object Tokens {
       token.asInstanceOf[Tokens.Problem].what
     else
       throw new ConfigException.BugOrBroken(
-        "tried to get problem what from " + token)
+        "tried to get problem what from " + token
+      )
   def getProblemMessage(token: Token) =
     if (token.isInstanceOf[Tokens.Problem])
       token.asInstanceOf[Tokens.Problem].message
     else
       throw new ConfigException.BugOrBroken(
-        "tried to get problem message from " + token)
+        "tried to get problem message from " + token
+      )
   def getProblemSuggestQuotes(token: Token) =
     if (token.isInstanceOf[Tokens.Problem])
       token.asInstanceOf[Tokens.Problem].suggestQuotes
     else
       throw new ConfigException.BugOrBroken(
-        "tried to get problem suggestQuotes from " + token)
+        "tried to get problem suggestQuotes from " + token
+      )
   def getProblemCause(token: Token) =
     if (token.isInstanceOf[Tokens.Problem])
       token.asInstanceOf[Tokens.Problem].cause
     else
       throw new ConfigException.BugOrBroken(
-        "tried to get problem cause from " + token)
+        "tried to get problem cause from " + token
+      )
   def isComment(token: Token) = token.isInstanceOf[Tokens.Comment]
   def getCommentText(token: Token) =
     if (token.isInstanceOf[Tokens.Comment])
       token.asInstanceOf[Tokens.Comment].text
     else
       throw new ConfigException.BugOrBroken(
-        "tried to get comment text from " + token)
+        "tried to get comment text from " + token
+      )
   def isUnquotedText(token: Token) =
     token.isInstanceOf[Tokens.UnquotedText]
   def getUnquotedText(token: Token) =
@@ -224,7 +238,8 @@ object Tokens {
       token.asInstanceOf[Tokens.UnquotedText].value
     else
       throw new ConfigException.BugOrBroken(
-        "tried to get unquoted text from " + token)
+        "tried to get unquoted text from " + token
+      )
   def isIgnoredWhitespace(token: Token) =
     token.isInstanceOf[Tokens.IgnoredWhitespace]
   def isSubstitution(token: Token) =
@@ -234,13 +249,15 @@ object Tokens {
       token.asInstanceOf[Tokens.Substitution].value
     else
       throw new ConfigException.BugOrBroken(
-        "tried to get substitution from " + token)
+        "tried to get substitution from " + token
+      )
   def getSubstitutionOptional(token: Token) =
     if (token.isInstanceOf[Tokens.Substitution])
       token.asInstanceOf[Tokens.Substitution].optional
     else
       throw new ConfigException.BugOrBroken(
-        "tried to get substitution optionality from " + token)
+        "tried to get substitution optionality from " + token
+      )
   val START =
     Token.newWithoutOrigin(TokenType.START, "start of file", "")
   val END =
@@ -261,11 +278,13 @@ object Tokens {
   val PLUS_EQUALS =
     Token.newWithoutOrigin(TokenType.PLUS_EQUALS, "'+='", "+=")
   def newLine(origin: ConfigOrigin) = new Tokens.Line(origin)
-  def newProblem(origin: ConfigOrigin,
-                 what: String,
-                 message: String,
-                 suggestQuotes: Boolean,
-                 cause: Throwable) =
+  def newProblem(
+      origin: ConfigOrigin,
+      what: String,
+      message: String,
+      suggestQuotes: Boolean,
+      cause: Throwable
+  ) =
     new Tokens.Problem(origin, what, message, suggestQuotes, cause)
   def newCommentDoubleSlash(origin: ConfigOrigin, text: String) =
     new Comment.DoubleSlashComment(origin, text)
@@ -275,9 +294,11 @@ object Tokens {
     new Tokens.UnquotedText(origin, s)
   def newIgnoredWhitespace(origin: ConfigOrigin, s: String) =
     new Tokens.IgnoredWhitespace(origin, s)
-  def newSubstitution(origin: ConfigOrigin,
-                      optional: Boolean,
-                      expression: ju.List[Token]) =
+  def newSubstitution(
+      origin: ConfigOrigin,
+      optional: Boolean,
+      expression: ju.List[Token]
+  ) =
     new Tokens.Substitution(origin, optional, expression)
   def newValue(value: AbstractConfigValue) =
     new Tokens.Value(value)

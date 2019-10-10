@@ -49,9 +49,11 @@ object SerializedConfigValue {
   // this is a separate function to prevent bugs writing to the
   // outer stream instead of field.data
   @throws[IOException]
-  private def writeOriginField(out: DataOutput,
-                               code: SerializedField,
-                               v: AnyRef): Unit = {
+  private def writeOriginField(
+      out: DataOutput,
+      code: SerializedField,
+      v: AnyRef
+  ): Unit = {
     import SerializedField._
     code match {
       case ORIGIN_DESCRIPTION     => out.writeUTF(v.asInstanceOf[String])
@@ -76,9 +78,11 @@ object SerializedConfigValue {
   }
   // not private because we use it to serialize ConfigException
   @throws[IOException]
-  private[impl] def writeOrigin(out: DataOutput,
-                                origin: SimpleConfigOrigin,
-                                baseOrigin: SimpleConfigOrigin): Unit = {
+  private[impl] def writeOrigin(
+      out: DataOutput,
+      origin: SimpleConfigOrigin,
+      baseOrigin: SimpleConfigOrigin
+  ): Unit = {
     var m: ju.Map[SerializedField, AnyRef] = null
     // to serialize a null origin, we write out no fields at all
     if (origin != null)
@@ -98,7 +102,8 @@ object SerializedConfigValue {
   @throws[IOException]
   private[impl] def readOrigin(
       in: DataInput,
-      baseOrigin: SimpleConfigOrigin): SimpleConfigOrigin = {
+      baseOrigin: SimpleConfigOrigin
+  ): SimpleConfigOrigin = {
     import SerializedField._
     val m: ju.Map[SerializedField, AnyRef] = new ju.HashMap
     breakable {
@@ -184,16 +189,20 @@ object SerializedConfigValue {
         out.writeInt(obj.size)
         for (e <- obj.entrySet.asScala) {
           out.writeUTF(e.getKey)
-          writeValue(out,
-                     e.getValue,
-                     obj.origin.asInstanceOf[SimpleConfigOrigin])
+          writeValue(
+            out,
+            e.getValue,
+            obj.origin.asInstanceOf[SimpleConfigOrigin]
+          )
         }
       // Note: no default case
     }
   }
   @throws[IOException]
-  private def readValueData(in: DataInput,
-                            origin: SimpleConfigOrigin): AbstractConfigValue = {
+  private def readValueData(
+      in: DataInput,
+      origin: SimpleConfigOrigin
+  ): AbstractConfigValue = {
     import SerializedValueType._
     val stb = in.readUnsignedByte
     val st  = SerializedValueType.forInt(stb)
@@ -246,14 +255,18 @@ object SerializedConfigValue {
   }
 
   @throws[IOException]
-  private def writeValue(out: DataOutput,
-                         value: ConfigValue,
-                         baseOrigin: SimpleConfigOrigin): Unit = {
+  private def writeValue(
+      out: DataOutput,
+      value: ConfigValue,
+      baseOrigin: SimpleConfigOrigin
+  ): Unit = {
     val origin =
       new SerializedConfigValue.FieldOut(SerializedField.VALUE_ORIGIN)
-    writeOrigin(origin.data,
-                value.origin.asInstanceOf[SimpleConfigOrigin],
-                baseOrigin)
+    writeOrigin(
+      origin.data,
+      value.origin.asInstanceOf[SimpleConfigOrigin],
+      baseOrigin
+    )
     writeField(out, origin)
     val data = new SerializedConfigValue.FieldOut(SerializedField.VALUE_DATA)
     writeValueData(data.data, value)
@@ -261,8 +274,10 @@ object SerializedConfigValue {
     writeEndMarker(out)
   }
   @throws[IOException]
-  private def readValue(in: DataInput,
-                        baseOrigin: SimpleConfigOrigin): AbstractConfigValue = {
+  private def readValue(
+      in: DataInput,
+      baseOrigin: SimpleConfigOrigin
+  ): AbstractConfigValue = {
     var value: AbstractConfigValue = null
     var origin: SimpleConfigOrigin = null
     breakable {
@@ -271,7 +286,8 @@ object SerializedConfigValue {
         if (code eq SerializedField.END_MARKER) {
           if (value == null)
             throw new IOException(
-              "No value data found in serialization of value")
+              "No value data found in serialization of value"
+            )
           return value
           break // break - was return value
         } else if (code eq SerializedField.VALUE_DATA) {
@@ -306,7 +322,8 @@ object SerializedConfigValue {
     val c = in.readUnsignedByte
     if (c == SerializedField.UNKNOWN.ordinal)
       throw new IOException(
-        "field code " + c + " is not supposed to be on the wire")
+        "field code " + c + " is not supposed to be on the wire"
+      )
     SerializedField.forInt(c)
   }
   @throws[IOException]
@@ -323,7 +340,8 @@ object SerializedConfigValue {
   private def shouldNotBeUsed =
     new ConfigException.BugOrBroken(
       classOf[SerializedConfigValue].getName +
-        " should not exist outside of serialization")
+        " should not exist outside of serialization"
+    )
 }
 
 @SerialVersionUID(1L)
@@ -355,7 +373,8 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
           .resolveStatus ne ResolveStatus.RESOLVED)
       throw new NotSerializableException(
         "tried to serialize a value with unresolved substitutions," +
-          " need to Config#resolve() first, see API docs")
+          " need to Config#resolve() first, see API docs"
+      )
     var field = new SerializedConfigValue.FieldOut(SerializedField.ROOT_VALUE)
     SerializedConfigValue.writeValue(field.data, value, null /* baseOrigin */ )
     SerializedConfigValue.writeField(out, field)

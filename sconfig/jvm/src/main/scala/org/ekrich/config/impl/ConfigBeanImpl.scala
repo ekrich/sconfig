@@ -45,7 +45,8 @@ object ConfigBeanImpl {
           .root
           .resolveStatus != ResolveStatus.RESOLVED)
       throw new ConfigException.NotResolved(
-        "need to Config#resolve() a config before using it to initialize a bean, see the API docs for Config#resolve()")
+        "need to Config#resolve() a config before using it to initialize a bean, see the API docs for Config#resolve()"
+      )
     val configProps =
       new ju.HashMap[String, AbstractConfigValue]
     val originalNames = new ju.HashMap[String, String]
@@ -58,8 +59,10 @@ object ConfigBeanImpl {
         // if we aren't a camel name to start with, we lose.
         // if we are or we are the first matching key, we win.
       } else {
-        configProps.put(camelName,
-                        configProp.getValue.asInstanceOf[AbstractConfigValue])
+        configProps.put(
+          camelName,
+          configProp.getValue.asInstanceOf[AbstractConfigValue]
+        )
         originalNames.put(camelName, originalName)
       }
     }
@@ -69,7 +72,8 @@ object ConfigBeanImpl {
       case e: IntrospectionException =>
         throw new ConfigException.BadBean(
           "Could not get bean information for class " + clazz.getName,
-          e)
+          e
+        )
     }
     try {
       val beanProps =
@@ -116,11 +120,13 @@ object ConfigBeanImpl {
               break // continue, Otherwise, raise a {@link Missing} exception right here
             throw new ConfigException.Missing(beanProp.getName)
           }
-          val unwrapped = getValue(clazz,
-                                   parameterType,
-                                   parameterClass,
-                                   config,
-                                   configPropName)
+          val unwrapped = getValue(
+            clazz,
+            parameterType,
+            parameterClass,
+            config,
+            configPropName
+          )
           setter.invoke(bean, unwrapped.asInstanceOf[AnyRef])
         }
       }
@@ -129,15 +135,18 @@ object ConfigBeanImpl {
       case e: InstantiationException =>
         throw new ConfigException.BadBean(
           clazz.getName + " needs a public no-args constructor to be used as a bean",
-          e)
+          e
+        )
       case e: IllegalAccessException =>
         throw new ConfigException.BadBean(
           clazz.getName + " getters and setters are not accessible, they must be for use as a bean",
-          e)
+          e
+        )
       case e: InvocationTargetException =>
         throw new ConfigException.BadBean(
           "Calling bean method on " + clazz.getName + " caused an exception",
-          e)
+          e
+        )
     }
   }
   // we could magically make this work in many cases by doing
@@ -148,20 +157,26 @@ object ConfigBeanImpl {
   // setting. So, instead, we only support a limited number of
   // types plus you can always use Object, ConfigValue, Config,
   // ConfigObject, etc.  as an escape hatch.
-  private def getValue(beanClass: Class[_],
-                       parameterType: Type,
-                       parameterClass: Class[_],
-                       config: Config,
-                       configPropName: String): Any =
+  private def getValue(
+      beanClass: Class[_],
+      parameterType: Type,
+      parameterClass: Class[_],
+      config: Config,
+      configPropName: String
+  ): Any =
     if ((parameterClass == classOf[jl.Boolean]) || (parameterClass == classOf[
-          Boolean])) config.getBoolean(configPropName)
+          Boolean
+        ])) config.getBoolean(configPropName)
     else if ((parameterClass == classOf[Integer]) || (parameterClass == classOf[
-               Int]))
+               Int
+             ]))
       config.getInt(configPropName)
     else if ((parameterClass == classOf[jl.Double]) || (parameterClass == classOf[
-               Double])) config.getDouble(configPropName)
+               Double
+             ])) config.getDouble(configPropName)
     else if ((parameterClass == classOf[jl.Long]) || (parameterClass == classOf[
-               Long]))
+               Long
+             ]))
       config.getLong(configPropName)
     else if (parameterClass == classOf[String])
       config.getString(configPropName)
@@ -171,17 +186,21 @@ object ConfigBeanImpl {
       config.getMemorySize(configPropName)
     else if (parameterClass == classOf[Any]) config.getAnyRef(configPropName)
     else if (parameterClass == classOf[ju.List[_]])
-      getListValue(beanClass,
-                   parameterType,
-                   parameterClass,
-                   config,
-                   configPropName)
+      getListValue(
+        beanClass,
+        parameterType,
+        parameterClass,
+        config,
+        configPropName
+      )
     else if (parameterClass == classOf[ju.Set[_]])
-      getSetValue(beanClass,
-                  parameterType,
-                  parameterClass,
-                  config,
-                  configPropName)
+      getSetValue(
+        beanClass,
+        parameterType,
+        parameterClass,
+        config,
+        configPropName
+      )
     else if (parameterClass == classOf[ju.Map[_, _]]) { // we could do better here, but right now we don't.
       val typeArgs = parameterType
         .asInstanceOf[ParameterizedType]
@@ -189,7 +208,9 @@ object ConfigBeanImpl {
       if ((typeArgs(0) != classOf[String]) || (typeArgs(1) != classOf[Any]))
         throw new ConfigException.BadBean(
           "Bean property '" + configPropName + "' of class " + beanClass.getName + " has unsupported Map<" + typeArgs(
-            0) + "," + typeArgs(1) + ">, only Map<String,Object> is supported right now")
+            0
+          ) + "," + typeArgs(1) + ">, only Map<String,Object> is supported right now"
+        )
       config.getObject(configPropName).unwrapped
     } else if (parameterClass == classOf[Config])
       config.getConfig(configPropName)
@@ -206,34 +227,42 @@ object ConfigBeanImpl {
       createInternal(config.getConfig(configPropName), parameterClass)
     else {
       throw new ConfigException.BadBean(
-        "Bean property " + configPropName + " of class " + beanClass.getName + " has unsupported type " + parameterType)
+        "Bean property " + configPropName + " of class " + beanClass.getName + " has unsupported type " + parameterType
+      )
     }
 
   private def getEnumAsClass[T <: jl.Enum[T]](
-      parameterClass: Class[_]): Class[T] =
+      parameterClass: Class[_]
+  ): Class[T] =
     parameterClass.asInstanceOf[Class[T]]
 
   private def getTypeAsClass[T](elementType: Type): Class[T] =
     elementType.asInstanceOf[Class[T]]
 
-  private def getSetValue(beanClass: Class[_],
-                          parameterType: Type,
-                          parameterClass: Class[_],
-                          config: Config,
-                          configPropName: String) =
+  private def getSetValue(
+      beanClass: Class[_],
+      parameterType: Type,
+      parameterClass: Class[_],
+      config: Config,
+      configPropName: String
+  ) =
     new ju.HashSet(
-      getListValue(beanClass,
-                   parameterType,
-                   parameterClass,
-                   config,
-                   configPropName)
+      getListValue(
+        beanClass,
+        parameterType,
+        parameterClass,
+        config,
+        configPropName
+      )
     )
 
-  private def getListValue(beanClass: Class[_],
-                           parameterType: Type,
-                           parameterClass: Class[_],
-                           config: Config,
-                           configPropName: String): ju.List[_] = {
+  private def getListValue(
+      beanClass: Class[_],
+      parameterType: Type,
+      parameterClass: Class[_],
+      config: Config,
+      configPropName: String
+  ): ju.List[_] = {
 
     val elementType: Type =
       parameterType.asInstanceOf[ParameterizedType].getActualTypeArguments()(0)
@@ -271,19 +300,24 @@ object ConfigBeanImpl {
       beanList
     } else
       throw new ConfigException.BadBean(
-        "Bean property '" + configPropName + "' of class " + beanClass.getName + " has unsupported list element type " + elementType)
+        "Bean property '" + configPropName + "' of class " + beanClass.getName + " has unsupported list element type " + elementType
+      )
   }
 
   // null if we can't easily say; this is heuristic/best-effort
   private def getValueTypeOrNull(parameterClass: Class[_]) =
     if ((parameterClass == classOf[jl.Boolean]) || (parameterClass == classOf[
-          Boolean])) ConfigValueType.BOOLEAN
+          Boolean
+        ])) ConfigValueType.BOOLEAN
     else if ((parameterClass == classOf[Integer]) || (parameterClass == classOf[
-               Int])) ConfigValueType.NUMBER
+               Int
+             ])) ConfigValueType.NUMBER
     else if ((parameterClass == classOf[jl.Double]) || (parameterClass == classOf[
-               Double])) ConfigValueType.NUMBER
+               Double
+             ])) ConfigValueType.NUMBER
     else if ((parameterClass == classOf[jl.Long]) || (parameterClass == classOf[
-               Long])) ConfigValueType.NUMBER
+               Long
+             ])) ConfigValueType.NUMBER
     else if (parameterClass == classOf[String]) ConfigValueType.STRING
     else if (parameterClass == classOf[Duration]) null
     else if (parameterClass == classOf[ConfigMemorySize]) null
@@ -308,8 +342,10 @@ object ConfigBeanImpl {
     false
   }
 
-  private def isOptionalProperty(beanClass: Class[_],
-                                 beanProp: PropertyDescriptor) = {
+  private def isOptionalProperty(
+      beanClass: Class[_],
+      beanProp: PropertyDescriptor
+  ) = {
     val field = getField(beanClass, beanProp.getName)
     if (field != null) field.getAnnotationsByType(classOf[Optional]).length > 0
     else

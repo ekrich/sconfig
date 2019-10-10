@@ -6,9 +6,10 @@ package org.ekrich.config.impl
 import org.ekrich.config.ConfigException
 import java.{util => ju}
 
-final class ConfigNodePath private[impl] (path: Path,
-                                          tokensArg: ju.Collection[Token])
-    extends AbstractConfigNode {
+final class ConfigNodePath private[impl] (
+    path: Path,
+    tokensArg: ju.Collection[Token]
+) extends AbstractConfigNode {
   override def tokens: ju.Collection[Token] = tokensArg
   private[impl] def value: Path             = path
   private[impl] def subPath(toRemove: Int): ConfigNodePath = {
@@ -22,13 +23,16 @@ final class ConfigNodePath private[impl] (path: Path,
         periodCount += 1
       }
       if (periodCount == toRemove)
-        return new ConfigNodePath(path.subPath(toRemove),
-                                  tokensCopy.subList(i + 1, tokensCopy.size))
+        return new ConfigNodePath(
+          path.subPath(toRemove),
+          tokensCopy.subList(i + 1, tokensCopy.size)
+        )
 
       i += 1
     }
     throw new ConfigException.BugOrBroken(
-      "Tried to remove too many elements from a Path node")
+      "Tried to remove too many elements from a Path node"
+    )
   }
   private[impl] def first: ConfigNodePath = {
     val tokensCopy = new ju.ArrayList[Token](tokens)

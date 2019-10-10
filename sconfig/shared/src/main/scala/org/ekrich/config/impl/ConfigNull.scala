@@ -29,10 +29,12 @@ final class ConfigNull(origin: ConfigOrigin)
 
   override def transformToString = "null"
 
-  override def render(sb: jl.StringBuilder,
-                      indent: Int,
-                      atRoot: Boolean,
-                      options: ConfigRenderOptions): Unit = {
+  override def render(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
     sb.append("null")
   }
 

@@ -11,6 +11,8 @@ trait ReplaceableMergeStack extends Container {
    * Make a replacement for this object skipping the given number of elements
    * which are lower in merge priority.
    */
-  def makeReplacement(context: ResolveContext,
-                      skipping: Int): AbstractConfigValue
+  def makeReplacement(
+      context: ResolveContext,
+      skipping: Int
+  ): AbstractConfigValue
 }

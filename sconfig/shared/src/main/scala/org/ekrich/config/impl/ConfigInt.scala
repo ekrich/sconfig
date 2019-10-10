@@ -10,10 +10,11 @@ import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigValueType
 
 @SerialVersionUID(2L)
-final class ConfigInt(origin: ConfigOrigin,
-                      val value: Int,
-                      originalText: String)
-    extends ConfigNumber(origin, originalText)
+final class ConfigInt(
+    origin: ConfigOrigin,
+    val value: Int,
+    originalText: String
+) extends ConfigNumber(origin, originalText)
     with Serializable {
 
   override def valueType: ConfigValueType = ConfigValueType.NUMBER

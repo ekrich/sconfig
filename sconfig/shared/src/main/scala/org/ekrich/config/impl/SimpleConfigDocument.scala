@@ -6,12 +6,13 @@ import java.io.StringReader
 
 final class SimpleConfigDocument private[impl] (
     var configNodeTree: ConfigNodeRoot,
-    var parseOptions: ConfigParseOptions)
-    extends ConfigDocument {
+    var parseOptions: ConfigParseOptions
+) extends ConfigDocument {
   override def withValueText(path: String, newValue: String): ConfigDocument = {
     if (newValue == null)
       throw new ConfigException.BugOrBroken(
-        "null value for " + path + " passed to withValueText")
+        "null value for " + path + " passed to withValueText"
+      )
     val origin =
       SimpleConfigOrigin.newSimple("single value parsing")
     val reader = new StringReader(newValue)
@@ -22,13 +23,17 @@ final class SimpleConfigDocument private[impl] (
     reader.close()
     new SimpleConfigDocument(
       configNodeTree.setValue(path, parsedValue, parseOptions.getSyntax),
-      parseOptions)
+      parseOptions
+    )
   }
-  override def withValue(path: String,
-                         newValue: ConfigValue): ConfigDocument = {
+  override def withValue(
+      path: String,
+      newValue: ConfigValue
+  ): ConfigDocument = {
     if (newValue == null)
       throw new ConfigException.BugOrBroken(
-        "null value for " + path + " passed to withValue")
+        "null value for " + path + " passed to withValue"
+      )
     var options = ConfigRenderOptions.defaults
     options = options.setOriginComments(false)
     withValueText(path, newValue.render(options).trim)
@@ -36,7 +41,8 @@ final class SimpleConfigDocument private[impl] (
   override def withoutPath(path: String) =
     new SimpleConfigDocument(
       configNodeTree.setValue(path, null, parseOptions.getSyntax),
-      parseOptions)
+      parseOptions
+    )
   override def hasPath(path: String): Boolean = configNodeTree.hasValue(path)
   override def render: String                 = configNodeTree.render
   override def equals(other: Any): Boolean =

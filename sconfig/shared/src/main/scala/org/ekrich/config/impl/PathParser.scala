@@ -12,9 +12,11 @@ import java.{util => ju}
 import scala.util.control.Breaks._
 
 object PathParser {
-  private[impl] class Element private[impl] (initial: String,
-                                             // an element can be empty if it has a quoted empty string "" in it
-                                             var canBeEmpty: Boolean) {
+  private[impl] class Element private[impl] (
+      initial: String,
+      // an element can be empty if it has a quoted empty string "" in it
+      var canBeEmpty: Boolean
+  ) {
     private[impl] val sb = new StringBuilder(initial)
     override def toString: String =
       "Element(" + sb.toString + "," + canBeEmpty + ")"
@@ -23,8 +25,10 @@ object PathParser {
   private[impl] val apiOrigin = SimpleConfigOrigin.newSimple("path parameter")
   private[impl] def parsePathNode(path: String): ConfigNodePath =
     parsePathNode(path, ConfigSyntax.CONF)
-  private[impl] def parsePathNode(path: String,
-                                  flavor: ConfigSyntax): ConfigNodePath = {
+  private[impl] def parsePathNode(
+      path: String,
+      flavor: ConfigSyntax
+  ): ConfigNodePath = {
     val reader = new StringReader(path)
     try {
       val tokens = Tokenizer.tokenize(apiOrigin, reader, flavor)
@@ -46,37 +50,47 @@ object PathParser {
       reader.close()
     }
   }
-  def parsePathExpression(expression: ju.Iterator[Token],
-                          origin: ConfigOrigin): Path =
+  def parsePathExpression(
+      expression: ju.Iterator[Token],
+      origin: ConfigOrigin
+  ): Path =
     parsePathExpression(expression, origin, null, null, ConfigSyntax.CONF)
-  protected def parsePathExpression(expression: ju.Iterator[Token],
-                                    origin: ConfigOrigin,
-                                    originalText: String): Path =
-    parsePathExpression(expression,
-                        origin,
-                        originalText,
-                        null,
-                        ConfigSyntax.CONF)
+  protected def parsePathExpression(
+      expression: ju.Iterator[Token],
+      origin: ConfigOrigin,
+      originalText: String
+  ): Path =
+    parsePathExpression(
+      expression,
+      origin,
+      originalText,
+      null,
+      ConfigSyntax.CONF
+    )
   private[impl] def parsePathNodeExpression(
       expression: ju.Iterator[Token],
-      origin: ConfigOrigin): ConfigNodePath =
+      origin: ConfigOrigin
+  ): ConfigNodePath =
     parsePathNodeExpression(expression, origin, null, ConfigSyntax.CONF)
   protected def parsePathNodeExpression(
       expression: ju.Iterator[Token],
       origin: ConfigOrigin,
       originalText: String,
-      flavor: ConfigSyntax): ConfigNodePath = {
+      flavor: ConfigSyntax
+  ): ConfigNodePath = {
     val pathTokens = new ju.ArrayList[Token]
     val path =
       parsePathExpression(expression, origin, originalText, pathTokens, flavor)
     new ConfigNodePath(path, pathTokens)
   }
   // originalText may be null if not available
-  protected def parsePathExpression(expression: ju.Iterator[Token],
-                                    origin: ConfigOrigin,
-                                    originalText: String,
-                                    pathTokens: ju.ArrayList[Token],
-                                    flavor: ConfigSyntax): Path = {
+  protected def parsePathExpression(
+      expression: ju.Iterator[Token],
+      origin: ConfigOrigin,
+      originalText: String,
+      pathTokens: ju.ArrayList[Token],
+      flavor: ConfigSyntax
+  ): Path = {
     // each builder in "buf" is an element in the path.
     val buf = new ju.ArrayList[PathParser.Element]
     buf.add(new PathParser.Element("", false))
@@ -84,7 +98,8 @@ object PathParser {
       throw new ConfigException.BadPath(
         origin,
         originalText,
-        "Expecting a field name or path here, but got nothing")
+        "Expecting a field name or path here, but got nothing"
+      )
     }
 
     while (expression.hasNext) {
@@ -136,7 +151,8 @@ object PathParser {
               origin,
               originalText,
               "Token not allowed in path expression: " + t +
-                " (you can double-quote this token if you really want it here)")
+                " (you can double-quote this token if you really want it here)"
+            )
           }
           addPathText(buf, false, text)
         }
@@ -149,14 +165,17 @@ object PathParser {
         throw new ConfigException.BadPath(
           origin,
           originalText,
-          "path has a leading, trailing, or two adjacent period '.' (use quoted \"\" empty string if you want an empty element)")
+          "path has a leading, trailing, or two adjacent period '.' (use quoted \"\" empty string if you want an empty element)"
+        )
       else pb.appendKey(e.sb.toString)
     }
     return pb.result
   }
 
-  private def splitTokenOnPeriod(t: Token,
-                                 flavor: ConfigSyntax): ju.List[Token] = {
+  private def splitTokenOnPeriod(
+      t: Token,
+      flavor: ConfigSyntax
+  ): ju.List[Token] = {
     val tokenText: String = t.tokenText
     if (tokenText == ".") return ju.Collections.singletonList(t)
     val splitToken  = tokenText.split("\\.")
@@ -173,9 +192,11 @@ object PathParser {
     splitTokens
   }
 
-  private def addPathText(buf: ju.List[PathParser.Element],
-                          wasQuoted: Boolean,
-                          newText: String): Unit = {
+  private def addPathText(
+      buf: ju.List[PathParser.Element],
+      wasQuoted: Boolean,
+      newText: String
+  ): Unit = {
     val i       = if (wasQuoted) -1 else newText.indexOf('.')
     val current = buf.get(buf.size - 1)
     if (i < 0) {

@@ -82,15 +82,19 @@ class PathTest extends TestUtils {
   @Test
   def pathFromPathList(): Unit = {
     assertEquals(path("foo"), new Path(List(path("foo")).asJava))
-    assertEquals(path("foo", "bar", "baz", "boo"),
-                 new Path(List(path("foo", "bar"), path("baz", "boo")).asJava))
+    assertEquals(
+      path("foo", "bar", "baz", "boo"),
+      new Path(List(path("foo", "bar"), path("baz", "boo")).asJava)
+    )
   }
 
   @Test
   def pathPrepend(): Unit = {
     assertEquals(path("foo", "bar"), path("bar").prepend(path("foo")))
-    assertEquals(path("a", "b", "c", "d"),
-                 path("c", "d").prepend(path("a", "b")))
+    assertEquals(
+      path("a", "b", "c", "d"),
+      path("c", "d").prepend(path("a", "b"))
+    )
   }
 
   @Test

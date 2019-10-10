@@ -10,9 +10,11 @@ object ResolveContext {
   private def newCycleMarkers: ju.Set[AbstractConfigValue] =
     ju.Collections.newSetFromMap(new ju.IdentityHashMap)
 
-  def resolve(value: AbstractConfigValue,
-              root: AbstractConfigObject,
-              options: ConfigResolveOptions): AbstractConfigValue = {
+  def resolve(
+      value: AbstractConfigValue,
+      root: AbstractConfigObject,
+      options: ConfigResolveOptions
+  ): AbstractConfigValue = {
     val source = new ResolveSource(root)
     val context =
       new ResolveContext(options, null /* restrictToChild */ )
@@ -22,7 +24,8 @@ object ResolveContext {
         // ConfigReference was supposed to catch NotPossibleToResolve
         throw new ConfigException.BugOrBroken(
           "NotPossibleToResolve was thrown from an outermost resolve",
-          e)
+          e
+        )
     }
   }
 }
@@ -37,7 +40,8 @@ private[impl] final class ResolveContext(
     // CAN BE NULL for a full resolve.
     val restrictToChild: Path,
     _resolveStack: ju.List[AbstractConfigValue],
-    _cycleMarkers: ju.Set[AbstractConfigValue]) {
+    _cycleMarkers: ju.Set[AbstractConfigValue]
+) {
 
   // This is used for tracing and debugging and nice error messages;
   // contains every node as we call resolve on it.
@@ -47,21 +51,27 @@ private[impl] final class ResolveContext(
   def this(options: ConfigResolveOptions, restrictToChild: Path) = {
     // LinkedHashSet keeps the traversal order which is at least useful
     // in error messages if nothing else
-    this(new ResolveMemos,
-         options,
-         restrictToChild,
-         new ju.ArrayList[AbstractConfigValue],
-         ResolveContext.newCycleMarkers)
-    if (ConfigImpl.traceSubstitutionsEnabled)
-      ConfigImpl.trace(depth,
-                       "ResolveContext restrict to child " + restrictToChild)
-  }
-  private[impl] def addCycleMarker(
-      value: AbstractConfigValue): ResolveContext = {
+    this(
+      new ResolveMemos,
+      options,
+      restrictToChild,
+      new ju.ArrayList[AbstractConfigValue],
+      ResolveContext.newCycleMarkers
+    )
     if (ConfigImpl.traceSubstitutionsEnabled)
       ConfigImpl.trace(
         depth,
-        "++ Cycle marker " + value + "@" + System.identityHashCode(value))
+        "ResolveContext restrict to child " + restrictToChild
+      )
+  }
+  private[impl] def addCycleMarker(
+      value: AbstractConfigValue
+  ): ResolveContext = {
+    if (ConfigImpl.traceSubstitutionsEnabled)
+      ConfigImpl.trace(
+        depth,
+        "++ Cycle marker " + value + "@" + System.identityHashCode(value)
+      )
     if (cycleMarkers.contains(value))
       throw new ConfigException.BugOrBroken("Added cycle marker twice " + value)
     val copy = ResolveContext.newCycleMarkers
@@ -70,24 +80,30 @@ private[impl] final class ResolveContext(
     new ResolveContext(memos, options, restrictToChild, resolveStack, copy)
   }
   private[impl] def removeCycleMarker(
-      value: AbstractConfigValue): ResolveContext = {
+      value: AbstractConfigValue
+  ): ResolveContext = {
     if (ConfigImpl.traceSubstitutionsEnabled)
       ConfigImpl.trace(
         depth,
-        "-- Cycle marker " + value + "@" + System.identityHashCode(value))
+        "-- Cycle marker " + value + "@" + System.identityHashCode(value)
+      )
     val copy = ResolveContext.newCycleMarkers
     copy.addAll(cycleMarkers)
     copy.remove(value)
     new ResolveContext(memos, options, restrictToChild, resolveStack, copy)
   }
-  private def memoize(key: MemoKey,
-                      value: AbstractConfigValue): ResolveContext = {
+  private def memoize(
+      key: MemoKey,
+      value: AbstractConfigValue
+  ): ResolveContext = {
     val changed = memos.put(key, value)
-    new ResolveContext(changed,
-                       options,
-                       restrictToChild,
-                       resolveStack,
-                       cycleMarkers)
+    new ResolveContext(
+      changed,
+      options,
+      restrictToChild,
+      resolveStack,
+      cycleMarkers
+    )
   }
 
   private[impl] def isRestrictedToChild: Boolean = restrictToChild != null
@@ -135,17 +151,20 @@ private[impl] final class ResolveContext(
   @throws[NotPossibleToResolve]
   private[impl] def resolve(
       original: AbstractConfigValue,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigValue] = {
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigValue] = {
     if (ConfigImpl.traceSubstitutionsEnabled)
       ConfigImpl.trace(
         depth,
-        "resolving " + original + " restrictToChild=" + restrictToChild + " in " + source)
+        "resolving " + original + " restrictToChild=" + restrictToChild + " in " + source
+      )
     pushTrace(original).realResolve(original, source).popTrace
   }
   @throws[NotPossibleToResolve]
   private def realResolve(
       original: AbstractConfigValue,
-      source: ResolveSource): ResolveResult[_ <: AbstractConfigValue] = {
+      source: ResolveSource
+  ): ResolveResult[_ <: AbstractConfigValue] = {
     // a fully-resolved (no restrictToChild) object can satisfy a
     // request for a restricted object, so always check that first.
     val fullKey                = new MemoKey(original, null)
@@ -162,20 +181,23 @@ private[impl] final class ResolveContext(
       if (ConfigImpl.traceSubstitutionsEnabled)
         ConfigImpl.trace(
           depth,
-          "using cached resolution " + cached + " for " + original + " restrictToChild " + restrictToChild)
+          "using cached resolution " + cached + " for " + original + " restrictToChild " + restrictToChild
+        )
       ResolveResult.make(this, cached)
     } else {
       if (ConfigImpl.traceSubstitutionsEnabled)
         ConfigImpl.trace(
           depth,
           "not found in cache, resolving " + original + "@" + System
-            .identityHashCode(original))
+            .identityHashCode(original)
+        )
       if (cycleMarkers.contains(original)) {
         if (ConfigImpl.traceSubstitutionsEnabled)
           ConfigImpl.trace(
             depth,
             "Cycle detected, can't resolve; " + original + "@" + System
-              .identityHashCode(original))
+              .identityHashCode(original)
+          )
         throw new AbstractConfigValue.NotPossibleToResolve(this)
       }
       val result =
@@ -186,7 +208,8 @@ private[impl] final class ResolveContext(
           depth,
           "resolved to " + resolved + "@" + System
             .identityHashCode(resolved) + " from " + original + "@" + System
-            .identityHashCode(resolved))
+            .identityHashCode(resolved)
+        )
       var withMemo = result.context
       if (resolved == null || (resolved.resolveStatus eq ResolveStatus.RESOLVED)) { // if the resolved object is fully resolved by resolving
         // only the restrictToChildOrNull, then it can be cached
@@ -201,19 +224,25 @@ private[impl] final class ResolveContext(
         if (isRestrictedToChild) {
           if (restrictedKey == null)
             throw new ConfigException.BugOrBroken(
-              "restrictedKey should not be null here")
+              "restrictedKey should not be null here"
+            )
           if (ConfigImpl.traceSubstitutionsEnabled)
-            ConfigImpl.trace(depth,
-                             "caching " + restrictedKey + " result " + resolved)
+            ConfigImpl.trace(
+              depth,
+              "caching " + restrictedKey + " result " + resolved
+            )
           withMemo = withMemo.memoize(restrictedKey, resolved)
         } else if (options.getAllowUnresolved) {
           if (ConfigImpl.traceSubstitutionsEnabled)
-            ConfigImpl.trace(depth,
-                             "caching " + fullKey + " result " + resolved)
+            ConfigImpl.trace(
+              depth,
+              "caching " + fullKey + " result " + resolved
+            )
           withMemo = withMemo.memoize(fullKey, resolved)
         } else
           throw new ConfigException.BugOrBroken(
-            "resolveSubstitutions() did not give us a resolved object")
+            "resolveSubstitutions() did not give us a resolved object"
+          )
       }
       ResolveResult.make(withMemo, resolved)
     }

@@ -19,8 +19,10 @@ object ComplexApp extends App {
   // system property overrides work, but the properties must be set
   // before the config lib is used (config lib will not notice changes
   // once it loads the properties)
-  System.setProperty("simple-lib.whatever",
-                     "This value comes from a system property")
+  System.setProperty(
+    "simple-lib.whatever",
+    "This value comes from a system property"
+  )
 
   ///////////
 
@@ -29,8 +31,9 @@ object ComplexApp extends App {
 
   // use the config ourselves
   println(
-    "config1, complex-app.something=" + config1.getString(
-      "complex-app.something"))
+    "config1, complex-app.something=" + config1
+      .getString("complex-app.something")
+  )
 
   // use the config for a library
   demoConfigInSimpleLib(config1)
@@ -42,8 +45,9 @@ object ComplexApp extends App {
 
   // use the config ourselves
   println(
-    "config2, complex-app.something=" + config2.getString(
-      "complex-app.something"))
+    "config2, complex-app.something=" + config2
+      .getString("complex-app.something")
+  )
 
   // pull out complex-app.simple-lib-context and move it to
   // the toplevel, creating a new config suitable for our SimpleLibContext.
@@ -72,6 +76,7 @@ object ComplexApp extends App {
   } catch {
     case e: ConfigException.ValidationFailed =>
       println(
-        "when we passed a bad config to simple-lib, it said: " + e.getMessage)
+        "when we passed a bad config to simple-lib, it said: " + e.getMessage
+      )
   }
 }

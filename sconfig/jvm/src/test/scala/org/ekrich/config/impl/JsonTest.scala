@@ -37,7 +37,8 @@ class JsonTest extends TestUtils {
           v.keySet()
             .asScala
             .map(k => (k, toJson(v.get(k))))
-            .toMap)
+            .toMap
+        )
       case v: ConfigList =>
         JsArray(v.asScala.toVector.map(elem => toJson(elem)))
       case v: ConfigBoolean =>
@@ -87,7 +88,8 @@ class JsonTest extends TestUtils {
         throw new ConfigException.Parse(
           SimpleConfigOrigin.newSimple("json parser"),
           e.getMessage(),
-          e)
+          e
+        )
     }
   }
 

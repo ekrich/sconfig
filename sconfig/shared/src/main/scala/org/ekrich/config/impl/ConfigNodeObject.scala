@@ -6,8 +6,8 @@ import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 
 final class ConfigNodeObject private[impl] (
-    _children: ju.Collection[AbstractConfigNode])
-    extends ConfigNodeComplexValue(_children) {
+    _children: ju.Collection[AbstractConfigNode]
+) extends ConfigNodeComplexValue(_children) {
 
   override def newNode(nodes: ju.Collection[AbstractConfigNode]) =
     new ConfigNodeObject(nodes)
@@ -31,9 +31,11 @@ final class ConfigNodeObject private[impl] (
     false
   }
 
-  protected def changeValueOnPath(desiredPath: Path,
-                                  value: AbstractConfigNodeValue,
-                                  flavor: ConfigSyntax): ConfigNodeObject = {
+  protected def changeValueOnPath(
+      desiredPath: Path,
+      value: AbstractConfigNodeValue,
+      flavor: ConfigSyntax
+  ): ConfigNodeObject = {
     val childrenCopy =
       new ju.ArrayList[AbstractConfigNode](children)
     var seenNonMatching = false
@@ -58,7 +60,8 @@ final class ConfigNodeObject private[impl] (
         val key = node.path.value
         // Delete all multi-element paths that start with the desired path, since technically they are duplicates
         if ((valueCopy == null && key == desiredPath) || (key.startsWith(
-              desiredPath) && !(key == desiredPath))) {
+              desiredPath
+            ) && !(key == desiredPath))) {
           childrenCopy.remove(i)
           // Remove any whitespace or commas after the deleted setting
           var j = i
@@ -71,7 +74,7 @@ final class ConfigNodeObject private[impl] (
                   childrenCopy.remove(j)
                   j -= 1
                 } else break // break
-              } else break // break
+              } else break   // break
 
               j += 1
             }
@@ -84,7 +87,8 @@ final class ConfigNodeObject private[impl] (
           if (value.isInstanceOf[ConfigNodeComplexValue] && before
                 .isInstanceOf[ConfigNodeSingleToken] && Tokens
                 .isIgnoredWhitespace(
-                  before.asInstanceOf[ConfigNodeSingleToken].token))
+                  before.asInstanceOf[ConfigNodeSingleToken].token
+                ))
             indentedValue =
               value.asInstanceOf[ConfigNodeComplexValue].indentText(before)
           else indentedValue = value
@@ -99,7 +103,9 @@ final class ConfigNodeObject private[impl] (
               node.replaceValue(
                 node.value
                   .asInstanceOf[ConfigNodeObject]
-                  .changeValueOnPath(remainingPath, valueCopy, flavor)))
+                  .changeValueOnPath(remainingPath, valueCopy, flavor)
+              )
+            )
             if (valueCopy != null && !(node == children.get(i)))
               valueCopy = null
           }
@@ -110,20 +116,26 @@ final class ConfigNodeObject private[impl] (
     new ConfigNodeObject(childrenCopy)
   }
 
-  def setValueOnPath(desiredPath: String,
-                     value: AbstractConfigNodeValue): ConfigNodeObject =
+  def setValueOnPath(
+      desiredPath: String,
+      value: AbstractConfigNodeValue
+  ): ConfigNodeObject =
     setValueOnPath(desiredPath, value, ConfigSyntax.CONF)
 
-  def setValueOnPath(desiredPath: String,
-                     value: AbstractConfigNodeValue,
-                     flavor: ConfigSyntax): ConfigNodeObject = {
+  def setValueOnPath(
+      desiredPath: String,
+      value: AbstractConfigNodeValue,
+      flavor: ConfigSyntax
+  ): ConfigNodeObject = {
     val path = PathParser.parsePathNode(desiredPath, flavor)
     setValueOnPath(path, value, flavor)
   }
 
-  private def setValueOnPath(desiredPath: ConfigNodePath,
-                             value: AbstractConfigNodeValue,
-                             flavor: ConfigSyntax): ConfigNodeObject = {
+  private def setValueOnPath(
+      desiredPath: ConfigNodePath,
+      value: AbstractConfigNodeValue,
+      flavor: ConfigSyntax
+  ): ConfigNodeObject = {
     val node =
       changeValueOnPath(desiredPath.value, value, flavor)
     // If the desired Path did not exist, add it
@@ -141,7 +153,8 @@ final class ConfigNodeObject private[impl] (
       if (!seenNewLine) {
         if (children.get(i).isInstanceOf[ConfigNodeSingleToken] && Tokens
               .isNewline(
-                children.get(i).asInstanceOf[ConfigNodeSingleToken].token)) {
+                children.get(i).asInstanceOf[ConfigNodeSingleToken].token
+              )) {
           seenNewLine = true
           indentation.add(new ConfigNodeSingleToken(Tokens.newLine(null)))
         }
@@ -151,7 +164,8 @@ final class ConfigNodeObject private[impl] (
                 children
                   .get(i)
                   .asInstanceOf[ConfigNodeSingleToken]
-                  .token) && i + 1 < children.size && (children
+                  .token
+              ) && i + 1 < children.size && (children
               .get(i + 1)
               .isInstanceOf[ConfigNodeField] || children
               .get(i + 1)
@@ -165,7 +179,8 @@ final class ConfigNodeObject private[impl] (
     }
     if (indentation.isEmpty)
       indentation.add(
-        new ConfigNodeSingleToken(Tokens.newIgnoredWhitespace(null, " ")))
+        new ConfigNodeSingleToken(Tokens.newIgnoredWhitespace(null, " "))
+      )
     else {
       // Calculate the indentation of the ending curly-brace to get the indentation of the root object
       val last = children.get(children.size - 1)
@@ -176,12 +191,14 @@ final class ConfigNodeObject private[impl] (
         var indent     = ""
         if (beforeLast.isInstanceOf[ConfigNodeSingleToken] && Tokens
               .isIgnoredWhitespace(
-                beforeLast.asInstanceOf[ConfigNodeSingleToken].token))
+                beforeLast.asInstanceOf[ConfigNodeSingleToken].token
+              ))
           indent =
             beforeLast.asInstanceOf[ConfigNodeSingleToken].token.tokenText
         indent += "  "
         indentation.add(
-          new ConfigNodeSingleToken(Tokens.newIgnoredWhitespace(null, indent)))
+          new ConfigNodeSingleToken(Tokens.newIgnoredWhitespace(null, indent))
+        )
         return indentation
       }
     }
@@ -189,9 +206,11 @@ final class ConfigNodeObject private[impl] (
     indentation
   }
 
-  protected def addValueOnPath(desiredPath: ConfigNodePath,
-                               value: AbstractConfigNodeValue,
-                               flavor: ConfigSyntax): ConfigNodeObject = {
+  protected def addValueOnPath(
+      desiredPath: ConfigNodePath,
+      value: AbstractConfigNodeValue,
+      flavor: ConfigSyntax
+  ): ConfigNodeObject = {
     val path            = desiredPath.value
     val childrenCopy    = new ju.ArrayList[AbstractConfigNode](children)
     val indentationCopy = new ju.ArrayList[AbstractConfigNode](indentation)
@@ -205,7 +224,8 @@ final class ConfigNodeObject private[impl] (
     val sameLine = !(indentationCopy.size > 0 && indentationCopy
       .get(0)
       .isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
-      indentationCopy.get(0).asInstanceOf[ConfigNodeSingleToken].token))
+      indentationCopy.get(0).asInstanceOf[ConfigNodeSingleToken].token
+    ))
     // If the path is of length greater than one, see if the value needs to be added further down
     if (path.length > 1) {
       var i = children.size - 1
@@ -222,7 +242,9 @@ final class ConfigNodeObject private[impl] (
             childrenCopy.set(
               i,
               node.replaceValue(
-                newValue.addValueOnPath(remainingPath, value, flavor)))
+                newValue.addValueOnPath(remainingPath, value, flavor)
+              )
+            )
             return new ConfigNodeObject(childrenCopy)
           }
         } // end break for continue in Java - increment needed as it was a for loop
@@ -240,10 +262,12 @@ final class ConfigNodeObject private[impl] (
     newNodes.addAll(indentationCopy)
     newNodes.add(desiredPath.first)
     newNodes.add(
-      new ConfigNodeSingleToken(Tokens.newIgnoredWhitespace(null, " ")))
+      new ConfigNodeSingleToken(Tokens.newIgnoredWhitespace(null, " "))
+    )
     newNodes.add(new ConfigNodeSingleToken(Tokens.COLON))
     newNodes.add(
-      new ConfigNodeSingleToken(Tokens.newIgnoredWhitespace(null, " ")))
+      new ConfigNodeSingleToken(Tokens.newIgnoredWhitespace(null, " "))
+    )
     if (path.length == 1) newNodes.add(indentedValue)
     else { // If the path is of length greater than one add the required new objects along the path
       val newObjectNodes =
@@ -256,7 +280,8 @@ final class ConfigNodeObject private[impl] (
       val newObject = new ConfigNodeObject(newObjectNodes)
       newNodes.add(
         newObject
-          .addValueOnPath(desiredPath.subPath(1), indentedValue, flavor))
+          .addValueOnPath(desiredPath.subPath(1), indentedValue, flavor)
+      )
     }
     // Combine these two cases so that we only have to iterate once
     if ((flavor == ConfigSyntax.JSON) || startsWithBrace || sameLine) {
@@ -289,12 +314,14 @@ final class ConfigNodeObject private[impl] (
             val previous = childrenCopy.get(i - 1)
             if (previous.isInstanceOf[ConfigNodeSingleToken] &&
                 Tokens.isNewline(
-                  previous.asInstanceOf[ConfigNodeSingleToken].token)) {
+                  previous.asInstanceOf[ConfigNodeSingleToken].token
+                )) {
               childrenCopy.add(i - 1, new ConfigNodeField(newNodes))
               i -= 1
             } else if (previous.isInstanceOf[ConfigNodeSingleToken] &&
                        Tokens.isIgnoredWhitespace(
-                         previous.asInstanceOf[ConfigNodeSingleToken].token)) {
+                         previous.asInstanceOf[ConfigNodeSingleToken].token
+                       )) {
               val beforePrevious = childrenCopy.get(i - 2)
               if (sameLine) {
                 childrenCopy.add(i - 1, new ConfigNodeField(newNodes))
@@ -303,7 +330,8 @@ final class ConfigNodeObject private[impl] (
                          Tokens.isNewline(
                            beforePrevious
                              .asInstanceOf[ConfigNodeSingleToken]
-                             .token)) {
+                             .token
+                         )) {
                 childrenCopy.add(i - 2, new ConfigNodeField(newNodes))
                 i -= 2
               } else childrenCopy.add(i, new ConfigNodeField(newNodes))
@@ -322,14 +350,17 @@ final class ConfigNodeObject private[impl] (
             childrenCopy
               .get(childrenCopy.size - 1)
               .asInstanceOf[ConfigNodeSingleToken]
-              .token))
+              .token
+          ))
         childrenCopy.add(childrenCopy.size - 1, new ConfigNodeField(newNodes))
       else childrenCopy.add(new ConfigNodeField(newNodes))
     new ConfigNodeObject(childrenCopy)
   }
 
-  def removeValueOnPath(desiredPath: String,
-                        flavor: ConfigSyntax): ConfigNodeObject = {
+  def removeValueOnPath(
+      desiredPath: String,
+      flavor: ConfigSyntax
+  ): ConfigNodeObject = {
     val path = PathParser.parsePathNode(desiredPath, flavor).value
     changeValueOnPath(path, null, flavor)
   }

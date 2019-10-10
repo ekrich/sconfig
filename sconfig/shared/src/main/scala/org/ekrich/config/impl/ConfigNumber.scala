@@ -12,16 +12,19 @@ import org.ekrich.config.ConfigOrigin
 @SerialVersionUID(2L)
 object ConfigNumber {
   private[impl] def newNumber( // used ?
-                              origin: ConfigOrigin,
-                              number: Long,
-                              originalText: String): ConfigNumber =
+      origin: ConfigOrigin,
+      number: Long,
+      originalText: String
+  ): ConfigNumber =
     if (number <= Integer.MAX_VALUE && number >= Integer.MIN_VALUE)
       new ConfigInt(origin, number.toInt, originalText)
     else new ConfigLong(origin, number, originalText)
 
-  def newNumber(origin: ConfigOrigin,
-                number: Double,
-                originalText: String): ConfigNumber = {
+  def newNumber(
+      origin: ConfigOrigin,
+      number: Double,
+      originalText: String
+  ): ConfigNumber = {
     val asLong = number.toLong
     if (asLong == number) newNumber(origin, asLong, originalText)
     else new ConfigDouble(origin, number, originalText)
@@ -29,13 +32,14 @@ object ConfigNumber {
 }
 
 @SerialVersionUID(2L)
-abstract class ConfigNumber(_origin: ConfigOrigin,
-                            // This is so when we concatenate a number into a string (say it appears in
-                            // a sentence) we always have it exactly as the person typed it into the
-                            // config file. It's purely cosmetic; equals/hashCode don't consider this
-                            // for example.
-                            val originalText: String)
-    extends AbstractConfigValue(_origin)
+abstract class ConfigNumber(
+    _origin: ConfigOrigin,
+    // This is so when we concatenate a number into a string (say it appears in
+    // a sentence) we always have it exactly as the person typed it into the
+    // config file. It's purely cosmetic; equals/hashCode don't consider this
+    // for example.
+    val originalText: String
+) extends AbstractConfigValue(_origin)
     with Serializable {
 
   override def unwrapped: Number
@@ -45,10 +49,12 @@ abstract class ConfigNumber(_origin: ConfigOrigin,
   private[impl] def intValueRangeChecked(path: String) = {
     val l = longValue
     if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE)
-      throw new ConfigException.WrongType(origin,
-                                          path,
-                                          "32-bit integer",
-                                          "out-of-range value " + l)
+      throw new ConfigException.WrongType(
+        origin,
+        path,
+        "32-bit integer",
+        "out-of-range value " + l
+      )
     l.toInt
   }
 
@@ -71,7 +77,7 @@ abstract class ConfigNumber(_origin: ConfigOrigin,
     } else false
   }
   override def hashCode
-    : Int = { // this matches what standard Long.hashCode and Double.hashCode
+      : Int = { // this matches what standard Long.hashCode and Double.hashCode
     // do, though I don't think it really matters.
     var asLong = 0L
     if (isWhole) asLong = longValue
