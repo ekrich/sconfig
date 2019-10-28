@@ -1,7 +1,15 @@
 # Scala Native and Scala.js Help
 
 The release has minimal capabilities at this time so
-the following is an example of how to use the API. 
+the following is an example of how to use the API.
+
+## Dependency for Scala Native and Scala.js
+
+Use three percent signs instead of two for dependency resolution.
+
+```scala
+libraryDependencies += "org.ekrich" %%% "sconfig" % "x.y.z"
+```
 
 ## Read from String example
 
