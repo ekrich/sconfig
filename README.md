@@ -23,7 +23,7 @@ If you are looking for the original proven Java API, see
 [![Maven Central](https://img.shields.io/maven-central/v/org.ekrich/sconfig_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig_2.11)
 
 ```scala
-libraryDependencies += "org.ekrich" %%% "sconfig" % "x.y.z"
+libraryDependencies += "org.ekrich" %% "sconfig" % "x.y.z"
 ```
 
 To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above.
