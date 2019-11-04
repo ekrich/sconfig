@@ -47,7 +47,7 @@ class ConfigValueTest extends TestUtils {
     checkNotEqualObjects(a, b)
   }
 
-  @Ignore @Test
+  @Test
   def configIntSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -70,7 +70,7 @@ class ConfigValueTest extends TestUtils {
     checkNotEqualObjects(a, b)
   }
 
-  @Ignore @Test
+  @Test
   def configLongSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -107,7 +107,7 @@ class ConfigValueTest extends TestUtils {
     checkNotEqualObjects(a, b)
   }
 
-  @Ignore @Test
+  @Test
   def configDoubleSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i_z_e" +
@@ -133,7 +133,7 @@ class ConfigValueTest extends TestUtils {
     checkNotEqualObjects(intValueB, doubleVal)
   }
 
-  @Ignore @Test
+  @Test
   def configNullSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -145,7 +145,7 @@ class ConfigValueTest extends TestUtils {
     assertNull("b is null", b.unwrapped)
   }
 
-  @Ignore @Test
+  @Test
   def configBooleanSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -157,7 +157,7 @@ class ConfigValueTest extends TestUtils {
     assertEquals(true, b.unwrapped)
   }
 
-  @Ignore @Test
+  @Test
   def configStringSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -213,7 +213,7 @@ class ConfigValueTest extends TestUtils {
     checkNotEqualObjects(b, b.toConfig)
   }
 
-  @Ignore @Test
+  @Test
   def java6ConfigObjectSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -230,7 +230,7 @@ class ConfigValueTest extends TestUtils {
     assertTrue(b.toConfig.root eq b)
   }
 
-  @Ignore @Test
+  @Test
   def java6ConfigConfigSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -247,7 +247,7 @@ class ConfigValueTest extends TestUtils {
     assertTrue(b.root.toConfig eq b)
   }
 
-  @Ignore @Test
+  @Test
   def configObjectSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -264,7 +264,7 @@ class ConfigValueTest extends TestUtils {
     assertTrue(b.toConfig.root eq b)
   }
 
-  @Ignore @Test
+  @Test
   def configConfigSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -289,7 +289,7 @@ class ConfigValueTest extends TestUtils {
    * by the string's bytes. Running this test with the original SerializedConfigValue.readExternal()
    * implementation results in an EOFException thrown during deserialization.
    */
-  @Ignore @Test
+  @Test
   def configConfigCustomSerializable(): Unit = {
     val aMap     = configMap("a" -> 1, "b" -> 2, "c" -> 3)
     val expected = new SimpleConfigObject(fakeOrigin(), aMap).toConfig
@@ -311,7 +311,7 @@ class ConfigValueTest extends TestUtils {
     checkNotEqualObjects(aList, bList)
   }
 
-  @Ignore @Test
+  @Test
   def configListSerializable(): Unit = {
     val expectedSerialization = "" +
       "ACED0005_s_r002C_o_r_g_._e_k_r_i_c_h_._c_o_n_f_i_g_._i_m_p_l_._S_e_r_i_a_l_i" +
@@ -1048,7 +1048,7 @@ class ConfigValueTest extends TestUtils {
     assertEquals(parseConfig("a=1,b.c=2,b.d=3,x.y.z=4"), config)
   }
 
-  @Ignore @Test
+  @Test
   def configOriginsInSerialization(): Unit = {
     val bases = Seq(
       SimpleConfigOrigin.newSimple("foo"),

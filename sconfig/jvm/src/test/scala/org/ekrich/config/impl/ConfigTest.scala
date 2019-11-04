@@ -1393,7 +1393,7 @@ class ConfigTest extends TestUtils {
     }
   }
 
-  @Ignore @Test
+  @Test
   def serializeRoundTrip(): Unit = {
     for (i <- 1 to 10) {
       val numString = i.toString
