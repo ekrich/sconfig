@@ -596,12 +596,12 @@ object SimpleConfig {
 }
 
 @SerialVersionUID(1L)
-final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
+final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     extends Config
     with MergeableValue
     with Serializable {
-  override def root: AbstractConfigObject = `object`
-  override def origin: ConfigOrigin       = `object`.origin
+  override def root: AbstractConfigObject = confObj
+  override def origin: ConfigOrigin       = confObj.origin
   override def resolve(): SimpleConfig    = resolve(ConfigResolveOptions.defaults)
   override def resolve(options: ConfigResolveOptions): SimpleConfig =
     resolveWith(this, options)
@@ -612,17 +612,17 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
       options: ConfigResolveOptions
   ): SimpleConfig = {
     val resolved = ResolveContext.resolve(
-      `object`,
-      source.asInstanceOf[SimpleConfig].`object`,
+      confObj,
+      source.asInstanceOf[SimpleConfig].confObj,
       options
     )
-    if (resolved eq `object`) this
+    if (resolved eq confObj) this
     else new SimpleConfig(resolved.asInstanceOf[AbstractConfigObject])
   }
   private def hasPathPeek(pathExpression: String) = {
     val path                        = Path.newPath(pathExpression)
     var peeked: AbstractConfigValue = null
-    try peeked = `object`.peekPath(path)
+    try peeked = confObj.peekPath(path)
     catch {
       case e: ConfigException.NotResolved =>
         throw ConfigImpl.improveNotResolved(path, e)
@@ -637,10 +637,10 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     val peeked = hasPathPeek(path)
     peeked != null
   }
-  override def isEmpty: Boolean = `object`.isEmpty
+  override def isEmpty: Boolean = confObj.isEmpty
   override def entrySet: ju.Set[ju.Map.Entry[String, ConfigValue]] = {
     val entries = new ju.HashSet[ju.Map.Entry[String, ConfigValue]]
-    SimpleConfig.findPaths(entries, null, `object`)
+    SimpleConfig.findPaths(entries, null, confObj)
     entries
   }
   private[impl] def find(
@@ -649,7 +649,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
       originalPath: Path
   ): AbstractConfigValue =
     SimpleConfig.throwIfNull(
-      SimpleConfig.findOrNull(`object`, pathExpression, expected, originalPath),
+      SimpleConfig.findOrNull(confObj, pathExpression, expected, originalPath),
       expected,
       originalPath
     )
@@ -665,7 +665,7 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
       expected: ConfigValueType,
       originalPath: Path
   ): AbstractConfigValue =
-    SimpleConfig.findOrNull(`object`, pathExpression, expected, originalPath)
+    SimpleConfig.findOrNull(confObj, pathExpression, expected, originalPath)
   private def findOrNull(
       pathExpression: String,
       expected: ConfigValueType
@@ -963,23 +963,23 @@ final class SimpleConfig private[impl] (val `object`: AbstractConfigObject)
     }
     builder
   }
-  override def toFallbackValue: AbstractConfigObject = `object`
+  override def toFallbackValue: AbstractConfigObject = confObj
   override def withFallback(other: ConfigMergeable): SimpleConfig = { // this can return "this" if the withFallback doesn't need a new
     // ConfigObject
-    `object`.withFallback(other).toConfig
+    confObj.withFallback(other).toConfig
   }
   override final def equals(other: Any): Boolean =
     if (other.isInstanceOf[SimpleConfig])
-      `object` == other.asInstanceOf[SimpleConfig].`object`
+      confObj == other.asInstanceOf[SimpleConfig].confObj
     else false
 
   override final def hashCode
       : Int = { // we do the "41*" just so our hash code won't match that of the
     // underlying object. there's no real reason it can't match, but
     // making it not match might catch some kinds of bug.
-    41 * `object`.hashCode
+    41 * confObj.hashCode
   }
-  override def toString: String                         = "Config(" + `object`.toString + ")"
+  override def toString: String                         = "Config(" + confObj.toString + ")"
   private def peekPath(path: Path): AbstractConfigValue = root.peekPath(path)
   override def isResolved: Boolean =
     root.resolveStatus eq ResolveStatus.RESOLVED
