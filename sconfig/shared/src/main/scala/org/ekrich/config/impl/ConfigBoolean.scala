@@ -10,7 +10,7 @@ import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigValueType
 
 @SerialVersionUID(2L)
-final class ConfigBoolean(origin: ConfigOrigin, val value: Boolean)
+final class ConfigBoolean(origin: ConfigOrigin, val value: jl.Boolean)
     extends AbstractConfigValue(origin)
     with Serializable {
 
@@ -18,7 +18,7 @@ final class ConfigBoolean(origin: ConfigOrigin, val value: Boolean)
 
   override def unwrapped: jl.Boolean = value
 
-  override def transformToString: String = if (value) "true" else "false"
+  override def transformToString: String = value.toString()
 
   override def newCopy(origin: ConfigOrigin) = new ConfigBoolean(origin, value)
 
