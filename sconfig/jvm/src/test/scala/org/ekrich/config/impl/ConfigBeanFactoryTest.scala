@@ -17,7 +17,6 @@ import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ArrayBuffer
 
 class ConfigBeanFactoryTest extends TestUtils {
-
   @Test
   def toCamelCase(): Unit = {
     assertEquals("configProp", ConfigImplUtil.toCamelCase("config-prop"))
@@ -309,7 +308,6 @@ class ConfigBeanFactoryTest extends TestUtils {
       "error about the right property",
       e.getMessage.contains("mandatoryValue")
     )
-
   }
 
   @Test
@@ -425,5 +423,4 @@ class ConfigBeanFactoryTest extends TestUtils {
       configIs.close()
     }
   }
-
 }

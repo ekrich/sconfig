@@ -18,7 +18,6 @@ import scala.annotation.varargs
 import scala.jdk.CollectionConverters._
 
 object AbstractConfigObject {
-
   private def peekPath(
       self: AbstractConfigObject,
       path: Path
@@ -84,7 +83,6 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
     extends AbstractConfigValue(_origin)
     with ConfigObject
     with Container {
-
   final private val config = new SimpleConfig(this)
 
   override def toConfig: SimpleConfig = config

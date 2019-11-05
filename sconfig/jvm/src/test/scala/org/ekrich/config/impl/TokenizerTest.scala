@@ -9,7 +9,6 @@ import org.ekrich.config.ConfigException
 import language.implicitConversions
 
 class TokenizerTest extends TestUtils {
-
   // FIXME most of this file should be using this method
   private def tokenizerTest(expected: List[Token], s: String): Unit = {
     assertEquals(

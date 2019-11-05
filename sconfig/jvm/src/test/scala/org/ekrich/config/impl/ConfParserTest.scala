@@ -14,7 +14,6 @@ import java.net.URL
 import java.util.Properties
 
 class ConfParserTest extends TestUtils {
-
   def parseWithoutResolving(s: String) = {
     val options = ConfigParseOptions.defaults
       .setOriginDescription("test conf string")

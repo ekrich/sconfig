@@ -40,7 +40,6 @@ import org.ekrich.config.ConfigValueType
 // essentially an ABI break and bad
 @SerialVersionUID(1L)
 object SerializedConfigValue {
-
   private[impl] class FieldOut private[impl] (val code: SerializedField) {
     final private[impl] var bytes = new ByteArrayOutputStream
     final private[impl] var data  = new DataOutputStream(bytes)

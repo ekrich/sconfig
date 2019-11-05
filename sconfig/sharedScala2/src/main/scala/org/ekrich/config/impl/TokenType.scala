@@ -6,7 +6,6 @@ final class TokenType private (name: String, ordinal: Int)
     extends jl.Enum[TokenType](name, ordinal)
 
 object TokenType {
-
   final val START              = new TokenType("START", 0)
   final val END                = new TokenType("END", 1)
   final val COMMA              = new TokenType("COMMA", 2)

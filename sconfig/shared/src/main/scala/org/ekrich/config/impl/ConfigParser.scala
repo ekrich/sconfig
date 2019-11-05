@@ -78,7 +78,6 @@ object ConfigParser {
       val includer: FullIncluder,
       val includeContext: ConfigIncludeContext
   ) {
-
     private var lineNumber      = 1
     final private var pathStack = new ju.LinkedList[Path]
     // the number of lists we are inside; this is used to detect the "cannot

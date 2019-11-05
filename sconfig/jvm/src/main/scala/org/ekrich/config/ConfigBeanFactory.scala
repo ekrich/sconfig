@@ -9,7 +9,6 @@ import org.ekrich.config.impl.ConfigBeanImpl
  * @since 1.3.0
  */
 object ConfigBeanFactory {
-
   /**
    * Creates an instance of a class, initializing its fields from a [[Config]].
    *

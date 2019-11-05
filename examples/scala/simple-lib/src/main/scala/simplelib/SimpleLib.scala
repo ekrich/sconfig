@@ -9,7 +9,6 @@ import org.ekrich.config._
 
 // we have a constructor allowing the app to provide a custom Config
 class SimpleLibContext(config: Config) {
-
   // This verifies that the Config is sane and has our
   // reference config. Importantly, we specify the "simple-lib"
   // path so we only validate settings that belong to this
@@ -34,7 +33,6 @@ class SimpleLibContext(config: Config) {
 // typos. This is redundant with the SimpleLibContext above,
 // in fact we'll show a settings-based context below.
 class SimpleLibSettings(config: Config) {
-
   // checkValid(), just as in the plain SimpleLibContext
   config.checkValid(ConfigFactory.defaultReference(), "simple-lib")
 

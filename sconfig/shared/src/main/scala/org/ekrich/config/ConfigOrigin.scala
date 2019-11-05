@@ -27,7 +27,6 @@ import java.util.List
  * implementations will break.
  */
 trait ConfigOrigin {
-
   /**
    * Returns a string describing the origin of a value or exception. This will
    * never return null.

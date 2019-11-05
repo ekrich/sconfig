@@ -100,7 +100,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeys(): Unit = {
-
     val props = new Properties()
     props.setProperty("a.0", "0")
     props.setProperty("a.1", "1")
@@ -117,7 +116,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeysWithGaps(): Unit = {
-
     val props = new Properties()
     props.setProperty("a.1", "0")
     props.setProperty("a.2", "1")
@@ -132,7 +130,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeysWithNoise(): Unit = {
-
     val props = new Properties()
     props.setProperty("a.-1", "-1")
     props.setProperty("a.foo", "-2")
@@ -151,7 +148,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def noNumericKeysAsListFails(): Unit = {
-
     val props = new Properties()
     props.setProperty("a.bar", "0")
 
@@ -165,7 +161,6 @@ class PropertiesTest extends TestUtils {
 
   @Test
   def makeListWithNumericKeysAndMerge(): Unit = {
-
     val props = new Properties()
     props.setProperty("a.0", "0")
     props.setProperty("a.1", "1")

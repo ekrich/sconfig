@@ -52,7 +52,6 @@ object ConfigDocumentParser {
       val baseOrigin: ConfigOrigin,
       val tokens: ju.Iterator[Token]
   ) {
-
     private var lineNumber   = 1
     final private var buffer = new ArrayStack[Token]
     // this is the number of "equals" we are inside,

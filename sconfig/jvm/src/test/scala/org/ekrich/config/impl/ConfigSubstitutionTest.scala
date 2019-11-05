@@ -13,7 +13,6 @@ import org.ekrich.config.ConfigFactory
 import scala.jdk.CollectionConverters._
 
 class ConfigSubstitutionTest extends TestUtils {
-
   private def resolveWithoutFallbacks(v: AbstractConfigObject) = {
     val options = ConfigResolveOptions.noSystem
     ResolveContext
@@ -171,7 +170,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def missingInArray(): Unit = {
-
     val obj = parseObject("""
     a : [ ${?missing}, ${?also.missing} ]
 """)
@@ -183,7 +181,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def missingInObject(): Unit = {
-
     val obj = parseObject(
       """
     a : ${?missing}, b : ${?also.missing}, c : ${?b}, d : ${?c}
@@ -802,7 +799,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def complexResolve(): Unit = {
-
     val resolved = resolveWithoutFallbacks(substComplexObject)
 
     assertEquals(57, resolved.getInt("foo"))
@@ -910,7 +906,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def fallbackToEnv(): Unit = {
-
     val resolved = resolve(substEnvVarObject)
 
     var existed = 0
@@ -933,7 +928,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def noFallbackToEnvIfValuesAreNull(): Unit = {
-
     // create a fallback object with all the env var names
     // set to null. we want to be sure this blocks
     // lookup in the environment. i.e. if there is a
@@ -955,7 +949,6 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def fallbackToEnvWhenRelativized(): Unit = {
-
     val values = new java.util.HashMap[String, AbstractConfigValue]()
 
     values.put("a", substEnvVarObject.relativized(new Path("a")))

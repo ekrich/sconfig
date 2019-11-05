@@ -23,7 +23,6 @@ import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
  *
  */
 object AbstractConfigValue {
-
   /**
    * This exception means that a value is inherently not resolveable, at the
    * moment the only known cause is a cycle of substitutions. This is a
@@ -39,7 +38,6 @@ object AbstractConfigValue {
   @SerialVersionUID(1L)
   class NotPossibleToResolve private[impl] (val context: ResolveContext)
       extends RuntimeException("was not possible to resolve") {
-
     private[impl] val traceString: String = context.traceString
   }
 
@@ -105,7 +103,6 @@ object AbstractConfigValue {
 
   private[impl] abstract class NoExceptionsModifier
       extends AbstractConfigValue.Modifier {
-
     @throws[Exception]
     override final def modifyChildMayThrow(
         keyOrNull: String,
@@ -123,7 +120,6 @@ object AbstractConfigValue {
         keyOrNull: String,
         v: AbstractConfigValue
     ): AbstractConfigValue
-
   }
 }
 
@@ -131,7 +127,6 @@ object AbstractConfigValue {
 abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     extends ConfigValue
     with MergeableValue {
-
   override def origin: SimpleConfigOrigin =
     this._origin.asInstanceOf[SimpleConfigOrigin]
 

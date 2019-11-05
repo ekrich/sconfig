@@ -41,7 +41,6 @@ abstract class ConfigNumber(
     val originalText: String
 ) extends AbstractConfigValue(_origin)
     with Serializable {
-
   override def unwrapped: Number
 
   override def transformToString: String = originalText

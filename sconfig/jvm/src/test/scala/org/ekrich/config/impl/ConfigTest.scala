@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit.{
 }
 
 class ConfigTest extends TestUtils {
-
   private def resolveNoSystem(
       v: AbstractConfigValue,
       root: AbstractConfigObject
@@ -1521,7 +1520,6 @@ class ConfigTest extends TestUtils {
       newPrefix: String,
       fallback: ConfigResolver
   ) extends ConfigResolver {
-
     override def lookup(path: String): ConfigValue = {
       if (path.startsWith(prefix))
         ConfigValueFactory.fromAnyRef(newPrefix + path.substring(prefix.length))
@@ -1537,7 +1535,6 @@ class ConfigTest extends TestUtils {
       else
         new DummyResolver(prefix, newPrefix, fallback.withFallback(f))
     }
-
   }
 
   private def runFallbackTest(
@@ -1608,5 +1605,4 @@ class ConfigTest extends TestUtils {
     }
     assertTrue(e.getMessage.contains("${a.b.c}"))
   }
-
 }

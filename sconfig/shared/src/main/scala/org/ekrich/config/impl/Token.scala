@@ -21,7 +21,6 @@ class Token private[impl] (
     _tokenText: String,
     debugString: String
 ) {
-
   def this(_tokenType: TokenType, _origin: ConfigOrigin, _tokenText: String) =
     this(_tokenType, _origin, _tokenText, null)
 

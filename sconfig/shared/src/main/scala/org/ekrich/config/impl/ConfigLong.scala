@@ -16,7 +16,6 @@ final class ConfigLong(
     originalText: String
 ) extends ConfigNumber(origin, originalText)
     with Serializable {
-
   override def valueType: ConfigValueType = ConfigValueType.NUMBER
 
   override def unwrapped: jl.Long = value

@@ -5,9 +5,7 @@ import minitest._
 import org.ekrich.config.ConfigRenderOptions
 
 object ConfigFactoryTests extends SimpleTestSuite {
-
   test("load() check system property throws NotImplementedError") {
-
     // example of how system properties override; note this
     // must be set before the config lib is used
     val propKey = "simple-prop.whatever"
@@ -40,7 +38,6 @@ object ConfigFactoryTests extends SimpleTestSuite {
   }
 
   test("resolve() to force substitution") {
-
     val configStr =
       """
         |pattern-default-main = default

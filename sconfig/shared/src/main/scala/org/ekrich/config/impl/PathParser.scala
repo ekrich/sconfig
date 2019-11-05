@@ -240,7 +240,6 @@ object PathParser {
           } else {
             lastWasDot = true
           }
-
         } else if (c == '-') {
           if (lastWasDot) {
             returnNow = true
@@ -305,5 +304,4 @@ object PathParser {
     if (looksUnsafeForFastParser(s)) null
     else fastPathBuild(null, s, s.length)
   }
-
 }

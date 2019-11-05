@@ -9,7 +9,6 @@ import org.ekrich.config.ConfigParseable
 
 class SimpleIncludeContext(parseable: Parseable, options: ConfigParseOptions)
     extends ConfigIncludeContext {
-
   def this(parseable: Parseable) =
     this(parseable, SimpleIncluder.clearForInclude(parseable.options()))
 

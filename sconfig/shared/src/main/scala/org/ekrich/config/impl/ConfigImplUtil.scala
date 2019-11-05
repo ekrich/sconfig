@@ -22,7 +22,6 @@ import org.ekrich.config.ConfigSyntax
  * For use only by the {@link org.ekrich.config} package.
  */
 object ConfigImplUtil {
-
   def equalsHandlingNull(a: AnyRef, b: AnyRef) =
     if (a == null && b != null) false
     else if (a != null && b == null) false

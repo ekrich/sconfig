@@ -23,7 +23,6 @@ import org.ekrich.config.impl.PlatformThread
  *
  */
 object ConfigParseOptions {
-
   /**
    * Gets an instance of <code>ConfigParseOptions</code> with all fields
    * set to the default values. Start with this instance and make any
@@ -41,7 +40,6 @@ final class ConfigParseOptions private (
     val includer: ConfigIncluder,
     val classLoader: ClassLoader
 ) {
-
   /**
    * Set the file format. If set to null, try to guess from any available
    * filename extension; if guessing fails, assume {@link ConfigSyntax#CONF}.

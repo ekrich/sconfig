@@ -17,7 +17,6 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 class PublicApiTest extends TestUtils {
-
   @Before
   def before(): Unit = {
     // TimeZone.getDefault internally invokes System.setProperty("user.timezone", <default time zone>) and it may

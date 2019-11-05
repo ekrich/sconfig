@@ -12,7 +12,6 @@ import scala.jdk.CollectionConverters._
 import scala.io.Source
 
 class ValidationTest extends TestUtils {
-
   @Test
   def validation(): Unit = {
     val reference = ConfigFactory.parseFile(

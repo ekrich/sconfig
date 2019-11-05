@@ -7,7 +7,6 @@ import org.ekrich.config.parser.ConfigNode
 import java.{util => ju}
 
 abstract class AbstractConfigNode extends ConfigNode {
-
   protected[impl] def tokens: ju.Collection[Token]
 
   override final def render: String = {

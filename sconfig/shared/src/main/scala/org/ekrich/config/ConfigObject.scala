@@ -61,7 +61,6 @@ import java.{util => ju}
  * implementations will break.
  */
 trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
-
   /**
    * Converts this object to a {@link Config} instance, enabling you to use
    * path expressions to find values in the object. This is a constant-time

@@ -12,7 +12,6 @@ final class ResolveResult[V <: AbstractConfigValue](
     val context: ResolveContext,
     val value: V
 ) {
-
   // better option? we don't have variance
   @SuppressWarnings(Array("unchecked"))
   private[impl] def asObjectResult: ResolveResult[AbstractConfigObject] = {

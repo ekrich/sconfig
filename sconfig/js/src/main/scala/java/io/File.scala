@@ -3,7 +3,6 @@ package java.io
 import java.net.URI
 
 class File(path: String) extends Serializable with Comparable[File] {
-
   def this(parent: File, child: String) = this(??? : String)
 
   def this(uri: URI) = this(??? : String)
@@ -21,5 +20,4 @@ class File(path: String) extends Serializable with Comparable[File] {
   def getName(): String = ???
 
   def getParentFile(): File = ???
-
 }

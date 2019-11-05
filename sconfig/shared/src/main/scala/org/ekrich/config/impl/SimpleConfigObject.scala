@@ -18,12 +18,10 @@ import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
 
 @SerialVersionUID(2L)
 object SimpleConfigObject {
-
   final private[impl] class ResolveModifier private[impl] (
       var context: ResolveContext,
       val source: ResolveSource
   ) extends AbstractConfigValue.Modifier {
-
     final private[impl] var originalRestrict = context.restrictToChild
 
     @throws[NotPossibleToResolve]
@@ -150,7 +148,6 @@ final class SimpleConfigObject(
     override val ignoresFallbacks: Boolean
 ) extends AbstractConfigObject(_origin)
     with Serializable {
-
   if (value == null)
     throw new ConfigException.BugOrBroken(
       "creating config object with null map"

@@ -9,7 +9,6 @@ final class FromMapMode private (name: String, ordinal: Int)
     extends jl.Enum[FromMapMode](name, ordinal)
 
 object FromMapMode {
-
   final val KEYS_ARE_PATHS = new FromMapMode("KEYS_ARE_PATHS", 0)
   final val KEYS_ARE_KEYS  = new FromMapMode("KEYS_ARE_KEYS", 1)
 

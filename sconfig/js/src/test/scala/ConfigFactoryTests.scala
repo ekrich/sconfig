@@ -6,10 +6,8 @@ import org.junit.Test
 
 // essentially a duplicate of Scala Native Test
 class ConfigFactoryTests {
-
   @Test
   def parseString: Unit = {
-
     val configStr =
       """
         |maxColumn = 100

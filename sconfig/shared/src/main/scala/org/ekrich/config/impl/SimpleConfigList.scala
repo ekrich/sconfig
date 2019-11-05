@@ -14,7 +14,6 @@ import org.ekrich.config.impl.AbstractConfigValue._
 
 @SerialVersionUID(2L)
 object SimpleConfigList {
-
   private[impl] class ResolveModifier private[impl] (
       var context: ResolveContext,
       val source: ResolveSource

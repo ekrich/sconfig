@@ -42,7 +42,6 @@ object Tokenizer {
   }
 
   object TokenIterator {
-
     class WhitespaceSaver() {
       val whitespace = new jl.StringBuilder
       // has to be saved inside value concatenations
@@ -154,7 +153,6 @@ object Tokenizer {
       val input: Reader,
       val allowComments: Boolean
   ) extends ju.Iterator[Token] {
-
     val origin     = _origin.asInstanceOf[SimpleConfigOrigin]
     val buffer     = new ju.LinkedList[Integer]
     var lineNumber = 1
@@ -446,7 +444,6 @@ object Tokenizer {
           sbOrig.appendCodePoint(c)
         }
       }
-
     }
     @throws[ProblemException]
     private def pullQuotedString: Tokens.Value = {

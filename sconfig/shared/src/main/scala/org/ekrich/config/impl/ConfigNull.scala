@@ -22,7 +22,6 @@ import org.ekrich.config.ConfigValueType
 final class ConfigNull(origin: ConfigOrigin)
     extends AbstractConfigValue(origin)
     with Serializable {
-
   override def valueType: ConfigValueType = ConfigValueType.NULL
 
   override def unwrapped: AnyRef = null

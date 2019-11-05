@@ -4,7 +4,6 @@ import org.junit.Assert._
 import org.junit.Test
 
 class ConfigNodeTest extends TestUtils {
-
   private def singleTokenNodeTest(token: Token): Unit = {
     val node = configNodeSingleToken(token)
     assertEquals(node.render, token.tokenText)
@@ -368,5 +367,4 @@ class ConfigNodeTest extends TestUtils {
     // The above operations cause the resultant map to be rendered properly
     assertEquals(finalText, newNode.render)
   }
-
 }

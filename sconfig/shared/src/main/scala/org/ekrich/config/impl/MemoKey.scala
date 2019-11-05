@@ -5,7 +5,6 @@ final class MemoKey private[impl] (
     val value: AbstractConfigValue,
     val restrictToChildOrNull: Path
 ) {
-
   override final def hashCode: Int = {
     val h = System.identityHashCode(value)
     if (restrictToChildOrNull != null)
