@@ -11,10 +11,8 @@ import org.ekrich.config.ConfigValueType
 
 /* FIXME the way the subclasses of Token are private with static isFoo and accessors is kind of ridiculous. */
 object Tokens {
-
   class Value private[impl] (val value: AbstractConfigValue, origText: String)
       extends Token(TokenType.VALUE, value.origin, origText) {
-
     def this(value: AbstractConfigValue) = this(value, null)
 
     override def toString(): String =
@@ -48,7 +46,6 @@ object Tokens {
       origin: ConfigOrigin,
       val value: String
   ) extends Token(TokenType.UNQUOTED_TEXT, origin) {
-
     override def toString(): String = "'" + value + "'"
     override def canEqual(other: Any): Boolean =
       other.isInstanceOf[Tokens.UnquotedText]
@@ -82,7 +79,6 @@ object Tokens {
       val suggestQuotes: Boolean,
       val cause: Throwable
   ) extends Token(TokenType.PROBLEM, origin) {
-
     override def toString(): String = {
       val sb = new StringBuilder
       sb.append('\'')
@@ -135,7 +131,6 @@ object Tokens {
       origin: ConfigOrigin,
       val text: String
   ) extends Token(TokenType.COMMENT, origin) {
-
     override def toString(): String = {
       val sb = new StringBuilder
       sb.append("'#")
@@ -161,7 +156,6 @@ object Tokens {
       val optional: Boolean,
       val value: ju.List[Token]
   ) extends Token(TokenType.SUBSTITUTION, origin) {
-
     override def tokenText: String =
       "${" + (if (this.optional) "?" else "") + Tokenizer.render(
         this.value.iterator

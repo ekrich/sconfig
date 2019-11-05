@@ -5,7 +5,6 @@ import org.junit.Assert._
 import org.junit.Test
 
 class ConfigDocumentParserTest extends TestUtils {
-
   private def parseTest(origText: String): Unit = {
     val node = ConfigDocumentParser.parse(
       tokenize(origText),
@@ -300,7 +299,6 @@ class ConfigDocumentParserTest extends TestUtils {
 
     // JSON does not support empty documents
     parseJSONFailuresTest("", "Empty document")
-
   }
 
   @Test

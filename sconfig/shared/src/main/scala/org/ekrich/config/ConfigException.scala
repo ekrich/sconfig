@@ -22,7 +22,6 @@ import org.ekrich.config.impl.ConfigImplUtil
 abstract class ConfigException(message: String, cause: Throwable)
     extends RuntimeException(message, cause)
     with Serializable {
-
   @transient var origin: ConfigOrigin = null
 
   protected def this(origin: ConfigOrigin, message: String, cause: Throwable) = {
@@ -52,7 +51,6 @@ abstract class ConfigException(message: String, cause: Throwable)
     val origin = ConfigImplUtil.readOrigin(in)
     ConfigException.setOriginField(this, classOf[ConfigException], origin)
   }
-
 }
 
 @SerialVersionUID(1L)
@@ -100,7 +98,6 @@ object ConfigException {
   @SerialVersionUID(1L)
   class WrongType(origin: ConfigOrigin, message: String, cause: Throwable)
       extends ConfigException(origin, message, cause) {
-
     def this(
         origin: ConfigOrigin,
         path: String,
@@ -124,7 +121,6 @@ object ConfigException {
 
     def this(origin: ConfigOrigin, message: String) =
       this(origin, message, null)
-
   }
 
   /**
@@ -141,7 +137,6 @@ object ConfigException {
   @SerialVersionUID(1L)
   class Missing(origin: ConfigOrigin, message: String, cause: Throwable)
       extends ConfigException(origin, message, cause) {
-
     def this(path: String, cause: Throwable) =
       this(null, Missing.makeMessage(path), cause)
 
@@ -149,7 +144,6 @@ object ConfigException {
       this(origin, Missing.makeMessage(path), null)
 
     def this(path: String) = this(path, null)
-
   }
 
   /**
@@ -175,7 +169,6 @@ object ConfigException {
         Null.makeMessage(path, expected),
         cause
       ) {
-
     def this(origin: ConfigOrigin, path: String, expected: String) =
       this(origin, path, expected, null)
   }
@@ -218,7 +211,6 @@ object ConfigException {
   @SerialVersionUID(1L)
   class BadPath(origin: ConfigOrigin, message: String, cause: Throwable)
       extends ConfigException(origin, message, cause) {
-
     def this(
         origin: ConfigOrigin,
         path: String,
@@ -259,7 +251,6 @@ object ConfigException {
   @SerialVersionUID(1L)
   class BugOrBroken(message: String, cause: Throwable)
       extends ConfigException(message, cause) {
-
     def this(message: String) = this(message, null)
   }
 
@@ -270,7 +261,6 @@ object ConfigException {
   @SerialVersionUID(1L)
   class IO(origin: ConfigOrigin, message: String, cause: Throwable)
       extends ConfigException(origin, message, cause) {
-
     def this(origin: ConfigOrigin, message: String) =
       this(origin, message, null)
   }
@@ -282,7 +272,6 @@ object ConfigException {
   @SerialVersionUID(1L)
   class Parse(origin: ConfigOrigin, message: String, cause: Throwable)
       extends ConfigException(origin, message, cause) {
-
     def this(origin: ConfigOrigin, message: String) =
       this(origin, message, null)
   }
@@ -301,7 +290,6 @@ object ConfigException {
         "Could not resolve substitution to a value: " + detail,
         cause
       ) {
-
     def this(origin: ConfigOrigin, detail: String) = this(origin, detail, null)
   }
 
@@ -316,7 +304,6 @@ object ConfigException {
   @SerialVersionUID(1L)
   class NotResolved(message: String, cause: Throwable)
       extends ConfigException.BugOrBroken(message, cause) {
-
     def this(message: String) = this(message, null)
   }
 
@@ -332,7 +319,6 @@ object ConfigException {
       val problem: String
   ) // description of the problem
       extends Serializable {
-
     // We customize serialization because ConfigOrigin isn't
     // serializable and we don't want it to be
     @throws[IOException]
@@ -406,5 +392,4 @@ object ConfigException {
       extends ConfigException(message, cause) {
     def this(message: String) = this(message, null)
   }
-
 }

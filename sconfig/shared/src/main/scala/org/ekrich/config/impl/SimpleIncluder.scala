@@ -84,7 +84,6 @@ object SimpleIncluder {
   private[impl] class RelativeNameSource private[impl] (
       val context: ConfigIncludeContext
   ) extends SimpleIncluder.NameSource {
-
     override def nameToParseable(
         name: String,
         options: ConfigParseOptions
@@ -109,7 +108,6 @@ object SimpleIncluder {
       name: String,
       options: ConfigParseOptions
   ) = {
-
     var obj: ConfigObject = null
     if (name.endsWith(".conf") || name.endsWith(".json") || name.endsWith(
           ".properties"
@@ -203,7 +201,6 @@ object SimpleIncluder {
   // have an implementation.
   private[impl] class Proxy private[impl] (val delegater: ConfigIncluder)
       extends FullIncluder {
-
     override def withFallback(fallback: ConfigIncluder): ConfigIncluder = { // we never fall back
       this
     }
@@ -253,7 +250,6 @@ object SimpleIncluder {
 
 class SimpleIncluder private[impl] (var fallback: ConfigIncluder)
     extends FullIncluder {
-
   // this is the heuristic includer
   override def include(
       context: ConfigIncludeContext,

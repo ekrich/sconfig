@@ -13,7 +13,6 @@ import org.ekrich.config.ConfigValueType
 final class ConfigBoolean(origin: ConfigOrigin, val value: jl.Boolean)
     extends AbstractConfigValue(origin)
     with Serializable {
-
   override def valueType: ConfigValueType = ConfigValueType.BOOLEAN
 
   override def unwrapped: jl.Boolean = value

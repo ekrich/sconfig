@@ -15,7 +15,6 @@ private[impl] final class MemoryUnit private[impl] (
 }
 
 private object MemoryUnit {
-
   final val BYTES      = new MemoryUnit("BYTES", 0, "", 1024, 0)
   final val KILOBYTES  = new MemoryUnit("KILOBYTES", 1, "kilo", 1000, 1)
   final val MEGABYTES  = new MemoryUnit("MEGABYTES", 2, "mega", 1000, 2)

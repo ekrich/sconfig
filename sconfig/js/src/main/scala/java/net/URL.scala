@@ -2,7 +2,6 @@ package java.net
 
 // from Scala Native with @stub removed
 class URL(from: String) {
-
   def getPath(): java.lang.String = ???
 
   def getProtocol(): java.lang.String = ???

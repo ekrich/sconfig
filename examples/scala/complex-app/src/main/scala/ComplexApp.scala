@@ -2,7 +2,6 @@ import org.ekrich.config._
 import simplelib._
 
 object ComplexApp extends App {
-
   // This app is "complex" because we load multiple separate app
   // configs into a single JVM and we have a separately-configurable
   // context for simple lib.

@@ -122,7 +122,6 @@ final class ConfigConcatenation(
 ) extends AbstractConfigValue(_origin)
     with Unmergeable
     with Container {
-
   if (pieces.size < 2)
     throw new ConfigException.BugOrBroken(
       "Created concatenation with less than 2 items: " + this
@@ -167,7 +166,6 @@ final class ConfigConcatenation(
       context: ResolveContext,
       source: ResolveSource
   ): ResolveResult[_ <: AbstractConfigValue] = {
-
     if (ConfigImpl.traceSubstitutionsEnabled) {
       val indent = context.depth + 2
       ConfigImpl.trace(

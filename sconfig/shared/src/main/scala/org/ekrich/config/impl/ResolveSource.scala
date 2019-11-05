@@ -115,7 +115,6 @@ object ResolveSource {
       val value: T,
       val next: ResolveSource.Node[T]
   ) {
-
     def this(value: T) = this(value, null)
     private[impl] def prepend(value: T) =
       new ResolveSource.Node[T](value, this)
@@ -174,7 +173,6 @@ final class ResolveSource(
     // the root itself should be a node in this if non-null.
     val pathFromRoot: ResolveSource.Node[Container]
 ) {
-
   def this(root: AbstractConfigObject) = this(root, null)
 
   // if we replace the root with a non-object, use an empty

@@ -11,7 +11,6 @@ import scala.annotation.varargs
  *
  */
 object ConfigUtil {
-
   /**
    * Quotes and escapes a string, as in the JSON specification.
    *

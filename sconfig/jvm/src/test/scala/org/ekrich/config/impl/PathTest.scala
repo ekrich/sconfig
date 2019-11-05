@@ -9,7 +9,6 @@ import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 
 class PathTest extends TestUtils {
-
   @Test
   def pathEquality(): Unit = {
     // note: foo.bar is a single key here

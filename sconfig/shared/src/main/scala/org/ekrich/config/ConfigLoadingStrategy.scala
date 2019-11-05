@@ -10,7 +10,6 @@ package org.ekrich.config
  * You have to define VM property `config.strategy` to replace default strategy with your own.
  */
 trait ConfigLoadingStrategy {
-
   /**
    * This method must load and parse application config.
    *

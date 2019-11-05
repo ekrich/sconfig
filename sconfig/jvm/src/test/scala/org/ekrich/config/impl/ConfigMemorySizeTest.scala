@@ -8,7 +8,6 @@ import org.junit._
 import org.ekrich.config.ConfigMemorySize
 
 class ConfigMemorySizeTest extends TestUtils {
-
   @Test
   def testEquals(): Unit = {
     assertTrue(

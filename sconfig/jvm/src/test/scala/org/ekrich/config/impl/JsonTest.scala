@@ -14,7 +14,6 @@ import scala.jdk.CollectionConverters._
 import org.ekrich.config._
 
 class JsonTest extends TestUtils {
-
   def parse(s: String): ConfigValue = {
     val options = ConfigParseOptions.defaults
       .setOriginDescription("test json string")
@@ -30,7 +29,6 @@ class JsonTest extends TestUtils {
   }
 
   private[this] def toJson(value: ConfigValue): JsValue = {
-
     value match {
       case v: ConfigObject =>
         JsObject(
@@ -57,7 +55,6 @@ class JsonTest extends TestUtils {
   }
 
   private[this] def fromJson(jsonValue: JsValue): AbstractConfigValue = {
-
     jsonValue match {
       case JsObject(fields) =>
         val m = new HashMap[String, AbstractConfigValue]()
@@ -119,7 +116,6 @@ class JsonTest extends TestUtils {
           tested += 1
         }
       }
-
     }
 
     assertTrue(tested > 100) // just checking we ran a bunch of tests

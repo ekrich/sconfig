@@ -18,7 +18,6 @@ import org.ekrich.config.ConfigValueFactory
 import org.ekrich.config.ConfigFactory
 
 class ConfigValueTest extends TestUtils {
-
   @Test
   def configOriginEquality(): Unit = {
     val a       = SimpleConfigOrigin.newSimple("foo")
@@ -340,7 +339,6 @@ class ConfigValueTest extends TestUtils {
     checkEqualObjects(a, sameAsA)
     checkNotEqualObjects(a, b)
     checkNotEqualObjects(a, c)
-
   }
 
   @Test
@@ -743,7 +741,6 @@ class ConfigValueTest extends TestUtils {
     intercept[ConfigException.BadPath] {
       empty.hasPath("..")
     }
-
   }
 
   @Test

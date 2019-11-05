@@ -12,7 +12,6 @@ import java.net.URL
  * attempts to load URLs will use the default includer.
  */
 trait ConfigIncluderURL {
-
   /**
    * Parses another item to be included. The returned object typically would
    * not have substitutions resolved. You can throw a ConfigException here to

@@ -12,7 +12,6 @@ import org.ekrich.config._
 import java.util.concurrent.TimeUnit
 
 class UnitParserTest extends TestUtils {
-
   @Test
   def parseDuration(): Unit = {
     val oneSecs = List(

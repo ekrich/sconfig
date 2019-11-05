@@ -8,7 +8,6 @@ final class ConfigNodeInclude(
     private[impl] val kind: ConfigIncludeKind,
     private[impl] val isRequired: Boolean
 ) extends AbstractConfigNode {
-
   override def tokens: ju.Collection[Token] = {
     val tokens = new ju.ArrayList[Token]
     for (child <- children.asScala) {

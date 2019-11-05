@@ -8,7 +8,6 @@ import org.junit.Assert.{assertEquals, assertThat}
 import org.junit.Test
 
 class ParseableReaderTest extends TestUtils {
-
   @Test
   def parse(): Unit = {
     val filename = "/test01.properties"

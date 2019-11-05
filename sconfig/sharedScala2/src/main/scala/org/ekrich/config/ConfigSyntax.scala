@@ -17,7 +17,6 @@ final class ConfigSyntax private (name: String, ordinal: Int)
     extends jl.Enum[ConfigSyntax](name, ordinal)
 
 object ConfigSyntax {
-
   /**
    * Pedantically strict <a href="http://json.org">JSON</a> format; no
    * comments, no unexpected commas, no duplicate keys in the same object.

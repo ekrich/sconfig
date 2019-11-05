@@ -17,7 +17,6 @@ final class ConfigReference(
     val prefixLength: Int
 ) extends AbstractConfigValue(_origin)
     with Unmergeable {
-
   def this(_origin: ConfigOrigin, expr: SubstitutionExpression) =
     this(_origin, expr, 0)
 

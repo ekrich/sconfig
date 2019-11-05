@@ -20,7 +20,6 @@ import org.ekrich.config.ConfigValue
  * implementations will break.
  */
 trait ConfigDocument {
-
   /**
    * Returns a new ConfigDocument that is a copy of the current ConfigDocument,
    * but with the desired value set at the desired path. If the path exists, it will

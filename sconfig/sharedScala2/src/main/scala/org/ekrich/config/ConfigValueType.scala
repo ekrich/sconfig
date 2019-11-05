@@ -13,7 +13,6 @@ final class ConfigValueType private (name: String, ordinal: Int)
     extends jl.Enum[ConfigValueType](name, ordinal)
 
 object ConfigValueType {
-
   final val OBJECT  = new ConfigValueType("OBJECT", 0)
   final val LIST    = new ConfigValueType("LIST", 1)
   final val NUMBER  = new ConfigValueType("NUMBER", 2)

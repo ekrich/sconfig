@@ -12,12 +12,10 @@ import org.ekrich.config.ConfigValueType
 
 @SerialVersionUID(2L)
 object ConfigString {
-
   final private[impl] class Quoted private[impl] (
       origin: ConfigOrigin,
       value: String
   ) extends ConfigString(origin, value) {
-
     override def newCopy(origin: ConfigOrigin) =
       new ConfigString.Quoted(origin, value)
 
@@ -38,7 +36,6 @@ object ConfigString {
       origin: ConfigOrigin,
       value: String
   ) extends ConfigString(origin, value) {
-
     override def newCopy(origin: ConfigOrigin) =
       new ConfigString.Unquoted(origin, value)
 
@@ -51,7 +48,6 @@ object ConfigString {
 abstract class ConfigString(origin: ConfigOrigin, val value: String)
     extends AbstractConfigValue(origin)
     with Serializable {
-
   private[impl] def wasQuoted = this.isInstanceOf[ConfigString.Quoted]
 
   override def valueType: ConfigValueType = ConfigValueType.STRING

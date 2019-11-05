@@ -10,7 +10,6 @@ class ResolveStatus private (name: String, ordinal: Int)
     extends jl.Enum[ResolveStatus](name, ordinal)
 
 object ResolveStatus {
-
   final val UNRESOLVED = new ResolveStatus("UNRESOLVED", 0)
   final val RESOLVED   = new ResolveStatus("RESOLVED", 1)
 
@@ -36,5 +35,4 @@ object ResolveStatus {
 
   def fromBoolean(resolved: Boolean): ResolveStatus =
     if (resolved) ResolveStatus.RESOLVED else ResolveStatus.UNRESOLVED
-
 }

@@ -29,7 +29,6 @@ import org.ekrich.config.Optional
  * For use only by the {@link org.ekrich.config} package.
  */
 object ConfigBeanImpl {
-
   /**
    * This is public ONLY for use by the "config" package, DO NOT USE this ABI
    * may change.
@@ -263,7 +262,6 @@ object ConfigBeanImpl {
       config: Config,
       configPropName: String
   ): ju.List[_] = {
-
     val elementType: Type =
       parameterType.asInstanceOf[ParameterizedType].getActualTypeArguments()(0)
     if (elementType == classOf[jl.Boolean])

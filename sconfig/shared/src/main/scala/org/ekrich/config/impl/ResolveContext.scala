@@ -6,7 +6,6 @@ import org.ekrich.config.ConfigResolveOptions
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
 
 object ResolveContext {
-
   private def newCycleMarkers: ju.Set[AbstractConfigValue] =
     ju.Collections.newSetFromMap(new ju.IdentityHashMap)
 
@@ -42,7 +41,6 @@ private[impl] final class ResolveContext(
     _resolveStack: ju.List[AbstractConfigValue],
     _cycleMarkers: ju.Set[AbstractConfigValue]
 ) {
-
   // This is used for tracing and debugging and nice error messages;
   // contains every node as we call resolve on it.
   val resolveStack = ju.Collections.unmodifiableList(_resolveStack)

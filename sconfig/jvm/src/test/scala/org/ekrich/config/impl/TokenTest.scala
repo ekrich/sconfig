@@ -7,7 +7,6 @@ import org.junit.Assert._
 import org.junit._
 
 class TokenTest extends TestUtils {
-
   @Test
   def tokenEquality(): Unit = {
     // syntax tokens

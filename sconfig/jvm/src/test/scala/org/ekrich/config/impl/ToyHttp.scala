@@ -19,7 +19,6 @@ import java.util.Date
 
 // terrible http server that's good enough for our test suite
 final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
-
   import ToyHttp.{Request, Response}
 
   private final val serverSocket = new ServerSocket()
@@ -88,7 +87,6 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
   }
 
   private def parseHeader(reader: BufferedReader): Map[String, String] = {
-
     def readHeaders(sofar: Map[String, String]): Map[String, String] = {
       val line  = reader.readLine()
       val colon = line.indexOf(':')

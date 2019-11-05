@@ -13,7 +13,6 @@ import org.ekrich.config.ConfigFactory
 import scala.jdk.CollectionConverters._
 
 class ConcatenationTest extends TestUtils {
-
   @Test
   def noSubstitutionsStringConcat(): Unit = {
     val conf = parseConfig(""" a :  true "xyz" 123 foo  """).resolve()

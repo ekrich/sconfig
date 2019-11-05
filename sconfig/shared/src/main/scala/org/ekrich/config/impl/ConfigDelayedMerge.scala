@@ -216,7 +216,6 @@ final class ConfigDelayedMerge(
 ) extends AbstractConfigValue(_origin)
     with Unmergeable
     with ReplaceableMergeStack {
-
   if (stack.isEmpty)
     throw new ConfigException.BugOrBroken("creating empty delayed merge value")
 

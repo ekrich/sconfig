@@ -10,7 +10,6 @@ import java.io.Reader
  * [[org.ekrich.config.parser.ConfigDocument]] instances.
  */
 object ConfigDocumentFactory {
-
   /**
    * Parses a Reader into a ConfigDocument instance.
    *

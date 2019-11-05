@@ -8,7 +8,6 @@ import java.{util => ju}
 
 final class ConfigNodeSimpleValue private[impl] (val token: Token)
     extends AbstractConfigNodeValue {
-
   override def tokens: ju.Collection[Token] =
     ju.Collections.singletonList(token)
 
