@@ -27,14 +27,14 @@ jobs:
     script: sbt +test doc
   - env: TEST="linux" SCALANATIVE_VERSION=0.4.0-M2
     jdk: openjdk8
-    script: sbt +sconfigNative/test doc
+    script: sbt +sconfigNative/test
   - env: TEST="linux"
     jdk: openjdk11
     before_install: ./scripts/travis-os-setup.sh
-    script: sbt +sconfigJVM/test +sconfigJS/test doc # No tests on Scala Native due to link error on jdk11/0.3.9
+    script: sbt +sconfigJVM/test +sconfigJS/test # No tests on Scala Native due to link error on jdk11/0.3.9
   - env: TEST="linux" SCALANATIVE_VERSION=0.4.0-M2
     jdk: openjdk11
-    script: sbt +sconfigNative/test doc
+    script: sbt +sconfigNative/test
   - stage: release
     jdk: openjdk8
     script:
