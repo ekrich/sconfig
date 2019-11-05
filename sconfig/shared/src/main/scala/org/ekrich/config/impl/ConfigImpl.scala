@@ -52,8 +52,10 @@ object ConfigImpl {
         }
         var config = cache.get(key)
         if (config == null) {
-          try {
-            config = updater.call()
+          // Changed for https://github.com/lampepfl/dotty/issues/7356
+          // was config = updater.call()
+          config = try {
+            updater.call()
           } catch {
             case e: RuntimeException =>
               throw e // this will include ConfigException

@@ -50,7 +50,7 @@ val scala213 = "2.13.1"
 val dotty    = "0.20.0-RC1"
 
 val versionsBase   = Seq(scala211, scala212, scala213)
-val versionsJVM    = versionsBase :+ dotty
+val versionsJVM    = versionsBase //:+ dotty
 val versionsJS     = versionsBase
 val versionsNative = Seq(scala211)
 
@@ -134,13 +134,14 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     Test / fork := true,
     run / fork := true,
     Test / run / fork := true,
-    //env vars for tests
+    // env vars for tests
     Test / envVars ++= Map(
       "testList.0"      -> "0",
       "testList.1"      -> "1",
       "testClassesPath" -> (Test / classDirectory).value.getPath
     ),
-    Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
+    // uncomment for debugging
+    //Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
     // mima settings
     mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems
