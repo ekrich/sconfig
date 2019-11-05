@@ -539,7 +539,7 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException.WrongType
    * if value is not convertible to a number
    */
-  def getNumber(path: String): Number
+  def getNumber(path: String): jl.Number
 
   /**
    * Gets the integer at the given path. If the value at the
@@ -647,7 +647,7 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException.Missing
    * if value is absent or null
    */
-  def getAnyRef(path: String): Any
+  def getAnyRef(path: String): AnyRef
 
   /**
    * Gets the value at the given path, unless the value is a
@@ -830,7 +830,7 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException.WrongType
    * if value is not convertible to a list of numbers
    */
-  def getNumberList(path: String): ju.List[Number]
+  def getNumberList(path: String): ju.List[jl.Number]
 
   /**
    * Gets a list value with int elements.  Throws if the
@@ -845,7 +845,7 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException.WrongType
    * if value is not convertible to a list of ints
    */
-  def getIntList(path: String): ju.List[Integer]
+  def getIntList(path: String): ju.List[jl.Integer]
 
   /**
    * Gets a list value with long elements.  Throws if the
@@ -957,7 +957,7 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException.WrongType
    * if value is not convertible to a list
    */
-  def getAnyRefList(path: String): ju.List[_]
+  def getAnyRefList(path: String): ju.List[_ <: AnyRef]
 
   /**
    * Gets a list value with elements representing a size in

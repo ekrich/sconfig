@@ -74,36 +74,39 @@ object ResolveSource {
       replacement: AbstractConfigValue
   ): Node[Container] = {
     val child: Container = list.head
-    if (child ne old)
+    if (child ne old) {
       throw new ConfigException.BugOrBroken(
         "Can only replace() the top node we're resolving; had " + child +
           " on top and tried to replace " + old + " overall list was " + list
       )
-    val parent =
-      if (list.tail == null) null else list.tail.head
-    if (replacement == null || !replacement.isInstanceOf[Container])
-      if (parent == null) null
-      else {
+    }
+    val parent = if (list.tail == null) null else list.tail.head
+    if (replacement == null || !replacement.isInstanceOf[Container]) {
+      if (parent == null) {
+        null
+      } else {
         // we are deleting the child from the stack of containers
         // because it's either going away or not a container
         val newParent =
           parent.replaceChild(old.asInstanceOf[AbstractConfigValue], null)
         replace(list.tail, parent, newParent)
-      } else {
+      }
+    } else {
       /* we replaced the container with another container */
-      if (parent == null)
+      if (parent == null) {
         new ResolveSource.Node[Container](replacement.asInstanceOf[Container])
-      else {
+      } else {
         val newParent = parent.replaceChild(
           old.asInstanceOf[AbstractConfigValue],
           replacement
         )
         val newTail =
           replace(list.tail, parent, newParent)
-        if (newTail != null)
+        if (newTail != null) {
           newTail.prepend(replacement.asInstanceOf[Container])
-        else
+        } else {
           new ResolveSource.Node[Container](replacement.asInstanceOf[Container])
+        }
       }
     }
   }
@@ -229,34 +232,40 @@ final class ResolveSource(
     result
   }
   private[impl] def pushParent(parent: Container) = {
-    if (parent == null)
+    if (parent == null) {
       throw new ConfigException.BugOrBroken("can't push null parent")
-    if (ConfigImpl.traceSubstitutionsEnabled)
+    }
+    if (ConfigImpl.traceSubstitutionsEnabled) {
       ConfigImpl.trace(
         "pushing parent " + parent + " ==root " + (parent eq root) + " onto " + this
       )
-    if (pathFromRoot == null)
+    }
+    if (pathFromRoot == null) {
       if (parent eq root)
         new ResolveSource(root, new ResolveSource.Node[Container](parent))
       else {
         if (ConfigImpl.traceSubstitutionsEnabled) {
           // this hasDescendant check is super-expensive so it's a
           // trace message rather than an assertion
-          if (root.hasDescendant(parent.asInstanceOf[AbstractConfigValue]))
+          if (root.hasDescendant(parent.asInstanceOf[AbstractConfigValue])) {
             ConfigImpl.trace(
               "***** BUG ***** tried to push parent " + parent + " without having a path to it in " + this
             )
+          }
         }
         // ignore parents if we aren't proceeding from the root
         this
-      } else {
+      }
+    } else {
       val parentParent = pathFromRoot.head
-      if (ConfigImpl.traceSubstitutionsEnabled)
+      if (ConfigImpl.traceSubstitutionsEnabled) {
         if (parentParent != null && !parentParent
-              .hasDescendant(parent.asInstanceOf[AbstractConfigValue]))
+              .hasDescendant(parent.asInstanceOf[AbstractConfigValue])) {
           ConfigImpl.trace(
             "***** BUG ***** trying to push non-child of " + parentParent + ", non-child was " + parent
           )
+        }
+      }
       new ResolveSource(root, pathFromRoot.prepend(parent))
     }
   }

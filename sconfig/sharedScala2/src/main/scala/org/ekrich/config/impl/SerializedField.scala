@@ -63,6 +63,6 @@ object SerializedField {
   }
 
   private[impl] def forInt(b: Int): SerializedField =
-    if (b < values.length) values(b)
+    if (b >= 0 && b < values.length) values(b)
     else UNKNOWN
 }

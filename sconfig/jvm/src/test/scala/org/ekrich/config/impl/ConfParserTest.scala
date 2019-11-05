@@ -290,23 +290,14 @@ class ConfParserTest extends TestUtils {
     }
 
     val changes = Seq(
-      { s: String =>
-        s
-      }, { s: String =>
-        s.replace("\n", "\n\n")
-      }, { s: String =>
-        s.replace("\n", "\n\n\n")
-      }, { s: String =>
-        s.replace(",\n", "\n,\n")
-      }, { s: String =>
-        s.replace(",\n", "\n\n,\n\n")
-      }, { s: String =>
-        s.replace("\n", " \n ")
-      }, { s: String =>
-        s.replace(",\n", "  \n  \n  ,  \n  \n  ")
-      }, { s: String =>
-        dropCurlies(s)
-      }
+      (s: String) => s,
+      (s: String) => s.replace("\n", "\n\n"),
+      (s: String) => s.replace("\n", "\n\n\n"),
+      (s: String) => s.replace(",\n", "\n,\n"),
+      (s: String) => s.replace(",\n", "\n\n,\n\n"),
+      (s: String) => s.replace("\n", " \n "),
+      (s: String) => s.replace(",\n", "  \n  \n  ,  \n  \n  "),
+      (s: String) => dropCurlies(s)
     )
 
     var tested = 0

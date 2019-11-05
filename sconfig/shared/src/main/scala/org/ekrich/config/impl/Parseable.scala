@@ -232,29 +232,41 @@ object Parseable {
             e
           )
       }
+
     override private[impl] def guessSyntax: ConfigSyntax =
       ConfigImplUtil.syntaxFromExtension(input.getPath)
+
     override private[impl] def contentType: ConfigSyntax =
-      if (contentTypeStr != null)
-        if (contentTypeStr == jsonContentType) ConfigSyntax.JSON
-        else if (contentTypeStr == propertiesContentType)
+      if (contentTypeStr != null) {
+        if (contentTypeStr == jsonContentType) {
+          ConfigSyntax.JSON
+        } else if (contentTypeStr == propertiesContentType) {
           ConfigSyntax.PROPERTIES
-        else if (contentTypeStr == hoconContentType) ConfigSyntax.CONF
-        else {
-          if (ConfigImpl.traceLoadsEnabled)
+        } else if (contentTypeStr == hoconContentType) {
+          ConfigSyntax.CONF
+        } else {
+          if (ConfigImpl.traceLoadsEnabled) {
             trace("'" + contentTypeStr + "' isn't a known content type")
+          }
           null
-        } else null
+        }
+      } else {
+        null
+      }
+
     override private[impl] def relativeTo(filename: String): ConfigParseable = {
       val url = Parseable.relativeTo(input, filename)
       if (url == null) return null
       newURL(url, options().setOriginDescription(null))
     }
+
     override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newURL(input)
+
     override def toString: String =
       getClass.getSimpleName + "(" + input.toExternalForm + ")"
   }
+
   def newURL(input: URL, options: ConfigParseOptions): Parseable = {
     // we want file: URLs and files to always behave the same, so switch
     // to a file if it's a file: URL
@@ -262,6 +274,7 @@ object Parseable {
       newFile(ConfigImplUtil.urlToFile(input), options)
     else new ParseableURL(input, options)
   }
+
   final private[impl] class ParseableFile private[impl] (
       val input: File,
       options: ConfigParseOptions

@@ -157,11 +157,28 @@ abstract trait TestUtils {
     val objectStream = new ObjectOutputStream(byteStream)
     objectStream.writeObject(o)
     objectStream.close()
-    val inStream       = new ByteArrayInputStream(byteStream.toByteArray())
+    val bytes = byteStream.toByteArray()
+    //outputStringLiteral(bytes) // uncomment to print
+    val inStream       = new ByteArrayInputStream(bytes)
     val inObjectStream = new ObjectInputStream(inStream)
     val copy           = inObjectStream.readObject()
     inObjectStream.close()
     copy
+  }
+
+  def outputStringLiteral(bytes: Array[Byte]): Unit = {
+    val hex = encodeLegibleBinary(bytes)
+    outputStringLiteral(hex)
+  }
+
+  @tailrec
+  final def outputStringLiteral(hex: String): Unit = {
+    if (hex.nonEmpty) {
+      val (head, tail) = hex.splitAt(80)
+      val plus         = if (tail.isEmpty) "" else " +"
+      System.err.println("\"" + head + "\"" + plus)
+      outputStringLiteral(tail)
+    }
   }
 
   protected def checkSerializationCompat[T: ClassTag](
@@ -198,15 +215,6 @@ abstract trait TestUtils {
     val hex = encodeLegibleBinary(byteStream.toByteArray())
     def showCorrectResult(): Unit = {
       if (expectedHex != hex) {
-        @tailrec
-        def outputStringLiteral(s: String): Unit = {
-          if (s.nonEmpty) {
-            val (head, tail) = s.splitAt(80)
-            val plus         = if (tail.isEmpty) "" else " +"
-            System.err.println("\"" + head + "\"" + plus)
-            outputStringLiteral(tail)
-          }
-        }
         System.err.println(
           "Correct result literal for " + o.getClass.getSimpleName + " serialization:"
         )
@@ -596,24 +604,16 @@ abstract trait TestUtils {
       validInJsonParser: Boolean
   ): Seq[ParseTest] = {
     val variations = List(
-      { s: String =>
-        s
-      }, // identity
-      { s: String =>
-        " " + s
-      }, { s: String =>
-        s + " "
-      }, { s: String =>
-        " " + s + " "
-      }, { s: String =>
-        s.replace(" ", "")
-      }, // this would break with whitespace in a key or value
-      { s: String =>
-        s.replace(":", " : ")
-      }, // could break with : in a key or value
-      { s: String =>
-        s.replace(",", " , ")
-      } // could break with , in a key or value
+      (s: String) => s, // identity
+      (s: String) => " " + s,
+      (s: String) => s + " ",
+      (s: String) => " " + s + " ",
+      (s: String) =>
+        s.replace(" ", ""), // this would break with whitespace in a key or value
+      (s: String) =>
+        s.replace(":", " : "), // could break with : in a key or value
+      (s: String) =>
+        s.replace(",", " , ") // could break with , in a key or value
     )
     tests flatMap { t =>
       if (t.whitespaceMatters) {

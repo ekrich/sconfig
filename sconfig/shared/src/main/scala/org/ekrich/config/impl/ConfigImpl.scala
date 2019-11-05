@@ -30,7 +30,7 @@ object ConfigImpl {
   private[impl] class LoaderCache private[impl] () {
     private[impl] var currentSystemProperties: Config = null
     private var currentLoader                         = new WeakReference[ClassLoader](null)
-    private var cache                                 = new ju.HashMap[String, Config]
+    private val cache                                 = new ju.HashMap[String, Config]
 
     // for now, caching as long as the loader remains the same,
     // drop entire cache if it changes.
@@ -39,7 +39,7 @@ object ConfigImpl {
         key: String,
         updater: Callable[Config]
     ): Config =
-      synchronized {
+      this.synchronized {
         if (loader != currentLoader.get) {
           // reset the cache if we start using a different loader
           cache.clear()
@@ -52,26 +52,33 @@ object ConfigImpl {
         }
         var config = cache.get(key)
         if (config == null) {
-          try config = updater.call
-          catch {
+          // Changed for https://github.com/lampepfl/dotty/issues/7356
+          // was config = updater.call()
+          config = try {
+            updater.call()
+          } catch {
             case e: RuntimeException =>
               throw e // this will include ConfigException
 
             case e: Exception =>
               throw new ConfigException.Generic(e.getMessage, e)
           }
-          if (config == null)
+          if (config != null) {
+            cache.put(key, config)
+          } else {
             throw new ConfigException.BugOrBroken(
               "null config from cache updater"
             )
-          cache.put(key, config)
+          }
         }
         config
       }
   }
+
   private object LoaderCacheHolder {
-    private[impl] val cache = new ConfigImpl.LoaderCache
-    private[impl] def invalidate: Unit = cache.synchronized {
+    private[impl] val cache = new ConfigImpl.LoaderCache()
+
+    private[impl] def invalidate(): Unit = cache.synchronized {
       cache.currentSystemProperties = null
     }
   }
@@ -82,13 +89,15 @@ object ConfigImpl {
       updater: Callable[Config]
   ): Config = {
     var cache: LoaderCache = null
-    try cache = LoaderCacheHolder.cache
-    catch {
+    try {
+      cache = LoaderCacheHolder.cache
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
     cache.getOrElseUpdate(loader, key, updater)
   }
+
   private[impl] class FileNameSource extends SimpleIncluder.NameSource {
     override def nameToParseable(
         name: String,
@@ -96,6 +105,7 @@ object ConfigImpl {
     ): ConfigParseable =
       Parseable.newFile(new File(name), parseOptions)
   }
+
   private[impl] class ClasspathNameSource extends SimpleIncluder.NameSource {
     override def nameToParseable(
         name: String,
@@ -103,6 +113,7 @@ object ConfigImpl {
     ): ConfigParseable =
       Parseable.newResources(name, parseOptions)
   }
+
   private[impl] class ClasspathNameSourceWithClass(val klass: Class[_])
       extends SimpleIncluder.NameSource {
     override def nameToParseable(
@@ -111,6 +122,7 @@ object ConfigImpl {
     ): ConfigParseable =
       Parseable.newResources(klass, name, parseOptions)
   }
+
   def parseResourcesAnySyntax(
       klass: Class[_],
       resourceBasename: String,
@@ -120,6 +132,7 @@ object ConfigImpl {
       new ConfigImpl.ClasspathNameSourceWithClass(klass)
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
+
   def parseResourcesAnySyntax(
       resourceBasename: String,
       baseOptions: ConfigParseOptions
@@ -127,6 +140,7 @@ object ConfigImpl {
     val source = new ConfigImpl.ClasspathNameSource
     SimpleIncluder.fromBasename(source, resourceBasename, baseOptions)
   }
+
   def parseFileAnySyntax(
       basename: File,
       baseOptions: ConfigParseOptions
@@ -134,6 +148,7 @@ object ConfigImpl {
     val source = new ConfigImpl.FileNameSource
     SimpleIncluder.fromBasename(source, basename.getPath, baseOptions)
   }
+
   private[impl] def emptyObject(
       originDescription: String
   ): AbstractConfigObject = {
@@ -143,11 +158,13 @@ object ConfigImpl {
       else null
     emptyObject(origin)
   }
+
   def emptyConfig(originDescription: String): Config =
     emptyObject(originDescription).toConfig
 
   private[impl] def empty(origin: ConfigOrigin): AbstractConfigObject =
     emptyObject(origin)
+
   // default origin for values created with fromAnyRef and no origin specified
   private val defaultValueOrigin =
     SimpleConfigOrigin.newSimple("hardcoded value")
@@ -162,6 +179,7 @@ object ConfigImpl {
   )
   private val defaultEmptyObject =
     SimpleConfigObject.empty(defaultValueOrigin)
+
   private def emptyList(origin: ConfigOrigin): SimpleConfigList =
     if (origin == null || (origin == defaultValueOrigin)) defaultEmptyList
     else
@@ -169,19 +187,23 @@ object ConfigImpl {
         origin,
         ju.Collections.emptyList[AbstractConfigValue]
       )
+
   private def emptyObject(origin: ConfigOrigin): AbstractConfigObject = {
     // we want null origin to go to SimpleConfigObject.empty() to get the
     // origin "empty config" rather than "hardcoded value"
     if (origin == defaultValueOrigin) defaultEmptyObject
     else SimpleConfigObject.empty(origin)
   }
+
   private def valueOrigin(originDescription: String): ConfigOrigin =
     if (originDescription == null) defaultValueOrigin
     else SimpleConfigOrigin.newSimple(originDescription)
-  def fromAnyRef(`object`: AnyRef, originDescription: String): ConfigValue = {
+
+  def fromAnyRef(obj: AnyRef, originDescription: String): ConfigValue = {
     val origin = valueOrigin(originDescription)
-    fromAnyRef(`object`, origin, FromMapMode.KEYS_ARE_KEYS)
+    fromAnyRef(obj, origin, FromMapMode.KEYS_ARE_KEYS)
   }
+
   def fromPathMap(
       pathMap: ju.Map[String, _],
       originDescription: String
@@ -190,52 +212,53 @@ object ConfigImpl {
     fromAnyRef(pathMap, origin, FromMapMode.KEYS_ARE_PATHS)
       .asInstanceOf[ConfigObject]
   }
+
   def fromAnyRef(
-      `object`: Any,
+      obj: Any,
       origin: ConfigOrigin,
       mapMode: FromMapMode
   ): AbstractConfigValue = {
     if (origin == null)
       throw new ConfigException.BugOrBroken("origin not supposed to be null")
-    if (`object` == null)
+    if (obj == null)
       if (origin != defaultValueOrigin)
         new ConfigNull(origin)
       else defaultNullValue
-    else if (`object`.isInstanceOf[AbstractConfigValue])
-      `object`.asInstanceOf[AbstractConfigValue]
-    else if (`object`.isInstanceOf[jl.Boolean])
+    else if (obj.isInstanceOf[AbstractConfigValue])
+      obj.asInstanceOf[AbstractConfigValue]
+    else if (obj.isInstanceOf[jl.Boolean])
       if (origin != defaultValueOrigin)
-        new ConfigBoolean(origin, `object`.asInstanceOf[jl.Boolean])
-      else if (`object`.asInstanceOf[jl.Boolean]) defaultTrueValue
+        new ConfigBoolean(origin, obj.asInstanceOf[jl.Boolean])
+      else if (obj.asInstanceOf[jl.Boolean]) defaultTrueValue
       else defaultFalseValue
-    else if (`object`.isInstanceOf[String])
-      new ConfigString.Quoted(origin, `object`.asInstanceOf[String])
-    else if (`object`.isInstanceOf[Number]) {
+    else if (obj.isInstanceOf[String])
+      new ConfigString.Quoted(origin, obj.asInstanceOf[String])
+    else if (obj.isInstanceOf[Number]) {
       // here we always keep the same type that was passed to us,
       // rather than figuring out if a Long would fit in an Int
       // or a Double has no fractional part. i.e. deliberately
       // not using ConfigNumber.newNumber() when we have a
       // Double, Integer, or Long.
-      if (`object`.isInstanceOf[jl.Double])
-        new ConfigDouble(origin, `object`.asInstanceOf[jl.Double], null)
-      else if (`object`.isInstanceOf[Integer])
-        new ConfigInt(origin, `object`.asInstanceOf[Integer], null)
-      else if (`object`.isInstanceOf[jl.Long])
-        new ConfigLong(origin, `object`.asInstanceOf[jl.Long], null)
+      if (obj.isInstanceOf[jl.Double])
+        new ConfigDouble(origin, obj.asInstanceOf[jl.Double], null)
+      else if (obj.isInstanceOf[Integer])
+        new ConfigInt(origin, obj.asInstanceOf[Integer], null)
+      else if (obj.isInstanceOf[jl.Long])
+        new ConfigLong(origin, obj.asInstanceOf[jl.Long], null)
       else
         ConfigNumber.newNumber(
           origin,
-          `object`.asInstanceOf[Number].doubleValue,
+          obj.asInstanceOf[Number].doubleValue,
           null
         )
-    } else if (`object`.isInstanceOf[Duration]) {
-      new ConfigLong(origin, `object`.asInstanceOf[Duration].toMillis, null)
-    } else if (`object`.isInstanceOf[ju.Map[_, _]]) {
-      if (`object`.asInstanceOf[ju.Map[_, _]].isEmpty)
+    } else if (obj.isInstanceOf[Duration]) {
+      new ConfigLong(origin, obj.asInstanceOf[Duration].toMillis, null)
+    } else if (obj.isInstanceOf[ju.Map[_, _]]) {
+      if (obj.asInstanceOf[ju.Map[_, _]].isEmpty)
         return emptyObject(origin)
       if (mapMode == FromMapMode.KEYS_ARE_KEYS) {
         val values = new ju.HashMap[String, AbstractConfigValue]
-        for (entry <- `object`.asInstanceOf[ju.Map[_, _]].entrySet.asScala) {
+        for (entry <- obj.asInstanceOf[ju.Map[_, _]].entrySet.asScala) {
           val key = entry.getKey
           if (!key.isInstanceOf[String])
             throw new ConfigException.BugOrBroken(
@@ -246,13 +269,10 @@ object ConfigImpl {
         }
         new SimpleConfigObject(origin, values)
       } else {
-        PropertiesParser.fromPathMap(
-          origin,
-          `object`.asInstanceOf[ju.Map[_, _]]
-        )
+        PropertiesParser.fromPathMap(origin, obj.asInstanceOf[ju.Map[_, _]])
       }
-    } else if (`object`.isInstanceOf[jl.Iterable[_]]) {
-      val i = `object`.asInstanceOf[jl.Iterable[_]].iterator
+    } else if (obj.isInstanceOf[jl.Iterable[_]]) {
+      val i = obj.asInstanceOf[jl.Iterable[_]].iterator
       if (!i.hasNext) return emptyList(origin)
       val values = new ju.ArrayList[AbstractConfigValue]
       while (i.hasNext) {
@@ -260,21 +280,19 @@ object ConfigImpl {
         values.add(v)
       }
       new SimpleConfigList(origin, values)
-    } else if (`object`.isInstanceOf[ConfigMemorySize]) {
-      new ConfigLong(
-        origin,
-        `object`.asInstanceOf[ConfigMemorySize].toBytes,
-        null
-      )
+    } else if (obj.isInstanceOf[ConfigMemorySize]) {
+      new ConfigLong(origin, obj.asInstanceOf[ConfigMemorySize].toBytes, null)
     } else {
       throw new ConfigException.BugOrBroken(
-        "bug in method caller: not valid to create ConfigValue from: " + `object`
+        "bug in method caller: not valid to create ConfigValue from: " + obj
       )
     }
   }
+
   private object DefaultIncluderHolder {
     private[impl] val defaultIncluder = new SimpleIncluder(null)
   }
+
   private[impl] def defaultIncluder: ConfigIncluder =
     // this calls a simple constructor - not sure why we are catching this
     try DefaultIncluderHolder.defaultIncluder
@@ -282,6 +300,7 @@ object ConfigImpl {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
+
   private def getSystemProperties: ju.Properties = {
     // Avoid ConcurrentModificationException due to parallel setting of system properties by copying properties
     val systemProperties     = System.getProperties
@@ -297,6 +316,7 @@ object ConfigImpl {
     }
     systemPropertiesCopy
   }
+
   private def loadSystemProperties: AbstractConfigObject =
     Parseable
       .newProperties(
@@ -305,65 +325,77 @@ object ConfigImpl {
       )
       .parse()
       .asInstanceOf[AbstractConfigObject]
+
   private object SystemPropertiesHolder {
     // this isn't final due to the reloadSystemPropertiesConfig() hack below
     @volatile private[impl] var systemProperties: AbstractConfigObject =
       loadSystemProperties
   }
+
   private[impl] def systemPropertiesAsConfigObject: AbstractConfigObject =
-    try SystemPropertiesHolder.systemProperties
-    catch {
+    try {
+      SystemPropertiesHolder.systemProperties
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
+
   def systemPropertiesAsConfig: Config =
     systemPropertiesAsConfigObject.toConfig
+
   def reloadSystemPropertiesConfig(): Unit = {
     // ConfigFactory.invalidateCaches() relies on this having the side
     // effect that it drops all caches
     // change - could not find the side effect so added a method to invalidate explicitly
-    LoaderCacheHolder.invalidate
+    LoaderCacheHolder.invalidate()
     SystemPropertiesHolder.systemProperties = loadSystemProperties
   }
+
   private def loadEnvVariables: AbstractConfigObject =
     PropertiesParser.fromStringMap(
       newSimpleOrigin("env variables"),
       System.getenv
     )
+
   private object EnvVariablesHolder {
     @volatile private[impl] var envVariables = loadEnvVariables
   }
+
   def envVariablesAsConfigObject: AbstractConfigObject =
-    try EnvVariablesHolder.envVariables
-    catch {
+    try {
+      EnvVariablesHolder.envVariables
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
+
   def envVariablesAsConfig: Config = envVariablesAsConfigObject.toConfig
+
   def reloadEnvVariablesConfig(): Unit = {
     // ConfigFactory.invalidateCaches() relies on this having the side
     // effect that it drops all caches
     EnvVariablesHolder.envVariables = loadEnvVariables
   }
-  def defaultReference(loader: ClassLoader): Config =
-    computeCachedConfig(
-      loader,
-      "defaultReference",
-      new Callable[Config]() {
-        override def call: Config = {
-          val unresolvedResources = Parseable
-            .newResources(
-              "reference.conf",
-              ConfigParseOptions.defaults.setClassLoader(loader)
-            )
-            .parse()
-            .toConfig
-          systemPropertiesAsConfig
-            .withFallback(unresolvedResources)
-            .resolve()
-        }
+
+  def defaultReference(loader: ClassLoader): Config = {
+    val updater = new Callable[Config] {
+      override def call(): Config = {
+        val unresolvedResources = Parseable
+          .newResources(
+            "reference.conf",
+            ConfigParseOptions.defaults.setClassLoader(loader)
+          )
+          .parse()
+          .toConfig
+        val config = systemPropertiesAsConfig
+          .withFallback(unresolvedResources)
+          .resolve()
+        config
       }
-    )
+    }
+    computeCachedConfig(loader, "defaultReference", updater)
+  }
+
   private object DebugHolder {
     private val LOADS         = "loads"
     private val SUBSTITUTIONS = "substitutions"
@@ -397,14 +429,16 @@ object ConfigImpl {
   }
 
   def traceLoadsEnabled: Boolean =
-    try DebugHolder.traceLoadsEnabled
-    catch {
+    try {
+      DebugHolder.traceLoadsEnabled
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }
   def traceSubstitutionsEnabled: Boolean =
-    try DebugHolder.traceSubstitutionsEnabled
-    catch {
+    try {
+      DebugHolder.traceSubstitutionsEnabled
+    } catch {
       case e: ExceptionInInitializerError =>
         throw ConfigImplUtil.extractInitializerError(e)
     }

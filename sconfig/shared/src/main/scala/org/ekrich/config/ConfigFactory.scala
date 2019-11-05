@@ -251,10 +251,11 @@ object ConfigFactory {
   def load(loader: ClassLoader): Config = {
     val withLoader =
       ConfigParseOptions.defaults.setClassLoader(loader)
-    ConfigImpl.computeCachedConfig(loader, "load", new Callable[Config]() {
-      override def call: Config =
-        return load(loader, defaultApplication(withLoader))
-    })
+    val updater = new Callable[Config] {
+      override def call(): Config =
+        load(loader, defaultApplication(withLoader))
+    }
+    ConfigImpl.computeCachedConfig(loader, "load", updater)
   }
 
   /**
@@ -1025,17 +1026,21 @@ object ConfigFactory {
   private def getConfigLoadingStrategy = {
     val className =
       System.getProperties.getProperty(STRATEGY_PROPERTY_NAME)
-    if (className != null)
-      try classOf[ConfigLoadingStrategy].cast(
-        Class.forName(className).getConstructor().newInstance()
-      )
-      catch {
+    if (className != null) {
+      try {
+        classOf[ConfigLoadingStrategy].cast(
+          Class.forName(className).getConstructor().newInstance()
+        )
+      } catch {
         case e: Throwable =>
           throw new ConfigException.BugOrBroken(
             "Failed to load strategy: " + className,
             e
           )
-      } else new DefaultConfigLoadingStrategy
+      }
+    } else {
+      new DefaultConfigLoadingStrategy()
+    }
   }
 }
 
