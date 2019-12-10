@@ -115,7 +115,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   )
   .jvmSettings(
     sharedJvmNativeSource,
-    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-5" % Test,
+    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-7" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     libraryDependencies := libraryDependencies.value
       .map(_.withDottyCompat(scalaVersion.value)),
