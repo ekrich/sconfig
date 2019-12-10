@@ -5,29 +5,15 @@ package org.ekrich.config.impl
 
 import java.{util => ju}
 import org.ekrich.config.ConfigException
-import util.control.Breaks._
 
 object Path {
   // this doesn't have a very precise meaning, just to reduce
   // noise from quotes in the rendered path for average cases
-  private[impl] def hasFunkyChars(s: String): Boolean = {
-    val length = s.length
-    if (length == 0) return false
-    var i = 0
-    while (i < length) {
-      breakable {
-        val c = s.charAt(i)
-        if (Character.isLetterOrDigit(c) || c == '-' || c == '_') {
-          break // continue
-        } else {
-          return true
-        }
-      }
-      i += 1
-    }
-    return false
-  }
-  def newKey(key: String): Path   = new Path(key, null: Path)
+  private[impl] def hasFunkyChars(s: String): Boolean =
+    s.exists(c => !c.isLetterOrDigit && c != '-' && c != '_')
+
+  def newKey(key: String): Path = new Path(key, null: Path)
+
   def newPath(path: String): Path = PathParser.parsePath(path)
 
   private def convert(i: ju.Iterator[Path]): Seq[String] = {
