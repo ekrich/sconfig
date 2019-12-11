@@ -1,9 +1,10 @@
 package org.ekrich.config.impl
 
+import java.{util => ju}
+import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
-import java.{util => ju}
 
 final class ConfigNodeRoot private[impl] (
     _children: ju.Collection[AbstractConfigNode],
@@ -12,16 +13,15 @@ final class ConfigNodeRoot private[impl] (
   override def newNode(nodes: ju.Collection[AbstractConfigNode]) =
     throw new ConfigException.BugOrBroken("Tried to indent the root object")
 
-  private[impl] def value: ConfigNodeComplexValue = {
-    import scala.jdk.CollectionConverters._
-    for (node <- children.asScala) {
-      if (node.isInstanceOf[ConfigNodeComplexValue])
-        return node.asInstanceOf[ConfigNodeComplexValue]
+  private[impl] def value: ConfigNodeComplexValue =
+    children.asScala.find(node => node.isInstanceOf[ConfigNodeComplexValue]) match {
+      case Some(node) => node.asInstanceOf[ConfigNodeComplexValue]
+      case None =>
+        throw new ConfigException.BugOrBroken(
+          "ConfigNodeRoot did not contain a value"
+        )
     }
-    throw new ConfigException.BugOrBroken(
-      "ConfigNodeRoot did not contain a value"
-    )
-  }
+
   private[impl] def setValue(
       desiredPath: String,
       value: AbstractConfigNodeValue,
