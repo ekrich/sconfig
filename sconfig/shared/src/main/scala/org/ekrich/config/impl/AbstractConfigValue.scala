@@ -7,6 +7,8 @@ import java.{lang => jl}
 import java.{util => ju}
 import ju.Collections
 
+import scala.jdk.CollectionConverters._
+
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigMergeable
 import org.ekrich.config.ConfigObject
@@ -64,19 +66,13 @@ object AbstractConfigValue {
   def hasDescendantInList(
       list: ju.List[AbstractConfigValue],
       descendant: AbstractConfigValue
-  ): Boolean = {
-    import scala.jdk.CollectionConverters._
-    for (v <- list.asScala) {
-      if (v == descendant) return true
-    }
-    // now the expensive traversal
-    for (v <- list.asScala) {
-      if (v.isInstanceOf[Container] && v
-            .asInstanceOf[Container]
-            .hasDescendant(descendant)) return true
-    }
-    false
-  }
+  ): Boolean =
+    list.asScala.exists(_ == descendant) ||
+      // now the expensive traversal
+      list.asScala.exists { v =>
+        v.isInstanceOf[Container] &&
+        v.asInstanceOf[Container].hasDescendant(descendant)
+      }
 
   def indent(
       sb: jl.StringBuilder,
