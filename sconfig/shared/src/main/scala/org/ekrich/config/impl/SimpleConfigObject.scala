@@ -51,6 +51,7 @@ object SimpleConfigObject {
         result.value
       }
   }
+
   // this is only Serializable to chill out a findbugs warning
   @SerialVersionUID(1L)
   private object RenderComparator {
@@ -109,6 +110,7 @@ object SimpleConfigObject {
     }
     true
   }
+
   private def mapHash(m: ju.Map[String, ConfigValue]) = {
     // the keys have to be sorted, otherwise we could be equal
     // to another map but have a different hashcode.
@@ -121,10 +123,13 @@ object SimpleConfigObject {
     }
     41 * (41 + keys.hashCode) + valuesHash
   }
-  private val EMPTY_NAME    = "empty config"
+
+  private val EMPTY_NAME = "empty config"
+
   private val emptyInstance = empty(SimpleConfigOrigin.newSimple(EMPTY_NAME))
-  // commented out temporarily, used in Java
+
   private[impl] def empty(): SimpleConfigObject = emptyInstance
+
   private[impl] def empty(origin: ConfigOrigin): SimpleConfigObject =
     if (origin == null) empty()
     else
@@ -132,6 +137,7 @@ object SimpleConfigObject {
         origin,
         ju.Collections.emptyMap[String, AbstractConfigValue]
       )
+
   private[impl] def emptyMissing(baseOrigin: ConfigOrigin) =
     new SimpleConfigObject(
       SimpleConfigOrigin.newSimple(baseOrigin.description + " (not found)"),
@@ -167,8 +173,10 @@ final class SimpleConfigObject(
 
   override def withOnlyKey(key: String): SimpleConfigObject =
     withOnlyPath(Path.newKey(key))
+
   override def withoutKey(key: String): SimpleConfigObject =
     withoutPath(Path.newKey(key))
+
   // gets the object with only the path if the path
   // exists, otherwise null if it doesn't. this ensures
   // that if we have { a : { b : 42 } } and do
@@ -196,6 +204,7 @@ final class SimpleConfigObject(
         ignoresFallbacks
       )
   }
+
   override def withOnlyPath(path: Path): SimpleConfigObject = {
     val o = withOnlyPathOrNull(path)
     if (o == null)
@@ -207,6 +216,7 @@ final class SimpleConfigObject(
       )
     else o
   }
+
   override def withoutPath(path: Path): SimpleConfigObject = {
     val key  = path.first
     val next = path.remainder
@@ -236,6 +246,7 @@ final class SimpleConfigObject(
       )
     }
   }
+
   override def withValue(key: String, v: ConfigValue): SimpleConfigObject = {
     if (v == null)
       throw new ConfigException.BugOrBroken(
@@ -256,6 +267,7 @@ final class SimpleConfigObject(
       ignoresFallbacks
     )
   }
+
   override def withValue(path: Path, v: ConfigValue): SimpleConfigObject = {
     val key  = path.first
     val next = path.remainder
@@ -279,24 +291,30 @@ final class SimpleConfigObject(
       }
     }
   }
+
   override def attemptPeekWithPartialResolve(key: String): AbstractConfigValue =
     value.get(key)
+
   private def newCopy(
       newStatus: ResolveStatus,
       newOrigin: ConfigOrigin,
       newIgnoresFallbacks: Boolean
   ) =
     new SimpleConfigObject(newOrigin, value, newStatus, newIgnoresFallbacks)
+
   override def newCopy(
       newStatus: ResolveStatus,
       newOrigin: ConfigOrigin
   ): SimpleConfigObject =
     newCopy(newStatus, newOrigin, ignoresFallbacks)
+
   override def withFallbacksIgnored(): SimpleConfigObject =
     if (ignoresFallbacks) this
     else newCopy(resolveStatus, origin, true)
+
   override def resolveStatus: ResolveStatus =
     ResolveStatus.fromBoolean(resolved)
+
   override def replaceChild(
       child: AbstractConfigValue,
       replacement: AbstractConfigValue
@@ -318,6 +336,7 @@ final class SimpleConfigObject(
       "SimpleConfigObject.replaceChild did not find " + child + " in " + this
     )
   }
+
   override def hasDescendant(descendant: AbstractConfigValue): Boolean = {
     for (child <- value.values.asScala) {
       if (child eq descendant) return true
@@ -339,6 +358,7 @@ final class SimpleConfigObject(
     }
     m
   }
+
   override def mergedWithObject(
       abstractFallback: AbstractConfigObject
   ): SimpleConfigObject = {
@@ -379,6 +399,7 @@ final class SimpleConfigObject(
       newCopy(newResolveStatus, origin, newIgnoresFallbacks)
     else this
   }
+
   private def modify(modifier: AbstractConfigValue.NoExceptionsModifier) =
     try modifyMayThrow(modifier)
     catch {
@@ -387,6 +408,7 @@ final class SimpleConfigObject(
       case e: Exception =>
         throw new ConfigException.BugOrBroken("unexpected checked exception", e)
     }
+
   @throws[Exception]
   private def modifyMayThrow(modifier: AbstractConfigValue.Modifier) = {
     var changes: ju.Map[String, AbstractConfigValue] = null
@@ -431,6 +453,7 @@ final class SimpleConfigObject(
       )
     }
   }
+
   @throws[NotPossibleToResolve]
   override def resolveSubstitutions(
       context: ResolveContext,
@@ -453,6 +476,7 @@ final class SimpleConfigObject(
         throw new ConfigException.BugOrBroken("unexpected checked exception", e)
     }
   }
+
   override def relativized(prefix: Path): SimpleConfigObject =
     modify(new AbstractConfigValue.NoExceptionsModifier() {
       override def modifyChild(
@@ -461,6 +485,7 @@ final class SimpleConfigObject(
       ): AbstractConfigValue =
         v.relativized(prefix)
     })
+
   override def render(
       sb: jl.StringBuilder,
       indentVal: Int,
@@ -530,8 +555,11 @@ final class SimpleConfigObject(
     }
     if (atRoot && options.getFormatted) sb.append('\n')
   }
+
   override def get(key: Any): AbstractConfigValue = value.get(key)
-  override def canEqual(other: Any): Boolean      = other.isInstanceOf[ConfigObject]
+
+  override def canEqual(other: Any): Boolean = other.isInstanceOf[ConfigObject]
+
   override def equals(other: Any): Boolean = {
     // note that "origin" is deliberately NOT part of equality.
     // neither are other "extras" like ignoresFallbacks or resolve status.
@@ -544,13 +572,18 @@ final class SimpleConfigObject(
       )
     } else false
   }
+
   override def hashCode
       : Int = { // note that "origin" is deliberately NOT part of equality
     SimpleConfigObject.mapHash(this)
   }
+
   override def containsKey(key: Any): Boolean = value.containsKey(key)
-  override def keySet: ju.Set[String]         = value.keySet
+
+  override def keySet: ju.Set[String] = value.keySet
+
   override def containsValue(v: Any): Boolean = value.containsValue(v)
+
   override def entrySet: ju.Set[ju.Map.Entry[String, ConfigValue]] = {
     // total bloat just to work around lack of type variance
     val entries = new ju.HashSet[ju.Map.Entry[String, ConfigValue]]
@@ -564,9 +597,13 @@ final class SimpleConfigObject(
     }
     entries
   }
+
   override def isEmpty: Boolean = value.isEmpty
-  override def size: Int        = value.size
-  override def values           = new ju.HashSet[ConfigValue](value.values)
+
+  override def size: Int = value.size
+
+  override def values = new ju.HashSet[ConfigValue](value.values)
+
   // serialization all goes through SerializedConfigValue
   @throws[ObjectStreamException]
   private def writeReplace(): Object = new SerializedConfigValue(this)
