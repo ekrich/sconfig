@@ -99,17 +99,10 @@ object SimpleConfigObject {
   private def mapEquals(
       a: ju.Map[String, ConfigValue],
       b: ju.Map[String, ConfigValue]
-  ): Boolean = {
-    if (a eq b) return true
-    val aKeys = a.keySet
-    val bKeys = b.keySet
-    if (!(aKeys == bKeys)) return false
-
-    for (key <- aKeys.asScala) {
-      if (!(a.get(key) == b.get(key))) return false
-    }
-    true
-  }
+  ): Boolean =
+    if (a eq b) true
+    else if (a.keySet != b.keySet) false
+    else !a.keySet.asScala.exists(key => a.get(key) != b.get(key))
 
   private def mapHash(m: ju.Map[String, ConfigValue]) = {
     // the keys have to be sorted, otherwise we could be equal
@@ -320,35 +313,31 @@ final class SimpleConfigObject(
       replacement: AbstractConfigValue
   ): SimpleConfigObject = {
     val newChildren = new ju.HashMap[String, AbstractConfigValue](value)
-    for (old <- newChildren.entrySet.asScala) {
-      if (old.getValue eq child) {
+    newChildren.entrySet.asScala.find(_.getValue() eq child) match {
+      case Some(old) =>
         if (replacement != null) old.setValue(replacement)
         else newChildren.remove(old.getKey)
-        return new SimpleConfigObject(
+        new SimpleConfigObject(
           origin,
           newChildren,
           ResolveStatus.fromValues(newChildren.values),
           ignoresFallbacks
         )
-      }
+      case None =>
+        throw new ConfigException.BugOrBroken(
+          "SimpleConfigObject.replaceChild did not find " + child + " in " + this
+        )
     }
-    throw new ConfigException.BugOrBroken(
-      "SimpleConfigObject.replaceChild did not find " + child + " in " + this
-    )
   }
 
-  override def hasDescendant(descendant: AbstractConfigValue): Boolean = {
-    for (child <- value.values.asScala) {
-      if (child eq descendant) return true
-    }
-    // now do the expensive search
-    for (child <- value.values.asScala) {
-      if (child.isInstanceOf[Container] && child
-            .asInstanceOf[Container]
-            .hasDescendant(descendant)) return true
-    }
-    false
-  }
+  // related to AbstractConfigValue.hasDescendantInList
+  override def hasDescendant(descendant: AbstractConfigValue): Boolean =
+    value.values.asScala.exists(_ eq descendant) ||
+      // now the expensive traversal
+      value.values.asScala.exists { child =>
+        child.isInstanceOf[Container] &&
+        child.asInstanceOf[Container].hasDescendant(descendant)
+      }
 
   override def unwrapped: ju.Map[String, AnyRef] = {
     val m = new ju.HashMap[String, AnyRef]
