@@ -1,9 +1,5 @@
 package java.io
 
-// copied from Scala Native and minimized
-class FileInputStream(fd: FileDescriptor, file: Option[File])
-    extends InputStream {
-  def this(file: File) = this(??? : FileDescriptor, Some(file))
-
+class FileInputStream(file: File) extends InputStream {
   override def read(): Int = ???
 }
