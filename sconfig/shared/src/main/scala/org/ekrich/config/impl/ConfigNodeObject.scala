@@ -11,24 +11,26 @@ final class ConfigNodeObject private[impl] (
   override def newNode(nodes: ju.Collection[AbstractConfigNode]) =
     new ConfigNodeObject(nodes)
 
-  def hasValue(desiredPath: Path): Boolean = {
-    for (node <- children.asScala) {
-      if (node.isInstanceOf[ConfigNodeField]) {
+  def hasValue(desiredPath: Path): Boolean =
+    children.asScala.iterator
+      .filter(_.isInstanceOf[ConfigNodeField])
+      .map { node =>
         val field = node.asInstanceOf[ConfigNodeField]
-        val key   = field.path.value
-        if (key == desiredPath || key.startsWith(desiredPath)) return true
-        else if (desiredPath.startsWith(key)) {
-          if (field.value.isInstanceOf[ConfigNodeObject]) {
-            val obj =
-              field.value.asInstanceOf[ConfigNodeObject]
-            val remainingPath = desiredPath.subPath(key.length)
-            if (obj.hasValue(remainingPath)) return true
-          }
-        }
+        val path  = field.path.value
+        (field, path)
       }
-    }
-    false
-  }
+      .exists {
+        case (field, path) =>
+          if (path == desiredPath || path.startsWith(desiredPath)) true
+          else if (desiredPath.startsWith(path)) {
+            if (field.value.isInstanceOf[ConfigNodeObject]) {
+              val obj           = field.value.asInstanceOf[ConfigNodeObject]
+              val remainingPath = desiredPath.subPath(path.length)
+              if (obj.hasValue(remainingPath)) true
+              else false
+            } else false
+          } else false
+      }
 
   protected def changeValueOnPath(
       desiredPath: Path,
