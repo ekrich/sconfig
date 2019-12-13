@@ -12,25 +12,22 @@ final class ConfigNodeObject private[impl] (
     new ConfigNodeObject(nodes)
 
   def hasValue(desiredPath: Path): Boolean =
-    children.asScala.iterator
-      .filter(_.isInstanceOf[ConfigNodeField])
-      .map { node =>
-        val field = node.asInstanceOf[ConfigNodeField]
-        val path  = field.path.value
-        (field, path)
-      }
-      .exists {
-        case (field, path) =>
-          if (path == desiredPath || path.startsWith(desiredPath)) true
-          else if (desiredPath.startsWith(path)) {
-            if (field.value.isInstanceOf[ConfigNodeObject]) {
-              val obj           = field.value.asInstanceOf[ConfigNodeObject]
+    children.asScala.exists {
+      case field: ConfigNodeField => {
+        val path = field.path.value
+        if (path == desiredPath || path.startsWith(desiredPath)) true
+        else if (desiredPath.startsWith(path)) {
+          field.value match {
+            case obj: ConfigNodeObject =>
               val remainingPath = desiredPath.subPath(path.length)
               if (obj.hasValue(remainingPath)) true
               else false
-            } else false
-          } else false
+            case _ => false
+          }
+        } else false
       }
+      case _ => false
+    }
 
   protected def changeValueOnPath(
       desiredPath: Path,
