@@ -1,7 +1,7 @@
 package test
 
-import org.ekrich.config.ConfigFactory
 import minitest._
+import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigRenderOptions
 
 object ConfigFactoryTests extends SimpleTestSuite {

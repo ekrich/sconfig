@@ -111,11 +111,11 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
     scala2or3Source,
-    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.2"
+    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.3"
   )
   .jvmSettings(
     sharedJvmNativeSource,
-    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-5" % Test,
+    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-7" % Test,
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
     libraryDependencies := libraryDependencies.value
       .map(_.withDottyCompat(scalaVersion.value)),
@@ -157,7 +157,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   )
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5"
+    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.6"
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
