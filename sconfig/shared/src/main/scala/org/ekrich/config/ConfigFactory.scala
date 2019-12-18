@@ -38,11 +38,11 @@ object ConfigFactory {
    * classpath resource basename, sandwiches it between default reference
    * config and default overrides, and then resolves it. The classpath
    * resource is "raw" (it should have no "/" prefix, and is not made relative
-   * to any package, so it's like [[ClassLoader#getResource]] not
-   * [[Class#getResource]]).
+   * to any package, so it's like `ClassLoader.getResource` not
+   * `Class.getResource`).
    *
    * Resources are loaded from the current thread's
-   * [[Thread!.getContextClassLoader()]]. In general, a library needs its
+   * `Thread.getContextClassLoader`. In general, a library needs its
    * configuration to come from the class loader used to load that library, so
    * the proper "reference.conf" are present.
    *
@@ -432,7 +432,7 @@ object ConfigFactory {
     defaultApplication(ConfigParseOptions.defaults)
 
   /**
-   * Like [[ConfigFactory.defaultApplication()]] but allows you to specify a class loader
+   * Like [[ConfigFactory.defaultApplication]] but allows you to specify a class loader
    * to use rather than the current context class loader.
    *
    * @since 1.3.0
@@ -443,7 +443,7 @@ object ConfigFactory {
     defaultApplication(ConfigParseOptions.defaults.setClassLoader(loader))
 
   /**
-   * Like [[ConfigFactory.defaultApplication()]] but allows you to specify parse options.
+   * Like [[ConfigFactory.defaultApplication]] but allows you to specify parse options.
    *
    * @since 1.3.0
    * @param options the options
@@ -505,7 +505,7 @@ object ConfigFactory {
 
   /**
    * Gets a `Config` containing the system properties from
-   * [[java.lang.System#getProperties()]], parsed and converted as with
+   * `java.lang.System.getProperties()`, parsed and converted as with
    * [[ConfigFactory#parseProperties]].
    *
    * This method can return a global immutable singleton, so it's preferred
@@ -531,7 +531,7 @@ object ConfigFactory {
    * whether or not this object is included in the config being resolved, so
    * you probably don't need to use this method for most purposes. It can be a
    * nicer API for accessing environment variables than raw
-   * [[java.lang.System.getenv(String)]] though, since you can use methods
+   * `java.lang.System.getenv(String)` though, since you can use methods
    * such as [[Config.getInt]].
    *
    * @return system environment variables parsed into a `Config`
@@ -810,7 +810,7 @@ object ConfigFactory {
    *            resources, and non-absolute resource names will have this
    *            class's package added
    * @param resourceBasename
-   *            a resource name as in [[java.lang.Class#getResource]],
+   *            a resource name as in `java.lang.Class.getResource`,
    *            with or without extension
    * @return the parsed configuration
    */
@@ -828,8 +828,8 @@ object ConfigFactory {
    * Parses all resources on the classpath with the given name and merges them
    * into a single `Config`.
    *
-   * This works like [[java.lang.ClassLoader#getResource]], not like
-   * [[java.lang.Class#getResource]], so the name never begins with a
+   * This works like `java.lang.ClassLoader.getResource`, not like
+   * `java.lang.Class.getResource`, so the name never begins with a
    * slash.
    *
    * See [[ConfigFactory#parseResources(Class,String,ConfigParseOptions)]] for full
@@ -990,7 +990,7 @@ object ConfigFactory {
     parseString(s, ConfigParseOptions.defaults)
 
   /**
-   * Creates a [[Config]] based on a [[java.util.Map]] from paths to
+   * Creates a [[Config]] based on a `java.util.Map` from paths to
    * plain Java values. Similar to
    * [[ConfigValueFactory#fromMap(Map,String)]], except the keys in the
    * map are path expressions, rather than keys; and correspondingly it

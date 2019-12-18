@@ -18,7 +18,7 @@ object ConfigDocumentFactory {
    * @param options
    *       parse options to control how the reader is interpreted
    * @return the parsed configuration
-   * @throws [[org.ekrich.config.ConfigException]] on IO or parse errors
+   * @throws ConfigException on IO or parse errors
    */
   def parseReader(reader: Reader, options: ConfigParseOptions): ConfigDocument =
     Parseable.newReader(reader, options).parseConfigDocument()

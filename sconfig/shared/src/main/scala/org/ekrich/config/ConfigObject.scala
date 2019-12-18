@@ -11,19 +11,19 @@ import java.{util => ju}
  *
  * <p>
  * An object may also be viewed as a {@link Config} by calling
- * {@link ConfigObject#toConfig()}.
+ * {@link ConfigObject#toConfig}.
  *
  * <p>
  * {@code ConfigObject} implements {@code java.util.Map<String, ConfigValue>} so
- * you can use it like a regular Java map. Or call {@link #unwrapped()} to
+ * you can use it like a regular Java map. Or call {@link #unwrapped} to
  * unwrap the map to a map with plain Java values rather than
  * {@code ConfigValue}.
  *
  * <p>
  * Like all {@link ConfigValue} subtypes, {@code ConfigObject} is immutable.
  * This makes it threadsafe and you never have to create "defensive copies." The
- * mutator methods from {@link java.util.Map} all throw
- * {@link java.lang.UnsupportedOperationException}.
+ * mutator methods from `java.util.Map` all throw
+ * `java.lang.UnsupportedOperationException`.
  *
  * <p>
  * The {@link ConfigValue#valueType} method on an object returns
@@ -31,7 +31,7 @@ import java.{util => ju}
  *
  * <p>
  * In most cases you want to use the {@link Config} interface rather than this
- * one. Call {@link #toConfig()} to convert a {@code ConfigObject} to a
+ * one. Call {@link #toConfig} to convert a {@code ConfigObject} to a
  * {@code Config}.
  *
  * <p>
@@ -46,8 +46,8 @@ import java.{util => ju}
  *
  * <p>
  * A {@code ConfigObject} may contain null values, which will have
- * {@link ConfigValue#valueType()} equal to {@link ConfigValueType#NULL}. If
- * {@link ConfigObject#get(Object)} returns Java's null then the key was not
+ * {@link ConfigValue#valueType} equal to {@link ConfigValueType#NULL}. If
+ * {@link ConfigObject#get} returns Java's null then the key was not
  * present in the parsed file (or wherever this value tree came from). If
  * {@code get("key")} returns a {@link ConfigValue} with type
  * {@code ConfigValueType#NULL} then the key was set to null explicitly in the
@@ -74,7 +74,7 @@ trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
    * Recursively unwraps the object, returning a map from String to whatever
    * plain Java values are unwrapped from the object's values.
    *
-   * @return a {@link java.util.Map} containing plain Java objects
+   * @return a `java.util.Map` containing plain Java objects
    */
   override def unwrapped: ju.Map[String, AnyRef]
   override def withFallback(other: ConfigMergeable): ConfigObject
@@ -115,7 +115,7 @@ trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
    * Returns a {@code ConfigObject} based on this one, but with the given key
    * set to the given value. Does not modify this instance (since it's
    * immutable). If the key already has a value, that value is replaced. To
-   * remove a value, use {@link ConfigObject#withoutKey(String)}.
+   * remove a value, use {@link ConfigObject#withoutKey}.
    *
    * @param key
    *            key to add

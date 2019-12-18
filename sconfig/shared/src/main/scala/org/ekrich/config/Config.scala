@@ -25,7 +25,7 @@ import scala.annotation.varargs
  *
  * <p>
  * Fundamental operations on a {@code Config} include getting configuration
- * values, <em>resolving</em> substitutions with {@link Config#resolve}, and
+ * values, <em>resolving</em> substitutions with {@link Config#resolve():Config}, and
  * merging configs using {@link Config#withFallback(ConfigMergeable)}.
  *
  * <p>
@@ -36,11 +36,10 @@ import scala.annotation.varargs
  * <strong>Examples</strong>
  *
  * <p>
- * You can find an example app and library <a
- * href="https://github.com/lightbend/config/tree/master/examples">on
- * GitHub</a>. Also be sure to read the <a
- * href="package-summary.html#package_description">package overview</a> which
- * describes the big picture as shown in those examples.
+ * You can find an example app and library
+ * [[https://github.com/lightbend/config/tree/master/examples on GitHub]].
+ * Also be sure to read the [[package-summary.html#package_description package overview]]
+ * which describes the big picture as shown in those examples.
  *
  * <p>
  * <strong>Paths, keys, and Config vs. ConfigObject</strong>
@@ -56,9 +55,9 @@ import scala.annotation.varargs
  * The API tries to consistently use the terms "key" and "path." A key is a key
  * in a JSON object; it's just a string that's the key in a map. A "path" is a
  * parseable expression with a syntax and it refers to a series of keys. Path
- * expressions are described in the <a
- * href="https://github.com/lightbend/config/blob/master/HOCON.md">spec for
- * Human-Optimized Config Object Notation</a>. In brief, a path is
+ * expressions are described in the
+ * [[https://github.com/lightbend/config/blob/master/HOCON.md spec for Human-Optimized Config Object Notation]].
+ * In brief, a path is
  * period-separated so "a.b.c" looks for key c in object b in object a in the
  * root object. Sometimes double quotes are needed around special characters in
  * path expressions.
@@ -195,7 +194,7 @@ trait Config extends ConfigMergeable {
    *
    * <p>
    * This method uses {@link ConfigResolveOptions#defaults}, there is
-   * another variant {@link Config#resolve(ConfigResolveOptions)} which lets
+   * another variant {@link [[Config#resolve(ConfigResolveOptions)]]} which lets
    * you specify non-default options.
    *
    * <p>
@@ -234,7 +233,7 @@ trait Config extends ConfigMergeable {
    * files combined) rather than resolving each one individually.
    *
    * @return an immutable object with substitutions resolved
-   * @throws [[ConfigException.UnresolvedSubstitution]]
+   * @throws ConfigException.UnresolvedSubstitution
    * if any substitutions refer to nonexistent paths
    * @throws ConfigException
    * some other config exception if there are other problems
@@ -346,7 +345,7 @@ trait Config extends ConfigMergeable {
    * in particular it's assumed that strings are compatible with everything
    * except objects and lists. This is because string types are often "really"
    * some other type (system properties always start out as strings, or a
-   * string like "5ms" could be used with {@link #getMilliseconds}). Also,
+   * string like "5ms" could be used with {@link #getDuration}). Also,
    * it's allowed to set any type to null or override null with any type.
    * <li>
    * Any unresolved substitutions in this config will cause a validation
@@ -400,9 +399,9 @@ trait Config extends ConfigMergeable {
    * indicating that the object contains a null value for the key.
    *
    * <p>
-   * If a path exists according to {@link #hasPath(String)}, then
-   * {@link #getValue(String)} will never throw an exception. However, the
-   * typed getters, such as {@link #getInt(String)}, will still throw if the
+   * If a path exists according to {@link #hasPath}, then
+   * {@link #getValue} will never throw an exception. However, the
+   * typed getters, such as {@link #getInt}, will still throw if the
    * value is not convertible to the requested type.
    *
    * <p>
@@ -421,9 +420,9 @@ trait Config extends ConfigMergeable {
    * Checks whether a value is present at the given path, even
    * if the value is null. Most of the getters on
    * <code>Config</code> will throw if you try to get a null
-   * value, so if you plan to call {@link #getValue(String)},
-   * {@link #getInt(String)}, or another getter you may want to
-   * use plain {@link #hasPath(String)} rather than this method.
+   * value, so if you plan to call {@link #getValue},
+   * {@link #getInt}, or another getter you may want to
+   * use plain {@link #hasPath} rather than this method.
    *
    * <p>
    * To handle all three cases (unset, null, and a non-null value)
@@ -443,7 +442,7 @@ trait Config extends ConfigMergeable {
    * <p> However, the usual thing is to allow entirely unset
    * paths to be a bug that throws an exception (because you set
    * a default in your <code>reference.conf</code>), so in that
-   * case it's OK to call {@link #getIsNull(String)} without
+   * case it's OK to call {@link #getIsNull} without
    * checking <code>hasPathOrNull</code> first.
    *
    * <p>
@@ -493,9 +492,8 @@ trait Config extends ConfigMergeable {
   /**
    * Checks whether a value is set to null at the given path,
    * but throws an exception if the value is entirely
-   * unset. This method will not throw if {@link
-   * #hasPathOrNull(String)} returned true for the same path, so
-   * to avoid any possible exception check
+   * unset. This method will not throw if {@link #hasPathOrNull}
+   * returned true for the same path, so to avoid any possible exception check
    * <code>hasPathOrNull</code> first.  However, an exception
    * for unset paths will usually be the right thing (because a
    * <code>reference.conf</code> should exist that has the path
@@ -627,7 +625,7 @@ trait Config extends ConfigMergeable {
   /**
    * @param path
    * path expression
-   * @return the nested { @code Config} value at the requested path
+   * @return the nested {@code Config} value at the requested path
    * @throws ConfigException.Missing
    * if value is absent or null
    * @throws ConfigException.WrongType
@@ -637,7 +635,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets the value at the path as an unwrapped Java boxed value (
-   * {@link java.lang.Boolean Boolean}, {@link java.lang.Integer Integer}, and
+   * `java.lang.Boolean` `java.lang.Integer`, and
    * so on - see {@link ConfigValue#unwrapped}).
    *
    * @param path
@@ -651,8 +649,8 @@ trait Config extends ConfigMergeable {
   /**
    * Gets the value at the given path, unless the value is a
    * null value or missing, in which case it throws just like
-   * the other getters. Use {@code get} on the {@link
-   * Config#root} object (or other object in the tree) if you
+   * the other getters. Use {@code get} on the {@link Config#root}
+   * object (or other object in the tree) if you
    * want an unprocessed value.
    *
    * @param path
@@ -667,9 +665,7 @@ trait Config extends ConfigMergeable {
    * Gets a value as a size in bytes (parses special strings like "128M"). If
    * the value is already a number, then it's left alone; if it's a string,
    * it's parsed understanding unit suffixes such as "128K", as documented in
-   * the <a
-   * href="https://github.com/lightbend/config/blob/master/HOCON.md">the
-   * spec</a>.
+   * the [[https://github.com/lightbend/config/blob/master/HOCON.md the spec]].
    *
    * @param path
    * path expression
@@ -687,9 +683,7 @@ trait Config extends ConfigMergeable {
    * Gets a value as an amount of memory (parses special strings like "128M"). If
    * the value is already a number, then it's left alone; if it's a string,
    * it's parsed understanding unit suffixes such as "128K", as documented in
-   * the <a
-   * href="https://github.com/lightbend/config/blob/master/HOCON.md">the
-   * spec</a>.
+   * the [[https://github.com/lightbend/config/blob/master/HOCON.md the spec]].
    *
    * @since 1.3.0
    * @param path
@@ -706,7 +700,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets a value as a duration in a specified
-   * {@link java.util.concurrent.TimeUnit TimeUnit}. If the value is already a
+   * `java.util.concurrent.TimeUnit`. If the value is already a
    * number, then it's taken as milliseconds and then converted to the
    * requested TimeUnit; if it's a string, it's parsed understanding units
    * suffixes like "10m" or "5ns" as documented in the <a
@@ -975,7 +969,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets a list, converting each value in the list to a memory size, using the
-   * same rules as {@link #getMemorySize(String)}.
+   * same rules as {@link #getMemorySize}.
    *
    * @since 1.3.0
    * @param path
@@ -990,7 +984,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets a list, converting each value in the list to a duration, using the
-   * same rules as {@link #getDuration(String, TimeUnit)}.
+   * same rules as {@link #getDuration}.
    *
    * @since 1.2.0
    * @param path
@@ -1003,7 +997,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets a list, converting each value in the list to a duration, using the
-   * same rules as {@link #getDuration(String)}.
+   * same rules as {@link #getDuration}.
    *
    * @since 1.3.0
    * @param path
@@ -1057,7 +1051,7 @@ trait Config extends ConfigMergeable {
    *
    * @param key
    * key to store this config at.
-   * @return a { @code Config} instance containing this config at the given
+   * @return a {@code Config} instance containing this config at the given
    *                   key.
    */
   def atKey(key: String): Config

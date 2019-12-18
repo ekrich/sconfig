@@ -186,8 +186,8 @@ final class ConfigParseOptions private (
 
   /**
    * Appends a {@link ConfigIncluder} which customizes how
-   * includes are handled.  To append, the library calls {@link
-   * ConfigIncluder#withFallback} on the existing includer.
+   * includes are handled.  To append, the library calls
+   * {@link ConfigIncluder#withFallback} on the existing includer.
    *
    * @param includer the includer to append (may not be null)
    * @return new version of the parse options with different includer

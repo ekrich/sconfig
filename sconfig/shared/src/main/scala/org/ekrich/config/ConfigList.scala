@@ -11,14 +11,14 @@ import java.{util => ju}
  *
  * <p>
  * {@code ConfigList} implements {@code java.util.List<ConfigValue>} so you can
- * use it like a regular Java list. Or call {@link #unwrapped()} to unwrap the
+ * use it like a regular Java list. Or call {@link #unwrapped} to unwrap the
  * list elements into plain Java values.
  *
  * <p>
  * Like all {@link ConfigValue} subtypes, {@code ConfigList} is immutable. This
  * makes it threadsafe and you never have to create "defensive copies." The
- * mutator methods from {@link java.util.List} all throw
- * {@link java.lang.UnsupportedOperationException}.
+ * mutator methods from `java.util.List` all throw
+ * `java.lang.UnsupportedOperationException`.
  *
  * <p>
  * The {@link ConfigValue#valueType} method on a list returns
@@ -37,7 +37,7 @@ trait ConfigList extends ju.List[ConfigValue] with ConfigValue {
    * Recursively unwraps the list, returning a list of plain Java values such
    * as Integer or String or whatever is in the list.
    *
-   * @return a {@link java.util.List} containing plain Java objects
+   * @return a `java.util.List` containing plain Java objects
    */
   override def unwrapped: ju.List[AnyRef]
   override def withOrigin(origin: ConfigOrigin): ConfigList

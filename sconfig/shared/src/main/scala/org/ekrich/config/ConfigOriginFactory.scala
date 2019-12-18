@@ -16,7 +16,7 @@ object ConfigOriginFactory {
   /**
    * Returns the default origin for values when no other information is
    * provided. This is the origin used in
-   * [[ConfigValueFactory.fromAnyRef(Object)]].
+   * [[ConfigValueFactory.fromAnyRef]].
    *
    * @since 1.3.0
    * @return the default origin

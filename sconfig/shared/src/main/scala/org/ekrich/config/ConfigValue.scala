@@ -37,7 +37,7 @@ trait ConfigValue extends ConfigMergeable {
   /**
    * Returns the value as a plain Java boxed value, that is, a {@code String},
    * {@code Number}, {@code Boolean}, {@code Map<String,Object>},
-   * {@code List<Object>}, or {@code null}, matching the {@link #valueType()}
+   * {@code List<Object>}, or {@code null}, matching the {@link #valueType}
    * of this {@code ConfigValue}. If the value is a {@link ConfigObject} or
    * {@link ConfigList}, it is recursively unwrapped.
    *
@@ -88,7 +88,7 @@ trait ConfigValue extends ConfigMergeable {
 
   /**
    * Places the value inside a {@link Config} at the given path. See also
-   * {@link ConfigValue#atKey(String)}.
+   * {@link ConfigValue#atKey}.
    *
    * @param path
    *            path to store this value at.
@@ -99,7 +99,7 @@ trait ConfigValue extends ConfigMergeable {
 
   /**
    * Places the value inside a {@link Config} at the given key. See also
-   * {@link ConfigValue#atPath(String)}.
+   * {@link ConfigValue#atPath}.
    *
    * @param key
    *            key to store this value at.

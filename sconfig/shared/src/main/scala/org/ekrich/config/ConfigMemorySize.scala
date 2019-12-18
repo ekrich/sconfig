@@ -5,8 +5,8 @@ package org.ekrich.config
 
 /**
  * An immutable class representing an amount of memory.  Use
- * static factory methods such as {@link
- * ConfigMemorySize#ofBytes(long)} to create instances.
+ * static factory methods such as
+ * {@link ConfigMemorySize#ofBytes} to create instances.
  *
  * @since 1.3.0
  */

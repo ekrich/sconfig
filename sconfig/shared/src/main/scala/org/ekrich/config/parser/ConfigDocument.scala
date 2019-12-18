@@ -43,7 +43,7 @@ trait ConfigDocument {
   /**
    * Returns a new ConfigDocument that is a copy of the current
    * ConfigDocument, but with the desired value set at the
-   * desired path. Works like {@link #withValueText(String, String)},
+   * desired path. Works like {@link #withValueText},
    * but takes a ConfigValue instead of a string.
    *
    * @param path the path at which to set the desired value

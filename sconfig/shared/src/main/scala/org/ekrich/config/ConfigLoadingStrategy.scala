@@ -2,7 +2,7 @@ package org.ekrich.config
 
 /**
  * This method allows you to alter default config loading strategy for all the code which
- * calls one of the methods, e.g. [[ConfigFactory.load(String)]]
+ * calls one of the methods, e.g. [[ConfigFactory.load(resourceBasename:String):Config)]]
  *
  * Usually you don't have to implement this interface but it may be required
  * when you fixing a improperly implemented library with unavailable source code.
