@@ -6,7 +6,7 @@ package org.ekrich.config
 /**
  * <p>
  * A set of options related to rendering a {@link ConfigValue}. Passed to
- * {@link ConfigValue#render(ConfigRenderOptions)}.
+ * [[ConfigValue!.render(options:org\.ekrich\.config\.ConfigRenderOptions)* ConfigValue.render(ConfigRenderOptions)]].
  *
  * <p>
  * Here is an example of creating a {@code ConfigRenderOptions}:

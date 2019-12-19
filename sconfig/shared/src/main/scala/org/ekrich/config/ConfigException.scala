@@ -278,7 +278,7 @@ object ConfigException {
 
   /**
    * Exception indicating that a substitution did not resolve to anything.
-   * Thrown by {@link Config#resolve}.
+   * Thrown by [[Config!.resolve()* resolve()]].
    */
   @SerialVersionUID(1L)
   class UnresolvedSubstitution(
@@ -296,10 +296,10 @@ object ConfigException {
   /**
    * Exception indicating that you tried to use a function that requires
    * substitutions to be resolved, but substitutions have not been resolved
-   * (that is, {@link Config#resolve} was not called). This is always a bug in
-   * either application code or the library; it's wrong to write a handler for
-   * this exception because you should be able to fix the code to avoid it by
-   * adding calls to {@link Config#resolve}.
+   * (that is, [[Config!.resolve()* resolve()]] was not called). This is always
+   * a bug in either application code or the library; it's wrong to write a
+   * handler for this exception because you should be able to fix the code to
+   * avoid it by adding calls to [[Config!.resolve()* resolve()]].
    */
   @SerialVersionUID(1L)
   class NotResolved(message: String, cause: Throwable)

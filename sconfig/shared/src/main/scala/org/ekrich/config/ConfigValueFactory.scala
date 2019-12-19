@@ -34,16 +34,16 @@ object ConfigValueFactory {
    * key "bar".
    *
    * <p>
-   * The originDescription will be used to set the origin() field on the
-   * ConfigValue. It should normally be the name of the file the values came
+   * The originDescription will be used to set the `origin()` field on the
+   * `ConfigValue`. It should normally be the name of the file the values came
    * from, or something short describing the value such as "default settings".
    * The originDescription is prefixed to error messages so users can tell
    * where problematic values are coming from.
    *
    * <p>
-   * Supplying the result of ConfigValue.unwrapped() to this function is
-   * guaranteed to work and should give you back a ConfigValue that matches
-   * the one you unwrapped. The re-wrapped ConfigValue will lose some
+   * Supplying the result of `ConfigValue.unwrapped()` to this function is
+   * guaranteed to work and should give you back a `ConfigValue` that matches
+   * the one you unwrapped. The re-wrapped `ConfigValue` will lose some
    * information that was present in the original such as its origin, but it
    * will have matching values.
    *
@@ -65,13 +65,15 @@ object ConfigValueFactory {
    *            name of origin file or brief description of what the value is
    * @return a new value
    */
-  def fromAnyRef(`object`: AnyRef, originDescription: String): ConfigValue =
-    ConfigImpl.fromAnyRef(`object`, originDescription)
+  def fromAnyRef(obj: Object, originDescription: String): ConfigValue =
+    ConfigImpl.fromAnyRef(obj, originDescription)
 
   /**
-   * See the {@link #fromAnyRef(Object,String)} documentation for details.
-   * This is a typesafe wrapper that only works on {@link java.util.Map} and
-   * returns {@link ConfigObject} rather than {@link ConfigValue}.
+   * See the
+   * [[#fromAnyRef(obj:Object,originDescription:String)* fromAnyRef(Object,String)]]
+   * documentation for details. This is a typesafe wrapper that only works on
+   * `java.util.Map` and returns {@link ConfigObject} rather than
+   * {@link ConfigValue}.
    *
    * <p>
    * If your <code>Map</code> has a key "foo.bar" then you will get one object
@@ -84,8 +86,9 @@ object ConfigValueFactory {
    * maps.
    *
    * <p>
-   * See also {@link ConfigFactory#parseMap(Map,String)} which interprets the
-   * keys in the map as path expressions.
+   * See also
+   * [[ConfigFactory$.parseMap(values:java\.util\.Map[String,_],originDescription:String)* ConfigFactory.parseMap(Map,String)]]
+   * which interprets the keys in the map as path expressions.
    *
    * @param values map from keys to plain Java values
    * @param originDescription description to use in {@link ConfigOrigin} of created values
@@ -98,9 +101,11 @@ object ConfigValueFactory {
     fromAnyRef(values, originDescription).asInstanceOf[ConfigObject]
 
   /**
-   * See the {@link #fromAnyRef(Object,String)} documentation for details.
-   * This is a typesafe wrapper that only works on {@link java.lang.Iterable}
-   * and returns {@link ConfigList} rather than {@link ConfigValue}.
+   * See the
+   * [[#fromAnyRef(obj:Object,originDescription:String)* fromAnyRef(Object,String)]]
+   * documentation for details. This is a typesafe wrapper that only works on
+   * `java.lang.Iterable` and returns {@link ConfigList} rather than
+   * {@link ConfigValue}.
    *
    * @param values list of plain Java values
    * @param originDescription description to use in {@link ConfigOrigin} of created values
@@ -113,21 +118,22 @@ object ConfigValueFactory {
     fromAnyRef(values, originDescription).asInstanceOf[ConfigList]
 
   /**
-   * See the other overload {@link #fromAnyRef(Object,String)} for details,
-   * this one just uses a default origin description.
+   * See the other overload [[#fromAnyRef(obj:Object,originDescription:String)* fromAnyRef(Object,String)]]
+   * for details, this one just uses a default origin description.
    *
    * @param object a plain Java value
    * @return a new {@link ConfigValue}
    */
-  def fromAnyRef(`object`: AnyRef): ConfigValue = fromAnyRef(`object`, null)
+  def fromAnyRef(obj: Object): ConfigValue = fromAnyRef(obj, null)
 
   /**
-   * See the other overload {@link #fromMap(Map,String)} for details, this one
-   * just uses a default origin description.
+   * See the other overload
+   * [[#fromMap(values:java\.util\.Map[String,_],originDescription:String)* fromMap(Map,String)]]
+   * for details, this one just uses a default origin description.
    *
    * <p>
-   * See also {@link ConfigFactory#parseMap(Map)} which interprets the keys in
-   * the map as path expressions.
+   * See also [[ConfigFactory$.parseMap(values:java\.util\.Map[String,_])* ConfigFactory.parseMap(ju.Map)]]
+   * which interprets the keys in the map as path expressions.
    *
    * @param values map from keys to plain Java values
    * @return a new {@link ConfigObject}
@@ -135,8 +141,9 @@ object ConfigValueFactory {
   def fromMap(values: ju.Map[String, _]): ConfigObject = fromMap(values, null)
 
   /**
-   * See the other overload of {@link #fromIterable(Iterable, String)} for
-   * details, this one just uses a default origin description.
+   * See the other overload of
+   * [[#fromIterable(values:Iterable[_],originDescription:String)* fromIterable(jl.Iterable, String)]]
+   * for details, this one just uses a default origin description.
    *
    * @param values list of plain Java values
    * @return a new {@link ConfigList}

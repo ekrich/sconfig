@@ -41,7 +41,8 @@ import java.{util => ju}
  * {@code Config} is a one-level map from paths to values.
  *
  * <p>
- * Use {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath} to convert
+ * Use [[ConfigUtil$.joinPath(elements:String*)* ConfigUtil.joinPath(String*)]]
+ * and [[ConfigUtil$.splitPath ConfigUtil.splitPath(String)]] to convert
  * between path expressions and individual path elements (keys).
  *
  * <p>
@@ -77,6 +78,7 @@ trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
    * @return a `java.util.Map` containing plain Java objects
    */
   override def unwrapped: ju.Map[String, AnyRef]
+
   override def withFallback(other: ConfigMergeable): ConfigObject
 
   /**
@@ -124,5 +126,6 @@ trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
    * @return the new instance with the new map entry
    */
   def withValue(key: String, value: ConfigValue): ConfigObject
+
   override def withOrigin(origin: ConfigOrigin): ConfigObject
 }

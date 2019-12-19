@@ -9,7 +9,7 @@ package org.ekrich.config
  * [[https://github.com/ekrich/sconfig/blob/master/HOCON.md">HOCON spec]].
  * <p>
  * Typically this class would be used with the method
- * {@link Config#resolve(ConfigResolveOptions)}.
+ * [[Config!.resolve(options:org\.ekrich\.config\.ConfigResolveOptions)* Config.resolve(ConfigResolveOptions)]].
  * <p>
  * This object is immutable, so the "setters" return a new object.
  * <p>
@@ -81,8 +81,9 @@ final class ConfigResolveOptions private (
    * Returns options with "allow unresolved" set to the given value. By
    * default, unresolved substitutions are an error. If unresolved
    * substitutions are allowed, then a future attempt to use the unresolved
-   * value may fail, but {@link Config#resolve(ConfigResolveOptions)} itself
-   * will not throw.
+   * value may fail, but
+   * [[Config!.resolve(options:org\.ekrich\.config\.ConfigResolveOptions)* Config.resolve(ConfigResolveOptions)]]
+   * itself will not throw.
    *
    * @param value
    *            true to silently ignore unresolved substitutions.

@@ -25,8 +25,9 @@ import scala.annotation.varargs
  *
  * <p>
  * Fundamental operations on a {@code Config} include getting configuration
- * values, <em>resolving</em> substitutions with {@link Config#resolve():Config}, and
- * merging configs using {@link Config#withFallback(ConfigMergeable)}.
+ * values, <em>resolving</em> substitutions with [[#resolve()* resolve()]], and
+ * merging configs using
+ * [[#withFallback(other:org\.ekrich\.config\.ConfigMergeable)* withFallback(ConfigMergeable)]].
  *
  * <p>
  * All operations return a new immutable {@code Config} rather than modifying
@@ -38,7 +39,7 @@ import scala.annotation.varargs
  * <p>
  * You can find an example app and library
  * [[https://github.com/lightbend/config/tree/master/examples on GitHub]].
- * Also be sure to read the [[package-summary.html#package_description package overview]]
+ * Also be sure to read the `package-summary.html#package_description` package overview]]
  * which describes the big picture as shown in those examples.
  *
  * <p>
@@ -69,8 +70,9 @@ import scala.annotation.varargs
  * {@code ConfigObject} is a tree of nested maps from <em>keys</em> to values.
  *
  * <p>
- * Use {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath} to convert
- * between path expressions and individual path elements (keys).
+ * Use [[ConfigUtil$.joinPath(elements:String*)* ConfigUtil.joinPath(String*)]]
+ * and [[ConfigUtil$.splitPath ConfigUtil.splitPath(String)]]
+ * to convert between path expressions and individual path elements (keys).
  *
  * <p>
  * Another difference between {@code Config} and {@code ConfigObject} is that
@@ -113,8 +115,8 @@ import scala.annotation.varargs
  * values.
  *
  * <p>
- * Before using a {@code Config} it's necessary to call {@link Config#resolve}
- * to handle substitutions (though {@link ConfigFactory#load} and similar
+ * Before using a {@code Config} it's necessary to call [[#resolve()* resolve()]]
+ * to handle substitutions (though [[ConfigFactory$.load()* ConfigFactory.load()]] and similar
  * methods will do the resolve for you already).
  *
  * <p>
@@ -122,30 +124,33 @@ import scala.annotation.varargs
  *
  * <p>
  * The full <code>Config</code> for your application can be constructed using
- * the associative operation {@link Config#withFallback(ConfigMergeable)}. If
- * you use {@link ConfigFactory#load} (recommended), it merges system
- * properties over the top of <code>application.conf</code> over the top of
- * <code>reference.conf</code>, using <code>withFallback</code>. You can add in
- * additional sources of configuration in the same way (usually, custom layers
- * should go either just above or just below <code>application.conf</code>,
- * keeping <code>reference.conf</code> at the bottom and system properties at
- * the top).
+ * the associative operation
+ * [[#withFallback(other:org\.ekrich\.config\.ConfigMergeable)* withFallback(ConfigMergeable)]].
+ * If you use [[ConfigFactory$.load()* ConfigFactory.load()]] (recommended), it
+ * merges system properties over the top of <code>application.conf</code> over
+ * the top of <code>reference.conf</code>, using <code>withFallback</code>. You
+ * can add in additional sources of configuration in the same way (usually,
+ * custom layers should go either just above or just below
+ * <code>application.conf</code>, keeping <code>reference.conf</code> at the
+ * bottom and system properties at the top).
  *
  * <p>
  * <strong>Serialization</strong>
  *
  * <p>
  * Convert a <code>Config</code> to a JSON or HOCON string by calling
- * {@link ConfigObject#render} on the root object,
- * <code>myConfig.root.render</code>. There's also a variant
- * {@link ConfigObject#render(ConfigRenderOptions)} which allows you to control
+ * [[#root root]] to get the [[ConfigObject]] and then call
+ * [[ConfigValue!.render:String* render]]
+ * on the root object, <code>myConfig.root.render</code>. There's also a variant
+ * [[ConfigValue!.render(options:org\.ekrich\.config\.ConfigRenderOptions)* render(ConfigRenderOptions)]]
+ * inherited from [[ConfigValue]] which allows you to control
  * the format of the rendered string. (See {@link ConfigRenderOptions}.) Note
  * that <code>Config</code> does not remember the formatting of the original
  * file, so if you load, modify, and re-save a config file, it will be
  * substantially reformatted.
  *
  * <p>
- * As an alternative to {@link ConfigObject#render}, the
+ * As an alternative to [[ConfigValue!.render:String* render]], the
  * <code>toString</code> method produces a debug-output-oriented
  * representation (which is not valid JSON).
  *
@@ -177,7 +182,7 @@ trait Config extends ConfigMergeable {
    * Gets the origin of the {@code Config}, which may be a file, or a file
    * with a line number, or just a descriptive phrase.
    *
-   * @return the origin of the { @code Config} for use in error messages
+   * @return the origin of the {@code Config} for use in error messages
    */
   def origin: ConfigOrigin
 
@@ -194,8 +199,9 @@ trait Config extends ConfigMergeable {
    *
    * <p>
    * This method uses {@link ConfigResolveOptions#defaults}, there is
-   * another variant {@link [[Config#resolve(ConfigResolveOptions)]]} which lets
-   * you specify non-default options.
+   * another variant
+   * [[#resolve(options:org\.ekrich\.config\.ConfigResolveOptions)* resolve(ConfigResolveOptions)]]
+   * which lets you specify non-default options.
    *
    * <p>
    * A given {@link Config} must be resolved before using it to retrieve
@@ -224,8 +230,8 @@ trait Config extends ConfigMergeable {
    *
    * <p>
    * Many methods on {@link ConfigFactory} such as
-   * {@link ConfigFactory#load} automatically resolve the loaded
-   * <code>Config</code> on the loaded stack of config files.
+   * [[ConfigFactory$.load()* ConfigFactory.load()]] automatically resolve the
+   * loaded <code>Config</code> on the loaded stack of config files.
    *
    * <p>
    * Resolving an already-resolved config is a harmless no-op, but again, it
@@ -241,20 +247,20 @@ trait Config extends ConfigMergeable {
   def resolve(): Config
 
   /**
-   * Like {@link Config#resolve} but allows you to specify non-default
+   * Like [[#resolve()* resolve()]] but allows you to specify non-default
    * options.
    *
    * @param options
-   * resolve options
+   *          resolve options
    * @return the resolved <code>Config</code> (may be only partially resolved if options are set to allow unresolved)
    */
   def resolve(options: ConfigResolveOptions): Config
 
   /**
    * Checks whether the config is completely resolved. After a successful call
-   * to {@link Config#resolve} it will be completely resolved, but after
-   * calling {@link Config#resolve(ConfigResolveOptions)} with
-   * <code>allowUnresolved</code> set in the options, it may or may not be
+   * to [[#resolve()* resolve()]] it will be completely resolved, but after calling
+   * [[#resolve(options:org\.ekrich\.config\.ConfigResolveOptions)* resolve(ConfigResolveOptions)]]
+   * with <code>allowUnresolved</code> set in the options, it may or may not be
    * completely resolved. A newly-loaded config may or may not be completely
    * resolved depending on whether there were substitutions present in the
    * file.
@@ -266,7 +272,7 @@ trait Config extends ConfigMergeable {
   def isResolved: Boolean
 
   /**
-   * Like {@link Config#resolve} except that substitution values are looked
+   * Like [[#resolve()* resolve()]] except that substitution values are looked
    * up in the given source, rather than in this instance. This is a
    * special-purpose method which doesn't make sense to use in most cases;
    * it's only needed if you're constructing some sort of app-specific custom
@@ -278,7 +284,7 @@ trait Config extends ConfigMergeable {
    * values. If you want to do that, you could either merge this instance into
    * your value source using {@link Config#withFallback}, or you could resolve
    * multiple times with multiple sources (using
-   * {@link ConfigResolveOptions#setAllowUnresolved(boolean)} so the partial
+   * {@link ConfigResolveOptions#setAllowUnresolved} so the partial
    * resolves don't fail).
    *
    * @param source
@@ -294,8 +300,8 @@ trait Config extends ConfigMergeable {
   def resolveWith(source: Config): Config
 
   /**
-   * Like {@link Config#resolveWith(Config)} but allows you to specify
-   * non-default options.
+   * Like [[#resolveWith(source:org\.ekrich\.config\.Config)* resolveWith(Config)]]
+   * but allows you to specify non-default options.
    *
    * @param source
    * source configuration to pull values from
@@ -345,8 +351,9 @@ trait Config extends ConfigMergeable {
    * in particular it's assumed that strings are compatible with everything
    * except objects and lists. This is because string types are often "really"
    * some other type (system properties always start out as strings, or a
-   * string like "5ms" could be used with {@link #getDuration}). Also,
-   * it's allowed to set any type to null or override null with any type.
+   * string like "5ms" could be used with
+   * [[#getDuration(path:String)* getDuration(String)]]).
+   * Also, it's allowed to set any type to null or override null with any type.
    * <li>
    * Any unresolved substitutions in this config will cause a validation
    * failure; both the reference config and this config should be resolved
@@ -406,7 +413,7 @@ trait Config extends ConfigMergeable {
    *
    * <p>
    * Note that path expressions have a syntax and sometimes require quoting
-   * (see {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link ConfigUtil#splitPath}).
    *
    * @param path
    * the path expression
@@ -447,7 +454,7 @@ trait Config extends ConfigMergeable {
    *
    * <p>
    * Note that path expressions have a syntax and sometimes require quoting
-   * (see {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link ConfigUtil#splitPath}).
    *
    * @param path
    * the path expression
@@ -502,7 +509,7 @@ trait Config extends ConfigMergeable {
    *
    * <p>
    * Note that path expressions have a syntax and sometimes require quoting
-   * (see {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link ConfigUtil#splitPath}).
    *
    * @param path
    * the path expression
@@ -984,7 +991,8 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets a list, converting each value in the list to a duration, using the
-   * same rules as {@link #getDuration}.
+   * same rules as
+   * [[#getDuration(path:String,unit:java\.util\.concurrent\.TimeUnit)* getDuration(String, TimeUnit)]].
    *
    * @since 1.2.0
    * @param path
@@ -997,7 +1005,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets a list, converting each value in the list to a duration, using the
-   * same rules as {@link #getDuration}.
+   * same rules as [[#getDuration(path:String)* getDuration(String)]].
    *
    * @since 1.3.0
    * @param path
@@ -1011,7 +1019,7 @@ trait Config extends ConfigMergeable {
    * all sibling paths are removed.
    * <p>
    * Note that path expressions have a syntax and sometimes require quoting
-   * (see {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link ConfigUtil#splitPath}).
    *
    * @param path
    * path to keep
@@ -1023,7 +1031,7 @@ trait Config extends ConfigMergeable {
    * Clone the config with the given path removed.
    * <p>
    * Note that path expressions have a syntax and sometimes require quoting
-   * (see {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link ConfigUtil#splitPath}).
    *
    * @param path
    * path expression to remove
@@ -1035,7 +1043,7 @@ trait Config extends ConfigMergeable {
    * Places the config inside another {@code Config} at the given path.
    * <p>
    * Note that path expressions have a syntax and sometimes require quoting
-   * (see {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link ConfigUtil#splitPath}).
    *
    * @param path
    * path expression to store this config at.
@@ -1047,7 +1055,7 @@ trait Config extends ConfigMergeable {
   /**
    * Places the config inside a {@code Config} at the given key. See also
    * atPath. Note that a key is NOT a path expression (see
-   * {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).
+   * [[ConfigUtil$.joinPath(elements:String*)*]] and {@link ConfigUtil#splitPath}).
    *
    * @param key
    * key to store this config at.
@@ -1063,7 +1071,7 @@ trait Config extends ConfigMergeable {
    * value, use withoutPath.
    * <p>
    * Note that path expressions have a syntax and sometimes require quoting
-   * (see {@link ConfigUtil#joinPath} and {@link ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link ConfigUtil#splitPath}).
    *
    * @param path
    * path expression for the value's new location

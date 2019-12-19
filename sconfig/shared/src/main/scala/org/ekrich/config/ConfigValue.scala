@@ -51,7 +51,8 @@ trait ConfigValue extends ConfigMergeable {
    * whitespace.
    *
    * <p>
-   * If the config value has not been resolved (see {@link Config#resolve}),
+   * If the config value has not been resolved
+   * (see [[Config!.resolve()* Config.resolve()]]),
    * it's possible that it can't be rendered as valid HOCON. In that case the
    * rendering should still be useful for debugging but you might not be able
    * to parse it. If the value has been resolved, it will always be parseable.
@@ -68,7 +69,8 @@ trait ConfigValue extends ConfigMergeable {
    * Renders the config value to a string, using the provided options.
    *
    * <p>
-   * If the config value has not been resolved (see {@link Config#resolve}),
+   * If the config value has not been resolved
+   * (see [[[Config!.resolve()* Config.resolve()]]),
    * it's possible that it can't be rendered as valid HOCON. In that case the
    * rendering should still be useful for debugging but you might not be able
    * to parse it. If the value has been resolved, it will always be parseable.
@@ -84,6 +86,7 @@ trait ConfigValue extends ConfigMergeable {
    * @return the rendered value
    */
   def render(options: ConfigRenderOptions): String
+
   override def withFallback(other: ConfigMergeable): ConfigValue
 
   /**
