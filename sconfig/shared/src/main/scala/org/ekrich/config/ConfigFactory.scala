@@ -16,7 +16,7 @@ import java.util.concurrent.Callable
  *
  * See also [[ConfigValueFactory]] which contains static methods for
  * converting Java values into a [[ConfigObject]]. You can then convert a
- * [[ConfigObject]] into a [[Config]] with [[ConfigObject#toConfig]].
+ * [[ConfigObject]] into a [[Config]] with [[ConfigObject#toConfig ConfigObject.toConfig()]].
  *
  * The static methods with "load" in the name do some sort of higher-level
  * operation potentially parsing multiple resources and resolving substitutions,
@@ -579,8 +579,9 @@ object ConfigFactory {
     Parseable.newProperties(properties, options).parse().toConfig
 
   /**
-   * Like [[ConfigFactory#parseProperties(Properties, ConfigParseOptions)]] but uses default
-   * parse options.
+   * Like
+   * [[#parseProperties(properties:java\.util\.Properties,options:org\.ekrich\.config\.ConfigParseOptions)* parseProperties(Properties, ConfigParseOptions)]]
+   * but uses default parse options.
    *
    * @param properties
    *            a Java Properties object
@@ -609,8 +610,8 @@ object ConfigFactory {
 
   /**
    * Parses a reader into a Config instance as with
-   * [[ConfigFactory.parseReader(Reader,ConfigParseOptions)]] but always uses the
-   * default parse options.
+   * [[#parseReader(reader:java\.io\.Reader,options:org\.ekrich\.config\.ConfigParseOptions)* parseReader(Reader, ConfigParseOptions)]]
+   * but always uses the default parse options.
    *
    * @param reader
    *       the reader to parse
@@ -670,8 +671,8 @@ object ConfigFactory {
 
   /**
    * Parses a file into a Config instance as with
-   * [[ConfigFactory#parseFile(File,ConfigParseOptions)]] but always uses the
-   * default parse options.
+   * [[#parseFile(file:java\.io\.File,options:org\.ekrich\.config\.ConfigParseOptions)* parseFile(File,ConfigParseOptions)]]
+   * but always uses the default parse options.
    *
    * @param file
    *       the file to parse
@@ -763,8 +764,9 @@ object ConfigFactory {
     Parseable.newResources(klass, resource, options).parse().toConfig
 
   /**
-   * Like [[ConfigFactory#parseResources(Class,String,ConfigParseOptions)]] but always uses
-   * default parse options.
+   * Like
+   * [[#parseResources(klass:Class[_],resource:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResources(Class,String,ConfigParseOptions)]]
+   * but always uses default parse options.
    *
    * @param klass
    *            `klass.getClassLoader()` will be used to load
@@ -848,8 +850,9 @@ object ConfigFactory {
    * `java.lang.Class.getResource`, so the name never begins with a
    * slash.
    *
-   * See [[ConfigFactory#parseResources(Class,String,ConfigParseOptions)]] for full
-   * details.
+   * See
+   * [[#parseResources(klass:Class[_],resource:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResources(Class,String,ConfigParseOptions)]]
+   * for full details.
    *
    * @param loader
    *            will be used to load resources by setting this loader on the
@@ -868,7 +871,8 @@ object ConfigFactory {
     parseResources(resource, options.setClassLoader(loader))
 
   /**
-   * Like [[#parseResources(loader:ClassLoader,resource:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResources(ClassLoader,String,ConfigParseOptions)]]
+   * Like
+   * [[#parseResources(loader:ClassLoader,resource:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResources(ClassLoader,String,ConfigParseOptions)]]
    * but always uses default parse options.
    *
    * @param loader
@@ -950,8 +954,9 @@ object ConfigFactory {
   }
 
   /**
-   * Like [[ConfigFactory#parseResources(ClassLoader,String)]] but uses thread's
-   * current context class loader.
+   * Like
+   * [[#parseResources(loader:ClassLoader,resource:String)* parseResources(ClassLoader,String)]]
+   * but uses thread's current context class loader.
    *
    * @param resource the resource name
    * @return the parsed configuration
@@ -1010,11 +1015,12 @@ object ConfigFactory {
   /**
    * Creates a [[Config]] based on a `java.util.Map` from paths to
    * plain Java values. Similar to
-   * [[ConfigValueFactory#fromMap(Map,String)]], except the keys in the
-   * map are path expressions, rather than keys; and correspondingly it
-   * returns a [[Config]] instead of a [[ConfigObject]]. This is more
-   * convenient if you are writing literal maps in code, and less convenient
-   * if you are getting your maps from some data source such as a parser.
+   * [[ConfigValueFactory$.fromMap(values:java\.util\.Map[String,_],originDescription:String)* ConfigValueFactory.fromMap(Map,String)]],
+   * except the keys in the map are path expressions, rather than keys; and
+   * correspondingly it returns a [[Config]] instead of a [[ConfigObject]].
+   * This is more convenient if you are writing literal maps in code, and less
+   * convenient if you are getting your maps from some data source such as a
+   * parser.
    *
    * An exception will be thrown (and it is a bug in the caller of the method)
    * if a path is both an object and a value, for example if you had both
