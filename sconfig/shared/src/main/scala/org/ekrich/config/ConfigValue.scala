@@ -37,7 +37,7 @@ trait ConfigValue extends ConfigMergeable {
   /**
    * Returns the value as a plain Java boxed value, that is, a {@code String},
    * {@code Number}, {@code Boolean}, {@code Map<String,Object>},
-   * {@code List<Object>}, or {@code null}, matching the {@link #valueType()}
+   * {@code List<Object>}, or {@code null}, matching the {@link #valueType}
    * of this {@code ConfigValue}. If the value is a {@link ConfigObject} or
    * {@link ConfigList}, it is recursively unwrapped.
    *
@@ -51,7 +51,8 @@ trait ConfigValue extends ConfigMergeable {
    * whitespace.
    *
    * <p>
-   * If the config value has not been resolved (see {@link Config#resolve}),
+   * If the config value has not been resolved
+   * (see [[Config!.resolve()* Config.resolve()]]),
    * it's possible that it can't be rendered as valid HOCON. In that case the
    * rendering should still be useful for debugging but you might not be able
    * to parse it. If the value has been resolved, it will always be parseable.
@@ -68,7 +69,8 @@ trait ConfigValue extends ConfigMergeable {
    * Renders the config value to a string, using the provided options.
    *
    * <p>
-   * If the config value has not been resolved (see {@link Config#resolve}),
+   * If the config value has not been resolved
+   * (see [[[Config!.resolve()* Config.resolve()]]),
    * it's possible that it can't be rendered as valid HOCON. In that case the
    * rendering should still be useful for debugging but you might not be able
    * to parse it. If the value has been resolved, it will always be parseable.
@@ -84,11 +86,12 @@ trait ConfigValue extends ConfigMergeable {
    * @return the rendered value
    */
   def render(options: ConfigRenderOptions): String
+
   override def withFallback(other: ConfigMergeable): ConfigValue
 
   /**
    * Places the value inside a {@link Config} at the given path. See also
-   * {@link ConfigValue#atKey(String)}.
+   * {@link ConfigValue#atKey}.
    *
    * @param path
    *            path to store this value at.
@@ -99,7 +102,7 @@ trait ConfigValue extends ConfigMergeable {
 
   /**
    * Places the value inside a {@link Config} at the given key. See also
-   * {@link ConfigValue#atPath(String)}.
+   * {@link ConfigValue#atPath}.
    *
    * @param key
    *            key to store this value at.

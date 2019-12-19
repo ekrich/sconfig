@@ -18,15 +18,15 @@ object ConfigDocumentFactory {
    * @param options
    *       parse options to control how the reader is interpreted
    * @return the parsed configuration
-   * @throws [[org.ekrich.config.ConfigException]] on IO or parse errors
+   * @throws ConfigException on IO or parse errors
    */
   def parseReader(reader: Reader, options: ConfigParseOptions): ConfigDocument =
     Parseable.newReader(reader, options).parseConfigDocument()
 
   /**
    * Parses a reader into a Config instance as with
-   * {@link #parseReader(Reader,ConfigParseOptions)} but always uses the
-   * default parse options.
+   * [[#parseReader(reader:java\.io\.Reader,options:org\.ekrich\.config\.ConfigParseOptions)* parseReader(Reader, ConfigParseOptions)]]
+   * but always uses the default parse options.
    *
    * @param reader
    *       the reader to parse
@@ -51,8 +51,8 @@ object ConfigDocumentFactory {
 
   /**
    * Parses a file into a ConfigDocument instance as with
-   * {@link #parseFile(File,ConfigParseOptions)} but always uses the
-   * default parse options.
+   * [[#parseFile(file:java\.io\.File,options:org\.ekrich\.config\.ConfigParseOptions)* parseFile(File, ConfigParseOptions)]]
+   * but always uses the default parse options.
    *
    * @param file
    *       the file to parse

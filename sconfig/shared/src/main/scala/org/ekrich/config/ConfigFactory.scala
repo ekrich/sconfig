@@ -16,7 +16,7 @@ import java.util.concurrent.Callable
  *
  * See also [[ConfigValueFactory]] which contains static methods for
  * converting Java values into a [[ConfigObject]]. You can then convert a
- * [[ConfigObject]] into a [[Config]] with [[ConfigObject#toConfig]].
+ * [[ConfigObject]] into a [[Config]] with [[ConfigObject#toConfig ConfigObject.toConfig()]].
  *
  * The static methods with "load" in the name do some sort of higher-level
  * operation potentially parsing multiple resources and resolving substitutions,
@@ -38,11 +38,11 @@ object ConfigFactory {
    * classpath resource basename, sandwiches it between default reference
    * config and default overrides, and then resolves it. The classpath
    * resource is "raw" (it should have no "/" prefix, and is not made relative
-   * to any package, so it's like [[ClassLoader#getResource]] not
-   * [[Class#getResource]]).
+   * to any package, so it's like `ClassLoader.getResource` not
+   * `Class.getResource`).
    *
    * Resources are loaded from the current thread's
-   * [[Thread!.getContextClassLoader()]]. In general, a library needs its
+   * `Thread.getContextClassLoader`. In general, a library needs its
    * configuration to come from the class loader used to load that library, so
    * the proper "reference.conf" are present.
    *
@@ -50,12 +50,14 @@ object ConfigFactory {
    * been processed). As a result, if you add more fallbacks then they won't
    * be seen by substitutions. Substitutions are the `\${foo.bar}` syntax. If
    * you want to parse additional files or something then you need to use
-   * [[ConfigFactory.load(Config)]].
+   * [[#load(config:org\.ekrich\.config\.Config)* load(Config)]].
    *
    * To load a standalone resource (without the default reference and default
-   * overrides), use [[ConfigFactory.parseResourcesAnySyntax(String)]] rather than this
-   * method. To load only the reference config use [[ConfigFactory.defaultReference()]]
-   * and to load only the overrides use [[ConfigFactory.defaultOverrides()]].
+   * overrides), use
+   * [[#parseResourcesAnySyntax(resourceBasename:String)* parseResourcesAnySyntax(String)]]
+   * rather than this
+   * method. To load only the reference config use [[#defaultReference()* defaultReference()]]
+   * and to load only the overrides use [[#defaultOverrides()* defaultOverrides()]].
    *
    * @param resourceBasename
    *            name (optionally without extension) of a resource on classpath
@@ -69,14 +71,16 @@ object ConfigFactory {
     )
 
   /**
-   * Like [[ConfigFactory.load(String)]] but uses the supplied class loader instead of
-   * the current thread's context class loader.
+   * Like [[#load(resourceBasename:String)* ConfigFactory.load(String)]]
+   * but uses the supplied class loader instead of the current thread's
+   * context class loader.
    *
    * To load a standalone resource (without the default reference and default
-   * overrides), use [[ConfigFactory.parseResourcesAnySyntax(ClassLoader, String)]]
+   * overrides), use
+   * [[#parseResourcesAnySyntax(loader:ClassLoader,resourceBasename:String)* parseResourcesAnySyntax(ClassLoader,String)]]
    * rather than this method. To load only the reference config use
-   * [[ConfigFactory.defaultReference(ClassLoader)]] and to load only the overrides use
-   * [[ConfigFactory.defaultOverrides(ClassLoader)]].
+   * [[#defaultReference(loader:ClassLoader)* defaultReference(ClassLoader)]] and to load only the overrides use
+   * [[#defaultOverrides(loader:ClassLoader)* defaultOverrides(ClassLoader)]].
    *
    * @param loader class loader to look for resources in
    * @param resourceBasename basename (no .conf/.json/.properties suffix)
@@ -90,8 +94,8 @@ object ConfigFactory {
     )
 
   /**
-   * Like [[ConfigFactory.load(String)]] but allows you to specify parse and resolve
-   * options.
+   * Like [[#load(resourceBasename:String)* ConfigFactory.load(String)]]
+   * but allows you to specify parse and resolve options.
    *
    * @param resourceBasename
    *            the classpath resource name with optional extension
@@ -113,8 +117,9 @@ object ConfigFactory {
   }
 
   /**
-   * Like [[ConfigFactory.load(String,ConfigParseOptions,ConfigResolveOptions)]] but
-   * has a class loader parameter that overrides any from the
+   * Like
+   * [[#load(resourceBasename:String,parseOptions:org\.ekrich\.config\.ConfigParseOptions,resolveOptions:org\.ekrich\.config\.ConfigResolveOptions)* load(String,ConfigParseOptions,ConfigResolveOptions)]]
+   * but has a class loader parameter that overrides any from the
    * [[ConfigParseOptions]].
    *
    * @param loader
@@ -140,7 +145,9 @@ object ConfigFactory {
     val loader = Thread.currentThread.getContextClassLoader
     if (loader == null)
       throw new ConfigException.BugOrBroken(
-        "Context class loader is not set for the current thread; " + "if Thread.currentThread.getContextClassLoader returns null, you must pass a ClassLoader " + "explicitly to ConfigFactory." + methodName
+        "Context class loader is not set for the current thread; " +
+          "if Thread.currentThread.getContextClassLoader returns null, you must pass a ClassLoader " +
+          "explicitly to ConfigFactory." + methodName
       )
     else loader
   }
@@ -166,8 +173,8 @@ object ConfigFactory {
     load(checkedContextClassLoader("load"), config)
 
   /**
-   * Like [[ConfigFactory.load(Config)]] but allows you to specify
-   * the class loader for looking up resources.
+   * Like [[#load(config:org\.ekrich\.config\.Config)* load(Config)]]
+   * but allows you to specify the class loader for looking up resources.
    *
    * @param loader
    *            the class loader to use to find resources
@@ -179,8 +186,8 @@ object ConfigFactory {
     load(loader, config, ConfigResolveOptions.defaults)
 
   /**
-   * Like [[ConfigFactory.load(Config)]] but allows you to specify
-   * [[ConfigResolveOptions]].
+   * Like [[#load(config:org\.ekrich\.config\.Config)* load(Config)]]
+   * but allows you to specify [[ConfigResolveOptions]].
    *
    * @param config
    *            the application's portion of the configuration
@@ -192,8 +199,9 @@ object ConfigFactory {
     load(checkedContextClassLoader("load"), config, resolveOptions)
 
   /**
-   * Like [[ConfigFactory.load(Config,ConfigResolveOptions)]] but allows you to specify
-   * a class loader other than the context class loader.
+   * Like
+   * [[#load(config:org\.ekrich\.config\.Config,resolveOptions:org\.ekrich\.config\.ConfigResolveOptions)* load(Config,ConfigResolveOptions)]]
+   * but allows you to specify a class loader other than the context class loader.
    *
    * @param loader
    *            class loader to use when looking up override and reference
@@ -215,12 +223,14 @@ object ConfigFactory {
       .resolve(resolveOptions)
 
   /**
-   * Loads a default configuration, equivalent to [[ConfigFactory.load(Config)]]
-   * [[.load(defaultApplication())]] in most cases. This configuration should be used by
-   * libraries and frameworks unless an application provides a different one.
+   * Loads a default configuration, equivalent to
+   * [[#load(config:org\.ekrich\.config\.Config)* load(Config)]]
+   * `ConfigFactory.load(defaultApplication()) in most cases. This
+   * configuration should be used by libraries and frameworks unless an
+   * application provides a different one.
    *
    * This method may return a cached singleton so will not see changes to
-   * system properties or config files. (Use [[ConfigFactory.invalidateCaches()]] to
+   * system properties or config files. (Use [[#invalidateCaches invalidateCaches()]] to
    * force it to reload.)
    *
    * @return configuration for an application
@@ -231,7 +241,7 @@ object ConfigFactory {
   }
 
   /**
-   * Like [[ConfigFactory.load()]] but allows specifying parse options.
+   * Like [[#load()* load()]] but allows specifying parse options.
    *
    * @param parseOptions
    *            Options for parsing resources
@@ -241,7 +251,7 @@ object ConfigFactory {
     load(parseOptions, ConfigResolveOptions.defaults)
 
   /**
-   * Like [[ConfigFactory.load()]] but allows specifying a class loader other than the
+   * Like [[#load()* load()]] but allows specifying a class loader other than the
    * thread's current context class loader.
    *
    * @param loader
@@ -259,7 +269,7 @@ object ConfigFactory {
   }
 
   /**
-   * Like [[ConfigFactory.load()]] but allows specifying a class loader other than the
+   * Like [[#load()* load()]] but allows specifying a class loader other than the
    * thread's current context class loader and also specify parse options.
    *
    * @param loader
@@ -272,7 +282,7 @@ object ConfigFactory {
     load(parseOptions.setClassLoader(loader))
 
   /**
-   * Like [[ConfigFactory.load()]] but allows specifying a class loader other than the
+   * Like [[#load()* load()]] but allows specifying a class loader other than the
    * thread's current context class loader and also specify resolve options.
    *
    * @param loader
@@ -285,7 +295,7 @@ object ConfigFactory {
     load(loader, ConfigParseOptions.defaults, resolveOptions)
 
   /**
-   * Like [[ConfigFactory.load()]] but allows specifying a class loader other than the
+   * Like [[#load()* load()]] but allows specifying a class loader other than the
    * thread's current context class loader, parse options, and resolve options.
    *
    * @param loader
@@ -306,7 +316,7 @@ object ConfigFactory {
   }
 
   /**
-   * Like [[ConfigFactory.load()]] but allows specifying parse options and resolve
+   * Like [[#load()* load()]] but allows specifying parse options and resolve
    * options.
    *
    * @param parseOptions
@@ -336,10 +346,10 @@ object ConfigFactory {
    * The reference config must be looked up in the class loader that contains
    * the libraries that you want to use with this config, so the
    * "reference.conf" for each library can be found. Use
-   * [[ConfigFactory.defaultReference(ClassLoader)]] if the context class loader is not
+   * [[#defaultReference(loader:ClassLoader)* defaultReference(ClassLoader)]] if the context class loader is not
    * suitable.
    *
-   * The [[ConfigFactory.load()]] methods merge this configuration for you
+   * The [[#load()* load()]] methods merge this configuration for you
    * automatically.
    *
    * Future versions may look for reference configuration in more places. It
@@ -352,7 +362,7 @@ object ConfigFactory {
     defaultReference(checkedContextClassLoader("defaultReference"))
 
   /**
-   * Like [[ConfigFactory.defaultReference()]] but allows you to specify a class loader
+   * Like [[#defaultReference()* defaultReference()]] but allows you to specify a class loader
    * to use rather than the current context class loader.
    *
    * @param loader class loader to look for resources in
@@ -366,7 +376,7 @@ object ConfigFactory {
    * system properties. The returned override configuration will already have
    * substitutions resolved.
    *
-   * The [[ConfigFactory.load()]] methods merge this configuration for you
+   * The [[#load()* load()]] methods merge this configuration for you
    * automatically.
    *
    * Future versions may get overrides in more places. It is not guaranteed
@@ -377,7 +387,7 @@ object ConfigFactory {
   def defaultOverrides(): Config = systemProperties()
 
   /**
-   * Like [[ConfigFactory.defaultOverrides()]] but allows you to specify a class loader
+   * Like [[#defaultOverrides()* defaultOverrides()]] but allows you to specify a class loader
    * to use rather than the current context class loader.
    *
    * @param loader class loader to look for resources in
@@ -394,8 +404,10 @@ object ConfigFactory {
    * `config.resource`, and `config.url`
    * system properties.
    *
-   * The no-arguments [[ConfigFactory.load()]] method automatically
-   * stacks the [[ConfigFactory.defaultReference()]], [[ConfigFactory.defaultApplication()]], and [[ConfigFactory.defaultOverrides()]]
+   * The no-arguments [[#load()* load()]] method automatically stacks the
+   * [[#defaultReference()* defaultReference()]],
+   * [[#defaultApplication()* defaultApplication()]],
+   * and [[#defaultOverrides()* defaultOverrides()]]
    * configs. You would use `defaultApplication()`
    * directly only if you're somehow customizing behavior by
    * reimplementing `load()`.
@@ -413,7 +425,8 @@ object ConfigFactory {
    * used rather than the default
    * `application.{conf,json,properties]]` classpath resources.
    * These system properties should not be set in code (after all, you can
-   * just parse whatever you want manually and then use [[ConfigFactory.load(Config)]]
+   * just parse whatever you want manually and then use
+   * [[#load(config:org\.ekrich\.config\.Config)* load(Config)]]
    * if you don't want to use `application.conf`). The properties
    * are intended for use by the person or script launching the application.
    * For example someone might have a `production.conf` that
@@ -432,7 +445,7 @@ object ConfigFactory {
     defaultApplication(ConfigParseOptions.defaults)
 
   /**
-   * Like [[ConfigFactory.defaultApplication()]] but allows you to specify a class loader
+   * Like [[#defaultApplication()* defaultApplication()]] but allows you to specify a class loader
    * to use rather than the current context class loader.
    *
    * @since 1.3.0
@@ -443,7 +456,7 @@ object ConfigFactory {
     defaultApplication(ConfigParseOptions.defaults.setClassLoader(loader))
 
   /**
-   * Like [[ConfigFactory.defaultApplication()]] but allows you to specify parse options.
+   * Like [[#defaultApplication()* defaultApplication()]] but allows you to specify parse options.
    *
    * @since 1.3.0
    * @param options the options
@@ -458,8 +471,8 @@ object ConfigFactory {
    * Reloads any cached configs, picking up changes to system properties for
    * example. Because a [[Config]] is immutable, anyone with a reference
    * to the old configs will still have the same outdated objects. However,
-   * new calls to [[ConfigFactory.load()]] or [[ConfigFactory.defaultOverrides()]] or
-   * [[ConfigFactory.defaultReference]] may return a new object.
+   * new calls to [[#load()* load()]] or [[#defaultOverrides()* defaultOverrides()]]
+   * or [[#defaultReference()* defaultReference()]] may return a new object.
    *
    * This method is primarily intended for use in unit tests, for example,
    * that may want to update a system property then confirm that it's used
@@ -470,7 +483,7 @@ object ConfigFactory {
    * the reload can occur at any time, even during the invalidation process.
    * So FIRST make the changes you'd like the caches to notice, then SECOND
    * call this method to invalidate caches. Don't expect that invalidating,
-   * making changes, then calling [[ConfigFactory.load()]], will work. Make changes
+   * making changes, then calling [[#load()* load()]], will work. Make changes
    * before you invalidate.
    */
   def invalidateCaches(): Unit = {
@@ -480,7 +493,8 @@ object ConfigFactory {
   }
 
   /**
-   * Gets an empty configuration. See also [[ConfigFactory.empty(String)]] to create an
+   * Gets an empty configuration. See also
+   * [[#empty(originDescription:String)* empty(String)]] to create an
    * empty configuration with a description, which may improve user-visible
    * error messages.
    *
@@ -505,18 +519,18 @@ object ConfigFactory {
 
   /**
    * Gets a `Config` containing the system properties from
-   * [[java.lang.System#getProperties()]], parsed and converted as with
-   * [[ConfigFactory#parseProperties]].
+   * `java.lang.System.getProperties()`, parsed and converted as with
+   * [[ConfigFactory$.parseProperties(properties:java\.util\.Properties)* parseProperties(Properties)]].
    *
    * This method can return a global immutable singleton, so it's preferred
    * over parsing system properties yourself.
    *
-   * [[ConfigFactory#load]] will include the system properties as overrides already, as
-   * will [[ConfigFactory#defaultReference]] and [[ConfigFactory#defaultOverrides]].
+   * [[#load()* ConfigFactory.load()]] will include the system properties as overrides already, as
+   * will [[#defaultReference()* defaultReference()]] and [[#defaultOverrides()* defaultOverrides()]].
    *
    * Because this returns a singleton, it will not notice changes to system
    * properties made after the first time this method is called. Use
-   * [[ConfigFactory#invalidateCaches()]] to force the singleton to reload if you
+   * [[#invalidateCaches invalidateCaches()]] to force the singleton to reload if you
    * modify system properties.
    *
    * @return system properties parsed into a [[Config]]
@@ -531,7 +545,7 @@ object ConfigFactory {
    * whether or not this object is included in the config being resolved, so
    * you probably don't need to use this method for most purposes. It can be a
    * nicer API for accessing environment variables than raw
-   * [[java.lang.System.getenv(String)]] though, since you can use methods
+   * `java.lang.System.getenv(String)` though, since you can use methods
    * such as [[Config.getInt]].
    *
    * @return system environment variables parsed into a `Config`
@@ -539,7 +553,7 @@ object ConfigFactory {
   def systemEnvironment(): Config = ConfigImpl.envVariablesAsConfig
 
   /**
-   * Converts a Java [[java.util.Properties]] object to a
+   * Converts a Java `java.util.Properties` object to a
    * [[ConfigObject]] using the rules documented in the
    * [[https://github.com/ekrich/sconfig/blob/master/HOCON.md HOCON spec]]
    * The keys in the `Properties` object are split on the
@@ -549,7 +563,7 @@ object ConfigFactory {
    * the string value is dropped.
    *
    * If you want to have `System.getProperties()` as a
-   * ConfigObject, it's better to use the [[ConfigFactory.systemProperties()]] method
+   * ConfigObject, it's better to use the [[#systemProperties]] method
    * which returns a cached global singleton.
    *
    * @param properties
@@ -565,8 +579,9 @@ object ConfigFactory {
     Parseable.newProperties(properties, options).parse().toConfig
 
   /**
-   * Like [[ConfigFactory#parseProperties(Properties, ConfigParseOptions)]] but uses default
-   * parse options.
+   * Like
+   * [[#parseProperties(properties:java\.util\.Properties,options:org\.ekrich\.config\.ConfigParseOptions)* parseProperties(Properties, ConfigParseOptions)]]
+   * but uses default parse options.
    *
    * @param properties
    *            a Java Properties object
@@ -577,8 +592,8 @@ object ConfigFactory {
 
   /**
    * Parses a Reader into a Config instance. Does not call
-   * [[Config.resolve*]] or merge the parsed stream with any
-   * other configuration; this method parses a single stream and
+   * [[Config!.resolve()* Config.resolve()]] or merge the parsed stream with
+   * any other configuration; this method parses a single stream and
    * does nothing else. It does process "include" statements in
    * the parsed stream, and may end up doing other IO due to those
    * statements.
@@ -595,8 +610,8 @@ object ConfigFactory {
 
   /**
    * Parses a reader into a Config instance as with
-   * [[ConfigFactory.parseReader(Reader,ConfigParseOptions)]] but always uses the
-   * default parse options.
+   * [[#parseReader(reader:java\.io\.Reader,options:org\.ekrich\.config\.ConfigParseOptions)* parseReader(Reader, ConfigParseOptions)]]
+   * but always uses the default parse options.
    *
    * @param reader
    *       the reader to parse
@@ -608,8 +623,8 @@ object ConfigFactory {
 
   /**
    * Parses a URL into a Config instance. Does not call
-   * [[Config.resolve*]] or merge the parsed stream with any
-   * other configuration; this method parses a single stream and
+   * [[Config!.resolve()* Config.resolve()]] or merge the parsed stream with
+   * any other configuration; this method parses a single stream and
    * does nothing else. It does process "include" statements in
    * the parsed stream, and may end up doing other IO due to those
    * statements.
@@ -626,7 +641,7 @@ object ConfigFactory {
 
   /**
    * Parses a url into a [[Config]] instance as with
-   * [[ConfigFactory.parseURL(URL,ConfigParseOptions)]]
+   * [[#parseURL(url:java\.net\.URL,options:org\.ekrich\.config\.ConfigParseOptions)* ConfigFactory.parseURL(URL,ConfigParseOptions)]]
    * but always uses the default parse options.
    *
    * @param url
@@ -638,8 +653,8 @@ object ConfigFactory {
 
   /**
    * Parses a file into a Config instance. Does not call
-   * [[Config.resolve]] or merge the file with any other
-   * configuration; this method parses a single file and does
+   * [[Config!.resolve()* Config.resolve()]] or merge the file with any
+   * other configuration; this method parses a single file and does
    * nothing else. It does process "include" statements in the
    * parsed file, and may end up doing other IO due to those
    * statements.
@@ -656,8 +671,8 @@ object ConfigFactory {
 
   /**
    * Parses a file into a Config instance as with
-   * [[ConfigFactory#parseFile(File,ConfigParseOptions)]] but always uses the
-   * default parse options.
+   * [[#parseFile(file:java\.io\.File,options:org\.ekrich\.config\.ConfigParseOptions)* parseFile(File,ConfigParseOptions)]]
+   * but always uses the default parse options.
    *
    * @param file
    *       the file to parse
@@ -703,8 +718,9 @@ object ConfigFactory {
     ConfigImpl.parseFileAnySyntax(fileBasename, options).toConfig
 
   /**
-   * Like [[ConfigFactory#parseFileAnySyntax(File,ConfigParseOptions)]] but always uses
-   * default parse options.
+   * Like
+   * [[#parseFileAnySyntax(fileBasename:java\.io\.File,options:org\.ekrich\.config\.ConfigParseOptions)* parseFileAnySyntax(File,ConfigParseOptions)]]
+   * but always uses default parse options.
    *
    * @param fileBasename
    *            a filename with or without extension
@@ -719,10 +735,10 @@ object ConfigFactory {
    *
    * If the resource name does not begin with a "/", it will have the supplied
    * class's package added to it, in the same way as
-   * [[java.lang.Class#getResource]].
+   * `java.lang.Class.getResource`.
    *
    * Duplicate resources with the same name are merged such that ones returned
-   * earlier from [[ClassLoader#getResources]] fall back to (have higher
+   * earlier from `ClassLoader.getResources` fall back to (have higher
    * priority than) the ones returned later# This implies that resources
    * earlier in the classpath override those later in the classpath when they
    * configure the same setting# However, in practice real applications may
@@ -748,8 +764,9 @@ object ConfigFactory {
     Parseable.newResources(klass, resource, options).parse().toConfig
 
   /**
-   * Like [[ConfigFactory#parseResources(Class,String,ConfigParseOptions)]] but always uses
-   * default parse options.
+   * Like
+   * [[#parseResources(klass:Class[_],resource:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResources(Class,String,ConfigParseOptions)]]
+   * but always uses default parse options.
    *
    * @param klass
    *            `klass.getClassLoader()` will be used to load
@@ -766,18 +783,18 @@ object ConfigFactory {
   /**
    * Parses classpath resources with a flexible extension. In general, this
    * method has the same behavior as
-   * [[ConfigFactory#parseFileAnySyntax(File,ConfigParseOptions)]] but for classpath
-   * resources instead, as in [[ConfigFactory#parseResources]].
+   * [[#parseFileAnySyntax(fileBasename:java\.io\.File,options:org\.ekrich\.config\.ConfigParseOptions)* parseFileAnySyntax(File,ConfigParseOptions)]]
+   * but for classpath resources instead, as in [[#parseResources(resource:String)* parseResources(String)]].
    *
    * There is a thorny problem with this method, which is that
-   * [[java.lang.ClassLoader#getResources]] must be called separately for
+   * `java.lang.ClassLoader.getResources` must be called separately for
    * each possible extension. The implementation ends up with separate lists
    * of resources called "basename.conf" and "basename.json" for example. As a
    * result, the ideal ordering between two files with different extensions is
    * unknown; there is no way to figure out how to merge the two lists in
    * classpath order. To keep it simple, the lists are simply concatenated,
    * with the same syntax priorities as
-   * [[ConfigFactory#parseFileAnySyntax(File,ConfigParseOptions)]]
+   * [[#parseFileAnySyntax(fileBasename:java\.io\.File,options:org\.ekrich\.config\.ConfigParseOptions)* parseFileAnySyntax(File,ConfigParseOptions)]]
    * - all ".conf" resources are ahead of all ".json" resources which are
    * ahead of all ".properties" resources.
    *
@@ -785,7 +802,7 @@ object ConfigFactory {
    *            class which determines the `ClassLoader` and the
    *            package for relative resource names
    * @param resourceBasename
-   *            a resource name as in [[java.lang.Class#getResource]],
+   *            a resource name as in `java.lang.Class.getResource`,
    *            with or without extension
    * @param options
    *            parse options (class loader is ignored in favor of the one
@@ -802,7 +819,8 @@ object ConfigFactory {
       .toConfig
 
   /**
-   * Like [[ConfigFactory#parseResourcesAnySyntax(Class,String,ConfigParseOptions)]]
+   * Like
+   * [[#parseResourcesAnySyntax(klass:Class[_],resourceBasename:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResourcesAnySyntax(Class,String,ConfigParseOptions)]]
    * but always uses default parse options.
    *
    * @param klass
@@ -810,7 +828,7 @@ object ConfigFactory {
    *            resources, and non-absolute resource names will have this
    *            class's package added
    * @param resourceBasename
-   *            a resource name as in [[java.lang.Class#getResource]],
+   *            a resource name as in `java.lang.Class.getResource`,
    *            with or without extension
    * @return the parsed configuration
    */
@@ -828,12 +846,13 @@ object ConfigFactory {
    * Parses all resources on the classpath with the given name and merges them
    * into a single `Config`.
    *
-   * This works like [[java.lang.ClassLoader#getResource]], not like
-   * [[java.lang.Class#getResource]], so the name never begins with a
+   * This works like `java.lang.ClassLoader.getResource`, not like
+   * `java.lang.Class.getResource`, so the name never begins with a
    * slash.
    *
-   * See [[ConfigFactory#parseResources(Class,String,ConfigParseOptions)]] for full
-   * details.
+   * See
+   * [[#parseResources(klass:Class[_],resource:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResources(Class,String,ConfigParseOptions)]]
+   * for full details.
    *
    * @param loader
    *            will be used to load resources by setting this loader on the
@@ -852,8 +871,9 @@ object ConfigFactory {
     parseResources(resource, options.setClassLoader(loader))
 
   /**
-   * Like [[ConfigFactory#parseResources(ClassLoader,String,ConfigParseOptions)]] but always uses
-   * default parse options.
+   * Like
+   * [[#parseResources(loader:ClassLoader,resource:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResources(ClassLoader,String,ConfigParseOptions)]]
+   * but always uses default parse options.
    *
    * @param loader
    *            will be used to load resources
@@ -867,20 +887,19 @@ object ConfigFactory {
   /**
    * Parses classpath resources with a flexible extension. In general, this
    * method has the same behavior as
-   * [[ConfigFactory#parseFileAnySyntax(File,ConfigParseOptions)]] but for classpath
-   * resources instead, as in
-   * [[ConfigFactory#parseResources(ClassLoader,String,ConfigParseOptions)]].
+   * [[#parseFileAnySyntax(fileBasename:java\.io\.File,options:org\.ekrich\.config\.ConfigParseOptions)* parseFileAnySyntax(File,ConfigParseOptions)]]
+   * but for classpath resources instead, as in
+   * [[#parseResources(loader:ClassLoader,resource:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResources(ClassLoader,String,ConfigParseOptions)]].
    *
-   * [[ConfigFactory#parseResourcesAnySyntax(Class,String,ConfigParseOptions)]] differs
-   * in the syntax for the resource name, but otherwise see
-   * [[ConfigFactory#parseResourcesAnySyntax(Class,String,ConfigParseOptions)]] for
+   * [[#parseResourcesAnySyntax(klass:Class[_],resourceBasename:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResourcesAnySyntax(Class,String,ConfigParseOptions)]]
+   * differs in the syntax for the resource name, but it is useful to review for
    * some details and caveats on this method.
    *
    * @param loader
    *            class loader to look up resources in, will be set on options
    * @param resourceBasename
    *            a resource name as in
-   *            [[java.lang.ClassLoader#getResource]], with or without
+   *            `java.lang.ClassLoader.getResource`, with or without
    *            extension
    * @param options
    *            parse options (class loader ignored)
@@ -896,14 +915,15 @@ object ConfigFactory {
       .toConfig
 
   /**
-   * Like [[ConfigFactory#parseResourcesAnySyntax(ClassLoader,String,ConfigParseOptions)]] but always uses
-   * default parse options.
+   * Like
+   * [[#parseResourcesAnySyntax(loader:ClassLoader,resourceBasename:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResourcesAnySyntax(ClassLoader,String,ConfigParseOptions)]]
+   * but always uses default parse options.
    *
    * @param loader
    *            will be used to load resources
    * @param resourceBasename
    *            a resource name as in
-   *            [[java.lang.ClassLoader#getResource]], with or without
+   *            `java.lang.ClassLoader.getResource`, with or without
    *            extension
    * @return the parsed configuration
    */
@@ -918,8 +938,9 @@ object ConfigFactory {
     )
 
   /**
-   * Like [[ConfigFactory#parseResources(ClassLoader,String,ConfigParseOptions)]] but
-   * uses thread's current context class loader if none is set in the
+   * Like
+   * [[#parseResources(loader:ClassLoader,resource:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResources(ClassLoader,String,ConfigParseOptions)]]
+   * but uses thread's current context class loader if none is set in the
    * ConfigParseOptions.
    *
    * @param resource the resource name
@@ -933,8 +954,9 @@ object ConfigFactory {
   }
 
   /**
-   * Like [[ConfigFactory#parseResources(ClassLoader,String)]] but uses thread's
-   * current context class loader.
+   * Like
+   * [[#parseResources(loader:ClassLoader,resource:String)* parseResources(ClassLoader,String)]]
+   * but uses thread's current context class loader.
    *
    * @param resource the resource name
    * @return the parsed configuration
@@ -944,7 +966,7 @@ object ConfigFactory {
 
   /**
    * Like
-   * [[ConfigFactory#parseResourcesAnySyntax(ClassLoader,String,ConfigParseOptions)]]
+   * [[#parseResourcesAnySyntax(loader:ClassLoader,resourceBasename:String,options:org\.ekrich\.config\.ConfigParseOptions)* parseResourcesAnySyntax(ClassLoader,String,ConfigParseOptions)]]
    * but uses thread's current context class loader.
    *
    * @param resourceBasename the resource basename (no file type suffix)
@@ -960,8 +982,9 @@ object ConfigFactory {
       .toConfig
 
   /**
-   * Like [[ConfigFactory#parseResourcesAnySyntax(ClassLoader,String)]] but uses
-   * thread's current context class loader.
+   * Like
+   * [[#parseResourcesAnySyntax(loader:ClassLoader,resourceBasename:String)* parseResourcesAnySyntax(ClassLoader,String)]]
+   * but uses thread's current context class loader.
    *
    * @param resourceBasename the resource basename (no file type suffix)
    * @return the parsed configuration
@@ -990,13 +1013,14 @@ object ConfigFactory {
     parseString(s, ConfigParseOptions.defaults)
 
   /**
-   * Creates a [[Config]] based on a [[java.util.Map]] from paths to
+   * Creates a [[Config]] based on a `java.util.Map` from paths to
    * plain Java values. Similar to
-   * [[ConfigValueFactory#fromMap(Map,String)]], except the keys in the
-   * map are path expressions, rather than keys; and correspondingly it
-   * returns a [[Config]] instead of a [[ConfigObject]]. This is more
-   * convenient if you are writing literal maps in code, and less convenient
-   * if you are getting your maps from some data source such as a parser.
+   * [[ConfigValueFactory$.fromMap(values:java\.util\.Map[String,_],originDescription:String)* ConfigValueFactory.fromMap(Map,String)]],
+   * except the keys in the map are path expressions, rather than keys; and
+   * correspondingly it returns a [[Config]] instead of a [[ConfigObject]].
+   * This is more convenient if you are writing literal maps in code, and less
+   * convenient if you are getting your maps from some data source such as a
+   * parser.
    *
    * An exception will be thrown (and it is a bug in the caller of the method)
    * if a path is both an object and a value, for example if you had both
@@ -1015,8 +1039,9 @@ object ConfigFactory {
     ConfigImpl.fromPathMap(values, originDescription).toConfig
 
   /**
-   * See the other overload of [[ConfigFactory#parseMap(Map, String)]] for details,
-   * this one just uses a default origin description.
+   * See the other overload of
+   * [[ConfigFactory$.parseMap(values:java\.util\.Map[String,_],originDescription:String)* ConfigFactory.parseMap(Map,String)]]
+   * for details, this one just uses a default origin description.
    *
    * @param values map from paths to plain Java values
    * @return the map converted to a [[Config]]

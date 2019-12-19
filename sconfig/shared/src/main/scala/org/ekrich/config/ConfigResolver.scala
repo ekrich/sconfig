@@ -11,8 +11,9 @@ package org.ekrich.config
 trait ConfigResolver {
   /**
    * Returns the value to substitute for the given unresolved path. To get the
-   * components of the path use {@link ConfigUtil#splitPath(String)}. If a
-   * non-null value is returned that value will be substituted, otherwise
+   * components of the path use
+   * [[ConfigUtil$.splitPath ConfigUtil.splitPath(String)]].
+   * If a non-null value is returned that value will be substituted, otherwise
    * resolution will continue to consider the substitution as still
    * unresolved.
    *

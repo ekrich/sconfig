@@ -36,7 +36,7 @@ trait ConfigIncludeContext {
 
   /**
    * Parse options to use (if you use another method to get a
-   * {@link ConfigParseable} then use {@link ConfigParseable#options()}
+   * {@link ConfigParseable} then use {@link ConfigParseable#options}
    * instead though).
    *
    * @return the parse options
