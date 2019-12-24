@@ -334,10 +334,12 @@ final class SimpleConfigObject(
   override def hasDescendant(descendant: AbstractConfigValue): Boolean =
     value.values.asScala.exists(_ eq descendant) ||
       // now the expensive traversal
-      value.values.asScala.exists { child =>
-        child.isInstanceOf[Container] &&
-        child.asInstanceOf[Container].hasDescendant(descendant)
-      }
+      value.values.asScala.exists(
+        _ match {
+          case v: Container => v.hasDescendant(descendant)
+          case _            => false
+        }
+      )
 
   override def unwrapped: ju.Map[String, AnyRef] = {
     val m = new ju.HashMap[String, AnyRef]

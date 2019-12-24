@@ -69,12 +69,12 @@ object AbstractConfigValue {
   ): Boolean =
     list.asScala.exists(_ == descendant) ||
       // now the expensive traversal
-      list.asScala.exists {
+      list.asScala.exists(
         _ match {
           case v: Container => v.hasDescendant(descendant)
           case _            => false
         }
-      }
+      )
 
   def indent(
       sb: jl.StringBuilder,
