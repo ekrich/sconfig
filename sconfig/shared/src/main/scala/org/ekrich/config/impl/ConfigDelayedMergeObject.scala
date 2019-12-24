@@ -37,13 +37,16 @@ final class ConfigDelayedMergeObject(
     throw new ConfigException.BugOrBroken(
       "created a delayed merge object not guaranteed to be an object"
     )
-  for (v <- stack.asScala) {
-    if (v.isInstanceOf[ConfigDelayedMerge] || v
-          .isInstanceOf[ConfigDelayedMergeObject])
-      throw new ConfigException.BugOrBroken(
-        "placed nested DelayedMerge in a ConfigDelayedMergeObject, should have consolidated stack"
-      )
+  stack.asScala.foreach { v =>
+    v match {
+      case _: ConfigDelayedMerge | _: ConfigDelayedMergeObject =>
+        throw new ConfigException.BugOrBroken(
+          "placed nested DelayedMerge in a ConfigDelayedMergeObject, should have consolidated stack"
+        )
+      case _ => ()
+    }
   }
+
   override def newCopy(
       status: ResolveStatus,
       origin: ConfigOrigin
@@ -239,26 +242,30 @@ final class ConfigDelayedMergeObject(
               // if the layer is not an object, and not a substitution or merge,
               // then it's something that's unresolved because it _contains_
               // an unresolved object... i.e. it's an array
-              if (!layer.isInstanceOf[ConfigList]) {
-                throw new ConfigException.BugOrBroken(
-                  "Expecting a list here, not " + layer
-                )
+              layer match {
+                case _: ConfigList =>
+                  // all later objects will be hidden so we can say we won't find
+                  // the key
+                  Right(null)
+                case _ =>
+                  throw new ConfigException.BugOrBroken(
+                    "Expecting a list here, not " + layer
+                  )
               }
-              // all later objects will be hidden so we can say we won't find
-              // the key
-              Right(null) // can I get null from this??
+
             case _ =>
               // non-object, but resolved, like an integer or something.
               // has no children so the one we're after won't be in it.
               // we would only have this in the stack in case something
               // else "looks back" to it due to a cycle.
               // anyway at this point we know we can't find the key anymore.
-              if (!head.ignoresFallbacks) {
+              if (head.ignoresFallbacks)
+                Right(null)
+              else {
                 throw new ConfigException.BugOrBroken(
                   "resolved non-object should ignore fallbacks"
                 )
               }
-              Right(null)
           }
       }
     // run the logic
