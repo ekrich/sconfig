@@ -15,6 +15,7 @@ import java.time.Duration
 import scala.reflect.ClassTag
 import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
+import scala.util.Try
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigList
@@ -327,17 +328,17 @@ object ConfigBeanImpl {
     else null
 
   private def hasAtLeastOneBeanProperty(clazz: Class[_]): Boolean = {
-    var beanInfo: BeanInfo = null
-    try beanInfo = Introspector.getBeanInfo(clazz)
-    catch {
-      case e: IntrospectionException =>
-        return false
+    val beanInfoOpt = Try(Introspector.getBeanInfo(clazz)).toOption
+    beanInfoOpt match {
+      case None => false
+      case Some(beanInfo) =>
+        beanInfo
+          .getPropertyDescriptors()
+          .exists(
+            beanProp =>
+              beanProp.getReadMethod != null && beanProp.getWriteMethod != null
+          )
     }
-    for (beanProp <- beanInfo.getPropertyDescriptors) {
-      if (beanProp.getReadMethod != null && beanProp.getWriteMethod != null)
-        return true
-    }
-    false
   }
 
   private def isOptionalProperty(

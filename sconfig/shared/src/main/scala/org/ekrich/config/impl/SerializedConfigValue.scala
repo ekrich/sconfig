@@ -246,10 +246,6 @@ object SerializedConfigValue {
           i += 1
         }
         new SimpleConfigObject(origin, map)
-      case null =>
-        throw new IOException("Unknown serialized value type: " + stb)
-      case _ => // warning in Dotty "Unreachable case" because enum values are a closed set
-        throw new IOException("Unhandled serialized value type: " + st)
     }
   }
 
@@ -287,8 +283,7 @@ object SerializedConfigValue {
             throw new IOException(
               "No value data found in serialization of value"
             )
-          return value
-          break // break - was return value
+          break // break - previous set value
         } else if (code eq SerializedField.VALUE_DATA) {
           if (origin == null)
             throw new IOException("Origin must be stored before value data")

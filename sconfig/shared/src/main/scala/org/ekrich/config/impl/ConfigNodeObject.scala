@@ -11,24 +11,23 @@ final class ConfigNodeObject private[impl] (
   override def newNode(nodes: ju.Collection[AbstractConfigNode]) =
     new ConfigNodeObject(nodes)
 
-  def hasValue(desiredPath: Path): Boolean = {
-    for (node <- children.asScala) {
-      if (node.isInstanceOf[ConfigNodeField]) {
-        val field = node.asInstanceOf[ConfigNodeField]
-        val key   = field.path.value
-        if (key == desiredPath || key.startsWith(desiredPath)) return true
-        else if (desiredPath.startsWith(key)) {
-          if (field.value.isInstanceOf[ConfigNodeObject]) {
-            val obj =
-              field.value.asInstanceOf[ConfigNodeObject]
-            val remainingPath = desiredPath.subPath(key.length)
-            if (obj.hasValue(remainingPath)) return true
+  def hasValue(desiredPath: Path): Boolean =
+    children.asScala.exists {
+      case field: ConfigNodeField => {
+        val path = field.path.value
+        if (path == desiredPath || path.startsWith(desiredPath)) true
+        else if (desiredPath.startsWith(path)) {
+          field.value match {
+            case obj: ConfigNodeObject =>
+              val remainingPath = desiredPath.subPath(path.length)
+              if (obj.hasValue(remainingPath)) true
+              else false
+            case _ => false
           }
-        }
+        } else false
       }
+      case _ => false
     }
-    false
-  }
 
   protected def changeValueOnPath(
       desiredPath: Path,
@@ -227,27 +226,28 @@ final class ConfigNodeObject private[impl] (
     ))
     // If the path is of length greater than one, see if the value needs to be added further down
     if (path.length > 1) {
-      var i = children.size - 1
-      while (i >= 0) {
-        breakable {
-          if (!children.get(i).isInstanceOf[ConfigNodeField])
-            break // continue
-          val node      = children.get(i).asInstanceOf[ConfigNodeField]
-          val key: Path = node.path.value
-          if (path.startsWith(key) && node.value
-                .isInstanceOf[ConfigNodeObject]) {
-            val remainingPath = desiredPath.subPath(key.length)
-            val newValue      = node.value.asInstanceOf[ConfigNodeObject]
-            childrenCopy.set(
-              i,
-              node.replaceValue(
-                newValue.addValueOnPath(remainingPath, value, flavor)
-              )
-            )
-            return new ConfigNodeObject(childrenCopy)
-          }
-        } // end break for continue in Java - increment needed as it was a for loop
-        i -= 1
+      val lastIndex = children.size - 1
+      val index = children.asScala.reverse.indexWhere { v =>
+        v match {
+          case node: ConfigNodeField =>
+            val key: Path = node.path.value
+            path.startsWith(key) && node.value.isInstanceOf[ConfigNodeObject]
+          case _ => false
+        }
+      }
+      if (index != -1) {
+        val i             = lastIndex - index
+        val node          = children.get(i).asInstanceOf[ConfigNodeField]
+        val key: Path     = node.path.value
+        val remainingPath = desiredPath.subPath(key.length)
+        val newValue      = node.value.asInstanceOf[ConfigNodeObject]
+        childrenCopy.set(
+          i,
+          node.replaceValue(
+            newValue.addValueOnPath(remainingPath, value, flavor)
+          )
+        )
+        return new ConfigNodeObject(childrenCopy)
       }
     }
     // Otherwise, construct the new setting

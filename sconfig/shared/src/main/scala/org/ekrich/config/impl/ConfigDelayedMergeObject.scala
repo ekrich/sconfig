@@ -5,8 +5,10 @@ package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
+
+import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
-import scala.util.control.Breaks._
+
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigList
 import org.ekrich.config.ConfigMergeable
@@ -165,6 +167,9 @@ final class ConfigDelayedMergeObject(
   override def keySet   = throw ConfigDelayedMergeObject.notResolved
   override def size     = throw ConfigDelayedMergeObject.notResolved
   override def values   = throw ConfigDelayedMergeObject.notResolved
+
+  // exercised in ValidationTest.validationFailedSerializable
+  // and ConfigTest.test01Serializable
   override def attemptPeekWithPartialResolve(
       key: String
   ): AbstractConfigValue = {
@@ -179,77 +184,89 @@ final class ConfigDelayedMergeObject(
     // spirit.
     // we'll be able to return a key if we have a value that ignores
     // fallbacks, prior to any unmergeable values.
-    for (layer <- stack.asScala) {
-      breakable {
-        if (layer.isInstanceOf[AbstractConfigObject]) {
-          val objectLayer =
-            layer.asInstanceOf[AbstractConfigObject]
-          val v =
-            objectLayer.attemptPeekWithPartialResolve(key)
-          if (v != null) {
-            if (v.ignoresFallbacks) {
-              // we know we won't need to merge anything in to this value
-              return v
-            } else {
-              // we can't return this value because we know there are
-              // unmergeable values later in the stack that may
-              // contain values that need to be merged with this
-              // value. we'll throw the exception when we get to those
-              // unmergeable values, so continue here.
-              break // continue
-            }
-          } else if (layer.isInstanceOf[Unmergeable]) {
-            // an unmergeable object (which would be another
-            // ConfigDelayedMergeObject) can't know that a key is
-            // missing, so it can't return null; it can only return a
-            // value or throw NotPossibleToResolve
-            throw new ConfigException.BugOrBroken(
-              "should not be reached: unmergeable object returned null value"
+    @tailrec
+    def loop(
+        layers: List[AbstractConfigValue]
+    ): Either[ConfigException, AbstractConfigValue] =
+      layers match {
+        case Nil =>
+          // If we get here, then we never found anything unresolved which means
+          // the ConfigDelayedMergeObject should not have existed. some
+          // invariant was violated.
+          Left(
+            new ConfigException.BugOrBroken(
+              "Delayed merge stack does not contain any unmergeable values"
             )
-          } else {
-            // a non-unmergeable AbstractConfigObject that returned null
-            // for the key in question is not relevant, we can keep
-            // looking for a value.
-            break // continue
-          }
-        } else if (layer.isInstanceOf[Unmergeable]) {
-          throw new ConfigException.NotResolved(
-            s"Key '$key' is not available at '${origin.description}' because value at '${layer.origin.description}'" +
-              s" has not been resolved and may turn out to contain or hide '$key'." +
-              " Be sure to Config#resolve() before using a config object."
           )
-        } else if (layer.resolveStatus eq ResolveStatus.UNRESOLVED) {
-          // if the layer is not an object, and not a substitution or merge,
-          // then it's something that's unresolved because it _contains_
-          // an unresolved object... i.e. it's an array
-          if (!layer.isInstanceOf[ConfigList]) {
-            throw new ConfigException.BugOrBroken(
-              "Expecting a list here, not " + layer
-            )
+        case head :: tl =>
+          head match {
+            case layer: AbstractConfigObject => {
+              layer.attemptPeekWithPartialResolve(key) match {
+                case v if v != null =>
+                  if (v.ignoresFallbacks) {
+                    // we know we won't need to merge anything in to this value
+                    Right(v)
+                  } else {
+                    // we can't return this value because we know there are
+                    // unmergeable values later in the stack that may
+                    // contain values that need to be merged with this
+                    // value. we'll throw the exception when we get to those
+                    // unmergeable values, so continue here.
+                    loop(tl)
+                  }
+                case _: Unmergeable =>
+                  // an unmergeable object (which would be another
+                  // ConfigDelayedMergeObject) can't know that a key is
+                  // missing, so it can't return null; it can only return a
+                  // value or throw NotPossibleToResolve
+                  throw new ConfigException.BugOrBroken(
+                    "should not be reached: unmergeable object returned null value"
+                  )
+                case _ =>
+                  // a non-unmergeable AbstractConfigObject that returned null
+                  // for the key in question is not relevant, we can keep
+                  // looking for a value.
+                  loop(tl)
+              }
+            }
+            case _: Unmergeable =>
+              throw new ConfigException.NotResolved(
+                s"Key '$key' is not available at '${origin.description}' because value at '${head.origin.description}'" +
+                  s" has not been resolved and may turn out to contain or hide '$key'." +
+                  " Be sure to Config#resolve() before using a config object."
+              )
+            case layer if (layer.resolveStatus eq ResolveStatus.UNRESOLVED) =>
+              // if the layer is not an object, and not a substitution or merge,
+              // then it's something that's unresolved because it _contains_
+              // an unresolved object... i.e. it's an array
+              if (!layer.isInstanceOf[ConfigList]) {
+                throw new ConfigException.BugOrBroken(
+                  "Expecting a list here, not " + layer
+                )
+              }
+              // all later objects will be hidden so we can say we won't find
+              // the key
+              Right(null) // can I get null from this??
+            case _ =>
+              // non-object, but resolved, like an integer or something.
+              // has no children so the one we're after won't be in it.
+              // we would only have this in the stack in case something
+              // else "looks back" to it due to a cycle.
+              // anyway at this point we know we can't find the key anymore.
+              if (!head.ignoresFallbacks) {
+                throw new ConfigException.BugOrBroken(
+                  "resolved non-object should ignore fallbacks"
+                )
+              }
+              Right(null)
           }
-          // all later objects will be hidden so we can say we won't find
-          // the key
-          return null
-        } else {
-          // non-object, but resolved, like an integer or something.
-          // has no children so the one we're after won't be in it.
-          // we would only have this in the stack in case something
-          // else "looks back" to it due to a cycle.
-          // anyway at this point we know we can't find the key anymore.
-          if (!layer.ignoresFallbacks) {
-            throw new ConfigException.BugOrBroken(
-              "resolved non-object should ignore fallbacks"
-            )
-          }
-          return null
-        }
       }
+    // run the logic
+    loop(stack.asScala.toList) match {
+      case Right(res) =>
+        res
+      case Left(ex) =>
+        throw ex
     }
-    // If we get here, then we never found anything unresolved which means
-    // the ConfigDelayedMergeObject should not have existed. some
-    // invariant was violated.
-    throw new ConfigException.BugOrBroken(
-      "Delayed merge stack does not contain any unmergeable values"
-    )
   }
 }

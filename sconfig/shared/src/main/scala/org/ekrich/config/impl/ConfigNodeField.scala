@@ -18,6 +18,7 @@ final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
     }
     tokens
   }
+
   def replaceValue(newValue: AbstractConfigNodeValue): ConfigNodeField = {
     val childrenCopy =
       new ju.ArrayList[AbstractConfigNode](children)
@@ -31,6 +32,7 @@ final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
     }
     throw new ConfigException.BugOrBroken("Field node doesn't have a value")
   }
+
   def value: AbstractConfigNodeValue = {
     var i = 0
     while (i < children.size) {
@@ -40,6 +42,7 @@ final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
     }
     throw new ConfigException.BugOrBroken("Field node doesn't have a value")
   }
+
   def path: ConfigNodePath = {
     var i = 0
     while (i < children.size) {
@@ -49,16 +52,16 @@ final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
     }
     throw new ConfigException.BugOrBroken("Field node doesn't have a path")
   }
-  private[impl] def separator: Token = {
-    for (child <- children.asScala) {
-      if (child.isInstanceOf[ConfigNodeSingleToken]) {
-        val t = child.asInstanceOf[ConfigNodeSingleToken].token
-        if ((t eq Tokens.PLUS_EQUALS) || (t eq Tokens.COLON) || (t eq Tokens.EQUALS))
-          return t
+
+  private[impl] def separator: Token =
+    children.asScala.iterator
+      .filter(_.isInstanceOf[ConfigNodeSingleToken])
+      .map(_.asInstanceOf[ConfigNodeSingleToken].token)
+      .find { t =>
+        (t eq Tokens.PLUS_EQUALS) || (t eq Tokens.COLON) || (t eq Tokens.EQUALS)
       }
-    }
-    null
-  }
+      .getOrElse(null)
+
   private[impl] def comments: ju.List[String] = {
     val comments = new ju.ArrayList[String]
     for (child <- children.asScala) {

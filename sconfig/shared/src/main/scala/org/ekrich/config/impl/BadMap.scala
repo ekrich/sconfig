@@ -76,13 +76,8 @@ object BadMap {
       983, 991, 997, 1009, /* now we start skipping some, this is arbitrary */
       2053, 3079, 4057, 7103, 10949, 16069, 32609, 65867, 104729)
 
-  private def nextPrime(i: Int): Int = {
-    for (p <- primes) {
-      if (p > i) return p
-    }
-    /* oh well */
-    primes(primes.length - 1)
-  }
+  private def nextPrime(i: Int): Int =
+    primes.find(p => p > i).getOrElse(primes(primes.length - 1))
 }
 
 final class BadMap[K, V] private (
