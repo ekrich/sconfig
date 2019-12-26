@@ -43,23 +43,24 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
 
   @tailrec
   private def mainLoop(): Unit = {
-    val done = try {
-      val socket = serverSocket.accept()
+    val done =
+      try {
+        val socket = serverSocket.accept()
 
-      try handleRequest(socket)
-      catch {
-        case _: EOFException =>
-        case e: IOException =>
-          System.err.println(
-            s"error handling http request: ${e.getClass.getName}: ${e.getMessage} ${e.getStackTrace
-              .mkString("\n")}"
-          )
+        try handleRequest(socket)
+        catch {
+          case _: EOFException =>
+          case e: IOException =>
+            System.err.println(
+              s"error handling http request: ${e.getClass.getName}: ${e.getMessage} ${e.getStackTrace
+                .mkString("\n")}"
+            )
+        }
+        false
+      } catch {
+        case e: java.net.SocketException =>
+          true
       }
-      false
-    } catch {
-      case e: java.net.SocketException =>
-        true
-    }
     if (!done)
       mainLoop()
   }

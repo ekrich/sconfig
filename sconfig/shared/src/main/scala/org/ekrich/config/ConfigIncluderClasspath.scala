@@ -10,6 +10,7 @@ package org.ekrich.config
  * attempts to load classpath resources will use the default includer.
  */
 trait ConfigIncluderClasspath {
+
   /**
    * Parses another item to be included. The returned object typically would
    * not have substitutions resolved. You can throw a ConfigException here to

@@ -12,6 +12,7 @@ import java.io.File
  * attempts to load files will use the default includer.
  */
 trait ConfigIncluderFile {
+
   /**
    * Parses another item to be included. The returned object typically would
    * not have substitutions resolved. You can throw a ConfigException here to

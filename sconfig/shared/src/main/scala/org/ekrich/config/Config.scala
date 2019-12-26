@@ -169,6 +169,7 @@ import scala.annotation.varargs
  * implementations will break.
  */
 trait Config extends ConfigMergeable {
+
   /**
    * Gets the {@code Config} as a tree of {@link ConfigObject}. This is a
    * constant-time operation (it is not proportional to the number of values

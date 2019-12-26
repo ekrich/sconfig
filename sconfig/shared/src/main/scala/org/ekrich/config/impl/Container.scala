@@ -12,6 +12,7 @@ import org.ekrich.config.ConfigValue
  * we are a ConfigValue.
  */
 trait Container extends ConfigValue {
+
   /**
    * Replace a child of this value. CAUTION if replacement is null, delete the
    * child, which may also delete the parent, or make the parent into a

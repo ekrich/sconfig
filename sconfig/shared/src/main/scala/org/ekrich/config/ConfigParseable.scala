@@ -15,6 +15,7 @@ package org.ekrich.config
  * implementations will break.
  */
 trait ConfigParseable {
+
   /**
    * Parse whatever it is. The options should come from
    * {@link ConfigParseable#options options()} but you could tweak them if you

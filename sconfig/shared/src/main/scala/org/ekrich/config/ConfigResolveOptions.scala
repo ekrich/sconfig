@@ -26,6 +26,7 @@ package org.ekrich.config
  * environment variables are the only example.)
  */
 object ConfigResolveOptions {
+
   /**
    * Returns the default resolve options. By default the system environment
    * will be used and unresolved substitutions are not allowed.
@@ -57,6 +58,7 @@ final class ConfigResolveOptions private (
     val allowUnresolved: Boolean,
     val resolver: ConfigResolver
 ) {
+
   /**
    * Returns options with use of environment variables set to the given value.
    *

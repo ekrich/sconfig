@@ -1362,18 +1362,19 @@ class ConfigTest extends TestUtils {
         }
         if (renderOptions.getJson && !(renderOptions.getComments || renderOptions.getOriginComments)) {
           // should get valid JSON if we don't have comments and are resolved
-          val json = try {
-            ConfigFactory.parseString(
-              resolvedRender,
-              ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON)
-            )
-          } catch {
-            case e: Exception =>
-              System.err.println(
-                "resolvedRender is not valid json: " + resolvedRender
+          val json =
+            try {
+              ConfigFactory.parseString(
+                resolvedRender,
+                ConfigParseOptions.defaults.setSyntax(ConfigSyntax.JSON)
               )
-              throw e
-          }
+            } catch {
+              case e: Exception =>
+                System.err.println(
+                  "resolvedRender is not valid json: " + resolvedRender
+                )
+                throw e
+            }
         }
         // rendering repeatedly should not make the file different (e.g. shouldn't make it longer)
         // unless the debug comments are in there

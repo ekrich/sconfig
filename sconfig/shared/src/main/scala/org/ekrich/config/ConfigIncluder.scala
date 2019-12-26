@@ -11,6 +11,7 @@ package org.ekrich.config
  * {@link ConfigIncluderFile}, and {@link ConfigIncluderURL}, or not.
  */
 trait ConfigIncluder {
+
   /**
    * Returns a new includer that falls back to the given includer. This is how
    * you can obtain the default includer; it will be provided as a fallback.

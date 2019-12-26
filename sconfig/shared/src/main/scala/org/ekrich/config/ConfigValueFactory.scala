@@ -13,6 +13,7 @@ import org.ekrich.config.impl.ConfigImpl
  * and certain in-memory data structures.
  */
 object ConfigValueFactory {
+
   /**
    * Creates a {@link ConfigValue} from a plain Java boxed value, which may be
    * a <code>Boolean</code>, <code>Number</code>, <code>String</code>,

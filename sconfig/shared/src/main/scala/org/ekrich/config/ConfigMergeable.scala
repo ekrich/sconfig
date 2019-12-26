@@ -16,6 +16,7 @@ package org.ekrich.config
  * implementations will break.
  */
 trait ConfigMergeable {
+
   /**
    * Returns a new value computed by merging this value with another, with
    * keys in this value "winning" over the other one.

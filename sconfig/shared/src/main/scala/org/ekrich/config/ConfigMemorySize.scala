@@ -11,6 +11,7 @@ package org.ekrich.config
  * @since 1.3.0
  */
 object ConfigMemorySize {
+
   /**
    * Constructs a ConfigMemorySize representing the given
    * number of bytes.

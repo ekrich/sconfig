@@ -13,6 +13,7 @@ import org.ekrich.config.impl.ConfigImpl
  * @since 1.3.0
  */
 object ConfigOriginFactory {
+
   /**
    * Returns the default origin for values when no other information is
    * provided. This is the origin used in

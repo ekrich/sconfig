@@ -32,6 +32,7 @@ import org.ekrich.config.parser._
  * handle" in the ConfigIncluder interface.
  */
 object Parseable {
+
   /**
    * Internal implementation detail, not ABI stable, do not touch.
    */

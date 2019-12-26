@@ -73,20 +73,21 @@ class ConfParserTest extends TestUtils {
 
     // parse first by wrapping into a whole document and using
     // the regular parser.
-    val result = try {
-      val tree = parseWithoutResolving("[${" + s + "}]")
-      tree match {
-        case list: ConfigList =>
-          list.get(0) match {
-            case ref: ConfigReference =>
-              ref.expression.path
-          }
+    val result =
+      try {
+        val tree = parseWithoutResolving("[${" + s + "}]")
+        tree match {
+          case list: ConfigList =>
+            list.get(0) match {
+              case ref: ConfigReference =>
+                ref.expression.path
+            }
+        }
+      } catch {
+        case e: ConfigException =>
+          firstException = e
+          null
       }
-    } catch {
-      case e: ConfigException =>
-        firstException = e
-        null
-    }
 
     // also parse with the standalone path parser and be sure the
     // outcome is the same.

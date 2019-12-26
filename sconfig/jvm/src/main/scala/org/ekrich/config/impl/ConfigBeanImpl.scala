@@ -30,6 +30,7 @@ import org.ekrich.config.Optional
  * For use only by the {@link org.ekrich.config} package.
  */
 object ConfigBeanImpl {
+
   /**
    * This is public ONLY for use by the "config" package, DO NOT USE this ABI
    * may change.
@@ -334,9 +335,8 @@ object ConfigBeanImpl {
       case Some(beanInfo) =>
         beanInfo
           .getPropertyDescriptors()
-          .exists(
-            beanProp =>
-              beanProp.getReadMethod != null && beanProp.getWriteMethod != null
+          .exists(beanProp =>
+            beanProp.getReadMethod != null && beanProp.getWriteMethod != null
           )
     }
   }

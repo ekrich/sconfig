@@ -33,13 +33,14 @@ abstract trait TestUtils {
   protected def intercept[E <: Throwable: ClassTag](block: => Any): E = {
     val expectedClass             = classTag[E].runtimeClass
     var thrown: Option[Throwable] = None
-    val result = try {
-      Some(block)
-    } catch {
-      case t: Throwable =>
-        thrown = Some(t)
-        None
-    }
+    val result =
+      try {
+        Some(block)
+      } catch {
+        case t: Throwable =>
+          thrown = Some(t)
+          None
+      }
     thrown match {
       case Some(t) if expectedClass.isAssignableFrom(t.getClass) =>
         t.asInstanceOf[E]
@@ -190,17 +191,18 @@ abstract trait TestUtils {
     val inStream                          = new ByteArrayInputStream(decodeLegibleBinary(expectedHex))
     var failure: Option[Exception]        = None
     var inObjectStream: ObjectInputStream = null
-    val deserialized = try {
-      inObjectStream = new ObjectInputStream(inStream) // this can throw too
-      inObjectStream.readObject()
-    } catch {
-      case e: Exception =>
-        failure = Some(e)
-        null
-    } finally {
-      if (inObjectStream != null)
-        inObjectStream.close()
-    }
+    val deserialized =
+      try {
+        inObjectStream = new ObjectInputStream(inStream) // this can throw too
+        inObjectStream.readObject()
+      } catch {
+        case e: Exception =>
+          failure = Some(e)
+          null
+      } finally {
+        if (inObjectStream != null)
+          inObjectStream.close()
+      }
 
     val why = failure
       .map({ e =>
@@ -276,19 +278,20 @@ abstract trait TestUtils {
 
     val a = o.asInstanceOf[java.io.Serializable]
 
-    val b = try {
-      copyViaSerialize(a)
-    } catch {
-      case nf: ClassNotFoundException =>
-        throw new AssertionError(
-          "failed to make a copy via serialization, " +
-            "possibly caused by http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6446627",
-          nf
-        )
-      case e: Exception =>
-        e.printStackTrace(System.err)
-        throw new AssertionError("failed to make a copy via serialization", e)
-    }
+    val b =
+      try {
+        copyViaSerialize(a)
+      } catch {
+        case nf: ClassNotFoundException =>
+          throw new AssertionError(
+            "failed to make a copy via serialization, " +
+              "possibly caused by http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6446627",
+            nf
+          )
+        case e: Exception =>
+          e.printStackTrace(System.err)
+          throw new AssertionError("failed to make a copy via serialization", e)
+      }
 
     assertTrue(
       "deserialized type " + b.getClass.getSimpleName + " doesn't match serialized type " + a.getClass.getSimpleName,
@@ -584,12 +587,13 @@ abstract trait TestUtils {
       body
     } catch {
       case t: Throwable =>
-        val tokens = try {
-          "tokens: " + tokenizeAsList(s)
-        } catch {
-          case e: Throwable =>
-            "tokenizer failed: " + e.getMessage()
-        }
+        val tokens =
+          try {
+            "tokens: " + tokenizeAsList(s)
+          } catch {
+            case e: Throwable =>
+              "tokenizer failed: " + e.getMessage()
+          }
         // don't use AssertionError because it seems to keep Eclipse
         // from showing the causing exception in JUnit view for some reason
         throw new Exception(
@@ -864,11 +868,12 @@ abstract trait TestUtils {
         val t   = Thread.currentThread()
         val old = t.getContextClassLoader()
         t.setContextClassLoader(loader)
-        val result = try {
-          body
-        } finally {
-          t.setContextClassLoader(old)
-        }
+        val result =
+          try {
+            body
+          } finally {
+            t.setContextClassLoader(old)
+          }
         result
       }
     })

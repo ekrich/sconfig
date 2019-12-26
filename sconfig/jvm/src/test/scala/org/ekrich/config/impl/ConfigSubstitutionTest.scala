@@ -1142,12 +1142,13 @@ class ConfigSubstitutionTest extends TestUtils {
     // then there's an error because ${a} is undefined.
     // if a first then b=1foo and a=1foo.
     val obj = parseObject("""a=1, b=${a}foo, a=${b}""")
-    val either = try {
-      Left(resolve(obj))
-    } catch {
-      case e: ConfigException.UnresolvedSubstitution =>
-        Right(e)
-    }
+    val either =
+      try {
+        Left(resolve(obj))
+      } catch {
+        case e: ConfigException.UnresolvedSubstitution =>
+          Right(e)
+      }
     val option1 = Left(parseObject("""a:1foo,b:1foo""").toConfig)
     assertTrue(
       "not an expected possibility: " + either +

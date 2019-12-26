@@ -25,6 +25,7 @@ package org.ekrich.config.parser
  * implementations will break.
  */
 trait ConfigNode {
+
   /**
    * The original text of the input which was used to form this particular
    * node.

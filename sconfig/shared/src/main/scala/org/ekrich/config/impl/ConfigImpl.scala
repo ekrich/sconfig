@@ -53,15 +53,16 @@ object ConfigImpl {
         if (config == null) {
           // Changed for https://github.com/lampepfl/dotty/issues/7356
           // was config = updater.call()
-          config = try {
-            updater.call()
-          } catch {
-            case e: RuntimeException =>
-              throw e // this will include ConfigException
+          config =
+            try {
+              updater.call()
+            } catch {
+              case e: RuntimeException =>
+                throw e // this will include ConfigException
 
-            case e: Exception =>
-              throw new ConfigException.Generic(e.getMessage, e)
-          }
+              case e: Exception =>
+                throw new ConfigException.Generic(e.getMessage, e)
+            }
           if (config != null) {
             cache.put(key, config)
           } else {

@@ -19,6 +19,7 @@ package org.ekrich.config
  * implementations will break.
  */
 trait ConfigValue extends ConfigMergeable {
+
   /**
    * The origin of the value (file, line number, etc.), for debugging and
    * error messages.

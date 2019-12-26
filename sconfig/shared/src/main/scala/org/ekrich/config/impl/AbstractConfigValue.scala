@@ -25,6 +25,7 @@ import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
  *
  */
 object AbstractConfigValue {
+
   /**
    * This exception means that a value is inherently not resolveable, at the
    * moment the only known cause is a cycle of substitutions. This is a

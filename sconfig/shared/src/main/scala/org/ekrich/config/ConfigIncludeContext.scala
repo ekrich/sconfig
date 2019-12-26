@@ -16,6 +16,7 @@ package org.ekrich.config
  * implementations will break.
  */
 trait ConfigIncludeContext {
+
   /**
    * Tries to find a name relative to whatever is doing the including, for
    * example in the same directory as the file doing the including. Returns
