@@ -8,7 +8,7 @@ val scalaNativeVersion = Option(System.getenv("SCALANATIVE_VERSION"))
   .getOrElse("0.3.9")
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
-addSbtPlugin("com.geirsson" % "sbt-ci-release"  % "1.4.31")
+addSbtPlugin("com.geirsson" % "sbt-ci-release"  % "1.2.6")
 addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "0.6.0")
 
 // Scala Native support
