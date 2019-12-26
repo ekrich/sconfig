@@ -46,8 +46,10 @@ jobs:
     script:
     - sbt ci-release
     - export SCALANATIVE_VERSION=0.4.0-M2
+    - export CI_RELEASE="+sconfigNative/publishSigned"
+    - sbt ci-release
     - export SCALAJS_VERSION=1.0.0-RC2
-    - export CI_RELEASE=";+sconfigNative/publishSigned;+sconfigJS/publishSigned"
+    - export CI_RELEASE="+sconfigJS/publishSigned"
     - sbt ci-release
 
 cache:
