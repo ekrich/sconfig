@@ -44,12 +44,15 @@ jobs:
   - stage: release
     jdk: openjdk8
     script:
+    - set -e
     - sbt ci-release
     - export SCALANATIVE_VERSION=0.4.0-M2
     - export CI_RELEASE="+sconfigNative/publishSigned"
+    - echo $CI_RELEASE
     - sbt ci-release
     - export SCALAJS_VERSION=1.0.0-RC2
     - export CI_RELEASE="+sconfigJS/publishSigned"
+    - echo $CI_RELEASE
     - sbt ci-release
 
 cache:
