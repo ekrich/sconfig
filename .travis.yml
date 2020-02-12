@@ -8,7 +8,7 @@ scala:
 matrix:
   include:
     - os: linux
-      dist: trusty
+      dist: xenial
 
 stages:
 - name: test
