@@ -1071,19 +1071,13 @@ class ConfigValueTest extends TestUtils {
     }) ++
       bases
         .sliding(2)
-        .map({ seq =>
-          (seq.head, seq.tail.head)
-        }) ++
+        .map({ seq => (seq.head, seq.tail.head) }) ++
       bases
         .sliding(3)
-        .map({ seq =>
-          (seq.head, seq.tail.tail.head)
-        }) ++
+        .map({ seq => (seq.head, seq.tail.tail.head) }) ++
       bases
         .sliding(4)
-        .map({ seq =>
-          (seq.head, seq.tail.tail.tail.head)
-        })
+        .map({ seq => (seq.head, seq.tail.tail.tail.head) })
     val withFlipped   = combos ++ combos.map(_.swap)
     val withDuplicate = withFlipped ++ withFlipped.map(p => (p._1, p._1))
     val values = withDuplicate.flatMap({ combo =>

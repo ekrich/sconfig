@@ -80,9 +80,7 @@ inThisBuild(
   )
 )
 
-ThisBuild / pomIncludeRepository := { _ =>
-  false
-}
+ThisBuild / pomIncludeRepository := { _ => false }
 
 lazy val root = (project in file("."))
   .aggregate(
