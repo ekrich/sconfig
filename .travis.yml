@@ -6,6 +6,9 @@ scala:
 jdk: 
   - openjdk8
 
+os:
+  - linux
+  
 dist: xenial
 
 stages:
