@@ -37,7 +37,8 @@ class TokenizerTest extends TestUtils {
     // all token types with no spaces (not sure JSON spec wants this to work,
     // but spec is unclear to me when spaces are required, and banning them
     // is actually extra work).
-    val source = """,:=}{][+="foo"""" + "\"\"\"bar\"\"\"" + """true3.14false42null${a.b}${?x.y}${"c.d"}""" + "\n"
+    val source =
+      """,:=}{][+="foo"""" + "\"\"\"bar\"\"\"" + """true3.14false42null${a.b}${?x.y}${"c.d"}""" + "\n"
     val expected = List(
       Tokens.COMMA,
       Tokens.COLON,
@@ -64,7 +65,8 @@ class TokenizerTest extends TestUtils {
 
   @Test
   def tokenizeAllTypesWithSingleSpaces(): Unit = {
-    val source = """ , : = } { ] [ += "foo" """ + "\"\"\"bar\"\"\"" + """ 42 true 3.14 false null ${a.b} ${?x.y} ${"c.d"} """ + "\n "
+    val source =
+      """ , : = } { ] [ += "foo" """ + "\"\"\"bar\"\"\"" + """ 42 true 3.14 false null ${a.b} ${?x.y} ${"c.d"} """ + "\n "
     val expected = List(
       tokenWhitespace(" "),
       Tokens.COMMA,
@@ -111,7 +113,8 @@ class TokenizerTest extends TestUtils {
 
   @Test
   def tokenizeAllTypesWithMultipleSpaces(): Unit = {
-    val source = """   ,   :   =   }   {   ]   [   +=   "foo"   """ + "\"\"\"bar\"\"\"" + """   42   true   3.14   false   null   ${a.b}   ${?x.y}   ${"c.d"}  """ + "\n   "
+    val source =
+      """   ,   :   =   }   {   ]   [   +=   "foo"   """ + "\"\"\"bar\"\"\"" + """   42   true   3.14   false   null   ${a.b}   ${?x.y}   ${"c.d"}  """ + "\n   "
     val expected = List(
       tokenWhitespace("   "),
       Tokens.COMMA,

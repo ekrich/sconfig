@@ -205,9 +205,7 @@ abstract trait TestUtils {
       }
 
     val why = failure
-      .map({ e =>
-        ": " + e.getClass.getSimpleName + ": " + e.getMessage
-      })
+      .map({ e => ": " + e.getClass.getSimpleName + ": " + e.getMessage })
       .getOrElse("")
 
     val byteStream   = new ByteArrayOutputStream()
@@ -220,7 +218,9 @@ abstract trait TestUtils {
         System.err.println(
           "Correct result literal for " + o.getClass.getSimpleName + " serialization:"
         )
-        System.err.println("\"\" + ") // line up all the lines by using empty string on first line
+        System.err.println(
+          "\"\" + "
+        ) // line up all the lines by using empty string on first line
         outputStringLiteral(hex)
       }
     }
@@ -390,30 +390,33 @@ abstract trait TestUtils {
     "{ foo \n bar : 10 }",                   // newline in the middle of the unquoted key
     "[ 1, \\",                               // ends with backslash
     // these two problems are ignored by the json tokenizer
-    "[:\"foo\", \"bar\"]",                                  // colon in an array
-    "[\"foo\" : \"bar\"]",                                  // colon in an array another way
-    "[ \"hello ]",                                          // unterminated string
-    ParseTest(false, "{ \"foo\" , true }"),                 // comma instead of colon
-    ParseTest(false, "{ \"foo\" : true \"bar\" : false }"), // missing comma between fields
-    "[ 10, }]",                                             // array with } as an element
-    "[ 10, {]",                                             // array with { as an element
-    "{}x",                                                  // trailing invalid token after the root object
-    "[]x",                                                  // trailing invalid token after the root array
-    ParseTest(false, "{}{}"),                               // trailing token after the root object
-    ParseTest(false, "{}true"),                             // trailing token after the root object
-    ParseTest(false, "[]{}"),                               // trailing valid token after the root array
-    ParseTest(false, "[]true"),                             // trailing valid token after the root array
-    "[${]",                                                 // unclosed substitution
-    "[$]",                                                  // '$' by itself
-    "[$  ]",                                                // '$' by itself with spaces after
-    "[${}]",                                                // empty substitution (no path)
-    "[${?}]",                                               // no path with ? substitution
-    ParseTest(false, true, "[${ ?foo}]"),                   // space before ? not allowed
-    """{ "a" : [1,2], "b" : y${a}z }""",                    // trying to interpolate an array in a string
-    """{ "a" : { "c" : 2 }, "b" : y${a}z }""",              // trying to interpolate an object in a string
-    """{ "a" : ${a} }""",                                   // simple cycle
-    """[ { "a" : 2, "b" : ${${a}} } ]""",                   // nested substitution
-    "[ = ]",                                                // = is not a valid token in unquoted text
+    "[:\"foo\", \"bar\"]",                  // colon in an array
+    "[\"foo\" : \"bar\"]",                  // colon in an array another way
+    "[ \"hello ]",                          // unterminated string
+    ParseTest(false, "{ \"foo\" , true }"), // comma instead of colon
+    ParseTest(
+      false,
+      "{ \"foo\" : true \"bar\" : false }"
+    ),                                         // missing comma between fields
+    "[ 10, }]",                                // array with } as an element
+    "[ 10, {]",                                // array with { as an element
+    "{}x",                                     // trailing invalid token after the root object
+    "[]x",                                     // trailing invalid token after the root array
+    ParseTest(false, "{}{}"),                  // trailing token after the root object
+    ParseTest(false, "{}true"),                // trailing token after the root object
+    ParseTest(false, "[]{}"),                  // trailing valid token after the root array
+    ParseTest(false, "[]true"),                // trailing valid token after the root array
+    "[${]",                                    // unclosed substitution
+    "[$]",                                     // '$' by itself
+    "[$  ]",                                   // '$' by itself with spaces after
+    "[${}]",                                   // empty substitution (no path)
+    "[${?}]",                                  // no path with ? substitution
+    ParseTest(false, true, "[${ ?foo}]"),      // space before ? not allowed
+    """{ "a" : [1,2], "b" : y${a}z }""",       // trying to interpolate an array in a string
+    """{ "a" : { "c" : 2 }, "b" : y${a}z }""", // trying to interpolate an object in a string
+    """{ "a" : ${a} }""",                      // simple cycle
+    """[ { "a" : 2, "b" : ${${a}} } ]""",      // nested substitution
+    "[ = ]",                                   // = is not a valid token in unquoted text
     "[ + ]",
     "[ # ]",
     "[ ` ]",
@@ -555,21 +558,33 @@ abstract trait TestUtils {
 , 11]""",
     """[ 10 // comment
 , 11]""",
-    """{ /a/b/c : 10 }""",                       // key has a slash in it
-    ParseTest(false, true, "[${ foo.bar}]"),     // substitution with leading spaces
-    ParseTest(false, true, "[${foo.bar }]"),     // substitution with trailing spaces
-    ParseTest(false, true, "[${ \"foo.bar\"}]"), // substitution with leading spaces and quoted
-    ParseTest(false, true, "[${\"foo.bar\" }]"), // substitution with trailing spaces and quoted
-    """[ ${"foo""bar"} ]""",                     // multiple strings in substitution
-    """[ ${foo  "bar"  baz} ]""",                // multiple strings and whitespace in substitution
-    "[${true}]",                                 // substitution with unquoted true token
-    "a = [], a += b",                            // += operator with previous init
-    "{ a = [], a += 10 }",                       // += in braces object with previous init
-    "a += b",                                    // += operator without previous init
-    "{ a += 10 }",                               // += in braces object without previous init
-    "[ 10e3e3 ]",                                // two exponents. this should parse to a number plus string "e3"
-    "[ 1-e3 ]",                                  // malformed number should end up as a string instead
-    "[ 1.0.0 ]",                                 // two decimals, should end up as a string
+    """{ /a/b/c : 10 }""",                   // key has a slash in it
+    ParseTest(false, true, "[${ foo.bar}]"), // substitution with leading spaces
+    ParseTest(
+      false,
+      true,
+      "[${foo.bar }]"
+    ), // substitution with trailing spaces
+    ParseTest(
+      false,
+      true,
+      "[${ \"foo.bar\"}]"
+    ), // substitution with leading spaces and quoted
+    ParseTest(
+      false,
+      true,
+      "[${\"foo.bar\" }]"
+    ),                            // substitution with trailing spaces and quoted
+    """[ ${"foo""bar"} ]""",      // multiple strings in substitution
+    """[ ${foo  "bar"  baz} ]""", // multiple strings and whitespace in substitution
+    "[${true}]",                  // substitution with unquoted true token
+    "a = [], a += b",             // += operator with previous init
+    "{ a = [], a += 10 }",        // += in braces object with previous init
+    "a += b",                     // += operator without previous init
+    "{ a += 10 }",                // += in braces object without previous init
+    "[ 10e3e3 ]",                 // two exponents. this should parse to a number plus string "e3"
+    "[ 1-e3 ]",                   // malformed number should end up as a string instead
+    "[ 1.0.0 ]",                  // two decimals, should end up as a string
     "[ 1.0. ]"
   ) // trailing decimal should end up as a string
 
@@ -613,7 +628,10 @@ abstract trait TestUtils {
       (s: String) => s + " ",
       (s: String) => " " + s + " ",
       (s: String) =>
-        s.replace(" ", ""), // this would break with whitespace in a key or value
+        s.replace(
+          " ",
+          ""
+        ), // this would break with whitespace in a key or value
       (s: String) =>
         s.replace(":", " : "), // could break with : in a key or value
       (s: String) =>
@@ -625,7 +643,9 @@ abstract trait TestUtils {
       } else {
         val withNonAscii =
           if (t.test.contains(" "))
-            Seq(ParseTest(validInJsonParser, t.test.replace(" ", "\u2003"))) // 2003 = em space, to test non-ascii whitespace
+            Seq(
+              ParseTest(validInJsonParser, t.test.replace(" ", "\u2003"))
+            ) // 2003 = em space, to test non-ascii whitespace
           else
             Seq()
         withNonAscii ++ (for (v <- variations)
@@ -848,9 +868,7 @@ abstract trait TestUtils {
       val other = super.findResources(name).asScala
       additions
         .get(name)
-        .map({ url =>
-          Iterator(url) ++ other
-        })
+        .map({ url => Iterator(url) ++ other })
         .getOrElse(other)
         .asJavaEnumeration
     }
@@ -951,7 +969,8 @@ abstract trait TestUtils {
       extends Problem(path, line) {
     override def check(p: ConfigException.ValidationProblem): Unit = {
       super.check(p)
-      val re = "Wrong value type.*" + path + ".*expecting.*" + expected + ".*got.*" + got + ".*"
+      val re =
+        "Wrong value type.*" + path + ".*expecting.*" + expected + ".*got.*" + got + ".*"
       assertMessage(p, re)
     }
   }
@@ -964,7 +983,8 @@ abstract trait TestUtils {
   ) extends Problem(path, line) {
     override def check(p: ConfigException.ValidationProblem): Unit = {
       super.check(p)
-      val re = "List at.*" + path + ".*wrong value type.*expecting.*" + expected + ".*got.*element of.*" + got + ".*"
+      val re =
+        "List at.*" + path + ".*wrong value type.*expecting.*" + expected + ".*got.*element of.*" + got + ".*"
       assertMessage(p, re)
     }
   }

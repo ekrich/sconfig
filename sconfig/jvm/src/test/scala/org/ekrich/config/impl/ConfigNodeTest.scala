@@ -275,8 +275,9 @@ class ConfigNodeTest extends TestUtils {
   @Test
   def replaceNestedNodes(): Unit = {
     // Test that all features of node replacement in a map work in a complex map containing nested maps
-    val origText = "foo : bar\nbaz : {\n\t\"abc.def\" : 123\n\t//This is a comment about the below setting\n\n\tabc : {\n\t\t" +
-      "def : \"this is a string\"\n\t\tghi : ${\"a.b\"}\n\t}\n}\nbaz.abc.ghi : 52\nbaz.abc.ghi : 53\n}"
+    val origText =
+      "foo : bar\nbaz : {\n\t\"abc.def\" : 123\n\t//This is a comment about the below setting\n\n\tabc : {\n\t\t" +
+        "def : \"this is a string\"\n\t\tghi : ${\"a.b\"}\n\t}\n}\nbaz.abc.ghi : 52\nbaz.abc.ghi : 53\n}"
     val lowestLevelMap = configNodeObject(
       List(
         nodeOpenBrace,
@@ -340,8 +341,9 @@ class ConfigNodeTest extends TestUtils {
       )
     )
     assertEquals(origText, origNode.render)
-    val finalText = "foo : bar\nbaz : {\n\t\"abc.def\" : true\n\t//This is a comment about the below setting\n\n\tabc : {\n\t\t" +
-      "def : false\n\t\t\n\t\t\"this.does.not.exist@@@+$#\" : {\n\t\t  end : doesnotexist\n\t\t}\n\t}\n}\n\nbaz.abc.ghi : randomunquotedString\n}"
+    val finalText =
+      "foo : bar\nbaz : {\n\t\"abc.def\" : true\n\t//This is a comment about the below setting\n\n\tabc : {\n\t\t" +
+        "def : false\n\t\t\n\t\t\"this.does.not.exist@@@+$#\" : {\n\t\t  end : doesnotexist\n\t\t}\n\t}\n}\n\nbaz.abc.ghi : randomunquotedString\n}"
 
     //Can replace settings in nested maps
     // Paths with quotes in the name are treated as a single Path, rather than multiple sub-paths

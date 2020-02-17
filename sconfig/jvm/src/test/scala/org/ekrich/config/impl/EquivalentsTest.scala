@@ -13,9 +13,7 @@ import org.ekrich.config._
 class EquivalentsTest extends TestUtils {
   private def equivDirs() = {
     val rawEquivs = resourceDir.listFiles()
-    val equivs = rawEquivs.filter({ f =>
-      f.getName().startsWith("equiv")
-    })
+    val equivs    = rawEquivs.filter({ f => f.getName().startsWith("equiv") })
     equivs
   }
 

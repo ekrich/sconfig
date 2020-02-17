@@ -1,14 +1,15 @@
-sudo: required
-
 language: scala
 
 scala:
   - 2.11.12
 
-matrix:
-  include:
-    - os: linux
-      dist: trusty
+jdk: 
+  - openjdk8
+
+os:
+  - linux
+  
+dist: xenial
 
 stages:
 - name: test
@@ -19,17 +20,13 @@ jobs:
   include:
   # stage="test" if no stage is specified
   - env: TEST="scalafmt"
-    jdk: openjdk8
     script: ./scripts/scalafmt --test
   - env: TEST="linux"
-    jdk: openjdk8
     before_install: ./scripts/travis-os-setup.sh
     script: sbt +test doc
   - env: TEST="linux" SCALANATIVE_VERSION=0.4.0-M2
-    jdk: openjdk8
     script: sbt +sconfigNative/test
-  - env: TEST="linux" SCALAJS_VERSION=1.0.0-RC2
-    jdk: openjdk8
+  - env: TEST="linux" SCALAJS_VERSION=1.0.0
     script: sbt +sconfigJS/test
   - env: TEST="linux"
     jdk: openjdk11
@@ -38,16 +35,15 @@ jobs:
   - env: TEST="linux" SCALANATIVE_VERSION=0.4.0-M2
     jdk: openjdk11
     script: sbt +sconfigNative/test
-  - env: TEST="linux" SCALAJS_VERSION=1.0.0-RC2
+  - env: TEST="linux" SCALAJS_VERSION=1.0.0
     jdk: openjdk11
     script: sbt +sconfigJS/test
   - stage: release
-    jdk: openjdk8
     script:
     - export CI_SONATYPE_RELEASE=version # dummy value to avoid release
     - sbt ci-release
     - export SCALANATIVE_VERSION=0.4.0-M2
-    - export SCALAJS_VERSION=1.0.0-RC2
+    - export SCALAJS_VERSION=1.0.0
     - export CI_RELEASE=";+sconfigNative/publishSigned;+sconfigJS/publishSigned"
     - export CI_SONATYPE_RELEASE=sonatypeBundleRelease
     - sbt ci-release

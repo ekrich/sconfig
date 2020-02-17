@@ -258,12 +258,15 @@ object ConfigDocumentParser {
       var part: String = null
       if (badToken == Tokens.END.toString) { // EOF requires special handling for the error to make sense.
         if (previousFieldName != null)
-          part = message + " (if you intended '" + previousFieldName + "' to be part of a value, instead of a key, " + "try adding double quotes around the whole value"
+          part =
+            message + " (if you intended '" + previousFieldName + "' to be part of a value, instead of a key, " + "try adding double quotes around the whole value"
         else return message
       } else if (previousFieldName != null)
-        part = message + " (if you intended " + badToken + " to be part of the value for '" + previousFieldName + "', " + "try enclosing the value in double quotes"
+        part =
+          message + " (if you intended " + badToken + " to be part of the value for '" + previousFieldName + "', " + "try enclosing the value in double quotes"
       else
-        part = message + " (if you intended " + badToken + " to be part of a key or string value, " + "try enclosing the key or value in double quotes"
+        part =
+          message + " (if you intended " + badToken + " to be part of a key or string value, " + "try enclosing the key or value in double quotes"
       if (insideEquals)
         part + ", or you may be able to rename the file .properties rather than .conf)"
       else part + ")"

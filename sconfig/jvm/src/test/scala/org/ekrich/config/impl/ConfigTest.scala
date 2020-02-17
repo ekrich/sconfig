@@ -1086,9 +1086,9 @@ class ConfigTest extends TestUtils {
     val conf = ConfigFactory.load("test01")
 
     val javaEntries = conf.entrySet
-    val entries = Map((javaEntries.asScala.toSeq map { e =>
-      (e.getKey(), e.getValue())
-    }): _*)
+    val entries = Map(
+      (javaEntries.asScala.toSeq map { e => (e.getKey(), e.getValue()) }): _*
+    )
     assertEquals(Some(intValue(42)), entries.get("ints.fortyTwo"))
     assertEquals(None, entries.get("nulls.null"))
   }
