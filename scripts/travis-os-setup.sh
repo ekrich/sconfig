@@ -12,13 +12,6 @@ else
     # Per https://github.com/scala-native/scala-native/pull/1240/
     sudo apt-get update
 
-    # Remove libunwind pre-bundled with clang
-    sudo find /usr -name "*libunwind*" -delete
-
-    # Use pre-bundled clang
-    export PATH=/usr/local/clang-5.0.0/bin:$PATH
-    export CXX=clang++
-
     # Install Boehm GC and libunwind
-    sudo apt-get install libgc-dev libunwind8-dev libatlas-base-dev libre2-dev
+    sudo apt-get install -y clang-5.0 zlib1g-dev libgc-dev libunwind8-dev libre2-dev
 fi
