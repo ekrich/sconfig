@@ -4,9 +4,11 @@
 .settings
 .idea
 .idea_modules
-.metals/
-.bloop/
 /bin-test-lib
 target/
 /bin
 /node_modules
+# metals
+.bloop/
+.metals/
+project/metals.sbt

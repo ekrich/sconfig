@@ -11,8 +11,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.1.4"
-val nextVersion = "1.2.0"
+val prevVersion = "1.2.2"
+val nextVersion = "1.3.0"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -26,7 +26,7 @@ val scalacOpts = List(
   "-deprecation",
   "-feature",
   "-Ywarn-unused:imports",
-  "-Xsource 2.14",
+  "-Xsource:3",
   "-Xlint:nonlocal-return"
 )
 
@@ -45,9 +45,9 @@ scalacOptions in (Compile, console) --= Seq(
 )
 
 val scala211 = "2.11.12"
-val scala212 = "2.12.10"
-val scala213 = "2.13.1"
-val dotty    = "0.22.0-RC1"
+val scala212 = "2.12.11"
+val scala213 = "2.13.2"
+val dotty    = "0.23.0-RC1"
 
 val versionsBase   = Seq(scala211, scala212, scala213)
 val versionsJVM    = versionsBase :+ dotty
