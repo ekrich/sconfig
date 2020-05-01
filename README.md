@@ -26,8 +26,16 @@ If you are looking for the original proven Java API, see
 libraryDependencies += "org.ekrich" %% "sconfig" % "x.y.z"
 ```
 
-To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above.
+To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above. Use `%%%` for non-JVM projects.
 All available versions can be seen at the [Maven Repository](https://mvnrepository.com/artifact/org.ekrich/sconfig).
+
+| Scala Version          | JVM | Scala.js (0.6.x, 1.x) | Native (0.4.x) |
+| ---------------------- | :-: | :-------------------: | :------------: |
+| 2.11.x                 | ✅  |          ✅           |       ✅       |
+| 2.12.x                 | ✅  |          ✅           |      n/a       |
+| 2.13.x                 | ✅  |          ✅           |      n/a       |
+| 0.24.0-RC1             | ✅  |          n/a          |      n/a       |
+
 
 ## Usage and Help
 [![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.11.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.11)
