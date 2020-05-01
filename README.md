@@ -4,7 +4,7 @@
 Configuration library written in [Scala](https://www.scala-lang.org/) which is a direct translation 
 of the original widely used Java library.
 
-Scala JVM, [Scala Native](https://scala-native.readthedocs.io/), and [Scala.js](https://www.scala-js.org/)
+[Scala JVM](https://www.scala-lang.org/), [Scala Native](https://scala-native.readthedocs.io/), and [Scala.js](https://www.scala-js.org/)
 are supported. Scala JVM is fully supported whereas the other platforms support a subset of the full API.
 
 For motivation and background about this project see the [PR](https://github.com/lightbend/config/pull/600) 
@@ -46,6 +46,7 @@ For specific changes, refer to the releases below.
 
 ## Versions
 
+Release [1.3.0](https://github.com/ekrich/sconfig/releases/tag/v1.3.0) - (2020-05-01)<br/>
 Release [1.2.2](https://github.com/ekrich/sconfig/releases/tag/v1.2.2) - (2020-04-28)<br/>
 Release [1.2.1](https://github.com/ekrich/sconfig/releases/tag/v1.2.1) - (2020-02-18)<br/>
 Release [1.1.3](https://github.com/ekrich/sconfig/releases/tag/v1.1.3) - (2019-12-27)<br/>
