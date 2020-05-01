@@ -109,7 +109,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
     scala2or3Source,
-    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.4"
+    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.6"
   )
   .jvmSettings(
     sharedJvmNativeSource,
