@@ -984,14 +984,6 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   override def isResolved: Boolean =
     root.resolveStatus eq ResolveStatus.RESOLVED
 
-  // This method in Config uses @varargs so it can be called from Java with varargs
-  // See https://github.com/scala/bug/issues/10658
-  // originally: @Override public void checkValid(Config reference, String... restrictToPaths)
-  // Now the code goes through the Scala varargs method but we need this one for Java
-  def checkValid(reference: Config, restrictToPaths: Array[String]): Unit = {
-    checkValid(reference, restrictToPaths.toIndexedSeq: _*)
-  }
-
   override def checkValid(reference: Config, restrictToPaths: String*): Unit = {
     val ref = reference.asInstanceOf[SimpleConfig]
     // unresolved reference config is a bug in the caller of checkValid

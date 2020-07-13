@@ -189,7 +189,7 @@ object Parseable {
       postConstruct(options)
     }
     @throws[IOException]
-    override protected def reader =
+    override protected def reader() =
       throw new ConfigException.BugOrBroken(
         "reader() without options should not be called on ParseableURL"
       )
@@ -346,7 +346,7 @@ object Parseable {
       with Relativizer {
     postConstruct(options)
     @throws[IOException]
-    override protected def reader =
+    override protected def reader() =
       throw new ConfigException.BugOrBroken(
         "reader() should not be called on resources"
       )
@@ -449,7 +449,7 @@ object Parseable {
   ) extends Parseable(options) {
     postConstruct(options)
     @throws[IOException]
-    override protected def reader =
+    override protected def reader() =
       throw new ConfigException.BugOrBroken(
         "reader() should not be called on props"
       )
