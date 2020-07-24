@@ -57,6 +57,7 @@ For specific changes, refer to the releases below.
 
 ## Versions
 
+Release [1.3.1](https://github.com/ekrich/sconfig/releases/tag/v1.3.1) - (2020-07-24)<br/>
 Release [1.3.0](https://github.com/ekrich/sconfig/releases/tag/v1.3.0) - (2020-05-01)<br/>
 Release [1.2.2](https://github.com/ekrich/sconfig/releases/tag/v1.2.2) - (2020-04-28)<br/>
 Release [1.2.1](https://github.com/ekrich/sconfig/releases/tag/v1.2.1) - (2020-02-18)<br/>
