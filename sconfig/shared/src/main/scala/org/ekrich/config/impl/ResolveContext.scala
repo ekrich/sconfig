@@ -38,13 +38,11 @@ private[impl] final class ResolveContext(
     // cause a cycle "by side effect"
     // CAN BE NULL for a full resolve.
     val restrictToChild: Path,
-    _resolveStack: ju.List[AbstractConfigValue],
-    _cycleMarkers: ju.Set[AbstractConfigValue]
+    // This is used for tracing and debugging and nice error messages;
+    // contains every node as we call resolve on it.
+    val resolveStack: ju.List[AbstractConfigValue],
+    val cycleMarkers: ju.Set[AbstractConfigValue]
 ) {
-  // This is used for tracing and debugging and nice error messages;
-  // contains every node as we call resolve on it.
-  val resolveStack = ju.Collections.unmodifiableList(_resolveStack)
-  val cycleMarkers = ju.Collections.unmodifiableSet(_cycleMarkers)
 
   def this(options: ConfigResolveOptions, restrictToChild: Path) = {
     // LinkedHashSet keeps the traversal order which is at least useful
