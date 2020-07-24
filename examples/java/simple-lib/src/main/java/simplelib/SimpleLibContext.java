@@ -18,10 +18,7 @@ public class SimpleLibContext {
         // path so we only validate settings that belong to this
         // library. Otherwise, we might throw mistaken errors about
         // settings we know nothing about.
-
-        // Comment out for dotty compiling
-        // See https://github.com/lampepfl/dotty/issues/7212
-        //config.checkValid(ConfigFactory.defaultReference(), "simple-lib");
+        config.checkValid(ConfigFactory.defaultReference(), "simple-lib");
     }
 
     // This uses the standard default Config, if none is provided,

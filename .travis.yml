@@ -24,20 +24,20 @@ jobs:
   - env: TEST="linux"
     before_install: ./scripts/travis-os-setup.sh
     script: sbt +test doc
-  - env: TEST="linux" SCALAJS_VERSION=1.0.1
+  - env: TEST="linux" SCALAJS_VERSION=1.1.1
     script: sbt +sconfigJS/test
   - env: TEST="linux"
     jdk: openjdk11
     before_install: ./scripts/travis-os-setup.sh
     script: sbt +test
-  - env: TEST="linux" SCALAJS_VERSION=1.0.1
+  - env: TEST="linux" SCALAJS_VERSION=1.1.1
     jdk: openjdk11
     script: sbt +sconfigJS/test
   - stage: release
     script:
     - export CI_SONATYPE_RELEASE=version # to avoid release (valid command)
     - sbt ci-release
-    - export SCALAJS_VERSION=1.0.1
+    - export SCALAJS_VERSION=1.1.1
     - export CI_RELEASE=";+sconfigJS/publishSigned"
     - export CI_SONATYPE_RELEASE=sonatypeBundleRelease
     - export CI_CLEAN=version # don't clean first

@@ -29,6 +29,9 @@ libraryDependencies += "org.ekrich" %% "sconfig" % "x.y.z"
 To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above. Use `%%%` for non-JVM projects.
 All available versions can be seen at the [Maven Repository](https://mvnrepository.com/artifact/org.ekrich/sconfig).
 
+## Cross Build Versions
+[![Scala.js](https://www.scala-js.org/assets/badges/scalajs-1.0.0.svg)](https://www.scala-js.org)
+
 | Scala Version          | JVM | Scala.js (0.6.x, 1.x) | Native (0.4.x) |
 | ---------------------- | :-: | :-------------------: | :------------: |
 | 2.11.x                 | ✅  |          ✅           |       ✅       |

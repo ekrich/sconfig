@@ -2,7 +2,7 @@
 val crossVer = "0.6.1"
 val scalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
   .filter(_.nonEmpty)
-  .getOrElse("0.6.32")
+  .getOrElse("0.6.33")
 val scalaNativeVersion = Option(System.getenv("SCALANATIVE_VERSION"))
   .filter(_.nonEmpty)
   .getOrElse("0.4.0-M2")
