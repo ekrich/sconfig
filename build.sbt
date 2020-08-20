@@ -142,8 +142,13 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     sharedJvmNativeSource,
     nativeLinkStubs := true,
     logLevel := Level.Info, // Info or Debug
-    libraryDependencies += "com.github.lolgab" %%% "minitest" % "2.5.0-5f3852e" % Test,
-    testFrameworks += new TestFramework("minitest.runner.Framework")
+    // temp until real Scala Native release
+    libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat_native0.4.0-M2" % "2.1.6",
+    addCompilerPlugin(
+      "org.scala-native" % "junit-plugin" % "0.4.0-SNAPSHOT" cross CrossVersion.full
+    ),
+    libraryDependencies += "org.scala-native" %%% "junit-runtime" % "0.4.0-SNAPSHOT",
+    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
   )
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
