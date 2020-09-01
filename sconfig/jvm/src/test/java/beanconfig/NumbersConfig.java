@@ -1,7 +1,5 @@
 package beanconfig;
 
-// Java object returns are fully specified and should be reverted
-// in the future. See https://github.com/lampepfl/dotty/issues/7312
 public class NumbersConfig {
 
 
@@ -37,7 +35,7 @@ public class NumbersConfig {
         this.longVal = longVal;
     }
 
-    public java.lang.Long getLongObj() { return longObj; }
+    public Long getLongObj() { return longObj; }
 
     public void setLongObj(Long longObj) {
         this.longObj = longObj;
@@ -51,7 +49,7 @@ public class NumbersConfig {
         this.doubleVal = doubleVal;
     }
 
-    public java.lang.Double getDoubleObj() {
+    public Double getDoubleObj() {
         return doubleObj;
     }
 

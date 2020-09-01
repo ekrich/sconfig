@@ -10,7 +10,7 @@ public class BooleansConfig {
     Boolean on;
     boolean off;
 
-    public java.lang.Boolean getTrueVal() {
+    public Boolean getTrueVal() {
         return trueVal;
     }
 
@@ -26,7 +26,7 @@ public class BooleansConfig {
         this.trueValAgain = trueValAgain;
     }
 
-    public java.lang.Boolean getFalseVal() {
+    public Boolean getFalseVal() {
         return falseVal;
     }
 
