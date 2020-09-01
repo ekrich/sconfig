@@ -8,7 +8,11 @@
 target/
 /bin
 /node_modules
+
 # metals
 .bloop/
 .metals/
 project/metals.sbt
+
+# vscode
+/.vscode/
