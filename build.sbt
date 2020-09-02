@@ -123,24 +123,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       "-g",
       "-Xlint:unchecked"
     ),
-    // Dotty is missing serializable support
-    // Can Filter based on Test name but not method name with "erializ"
-    // so exclude the Tests with the 19 that cannot pass
-    // 530 - 19 = 511 Only 346 get run this way so we lose coverage
-    Test / testOptions := {
-      if (isDotty.value)
-        Seq(
-          Tests.Exclude(
-            Seq(
-              "org.ekrich.config.impl.ValidationTest",
-              "org.ekrich.config.impl.PublicApiTest",
-              "org.ekrich.config.impl.ConfigValueTest",
-              "org.ekrich.config.impl.ConfigTest"
-            )
-          )
-        )
-      else Seq(Tests.Exclude(Seq()))
-    },
     // because we test some global state such as singleton caches,
     // we have to run tests in serial.
     Test / parallelExecution := false,

@@ -998,8 +998,10 @@ abstract trait TestUtils {
         .sortBy(_.path)
         .sortBy(_.origin.lineNumber)
 
-    //for (problem <- problems)
-    //    System.err.println(problem.origin.description() + ": " + problem.path() + ": " + problem.problem())
+    // for (problem <- problems)
+    //   System.err.println(
+    //     problem.origin.description + ": " + problem.path + ": " + problem.problem
+    //   )
 
     for ((problem, expected) <- problems zip expecteds) {
       expected.check(problem)
