@@ -16,6 +16,8 @@ libraryDependencies += "org.ekrich" %%% "sconfig" % "x.y.z"
 This assumes that you read a file into a `configStr` first.
 
 ```scala
+import org.ekrich.config.ConfigFactory
+
 val configStr =
         """
           |maxColumn = 100
