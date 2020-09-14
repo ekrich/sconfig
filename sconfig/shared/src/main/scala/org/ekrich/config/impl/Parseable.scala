@@ -360,7 +360,7 @@ object Parseable {
         throw new ConfigException.BugOrBroken(
           "null class loader; pass in a class loader or use Thread.currentThread().setContextClassLoader()"
         )
-      val e = loader.getResources(resource)
+      val e = new PlatformClassLoader(loader).getResources(resource)
       if (!e.hasMoreElements) {
         if (ConfigImpl.traceLoadsEnabled)
           trace(
