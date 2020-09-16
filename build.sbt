@@ -106,14 +106,15 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
     scala2or3Source,
-    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.2.0"
+    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.2.0")
+      .withDottyCompat(scalaVersion.value)
   )
   .jvmSettings(
     sharedJvmNativeSource,
-    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-7" % Test,
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
-    libraryDependencies := libraryDependencies.value
-      .map(_.withDottyCompat(scalaVersion.value)),
+    libraryDependencies ++= Seq(
+      "io.crashbox"  %% "spray-json"     % "1.3.5-7" % Test,
+      "com.novocode" % "junit-interface" % "0.11"    % Test
+    ).map(_.withDottyCompat(scalaVersion.value)),
     Compile / compile / javacOptions ++= Seq(
       "-source",
       "1.8",
@@ -170,9 +171,10 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   )
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "1.0.0",
-    libraryDependencies := libraryDependencies.value
-      .map(_.withDottyCompat(scalaVersion.value))
+    libraryDependencies ++= Seq(
+      "org.scala-js" %%% "scalajs-java-time"         % "1.0.0",
+      "org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion % "test"
+    ).map(_.withDottyCompat(scalaVersion.value))
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
@@ -191,8 +193,7 @@ lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
 lazy val sconfigNative = sconfig.native
-lazy val sconfigJS = sconfig.js
-  .enablePlugins(ScalaJSJUnitPlugin)
+lazy val sconfigJS     = sconfig.js
 
 lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
