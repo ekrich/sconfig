@@ -1,6 +1,3 @@
-// shadow sbt-scalajs' crossProject and CrossType until Scala.js 1.0.0 is released
-import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
-
 addCommandAlias(
   "run-examples",
   Seq(
@@ -49,8 +46,8 @@ val scala212 = "2.12.12"
 val scala213 = "2.13.3"
 val dotty    = "0.27.0-RC1"
 
-val versionsBase   = Seq(scala211, scala212, scala213)
-val versionsJVM    = versionsBase :+ dotty
+val versionsBase   = Seq(scala211, scala212, scala213, dotty)
+val versionsJVM    = versionsBase
 val versionsJS     = versionsBase
 val versionsNative = Seq(scala211)
 
@@ -173,7 +170,9 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   )
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "1.0.0"
+    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "1.0.0",
+    libraryDependencies := libraryDependencies.value
+      .map(_.withDottyCompat(scalaVersion.value))
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
@@ -185,7 +184,8 @@ lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
 lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
   Compile / unmanagedSourceDirectories +=
     (ThisBuild / baseDirectory).value
-      / "sconfig" / { if (isDotty.value) "sharedScala3" else "sharedScala2" } / "src" / "main" / "scala"
+      / "sconfig" / { if (isDotty.value) "sharedScala3" else "sharedScala2" }
+      / "src" / "main" / "scala"
 )
 
 lazy val sconfigJVM = sconfig.jvm
