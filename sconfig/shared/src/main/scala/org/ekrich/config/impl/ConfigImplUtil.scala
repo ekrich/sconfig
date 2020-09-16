@@ -152,16 +152,16 @@ object ConfigImplUtil {
   private[impl] def urlToFile(url: URL): File = {
     // this isn't really right, clearly, but not sure what to do.
     try // this will properly handle hex escapes, etc.
-    return new File(url.toURI)
+    return new File(url.toURI())
     catch {
       case e: URISyntaxException =>
         // this handles some stuff like file:///c:/Whatever/
         // apparently but mangles handling of hex escapes
-        return new File(url.getPath)
+        return new File(url.getPath())
       case e: IllegalArgumentException =>
         // file://foo with double slash causes
         // IllegalArgumentException "url has an authority component"
-        return new File(url.getPath)
+        return new File(url.getPath())
     }
   }
   // add Scala vararg version - this is the one finally called now

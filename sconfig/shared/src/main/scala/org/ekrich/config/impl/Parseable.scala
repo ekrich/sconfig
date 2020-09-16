@@ -80,9 +80,9 @@ object Parseable {
   }
   private[impl] def relativeTo(url: URL, filename: String): URL = {
     // I'm guessing this completely fails on Windows, help wanted
-    if (new File(filename).isAbsolute) return null
+    if (new File(filename).isAbsolute()) return null
     try {
-      val siblingURI = url.toURI
+      val siblingURI = url.toURI()
       val relative   = new URI(filename)
       // this seems wrong, but it's documented that the last
       // element of the path in siblingURI gets stripped out,
@@ -101,8 +101,8 @@ object Parseable {
   }
   private[impl] def relativeTo(file: File, filename: String): File = {
     val child = new File(filename)
-    if (child.isAbsolute) return null
-    val parent = file.getParentFile
+    if (child.isAbsolute()) return null
+    val parent = file.getParentFile()
     if (parent == null) null else new File(parent, filename)
   }
   // this is a parseable that doesn't exist and just throws when you try to
@@ -197,15 +197,15 @@ object Parseable {
     override protected def reader(options: ConfigParseOptions): Reader =
       try {
         if (ConfigImpl.traceLoadsEnabled)
-          trace("Loading config from a URL: " + input.toExternalForm)
-        val connection = input.openConnection
+          trace("Loading config from a URL: " + input.toExternalForm())
+        val connection = input.openConnection()
         // allow server to serve multiple types from one URL
         val acceptContent = ParseableURL.acceptContentType(options)
         if (acceptContent != null)
           connection.setRequestProperty("Accept", acceptContent)
         connection.connect()
         // save content type for later
-        contentTypeStr = connection.getContentType
+        contentTypeStr = connection.getContentType()
         if (contentTypeStr != null) {
           if (ConfigImpl.traceLoadsEnabled)
             trace("URL sets Content-Type: '" + contentTypeStr + "'")
@@ -213,7 +213,7 @@ object Parseable {
           val semi = contentTypeStr.indexOf(';')
           if (semi >= 0) contentTypeStr = contentTypeStr.substring(0, semi)
         }
-        val stream = connection.getInputStream
+        val stream = connection.getInputStream()
         readerFromStream(stream)
       } catch {
         case fnf: FileNotFoundException =>
@@ -228,13 +228,13 @@ object Parseable {
           throw fnf
         case e: IOException =>
           throw new ConfigException.BugOrBroken(
-            "Cannot load config from URL: " + input.toExternalForm,
+            "Cannot load config from URL: " + input.toExternalForm(),
             e
           )
       }
 
     override private[impl] def guessSyntax: ConfigSyntax =
-      ConfigImplUtil.syntaxFromExtension(input.getPath)
+      ConfigImplUtil.syntaxFromExtension(input.getPath())
 
     override private[impl] def contentType: ConfigSyntax =
       if (contentTypeStr != null) {
@@ -264,13 +264,13 @@ object Parseable {
       SimpleConfigOrigin.newURL(input)
 
     override def toString: String =
-      getClass.getSimpleName + "(" + input.toExternalForm + ")"
+      getClass.getSimpleName + "(" + input.toExternalForm() + ")"
   }
 
   def newURL(input: URL, options: ConfigParseOptions): Parseable = {
     // we want file: URLs and files to always behave the same, so switch
     // to a file if it's a file: URL
-    if (input.getProtocol == "file")
+    if (input.getProtocol() == "file")
       newFile(ConfigImplUtil.urlToFile(input), options)
     else new ParseableURL(input, options)
   }
@@ -288,15 +288,15 @@ object Parseable {
       readerFromStream(stream)
     }
     override private[impl] def guessSyntax =
-      ConfigImplUtil.syntaxFromExtension(input.getName)
+      ConfigImplUtil.syntaxFromExtension(input.getName())
     override private[impl] def relativeTo(filename: String): ConfigParseable = {
       val sibling: File =
-        if (new File(filename).isAbsolute) new File(filename)
+        if (new File(filename).isAbsolute()) new File(filename)
         else { // this may return null
           Parseable.relativeTo(input, filename)
         }
       if (sibling == null) return null
-      if (sibling.exists) {
+      if (sibling.exists()) {
         trace(s"$sibling exists, so loading it as a file")
         newFile(sibling, options.setOriginDescription(null))
       } else {
@@ -305,9 +305,9 @@ object Parseable {
       }
     }
     override protected def createOrigin(): ConfigOrigin =
-      SimpleConfigOrigin.newFile(input.getPath)
+      SimpleConfigOrigin.newFile(input.getPath())
     override def toString: String =
-      getClass.getSimpleName + "(" + input.getPath + ")"
+      getClass.getSimpleName + "(" + input.getPath() + ")"
   }
   def newFile(input: File, options: ConfigParseOptions) =
     new ParseableFile(input, options)
@@ -373,7 +373,8 @@ object Parseable {
         val url = e.nextElement
         if (ConfigImpl.traceLoadsEnabled)
           trace(
-            "Loading config from resource '" + resource + "' URL " + url.toExternalForm + " from class loader " + loader
+            "Loading config from resource '" + resource + "' URL " + url
+              .toExternalForm() + " from class loader " + loader
           )
         val element =
           newResourceURL(url, finalOptions, resource, this)
@@ -426,7 +427,7 @@ object Parseable {
     if (resource.startsWith("/")) { // "absolute" resource, chop the slash
       resource.substring(1)
     } else {
-      val className = klass.getName
+      val className = klass.getName()
       val i         = className.lastIndexOf('.')
       if (i < 0) { // no package
         resource
@@ -561,11 +562,12 @@ abstract class Parseable protected (
           SimpleConfigObject.emptyMissing(origin)
         } else {
           Parseable.trace(
-            "exception loading " + origin.description + ": " + e.getClass.getName + ": " + e.getMessage
+            "exception loading " + origin.description + ": " + e.getClass
+              .getName() + ": " + e.getMessage
           )
           throw new ConfigException.IO(
             origin,
-            e.getClass.getName + ": " + e.getMessage,
+            e.getClass.getName() + ": " + e.getMessage,
             e
           )
         }
@@ -599,11 +601,12 @@ abstract class Parseable protected (
           )
         } else {
           Parseable.trace(
-            "exception loading " + origin.description + ": " + e.getClass.getName + ": " + e.getMessage
+            "exception loading " + origin.description + ": " + e.getClass
+              .getName() + ": " + e.getMessage
           )
           throw new ConfigException.IO(
             origin,
-            e.getClass.getName + ": " + e.getMessage,
+            e.getClass.getName() + ": " + e.getMessage,
             e
           )
         }

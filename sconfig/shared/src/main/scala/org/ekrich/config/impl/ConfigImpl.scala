@@ -146,7 +146,7 @@ object ConfigImpl {
       baseOptions: ConfigParseOptions
   ): ConfigObject = {
     val source = new ConfigImpl.FileNameSource
-    SimpleIncluder.fromBasename(source, basename.getPath, baseOptions)
+    SimpleIncluder.fromBasename(source, basename.getPath(), baseOptions)
   }
 
   private[impl] def emptyObject(
