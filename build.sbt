@@ -171,10 +171,18 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   )
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-java-time"         % "1.0.0",
-      "org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion % "test"
-    ).map(_.withDottyCompat(scalaVersion.value))
+    autoCompilerPlugins := true,
+    libraryDependencies ++= (
+      if (isDotty.value)
+        Seq(
+          "org.scala-js" %%% "scalajs-java-time"         % "1.0.0",
+          "org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion % "test"
+        ).map(_.withDottyCompat(scalaVersion.value))
+      else
+        Seq(
+          "org.scala-js" %%% "scalajs-java-time" % "1.0.0"
+        )
+    )
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
@@ -194,6 +202,7 @@ lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
 lazy val sconfigNative = sconfig.native
 lazy val sconfigJS     = sconfig.js
+//.enablePlugins(ScalaJSJUnitPlugin) // needed not for Dotty
 
 lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
