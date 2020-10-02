@@ -110,6 +110,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       .withDottyCompat(scalaVersion.value)
   )
   .jvmSettings(
+    crossScalaVersions := versionsJVM,
     sharedJvmNativeSource,
     libraryDependencies ++= Seq(
       "io.crashbox"  %% "spray-json"     % "1.3.5-7" % Test,
