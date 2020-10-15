@@ -1,4 +1,3 @@
-
 addCommandAlias(
   "run-examples",
   Seq(
@@ -214,7 +213,6 @@ lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
 lazy val sconfigNative = sconfig.native
 lazy val sconfigJS     = sconfig.js
-
 
 lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
