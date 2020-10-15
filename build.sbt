@@ -1,3 +1,4 @@
+
 addCommandAlias(
   "run-examples",
   Seq(
@@ -44,7 +45,7 @@ scalacOptions in (Compile, console) --= Seq(
 val scala211 = "2.11.12"
 val scala212 = "2.12.12"
 val scala213 = "2.13.3"
-val dotty    = "0.27.0-RC1"
+val dotty    = "0.28.0-bin-20201013-68a7c03-NIGHTLY"
 
 val versionsBase   = Seq(scala211, scala212, scala213, dotty)
 val versionsJVM    = versionsBase
@@ -169,20 +170,31 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     libraryDependencies += "com.github.lolgab" %%% "minitest" % "2.5.0-5f3852e" % Test,
     testFrameworks += new TestFramework("minitest.runner.Framework")
   )
+  .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versionsJS,
-    autoCompilerPlugins := true,
-    libraryDependencies ++= (
+    libraryDependencies += (
       if (isDotty.value)
-        Seq(
-          "org.scala-js" %%% "scalajs-java-time"         % "1.0.0",
-          "org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion % "test"
-        ).map(_.withDottyCompat(scalaVersion.value))
+        ("org.scala-js" %%% "scalajs-java-time" % "1.0.0")
+          .withDottyCompat(scalaVersion.value)
       else
-        Seq(
-          "org.scala-js" %%% "scalajs-java-time" % "1.0.0"
-        )
-    )
+        "org.scala-js" %%% "scalajs-java-time" % "1.0.0"
+    ),
+    libraryDependencies := {
+      val prev   = libraryDependencies.value
+      val scalaV = scalaVersion.value
+      if (isDotty.value) {
+        prev
+          .filterNot(_.name == "scalajs-junit-test-plugin")
+          .map(dep =>
+            if (dep.name == "scalajs-junit-test-runtime")
+              dep.withDottyCompat(scalaV)
+            else dep
+          )
+      } else {
+        prev
+      }
+    }
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
@@ -202,7 +214,7 @@ lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
 lazy val sconfigNative = sconfig.native
 lazy val sconfigJS     = sconfig.js
-//.enablePlugins(ScalaJSJUnitPlugin) // needed not for Dotty
+
 
 lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
