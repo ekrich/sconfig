@@ -30,8 +30,8 @@ object SimpleConfigOrigin {
   private[impl] def newFile(filename: String): SimpleConfigOrigin = {
     var url: String = null
     try {
-      val uri = new File(filename).toURI
-      url = new PlatformUri(uri).toURL().toExternalForm
+      val uri = new File(filename).toURI()
+      url = new PlatformUri(uri).toURL().toExternalForm()
     } catch {
       case e: MalformedURLException =>
         url = null
@@ -39,7 +39,7 @@ object SimpleConfigOrigin {
     new SimpleConfigOrigin(filename, -1, -1, OriginType.FILE, url, null, null)
   }
   private[impl] def newURL(url: URL): SimpleConfigOrigin = {
-    val u = url.toExternalForm
+    val u = url.toExternalForm()
     new SimpleConfigOrigin(u, -1, -1, OriginType.URL, u, null, null)
   }
   private[impl] def newResource(
@@ -47,13 +47,13 @@ object SimpleConfigOrigin {
       url: URL
   ): SimpleConfigOrigin = {
     val desc: String =
-      if (url != null) resource + " @ " + url.toExternalForm else resource
+      if (url != null) resource + " @ " + url.toExternalForm() else resource
     new SimpleConfigOrigin(
       desc,
       -1,
       -1,
       OriginType.RESOURCE,
-      if (url != null) url.toExternalForm else null,
+      if (url != null) url.toExternalForm() else null,
       resource,
       null
     )
@@ -402,7 +402,7 @@ final class SimpleConfigOrigin protected (
       this.lineNumber,
       this.endLineNumber,
       this.originType,
-      if (url != null) url.toExternalForm else null,
+      if (url != null) url.toExternalForm() else null,
       this.resourceOrNull,
       this.commentsOrNull
     )
@@ -481,7 +481,7 @@ final class SimpleConfigOrigin protected (
         case e: MalformedURLException =>
           return null
       }
-      if (url.getProtocol == "file") url.getFile else null
+      if (url.getProtocol() == "file") url.getFile() else null
     } else null
 
   override def url: URL =

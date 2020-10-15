@@ -1,6 +1,3 @@
-// shadow sbt-scalajs' crossProject and CrossType until Scala.js 1.0.0 is released
-import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
-
 addCommandAlias(
   "run-examples",
   Seq(
@@ -47,10 +44,10 @@ scalacOptions in (Compile, console) --= Seq(
 val scala211 = "2.11.12"
 val scala212 = "2.12.12"
 val scala213 = "2.13.3"
-val dotty    = "0.27.0-RC1"
+val dotty    = "0.28.0-bin-20201013-68a7c03-NIGHTLY"
 
-val versionsBase   = Seq(scala211, scala212, scala213)
-val versionsJVM    = versionsBase :+ dotty
+val versionsBase   = Seq(scala211, scala212, scala213, dotty)
+val versionsJVM    = versionsBase
 val versionsJS     = versionsBase
 val versionsNative = Seq(scala211)
 
@@ -109,14 +106,15 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
     scala2or3Source,
-    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % "2.2.0"
+    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.2.0")
+      .withDottyCompat(scalaVersion.value)
   )
   .jvmSettings(
     sharedJvmNativeSource,
-    libraryDependencies += "io.crashbox"  %% "spray-json"     % "1.3.5-7" % Test,
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.11"    % Test,
-    libraryDependencies := libraryDependencies.value
-      .map(_.withDottyCompat(scalaVersion.value)),
+    libraryDependencies ++= Seq(
+      "io.crashbox"  %% "spray-json"     % "1.3.5-7" % Test,
+      "com.novocode" % "junit-interface" % "0.11"    % Test
+    ).map(_.withDottyCompat(scalaVersion.value)),
     Compile / compile / javacOptions ++= Seq(
       "-source",
       "1.8",
@@ -171,9 +169,31 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     libraryDependencies += "com.github.lolgab" %%% "minitest" % "2.5.0-5f3852e" % Test,
     testFrameworks += new TestFramework("minitest.runner.Framework")
   )
+  .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "1.0.0"
+    libraryDependencies += (
+      if (isDotty.value)
+        ("org.scala-js" %%% "scalajs-java-time" % "1.0.0")
+          .withDottyCompat(scalaVersion.value)
+      else
+        "org.scala-js" %%% "scalajs-java-time" % "1.0.0"
+    ),
+    libraryDependencies := {
+      val prev   = libraryDependencies.value
+      val scalaV = scalaVersion.value
+      if (isDotty.value) {
+        prev
+          .filterNot(_.name == "scalajs-junit-test-plugin")
+          .map(dep =>
+            if (dep.name == "scalajs-junit-test-runtime")
+              dep.withDottyCompat(scalaV)
+            else dep
+          )
+      } else {
+        prev
+      }
+    }
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
@@ -185,14 +205,14 @@ lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
 lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
   Compile / unmanagedSourceDirectories +=
     (ThisBuild / baseDirectory).value
-      / "sconfig" / { if (isDotty.value) "sharedScala3" else "sharedScala2" } / "src" / "main" / "scala"
+      / "sconfig" / { if (isDotty.value) "sharedScala3" else "sharedScala2" }
+      / "src" / "main" / "scala"
 )
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
 lazy val sconfigNative = sconfig.native
-lazy val sconfigJS = sconfig.js
-  .enablePlugins(ScalaJSJUnitPlugin)
+lazy val sconfigJS     = sconfig.js
 
 lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
