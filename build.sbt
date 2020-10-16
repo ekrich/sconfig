@@ -29,14 +29,14 @@ val scalacOpts = List(
 
 val dotcOpts = List("-Xdiags:verbose")
 
-ThisBuild / Compile / scalacOptions := {
+Compile / scalacOptions := {
   if (isDotty.value) dotcOpts else scalacOpts
 }
-ThisBuild / Test / scalacOptions := {
+Test / scalacOptions := {
   if (isDotty.value) dotcOpts else scalacOpts
 }
 
-scalacOptions in (Compile, console) --= Seq(
+Compile / console / scalacOptions --= Seq(
   "-Ywarn-unused:imports",
   "-Xfatal-warnings"
 )
@@ -127,7 +127,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     // because we test some global state such as singleton caches,
     // we have to run tests in serial.
     Test / parallelExecution := false,
-    test / fork := true,
     Test / fork := true,
     run / fork := true,
     Test / run / fork := true,
