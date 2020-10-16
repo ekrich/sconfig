@@ -63,18 +63,21 @@ object ConfigException {
       origin: ConfigOrigin
   ): Unit = {
     // circumvent "final"
-    var f: Field = null
-    try {
-      f = clazz.getDeclaredField("origin");
-    } catch {
-      case e: NoSuchFieldException =>
-        throw new IOException(clazz.getSimpleName + " has no origin field?", e)
-      case e: SecurityException =>
-        throw new IOException(
-          "unable to fill out origin field in " + clazz.getSimpleName,
-          e
-        )
-    }
+    val f: Field =
+      try {
+        clazz.getDeclaredField("origin");
+      } catch {
+        case e: NoSuchFieldException =>
+          throw new IOException(
+            clazz.getSimpleName + " has no origin field?",
+            e
+          )
+        case e: SecurityException =>
+          throw new IOException(
+            "unable to fill out origin field in " + clazz.getSimpleName,
+            e
+          )
+      }
 
     f.setAccessible(true)
     try {

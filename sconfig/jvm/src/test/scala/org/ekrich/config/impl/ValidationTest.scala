@@ -113,7 +113,7 @@ class ValidationTest extends TestUtils {
     checkValidationException(e, expecteds)
   }
 
-  @Test
+  @Test @Ignore("https://github.com/lampepfl/dotty/issues/9881")
   def validationFailedSerializable(): Unit = {
     // Reusing a previous test case to generate an error
     val reference = parseConfig("""{ a : [{},{},{}] }""")
@@ -121,7 +121,6 @@ class ValidationTest extends TestUtils {
     val e = intercept[ConfigException.ValidationFailed] {
       conf.checkValid(reference)
     }
-
     val expecteds = Seq(WrongType("a", 1, "list", "number"))
 
     val actual = checkSerializableNoMeaningfulEquals(e)
