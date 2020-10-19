@@ -44,7 +44,7 @@ Compile / console / scalacOptions --= Seq(
 val scala211 = "2.11.12"
 val scala212 = "2.12.12"
 val scala213 = "2.13.3"
-val dotty    = "0.28.0-bin-20201013-68a7c03-NIGHTLY"
+val dotty    = "3.0.0-M1-bin-20201015-8c56525-NIGHTLY"
 
 val versionsBase   = Seq(scala211, scala212, scala213, dotty)
 val versionsJVM    = versionsBase
