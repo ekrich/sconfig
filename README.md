@@ -37,7 +37,9 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 | 2.11.x                 | ✅  |          ✅           |       ✅       |
 | 2.12.x                 | ✅  |          ✅           |      n/a       |
 | 2.13.x                 | ✅  |          ✅           |      n/a       |
-| 0.27.0-RC1             | ✅  |          n/a          |      n/a       |
+| 3.0.0-M1               | ✅  |          ✅           |      n/a       |
+
+Scala 3 support is not released yet. See releases below.
 
 
 ## Usage and Help
