@@ -16,7 +16,7 @@ import org.ekrich.config.ConfigOrigin
 object PropertiesParser {
   @throws[IOException]
   private[impl] def parse(reader: Reader, origin: ConfigOrigin) = {
-    val props     = new Properties()
+    val props = new Properties()
     props.load(reader)
     fromProperties(origin, props)
   }
