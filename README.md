@@ -39,9 +39,6 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 | 2.13.x                 | ✅  |          ✅           |      n/a       |
 | 3.0.0-M1               | ✅  |          ✅           |      n/a       |
 
-Scala 3 support is not released yet. See releases below.
-
-
 ## Usage and Help
 [![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.11.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.11)
 [![Join chat https://gitter.im/ekrich/sconfig](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ekrich/sconfig?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
