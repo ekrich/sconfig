@@ -32,7 +32,7 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 ## Cross Build Versions
 [![Scala.js](https://www.scala-js.org/assets/badges/scalajs-1.0.0.svg)](https://www.scala-js.org)
 
-| Scala Version          | JVM | Scala.js (0.6.x, 1.x) | Native (0.4.x) |
+| Scala Version          | JVM | Scala.js (1.x)        | Native (0.4.x) |
 | ---------------------- | :-: | :-------------------: | :------------: |
 | 2.11.x                 | ✅  |          ✅           |       ✅       |
 | 2.12.x                 | ✅  |          ✅           |      n/a       |
