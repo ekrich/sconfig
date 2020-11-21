@@ -43,7 +43,7 @@ val dotty    = "3.0.0-M3"
 val versionsBase   = Seq(scala211, scala212, scala213, dotty)
 val versionsJVM    = versionsBase
 val versionsJS     = versionsBase
-val versionsNative = Seq(scala211)
+val versionsNative = Seq(scala211, scala212, scala213)
 
 ThisBuild / scalaVersion := scala212
 ThisBuild / crossScalaVersions := versionsJVM
@@ -138,12 +138,9 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   )
   .nativeSettings(
     crossScalaVersions := versionsNative,
-    scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
     sharedJvmNativeSource,
     nativeLinkStubs := true,
     logLevel := Level.Info, // Info or Debug
-    // temp until real Scala Native release
-    libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat_native0.4.0-M2" % "2.1.6",
     addCompilerPlugin(
       "org.scala-native" % "junit-plugin" % "0.4.0-SNAPSHOT" cross CrossVersion.full
     ),
