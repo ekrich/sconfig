@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.3.3"
-val nextVersion = "1.3.4"
+val prevVersion = "1.3.4"
+val nextVersion = "1.3.5"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -107,7 +107,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .settings(
     scala2or3Source,
     libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.3.0")
-      .withDottyCompat(scalaVersion.value)
   )
   .jvmSettings(
     crossScalaVersions := versionsJVM,
@@ -160,22 +159,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
           .withDottyCompat(scalaVersion.value)
       else
         "org.scala-js" %%% "scalajs-java-time" % "1.0.0"
-    ),
-    libraryDependencies := {
-      val prev   = libraryDependencies.value
-      val scalaV = scalaVersion.value
-      if (isDotty.value) {
-        prev
-          .filterNot(_.name == "scalajs-junit-test-plugin")
-          .map(dep =>
-            if (dep.name == "scalajs-junit-test-runtime")
-              dep.withDottyCompat(scalaV)
-            else dep
-          )
-      } else {
-        prev
-      }
-    }
+    )
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
