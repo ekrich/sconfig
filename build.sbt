@@ -44,7 +44,7 @@ Compile / console / scalacOptions --= Seq(
 val scala211 = "2.11.12"
 val scala212 = "2.12.12"
 val scala213 = "2.13.3"
-val dotty    = "3.0.0-M1"
+val dotty    = "3.0.0-M2"
 
 val versionsBase   = Seq(scala211, scala212, scala213, dotty)
 val versionsJVM    = versionsBase
@@ -106,7 +106,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
     scala2or3Source,
-    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.3.0")
+    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.3.1")
   )
   .jvmSettings(
     crossScalaVersions := versionsJVM,

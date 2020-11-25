@@ -113,7 +113,7 @@ class ValidationTest extends TestUtils {
     checkValidationException(e, expecteds)
   }
 
-  @Test @Ignore("https://github.com/lampepfl/dotty/issues/9881")
+  @Test
   def validationFailedSerializable(): Unit = {
     // Reusing a previous test case to generate an error
     val reference = parseConfig("""{ a : [{},{},{}] }""")
