@@ -40,10 +40,10 @@ val scala212 = "2.12.13"
 val scala213 = "2.13.4"
 val dotty    = "3.0.0-M3"
 
-val versionsBase   = Seq(scala211, scala212, scala213, dotty)
-val versionsJVM    = versionsBase
-val versionsJS     = versionsBase
-val versionsNative = Seq(scala211, scala212, scala213)
+val versionsBase   = Seq(scala211, scala212, scala213)
+val versionsJVM    = versionsBase :+ scala300
+val versionsJS     = versionsJVM
+val versionsNative = versionsBase
 
 ThisBuild / scalaVersion := scala212
 ThisBuild / crossScalaVersions := versionsJVM
