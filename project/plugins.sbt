@@ -4,7 +4,7 @@ val scalaJSVersion     = "1.3.1"
 val scalaNativeVersion = "0.4.0-M2"
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
-addSbtPlugin("com.geirsson" % "sbt-ci-release"  % "1.5.4")
+addSbtPlugin("com.geirsson" % "sbt-ci-release"  % "1.5.5")
 addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "0.8.1")
 
 // Scala Native support
