@@ -8,12 +8,12 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.3.4"
-val nextVersion = "1.3.5"
+val prevVersion = "1.3.5"
+val nextVersion = "1.3.6"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
-  val tag = out.ref.dropV.value
+  val tag = out.ref.dropPrefix
   if (out.isCleanAfterTag) tag
   else nextVersion + "-SNAPSHOT"
 }
@@ -43,8 +43,8 @@ Compile / console / scalacOptions --= Seq(
 
 val scala211 = "2.11.12"
 val scala212 = "2.12.12"
-val scala213 = "2.13.3"
-val dotty    = "3.0.0-M2"
+val scala213 = "2.13.4"
+val dotty    = "3.0.0-M3"
 
 val versionsBase   = Seq(scala211, scala212, scala213, dotty)
 val versionsJVM    = versionsBase
@@ -77,8 +77,6 @@ inThisBuild(
   )
 )
 
-ThisBuild / pomIncludeRepository := { _ => false }
-
 lazy val root = (project in file("."))
   .aggregate(
     testLibJVM,
@@ -106,7 +104,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
     scala2or3Source,
-    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.3.1")
+    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.3.2")
   )
   .jvmSettings(
     crossScalaVersions := versionsJVM,
