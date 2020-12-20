@@ -29,14 +29,12 @@ val scalacOpts = List(
 
 val dotcOpts = List("-Xdiags:verbose")
 
-Compile / scalacOptions := {
-  if (isDotty.value) dotcOpts else scalacOpts
-}
-Test / scalacOptions := {
+ThisBuild / scalacOptions := {
   if (isDotty.value) dotcOpts else scalacOpts
 }
 
 Compile / console / scalacOptions --= Seq(
+  "-Xlint:nonlocal-return", // for 2.12 console
   "-Ywarn-unused:imports",
   "-Xfatal-warnings"
 )
