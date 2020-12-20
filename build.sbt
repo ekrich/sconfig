@@ -22,16 +22,12 @@ val scalacOpts = List(
   "-unchecked",
   "-deprecation",
   "-feature",
-  "-Ywarn-unused:imports",
-  "-Xsource:3",
-  "-Xlint:nonlocal-return"
+  //"-Ywarn-unused:imports", // no 2.11 - maybe time for sbt-tpolecat
+  "-Xsource:3"
+  //"-Xlint:nonlocal-return" // no 2.11/2.12
 )
 
-val dotcOpts = List("-Xdiags:verbose")
-
-ThisBuild / scalacOptions := {
-  if (isDotty.value) dotcOpts else scalacOpts
-}
+val dotcOpts = List("-unchecked", "-deprecation", "-feature")
 
 Compile / console / scalacOptions --= Seq(
   "-Xlint:nonlocal-return", // for 2.12 console
@@ -101,6 +97,9 @@ lazy val root = (project in file("."))
 lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
+    scalacOptions := {
+      if (isDotty.value) dotcOpts else scalacOpts
+    },
     scala2or3Source,
     libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.3.2")
   )
