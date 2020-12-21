@@ -148,13 +148,8 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies += (
-      if (isDotty.value)
-        ("org.scala-js" %%% "scalajs-java-time" % "1.0.0")
-          .withDottyCompat(scalaVersion.value)
-      else
-        "org.scala-js" %%% "scalajs-java-time" % "1.0.0"
-    )
+    libraryDependencies += ("org.scala-js" %%% "scalajs-java-time" % "1.0.0")
+      .withDottyCompat(scalaVersion.value)
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
@@ -169,6 +164,7 @@ lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
       / "sconfig" / { if (isDotty.value) "sharedScala3" else "sharedScala2" }
       / "src" / "main" / "scala"
 )
+
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
