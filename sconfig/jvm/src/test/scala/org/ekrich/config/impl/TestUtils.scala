@@ -85,8 +85,8 @@ abstract trait TestUtils {
   }
 
   protected def checkNotEqualObjects(a: Any, b: Any): Unit = {
-    assertFalse(a.equals(b))
-    assertFalse(b.equals(a))
+    assertNotEquals(a, b)
+    assertNotEquals(b, a)
     // hashcode inequality isn't guaranteed, but
     // as long as it happens to work it might
     // detect a bug (if hashcodes are equal,
@@ -98,8 +98,8 @@ abstract trait TestUtils {
   }
 
   protected def checkEqualObjects(a: Any, b: Any): Unit = {
-    assertTrue(a.equals(b))
-    assertTrue(b.equals(a))
+    assertEquals(a, b)
+    assertEquals(b, a)
     assertTrue(a.hashCode() == b.hashCode())
     checkNotEqualToRandomOtherThing(a)
     checkNotEqualToRandomOtherThing(b)
