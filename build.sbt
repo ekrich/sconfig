@@ -97,7 +97,7 @@ lazy val root = (project in file("."))
 lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
-    scalacOptions := {
+    scalacOptions ++= {
       if (isDotty.value) dotcOpts else scalacOpts
     },
     scala2or3Source,
@@ -164,7 +164,6 @@ lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
       / "sconfig" / { if (isDotty.value) "sharedScala3" else "sharedScala2" }
       / "src" / "main" / "scala"
 )
-
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
