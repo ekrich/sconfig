@@ -108,7 +108,7 @@ object PathParser {
         if (pathTokens != null) pathTokens.add(t)
         // Ignore all IgnoredWhitespace tokens
         if (Tokens.isIgnoredWhitespace(t))
-          break // continue
+          break() // continue
         if (Tokens.isValueWithType(t, ConfigValueType.STRING)) {
           val v = Tokens.getValue(t)
           // this is a quoted string; so any periods
@@ -231,25 +231,25 @@ object PathParser {
         val c = s.charAt(i)
         if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') {
           lastWasDot = false
-          break // continue
+          break() // continue
         } else if (c == '.') {
           if (lastWasDot) {
             // ".." means we need to throw an error
             returnNow = true
-            break // continue for return
+            break() // continue for return
           } else {
             lastWasDot = true
           }
         } else if (c == '-') {
           if (lastWasDot) {
             returnNow = true
-            break // continue for return
+            break() // continue for return
           } else {
-            break // continue
+            break() // continue
           }
         } else {
           returnNow = true
-          break // continue for return
+          break() // continue for return
         }
       }
       if (returnNow) {

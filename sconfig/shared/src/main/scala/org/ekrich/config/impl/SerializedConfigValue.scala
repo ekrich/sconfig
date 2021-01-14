@@ -110,7 +110,7 @@ object SerializedConfigValue {
         val field: SerializedField = readCode(in)
         val v: AnyRef = field match {
           case END_MARKER =>
-            break // break - was return SimpleConfigOrigin.fromBase(baseOrigin, m)
+            break() // break - was return SimpleConfigOrigin.fromBase(baseOrigin, m)
           case ORIGIN_DESCRIPTION =>
             in.readInt // discard length - same for cases below
             in.readUTF
@@ -283,7 +283,7 @@ object SerializedConfigValue {
             throw new IOException(
               "No value data found in serialization of value"
             )
-          break // break - previous set value
+          break() // break - previous set value
         } else if (code eq SerializedField.VALUE_DATA) {
           if (origin == null)
             throw new IOException("Origin must be stored before value data")
@@ -384,7 +384,7 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
       while (true) {
         val code = SerializedConfigValue.readCode(in)
         if (code eq SerializedField.END_MARKER)
-          break // break - was return
+          break() // break - was return
         val input = fieldIn(in)
         if (code eq SerializedField.ROOT_VALUE)
           this.value = SerializedConfigValue.readValue(input, null)

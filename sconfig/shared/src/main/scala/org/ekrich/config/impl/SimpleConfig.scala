@@ -133,7 +133,7 @@ object SimpleConfig {
     breakable {
       while (i >= 0) {
         val c = s.charAt(i)
-        if (!Character.isLetter(c)) break // break
+        if (!Character.isLetter(c)) break() // break
         i -= 1
       }
     }
@@ -525,7 +525,7 @@ object SimpleConfig {
               ) + " but got element of type " + getDesc(e)
             )
             // don't add a problem for every last array element
-            break // break
+            break() // break
           }
         }
       }

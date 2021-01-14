@@ -84,13 +84,13 @@ object DefaultTransformer {
           try {
             i = Integer.parseInt(key, 10)
             if (i < 0) {
-              break // continue
+              break() // continue
             } else {
               values.put(i, o.get(key))
             }
           } catch {
             case e: NumberFormatException =>
-              break // continue
+              break() // continue
           }
         }
       }

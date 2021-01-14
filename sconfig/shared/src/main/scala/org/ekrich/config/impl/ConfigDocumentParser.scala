@@ -61,7 +61,7 @@ object ConfigDocumentParser {
 
     private def popToken: Token = {
       if (buffer.isEmpty) return tokens.next
-      buffer.pop
+      buffer.pop()
     }
     private def nextToken: Token = {
       val t = popToken
@@ -97,7 +97,7 @@ object ConfigDocumentParser {
             if (newNumber >= 0) lineNumber = newNumber
             //return t
             retToken = t
-            break // break - added for Scala to "return"
+            break() // break - added for Scala to "return"
           }
         }
       }
@@ -143,12 +143,12 @@ object ConfigDocumentParser {
               nodes.add(new ConfigNodeSingleToken(t))
               //return true
               retTrue = true
-              break // break - added for Scala to "return"
+              break() // break - added for Scala to "return"
             } else {
               // non-newline-or-comma
               putBack(t)
               //return sawSeparatorOrNewline
-              break // break - added for Scala to "return"
+              break() // break - added for Scala to "return"
             }
             t = nextToken
           }
@@ -183,7 +183,7 @@ object ConfigDocumentParser {
             if (v == null) throw new ConfigException.BugOrBroken("no value")
             values.add(v)
           } else {
-            break // break
+            break() // break
           }
           t = nextToken // but don't consolidate across a newline
         }
@@ -230,7 +230,7 @@ object ConfigDocumentParser {
             putBack(values.get(i).asInstanceOf[ConfigNodeSingleToken].token)
             values.remove(i)
           } else {
-            break // break
+            break() // break
           }
           i -= 1
         }
@@ -433,10 +433,10 @@ object ConfigDocumentParser {
                 )
               )
             objectNodes.add(new ConfigNodeSingleToken(Tokens.CLOSE_CURLY))
-            break // break
+            break() // break
           } else if ((t eq Tokens.END) && !hadOpenCurly) {
             putBack(t)
-            break // break
+            break() // break
           } else if ((flavor ne ConfigSyntax.JSON) && ParseContext
                        .isIncludeKeyword(t)) {
             val includeNodes =
@@ -517,7 +517,7 @@ object ConfigDocumentParser {
                   )
                 )
               objectNodes.add(new ConfigNodeSingleToken(t))
-              break // break
+              break() // break
             } else if (hadOpenCurly) {
               throw parseError(
                 addQuoteSuggestion(
@@ -530,7 +530,7 @@ object ConfigDocumentParser {
             } else {
               if (t eq Tokens.END) {
                 putBack(t)
-                break // break
+                break() // break
               } else
                 throw parseError(
                   addQuoteSuggestion(
@@ -581,7 +581,7 @@ object ConfigDocumentParser {
             if (t eq Tokens.CLOSE_SQUARE) {
               children.add(new ConfigNodeSingleToken(t))
               //return new ConfigNodeArray(children)
-              break // break - added for Scala to force return from while loop
+              break() // break - added for Scala to force return from while loop
             } else
               throw parseError(
                 "List should have ended with ] or had a comma, instead had token: " +

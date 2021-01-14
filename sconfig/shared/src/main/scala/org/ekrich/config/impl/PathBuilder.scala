@@ -35,7 +35,7 @@ final class PathBuilder private[impl] () {
         if (remainder != null) {
           first = remainder.first
           remainder = remainder.remainder
-        } else break // break
+        } else break() // break
       }
     }
   }
@@ -45,7 +45,7 @@ final class PathBuilder private[impl] () {
     if (resultPath == null) {
       var remainder: Path = null
       while (!keys.isEmpty) {
-        val key = keys.pop
+        val key = keys.pop()
         remainder = new Path(key, remainder)
       }
       resultPath = remainder

@@ -43,7 +43,7 @@ object ConfigParser {
         while (key != null) {
           keys.add(key)
           if (remaining == null) {
-            break // break
+            break() // break
           } else {
             key = remaining.first
             remaining = remaining.remainder
@@ -296,7 +296,7 @@ object ConfigParser {
                         ju.Collections.singletonList(comment.commentText)
                       )
                   )
-                  break // break
+                  break() // break
                 } else if (nodes.get(i).isInstanceOf[ConfigNodeSingleToken]) {
                   val curr =
                     nodes.get(i).asInstanceOf[ConfigNodeSingleToken]
@@ -305,11 +305,11 @@ object ConfigParser {
                     // keep searching, as there could still be a comment
                   } else {
                     i -= 1
-                    break // break
+                    break() // break
                   }
                 } else {
                   i -= 1
-                  break // break
+                  break() // break
                 }
                 i += 1
               }
@@ -418,7 +418,7 @@ object ConfigParser {
                     .appendComments(new ju.ArrayList[String](comments))
                 )
                 comments.clear()
-                break // break
+                break() // break
               }
               lastWasNewLine = true
             }

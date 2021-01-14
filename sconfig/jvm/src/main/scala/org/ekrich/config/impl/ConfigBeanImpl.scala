@@ -82,7 +82,7 @@ object ConfigBeanImpl {
       for (beanProp <- beanInfo.getPropertyDescriptors) {
         breakable {
           if (beanProp.getReadMethod == null || beanProp.getWriteMethod == null)
-            break // continue
+            break() // continue
           beanProps.add(beanProp)
         }
       }
@@ -118,7 +118,7 @@ object ConfigBeanImpl {
           // Is the property key missing in the config?
           if (configPropName == null) { // If so, continue if the field is marked as @{link Optional}
             if (isOptionalProperty(clazz, beanProp))
-              break // continue, Otherwise, raise a {@link Missing} exception right here
+              break() // continue, Otherwise, raise a {@link Missing} exception right here
             throw new ConfigException.Missing(beanProp.getName)
           }
           val unwrapped = getValue(
