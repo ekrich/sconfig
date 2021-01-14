@@ -9,7 +9,7 @@ jdk:
 os:
   - linux
   
-dist: xenial
+dist: bionic
 
 stages:
 - name: test
