@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Similar to Scala Native updated to Xenial
+# For Scala Native 0.4.0+
+# Ubuntu bionic (18.04)
 
 # Enable strict mode and fail the script on non-zero exit code,
 # unresolved variable or pipe failure.
@@ -12,9 +13,6 @@ else
     # Per https://github.com/scala-native/scala-native/pull/1240/
     sudo apt-get update
 
-    # Remove pre-bundled libunwind
-    sudo find /usr -name "*libunwind*" -delete
-
     # Install Boehm GC and libunwind
-    sudo apt-get install -y clang-5.0 zlib1g-dev libgc-dev libunwind8-dev libre2-dev
+    sudo apt-get install -y clang-6 zlib1g-dev libgc-dev libre2-dev
 fi
