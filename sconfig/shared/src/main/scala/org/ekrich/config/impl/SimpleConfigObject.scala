@@ -65,10 +65,10 @@ object SimpleConfigObject {
         breakable {
           val c = s.charAt(i)
           if (Character.isDigit(c)) {
-            break // continue
+            break() // continue
           } else {
             allDigits = false
-            break // continue to end loop
+            break() // continue to end loop
           }
         }
         if (allDigits) i += 1

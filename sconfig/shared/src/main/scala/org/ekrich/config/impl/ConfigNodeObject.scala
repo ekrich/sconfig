@@ -49,9 +49,9 @@ final class ConfigNodeObject private[impl] (
           if ((flavor == ConfigSyntax.JSON) && !seenNonMatching && (t == Tokens.COMMA)) {
             childrenCopy.remove(i)
           }
-          break // continue
+          break() // continue
         } else if (!childrenCopy.get(i).isInstanceOf[ConfigNodeField]) {
-          break // continue
+          break() // continue
         }
         val node =
           childrenCopy.get(i).asInstanceOf[ConfigNodeField]
@@ -71,8 +71,8 @@ final class ConfigNodeObject private[impl] (
                 if (Tokens.isIgnoredWhitespace(t) || (t == Tokens.COMMA)) {
                   childrenCopy.remove(j)
                   j -= 1
-                } else break // break
-              } else break   // break
+                } else break() // break
+              } else break()   // break
 
               j += 1
             }
@@ -300,7 +300,7 @@ final class ConfigNodeObject private[impl] (
                     .asInstanceOf[ConfigNodeSingleToken]
                     .token == Tokens.COMMA))
               childrenCopy.add(i + 1, new ConfigNodeSingleToken(Tokens.COMMA))
-            break // break
+            break() // break
           }
           // Add the value into the copy of the children map, keeping any whitespace/newlines
           // before the close curly brace

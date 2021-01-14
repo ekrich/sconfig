@@ -117,7 +117,7 @@ object ConfigImplUtil {
         else {
           val cp = s.codePointAt(start)
           if (isWhitespace(cp)) start += Character.charCount(cp)
-          else break // break
+          else break() // break
         }
       }
     }
@@ -137,7 +137,7 @@ object ConfigImplUtil {
             delta = 1
           }
           if (isWhitespace(cp)) end -= delta
-          else break // break
+          else break() // break
         }
       }
     }

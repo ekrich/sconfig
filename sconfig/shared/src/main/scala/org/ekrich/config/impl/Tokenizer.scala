@@ -178,7 +178,7 @@ object Tokenizer {
             )
         }
       } else {
-        val c = buffer.pop
+        val c = buffer.pop()
         c
       }
     private def putBack(c: Int): Unit = {
@@ -259,10 +259,10 @@ object Tokenizer {
             putBack(c)
             if (doubleSlash) {
               token = Tokens.newCommentDoubleSlash(lineOrigin, sb.toString)
-              break
+              break()
             } else {
               token = Tokens.newCommentHash(lineOrigin, sb.toString)
-              break
+              break()
             }
           } else sb.appendCodePoint(c)
         }
@@ -282,12 +282,12 @@ object Tokenizer {
       var retToken = false
       breakable {
         while (true) {
-          if (c == -1) break // break
+          if (c == -1) break() // break
           else if (TokenIterator.notInUnquotedText.indexOf(c) >= 0)
-            break // break
+            break() // break
           else if (TokenIterator.isWhitespace(c))
-            break                           // break
-          else if (startOfComment(c)) break // break
+            break()                           // break
+          else if (startOfComment(c)) break() // break
           else sb.appendCodePoint(c)
           // we parse true/false/null tokens as such no matter
           // what is after them, as long as they are at the
@@ -297,18 +297,18 @@ object Tokenizer {
             if (s == "true") {
               retToken = true
               t = Tokens.newBoolean(origin, true)
-              break // return
+              break() // return
             } else if (s == "null") {
               retToken = true
               t = Tokens.newNull(origin)
-              break // return
+              break() // return
             }
           } else if (sb.length == 5) {
             val s = sb.toString
             if (s == "false") {
               retToken = true
               t = Tokens.newBoolean(origin, false)
-              break // return
+              break() // return
             }
           }
           c = nextCharRaw
@@ -428,7 +428,7 @@ object Tokenizer {
             // the last three quotes end the string and the others are kept.
             sb.setLength(sb.length - 3)
             putBack(c)
-            break // break
+            break() // break
           } else {
             consecutiveQuotes = 0
             if (c == -1)
@@ -463,7 +463,7 @@ object Tokenizer {
           if (c == '\\') pullEscapeSequence(sb, sbOrig)
           else if (c == '"') {
             sbOrig.appendCodePoint(c)
-            break // break
+            break() // break()
           } else if (ConfigImplUtil.isC0Control(c))
             throw problem(
               asString(c),
@@ -523,7 +523,7 @@ object Tokenizer {
           // the substitution here; we even allow nested substitutions
           // in the tokenizer. The parser sorts it out.
           if (t eq Tokens.CLOSE_CURLY) { // end the loop, done!
-            break                        // break
+            break()                      // break
           } else if (t eq Tokens.END) {
             throw TokenIterator.problem(
               origin,
