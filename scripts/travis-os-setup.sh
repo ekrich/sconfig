@@ -14,5 +14,5 @@ else
     sudo apt-get update
 
     # Install Boehm GC and libunwind
-    sudo apt-get install -y clang-6 zlib1g-dev libgc-dev libre2-dev
+    sudo apt-get install -y clang-6.0 zlib1g-dev libgc-dev libre2-dev
 fi
