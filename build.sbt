@@ -101,7 +101,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       if (isDotty.value) dotcOpts else scalacOpts
     },
     scala2or3Source,
-    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.3.2")
+    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.1+265-bca8a641+20210115-1537-SNAPSHOT")
   )
   .jvmSettings(
     crossScalaVersions := versionsJVM,
@@ -142,9 +142,9 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     nativeLinkStubs := true,
     logLevel := Level.Info, // Info or Debug
     addCompilerPlugin(
-      "org.scala-native" % "junit-plugin" % "0.4.0-SNAPSHOT" cross CrossVersion.full
+      "org.scala-native" % "junit-plugin" % nativeVersion cross CrossVersion.full
     ),
-    libraryDependencies += "org.scala-native" %%% "junit-runtime" % "0.4.0-SNAPSHOT",
+    libraryDependencies += "org.scala-native" %%% "junit-runtime" % nativeVersion,
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
   )
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
