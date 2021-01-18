@@ -7,7 +7,7 @@ import org.junit.Test
 
 import scalanative.junit.utils.AssertThrows._
 
-class ConfigFactoryTest  {
+class ConfigFactoryTest {
   @Test def loadNotImplemented(): Unit = {
     // example of how system properties override; note this
     // must be set before the config lib is used

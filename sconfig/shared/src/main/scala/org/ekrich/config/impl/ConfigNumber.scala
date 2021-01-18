@@ -12,10 +12,9 @@ import org.ekrich.config.ConfigOrigin
 @SerialVersionUID(2L)
 object ConfigNumber {
   private[impl] def newNumber( // used ?
-      origin: ConfigOrigin,
-      number: Long,
-      originalText: String
-  ): ConfigNumber =
+                              origin: ConfigOrigin,
+                              number: Long,
+                              originalText: String): ConfigNumber =
     if (number <= Integer.MAX_VALUE && number >= Integer.MIN_VALUE)
       new ConfigInt(origin, number.toInt, originalText)
     else new ConfigLong(origin, number, originalText)

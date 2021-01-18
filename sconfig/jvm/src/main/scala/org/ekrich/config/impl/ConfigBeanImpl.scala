@@ -336,8 +336,7 @@ object ConfigBeanImpl {
         beanInfo
           .getPropertyDescriptors()
           .exists(beanProp =>
-            beanProp.getReadMethod != null && beanProp.getWriteMethod != null
-          )
+            beanProp.getReadMethod != null && beanProp.getWriteMethod != null)
     }
   }
 
