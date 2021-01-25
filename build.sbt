@@ -40,6 +40,9 @@ val scala212 = "2.12.13"
 val scala213 = "2.13.4"
 val scala300 = "3.0.0-M3"
 
+val javaTime = "1.0.0+2-6fc92637+20210124-1554-SNAPSHOT"
+val scCompat = "2.3.2+13-88e56fbb-SNAPSHOT"
+
 val versionsBase   = Seq(scala211, scala212, scala213)
 val versionsJVM    = versionsBase :+ scala300
 val versionsJS     = versionsJVM
@@ -101,7 +104,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       if (isDotty.value) dotcOpts else scalacOpts
     },
     scala2or3Source,
-    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.1.1+265-bca8a641+20210115-1537-SNAPSHOT")
+    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % scCompat)
   )
   .jvmSettings(
     crossScalaVersions := versionsJVM,
@@ -141,7 +144,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     sharedJvmNativeSource,
     nativeLinkStubs := true,
     logLevel := Level.Info, // Info or Debug
-    libraryDependencies += "org.ekrich" %%% "sjavatime" % "1.0.1-SNAPSHOT",
+    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime,
     addCompilerPlugin(
       "org.scala-native" % "junit-plugin" % nativeVersion cross CrossVersion.full
     ),
@@ -151,7 +154,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies += ("org.ekrich" %%% "sjavatime" % "1.0.1-SNAPSHOT")
+    libraryDependencies += ("org.ekrich" %%% "sjavatime" % javaTime)
       .withDottyCompat(scalaVersion.value)
   )
 
