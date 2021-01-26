@@ -49,7 +49,7 @@ val versionsJS     = versionsJVM
 val versionsNative = versionsBase
 
 ThisBuild / scalaVersion := scala212
-ThisBuild / crossScalaVersions := versionsJVM
+ThisBuild / crossScalaVersions := versionsBase
 
 inThisBuild(
   List(
