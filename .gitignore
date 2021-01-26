@@ -1,18 +1,14 @@
-.classpath
-.project
-.cache
-.settings
-.idea
-.idea_modules
-/bin-test-lib
-target/
-/bin
-/node_modules
+# IntelliJ
+/.idea/
 
 # metals
-.bloop/
-.metals/
+/.bloop/
+/.metals/
 /project/**/metals.sbt
+
+# sbt / bsp
+target/
+/.bsp/
 
 # vscode
 /.vscode/
