@@ -15,7 +15,7 @@ a native application.
 Care has been taken to keep the API the same but changes were needed when moving from the Java API.
 Using Java is also possible as demonstrated by including the working Java examples.
 
-If you are looking for the original proven Java API, see
+If you are looking for the original Java API, see
 [https://github.com/lightbend/config](https://github.com/lightbend/config).
 
 
@@ -26,7 +26,11 @@ If you are looking for the original proven Java API, see
 libraryDependencies += "org.ekrich" %% "sconfig" % "x.y.z"
 ```
 
-To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above. Use `%%%` for non-JVM projects.
+To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above. Use `%%%` for non-JVM projects
+but please refer to the guide below for **critical** Scala Native and Scala.js usage information.
+
+[Scala Native and Scala.js](docs/SCALA-NATIVE.md) - A guide to using Scala Native and Scala.js.
+
 All available versions can be seen at the [Maven Repository](https://mvnrepository.com/artifact/org.ekrich/sconfig).
 
 ## Cross Build Versions
@@ -35,8 +39,8 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 | Scala Version          | JVM | Scala.js (1.x)        | Native (0.4.x) |
 | ---------------------- | :-: | :-------------------: | :------------: |
 | 2.11.x                 | ✅  |          ✅           |       ✅       |
-| 2.12.x                 | ✅  |          ✅           |      n/a       |
-| 2.13.x                 | ✅  |          ✅           |      n/a       |
+| 2.12.x                 | ✅  |          ✅           |       ✅       |
+| 2.13.x                 | ✅  |          ✅           |       ✅       |
 | 3.0.0-M3               | ✅  |          ✅           |      n/a       |
 
 ## Usage and Help
@@ -50,12 +54,11 @@ The intent is to keep the library in sync with the original but each PR needs to
 to maintain feature parity. The documentation could contain features that are not yet implemented
 in this library.
 
-[Scala Native and Scala.js](docs/SCALA-NATIVE.md) - A guide to using Scala Native and Scala.js.
-
 For specific changes, refer to the releases below.
 
 ## Versions
 
+Release [1.4.0](https://github.com/ekrich/sconfig/releases/tag/v1.4.0) - (2021-01-26)<br/>
 Release [1.3.6](https://github.com/ekrich/sconfig/releases/tag/v1.3.6) - (2020-12-21)<br/>
 Release [1.3.5](https://github.com/ekrich/sconfig/releases/tag/v1.3.5) - (2020-11-24)<br/>
 Release [1.3.4](https://github.com/ekrich/sconfig/releases/tag/v1.3.4) - (2020-11-03)<br/>

@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.3.5"
-val nextVersion = "1.3.6"
+val prevVersion = "1.3.6"
+val nextVersion = "1.4.0"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -144,7 +144,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     sharedJvmNativeSource,
     nativeLinkStubs := true,
     logLevel := Level.Info, // Info or Debug
-    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime,
+    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided",
     addCompilerPlugin(
       "org.scala-native" % "junit-plugin" % nativeVersion cross CrossVersion.full
     ),
@@ -154,7 +154,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies += ("org.ekrich" %%% "sjavatime" % javaTime)
+    libraryDependencies += ("org.ekrich" %%% "sjavatime" % javaTime % "provided")
       .withDottyCompat(scalaVersion.value)
   )
 
