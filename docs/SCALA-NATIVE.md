@@ -5,15 +5,23 @@ the following is an example of how to use the API.
 
 ## Dependency for Scala Native and Scala.js
 
-Use three percent signs instead of two for dependency resolution.
+Use three percent signs `%%%` instead of two for dependency resolution.
 
 ```scala
-libraryDependencies += "org.ekrich" %%% "sconfig" % "x.y.z"
+// sconfig uses "provided" so you have a choice of the java.time API you use
+// Refer to your preferred java.time project for version to use
+libraryDependencies ++= Seq(
+  "org.ekrich" %%% "sconfig" % "x.y.z",
+  "org.ekrich" %%% "sjavatime" % "a.b.c"
+),
+// required to avoid linking errors
+nativeLinkStubs := true
 ```
 
 ## Read from String example
 
-This assumes that you read a file into a `configStr` first.
+This assumes that you read a file into a `configStr` first. Other methods
+that don't use `File` or `URL` should also work.
 
 ```scala
 import org.ekrich.config.ConfigFactory
@@ -54,7 +62,7 @@ into a `String` from a simple `sbt` project where the `src` directory is at the 
 level of your project and you are using the `run` command. If you package your
 application or run the application executable directly, then making the path relative
 to the binary with the code above could be your best option. Another option is to use
-the `"user.home"` property to configure the file path.
+the `"user.home"` or the `"user.dir"` property to configure the file path.
 
 ```scala
 import java.nio.file.{Files, Paths}

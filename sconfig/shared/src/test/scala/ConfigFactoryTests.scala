@@ -1,25 +1,12 @@
 package test
 
-import minitest._
+import org.junit.Assert._
+import org.junit.Test
+
 import org.ekrich.config.ConfigFactory
-import org.ekrich.config.ConfigRenderOptions
 
-object ConfigFactoryTests extends SimpleTestSuite {
-  test("load() check system property throws NotImplementedError") {
-    // example of how system properties override; note this
-    // must be set before the config lib is used
-    val propKey = "simple-prop.whatever"
-    val propVal = "This value comes from a system property"
-    System.setProperty(propKey, propVal)
-
-    // Load our own config values from the default location, application.conf
-    val e = intercept[NotImplementedError] {
-      val conf = ConfigFactory.load()
-      assert(conf.getString(propKey) == propVal)
-    }
-  }
-
-  test("parseString(s: String) scalafmt example works") {
+class ConfigFactoryTests {
+  @Test def parseString: Unit = {
     val configStr =
       """
         |maxColumn = 100
@@ -37,7 +24,7 @@ object ConfigFactoryTests extends SimpleTestSuite {
     assert(conf.getBoolean("project.git") == true)
   }
 
-  test("resolve() to force substitution") {
+  @Test def resolve: Unit = {
     val configStr =
       """
         |pattern-default-main = default

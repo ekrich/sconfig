@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.3.5"
-val nextVersion = "1.3.6"
+val prevVersion = "1.3.6"
+val nextVersion = "1.4.0"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -38,15 +38,18 @@ Compile / console / scalacOptions --= Seq(
 val scala211 = "2.11.12"
 val scala212 = "2.12.13"
 val scala213 = "2.13.4"
-val dotty    = "3.0.0-M3"
+val scala300 = "3.0.0-M3"
 
-val versionsBase   = Seq(scala211, scala212, scala213, dotty)
-val versionsJVM    = versionsBase
-val versionsJS     = versionsBase
-val versionsNative = Seq(scala211)
+val javaTime = "1.1.0"
+val scCompat = "2.4.0"
+
+val versionsBase   = Seq(scala211, scala212, scala213)
+val versionsJVM    = versionsBase :+ scala300
+val versionsJS     = versionsJVM
+val versionsNative = versionsBase
 
 ThisBuild / scalaVersion := scala212
-ThisBuild / crossScalaVersions := versionsJVM
+ThisBuild / crossScalaVersions := versionsBase
 
 inThisBuild(
   List(
@@ -101,7 +104,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       if (isDotty.value) dotcOpts else scalacOpts
     },
     scala2or3Source,
-    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % "2.3.2")
+    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % scCompat)
   )
   .jvmSettings(
     crossScalaVersions := versionsJVM,
@@ -138,17 +141,20 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   )
   .nativeSettings(
     crossScalaVersions := versionsNative,
-    scalaVersion := scala211, // allows to compile if scalaVersion set not 2.11
     sharedJvmNativeSource,
     nativeLinkStubs := true,
     logLevel := Level.Info, // Info or Debug
-    libraryDependencies += "com.github.lolgab" %%% "minitest" % "2.5.0-5f3852e" % Test,
-    testFrameworks += new TestFramework("minitest.runner.Framework")
+    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided",
+    addCompilerPlugin(
+      "org.scala-native" % "junit-plugin" % nativeVersion cross CrossVersion.full
+    ),
+    libraryDependencies += "org.scala-native" %%% "junit-runtime" % nativeVersion,
+    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
   )
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies += ("org.scala-js" %%% "scalajs-java-time" % "1.0.0")
+    libraryDependencies += ("org.ekrich" %%% "sjavatime" % javaTime % "provided")
       .withDottyCompat(scalaVersion.value)
   )
 
