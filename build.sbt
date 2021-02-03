@@ -154,8 +154,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versionsJS,
-    libraryDependencies += ("org.ekrich" %%% "sjavatime" % javaTime % "provided")
-      .withDottyCompat(scalaVersion.value)
+    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
   )
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
