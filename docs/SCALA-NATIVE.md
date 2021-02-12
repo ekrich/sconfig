@@ -17,6 +17,8 @@ libraryDependencies ++= Seq(
 // required to avoid linking errors
 nativeLinkStubs := true
 ```
+Please refer to the `sjavatime` [home page](https://github.com/ekrich/sjavatime)
+for the current version.
 
 ## Read from String example
 
