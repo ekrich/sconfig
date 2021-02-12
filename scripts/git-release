@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Release script from Olafur
+set -eux
+version=$1
+# f option (force) allows a republish with the same versions
+git tag -af "v$version" -m "v$version" && git push -f origin v$version
