@@ -26,8 +26,9 @@ If you are looking for the original Java API, see
 libraryDependencies += "org.ekrich" %% "sconfig" % "x.y.z"
 ```
 
-To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above. Use `%%%` for non-JVM projects
-but please refer to the guide below for **critical** Scala Native and Scala.js usage information.
+To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above.
+
+For non-JVM projects use `%%%` but please refer to the guide below for **critical** Scala Native and Scala.js usage information. The TLDR is that you must add a `java.time` library dependency to your project. Currently, the only library available is `sjavatime`. Refer to the [`sjavatime` home page](https://github.com/ekrich/sjavatime) for the current version.
 
 [Scala Native and Scala.js](docs/SCALA-NATIVE.md) - A guide to using Scala Native and Scala.js.
 
@@ -41,7 +42,7 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 | 2.11.x                 | ✅  |          ✅           |       ✅       |
 | 2.12.x                 | ✅  |          ✅           |       ✅       |
 | 2.13.x                 | ✅  |          ✅           |       ✅       |
-| 3.0.0-M3               | ✅  |          ✅           |      n/a       |
+| 3.0.0-RC1              | ✅  |          ✅           |      n/a       |
 
 ## Usage and Help
 [![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.11.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.11)
@@ -58,6 +59,7 @@ For specific changes, refer to the releases below.
 
 ## Versions
 
+Release [1.4.1](https://github.com/ekrich/sconfig/releases/tag/v1.4.1) - (2021-02-24)<br/>
 Release [1.4.0](https://github.com/ekrich/sconfig/releases/tag/v1.4.0) - (2021-01-26)<br/>
 Release [1.3.6](https://github.com/ekrich/sconfig/releases/tag/v1.3.6) - (2020-12-21)<br/>
 Release [1.3.5](https://github.com/ekrich/sconfig/releases/tag/v1.3.5) - (2020-11-24)<br/>
