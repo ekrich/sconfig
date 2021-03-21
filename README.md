@@ -1,5 +1,6 @@
 # sconfig
-[![Build Status](https://travis-ci.org/ekrich/sconfig.svg?branch=master)](https://travis-ci.org/ekrich/sconfig)
+![CI](https://github.com/ekrich/sconfig/workflows/CI/badge.svg)
+[![Scala.js](https://www.scala-js.org/assets/badges/scalajs-1.0.0.svg)](https://www.scala-js.org)
 
 Configuration library written in [Scala](https://www.scala-lang.org/) which is a direct translation 
 of the original widely used Java library.
