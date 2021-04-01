@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.3.6"
-val nextVersion = "1.4.0"
+val prevVersion = "1.4.1"
+val nextVersion = "1.4.2"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -38,9 +38,9 @@ Compile / console / scalacOptions --= Seq(
 val scala211 = "2.11.12"
 val scala212 = "2.12.13"
 val scala213 = "2.13.5"
-val scala300 = "3.0.0-RC1"
+val scala300 = "3.0.0-RC2"
 
-val javaTime = "1.1.2"
+val javaTime = "1.1.3"
 val scCompat = "2.4.3"
 
 val versionsBase   = Seq(scala211, scala212, scala213)
