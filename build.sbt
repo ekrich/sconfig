@@ -35,12 +35,19 @@ Compile / console / scalacOptions --= Seq(
   "-Xfatal-warnings"
 )
 
+val isScala3 = Def.setting {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((3, _)) => true
+    case _            => false
+  }
+}
+
 val scala211 = "2.11.12"
 val scala212 = "2.12.13"
 val scala213 = "2.13.5"
-val scala300 = "3.0.0-RC2"
+val scala300 = "3.0.0-RC3"
 
-val javaTime = "1.1.3"
+val javaTime = "1.1.4"
 val scCompat = "2.4.3"
 
 val versionsBase   = Seq(scala211, scala212, scala213)
@@ -101,7 +108,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
     scalacOptions ++= {
-      if (isDotty.value) dotcOpts else scalacOpts
+      if (isScala3.value) dotcOpts else scalacOpts
     },
     scala2or3Source,
     libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % scCompat)
@@ -110,9 +117,10 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     crossScalaVersions := versionsJVM,
     sharedJvmNativeSource,
     libraryDependencies ++= Seq(
-      "io.crashbox"  %% "spray-json"     % "1.3.5-7" % Test,
-      "com.novocode" % "junit-interface" % "0.11"    % Test
-    ).map(_.withDottyCompat(scalaVersion.value)),
+      ("io.crashbox" %% "spray-json" % "1.3.5-7" % Test)
+        .cross(CrossVersion.for3Use2_13),
+      "com.novocode" % "junit-interface" % "0.11" % Test
+    ),
     Compile / compile / javacOptions ++= Seq(
       "-source",
       "1.8",
@@ -166,7 +174,7 @@ lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
 lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
   Compile / unmanagedSourceDirectories +=
     (ThisBuild / baseDirectory).value
-      / "sconfig" / { if (isDotty.value) "sharedScala3" else "sharedScala2" }
+      / "sconfig" / { if (isScala3.value) "sharedScala3" else "sharedScala2" }
       / "src" / "main" / "scala"
 )
 
