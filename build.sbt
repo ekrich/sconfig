@@ -110,7 +110,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     scalacOptions ++= {
       if (isScala3.value) dotcOpts else scalacOpts
     },
-    scala2or3Source,
+    sharedScala2or3Source,
     libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % scCompat)
   )
   .jvmSettings(
@@ -165,17 +165,30 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
   )
 
-lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
-  Compile / unmanagedSourceDirectories +=
-    (ThisBuild / baseDirectory).value
-      / "sconfig" / "sharedjvmnative" / "src" / "main" / "scala"
+lazy val sharedScala2or3Source: Seq[Setting[_]] = Def.settings(
+  Compile / unmanagedSourceDirectories ++= {
+    val projectDir = baseDirectory.value.getParentFile()
+    sourceDir(projectDir, scalaVersion.value)
+  }
 )
 
-lazy val scala2or3Source: Seq[Setting[_]] = Def.settings(
-  Compile / unmanagedSourceDirectories +=
-    (ThisBuild / baseDirectory).value
-      / "sconfig" / { if (isScala3.value) "sharedScala3" else "sharedScala2" }
-      / "src" / "main" / "scala"
+// For Scala 2/3 enums
+def sourceDir(projectDir: File, scalaVersion: String): Seq[File] = {
+  def versionDir(versionDir: String): File =
+    projectDir / "shared" / "src" / "main" / versionDir
+
+  CrossVersion.partialVersion(scalaVersion) match {
+    case Some((3, _)) => Seq(versionDir("scala-3"))
+    case Some((2, _)) => Seq(versionDir("scala-2"))
+    case _            => Seq() // unknown version
+  }
+}
+
+lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
+  Compile / unmanagedSourceDirectories += {
+    val projectDir = baseDirectory.value.getParentFile()
+    projectDir / "shared" / "src" / "main" / "scala-jvm-native"
+  }
 )
 
 lazy val sconfigJVM = sconfig.jvm
