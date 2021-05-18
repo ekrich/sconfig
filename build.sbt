@@ -57,6 +57,10 @@ val versionsNative = versionsBase
 
 ThisBuild / scalaVersion := scala212
 ThisBuild / crossScalaVersions := versionsBase
+ThisBuild / versionScheme := Some("early-semver")
+
+Compile / packageBin / packageOptions +=
+  Package.ManifestAttributes("Automatic-Module-Name" -> "org.ekrich.sconfig")
 
 inThisBuild(
   List(
@@ -115,7 +119,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, n)) if n <= 12 =>
           Seq("org.scala-lang.modules" %%% "scala-collection-compat" % scCompat)
-        case _ => Seq()
+        case _ => Nil
       }
     }
   )
