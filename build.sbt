@@ -111,7 +111,13 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       if (isScala3.value) dotcOpts else scalacOpts
     },
     sharedScala2or3Source,
-    libraryDependencies += ("org.scala-lang.modules" %%% "scala-collection-compat" % scCompat)
+    libraryDependencies ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, n)) if n <= 12 =>
+          Seq("org.scala-lang.modules" %%% "scala-collection-compat" % scCompat)
+        case _ => Seq()
+      }
+    }
   )
   .jvmSettings(
     crossScalaVersions := versionsJVM,
