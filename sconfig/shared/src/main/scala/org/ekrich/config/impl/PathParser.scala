@@ -260,34 +260,13 @@ object PathParser {
       // normally increment here but we have short circuit returns
       // modeled by "returnNow
     }
-    if (lastWasDot) return true
-    else return false
-
-    // old Java code
-    //  while (i < len) {
-    //      val c = s.charAt(i)
-    //      if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') {
-    //          lastWasDot = false
-    //          continue //todo: continue is not supported
-    //      } else if (c == '.') {
-    //          if (lastWasDot) return true
-    //          // ".." means we need to throw an error
-    //          lastWasDot = true
-    //      } else if (c == '-') {
-    //          if (lastWasDot) return true
-    //          continue //todo: continue is not supported
-    //      } else return true
-    //      i += 1
-    //  }
-    //  if (lastWasDot) return true
-    //  else return false
+    if (lastWasDot) true
+    else false
   }
 
   private def fastPathBuild(tail: Path, s: String, end: Int): Path = {
     // lastIndexOf takes last index it should look at, end - 1 not end
     val splitAt = s.lastIndexOf('.', end - 1)
-    val tokens  = new ju.ArrayList[Token]
-    tokens.add(Tokens.newUnquotedText(null, s))
     // this works even if splitAt is -1; then we start the substring at 0
     val withOneMoreElement = new Path(s.substring(splitAt + 1, end), tail)
     if (splitAt < 0) {
