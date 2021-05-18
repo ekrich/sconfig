@@ -59,6 +59,9 @@ ThisBuild / scalaVersion := scala212
 ThisBuild / crossScalaVersions := versionsBase
 ThisBuild / versionScheme := Some("early-semver")
 
+Compile / packageBin / packageOptions +=
+  Package.ManifestAttributes("Automatic-Module-Name" -> "org.ekrich.sconfig")
+
 inThisBuild(
   List(
     version := dynverGitDescribeOutput.value.mkVersion(versionFmt, ""),
