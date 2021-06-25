@@ -6,7 +6,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        java: [ '8', '11' ]
+    name: Test using Java ${{ matrix.java }}
     steps:
     - uses: actions/checkout@v2
-    - uses: olafurpg/setup-scala@v10
+    - name: Setup Scala and Java
+      uses: olafurpg/setup-scala@v12
+      with:
+          distribution: 'adopt'
+          java-version: ${{ matrix.java }}
     - run: sbt +test
