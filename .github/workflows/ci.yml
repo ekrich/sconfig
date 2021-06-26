@@ -15,6 +15,5 @@ jobs:
     - name: Setup Scala and Java
       uses: olafurpg/setup-scala@v12
       with:
-          distribution: 'adopt'
           java-version: ${{ matrix.java }}
     - run: sbt +test
