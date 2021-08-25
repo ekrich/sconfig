@@ -92,7 +92,8 @@ lazy val root = (project in file("."))
     sconfigJVM,
     sconfigNative,
     sconfigJS,
-    scalafix,
+    `scalafix-rules`,
+    `scalafix-tests`,
     simpleLibScala,
     simpleAppScala,
     complexAppScala,
@@ -177,14 +178,48 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
   )
 
-lazy val scalafix = (project in file("scalafix"))
+lazy val `scalafix-rules` = (project in file("scalafix/rules"))
   .settings(
     moduleName := "sconfig-scalafix",
     crossScalaVersions := versionsBase,
     libraryDependencies ++= Seq(
       "ch.epfl.scala" %% "scalafix-core" % _root_.scalafix.sbt.BuildInfo.scalafixVersion
-    )
+    ),
   )
+
+lazy val `scalafix-input` = (project in file("scalafix/input"))
+  .settings(
+    crossScalaVersions := versionsBase,
+    publish / skip := true,
+    libraryDependencies ++= Seq(
+      "com.typesafe" % "config" % "1.3.3",
+    ),
+    scalacOptions ~= { _.filterNot(_ == "-Xfatal-warnings") },
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision,
+  )
+
+lazy val `scalafix-output` = (project in file("scalafix/output"))
+  .settings(
+    crossScalaVersions := versionsBase,
+    publish / skip := true,
+    scalacOptions ~= { _.filterNot(_ == "-Xfatal-warnings") },
+  )
+  .dependsOn(sconfigJVM)
+
+lazy val `scalafix-tests` = (project in file("scalafix/tests"))
+  .settings(
+    crossScalaVersions := versionsBase,
+    publish / skip := true,
+    libraryDependencies += "ch.epfl.scala" % "scalafix-testkit" % _root_.scalafix.sbt.BuildInfo.scalafixVersion % Test cross CrossVersion.full,
+    scalafixTestkitOutputSourceDirectories := (`scalafix-output` / Compile / unmanagedSourceDirectories).value,
+    scalafixTestkitInputSourceDirectories := (`scalafix-input` / Compile / unmanagedSourceDirectories).value,
+    scalafixTestkitInputClasspath := (`scalafix-input` / Compile / fullClasspath).value,
+    scalafixTestkitInputScalacOptions := (`scalafix-input` / Compile / scalacOptions).value,
+    scalafixTestkitInputScalaVersion := (`scalafix-input` / Compile / scalaVersion).value,
+  )
+  .dependsOn(`scalafix-rules`)
+  .enablePlugins(ScalafixTestkitPlugin)
 
 lazy val sharedScala2or3Source: Seq[Setting[_]] = Def.settings(
   Compile / unmanagedSourceDirectories ++= {
