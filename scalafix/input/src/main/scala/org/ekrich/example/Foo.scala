@@ -7,11 +7,14 @@ import com.typesafe.config.Config
 
 trait Foo {
   def conf: Config
+  def entrySet(): Unit
 }
 
 object Foo {
-  def apply(uc: Foo): Unit = {
-    uc.conf.entrySet()
+  def apply(foo: Foo): Unit = {
+    foo.conf.entrySet()
+
+    foo.entrySet()
 
     ()
   }
