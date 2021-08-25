@@ -92,6 +92,7 @@ lazy val root = (project in file("."))
     sconfigJVM,
     sconfigNative,
     sconfigJS,
+    scalafix,
     simpleLibScala,
     simpleAppScala,
     complexAppScala,
@@ -174,6 +175,15 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jsSettings(
     crossScalaVersions := versionsJS,
     libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
+  )
+
+lazy val scalafix = (project in file("scalafix"))
+  .settings(
+    moduleName := "sconfig-scalafix",
+    crossScalaVersions := versionsBase,
+    libraryDependencies ++= Seq(
+      "ch.epfl.scala" %% "scalafix-core" % _root_.scalafix.sbt.BuildInfo.scalafixVersion
+    )
   )
 
 lazy val sharedScala2or3Source: Seq[Setting[_]] = Def.settings(
