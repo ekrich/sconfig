@@ -58,6 +58,50 @@ in this library.
 
 For specific changes, refer to the releases below.
 
+### Migrating an existing Scala project from [lightbend/config](https://github.com/lightbend/config) to sconfig
+
+This project publishes a [scalafix](https://scalacenter.github.io/scalafix/) rule to migrate 
+existing Scala 2 source code that uses `com.typesafe.config.Config` to this implementation.
+Scalafix rules modify in place existing valid Scala code. Think of it as a fancy find-and-replace
+tool that is aware of the Scala type system and can therefore narrowly tailor the changes 
+being made. (Since scalafix changes the source code on your file system, it's best to commit 
+any changes prior to running the rule, in case something weird happens.)
+
+The rule will replace `com.typesafe.config` package references with `org.ekrich.config`,
+and remove trailing parens on some methods (where the API changed from the Java implementation).
+
+Complete setup documentation can be found in the [scalafix user guide](https://scalacenter.github.io/scalafix/docs/users/installation.html).
+At a high level, the process is as follows:
+
+1. Enable scalafix in the project's build:
+    
+    * Add this to the project's `project/plugins.sbt` file:
+
+        ```scala
+        addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.30")
+        ```
+    
+    * Add this to the project's `build.sbt`:
+    
+        ```scala
+        ThisBuild / semanticdbEnabled := true
+        ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+        ```
+   
+2. Add this project to the project's `libraryDependencies`, but don't remove the old one yet!
+   
+   (The old dependency needs to stay on the classpath until after the rule runs, because the 
+   code must compile before it will run.)
+
+3. Run the scalafix sbt task to apply the rule:
+
+    ```
+    scalafixAll dependency:ReplaceTypesafeConfig@org.ekrich:sconfig-scalafix:1.4.5
+    ```
+   
+4. Remove the old config dependency from the project's `libraryDependencies`
+5. Commit the changes
+
 ## Versions
 
 Release [1.4.4](https://github.com/ekrich/sconfig/releases/tag/v1.4.4) - (2021-05-13)<br/>
