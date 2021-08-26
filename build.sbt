@@ -184,7 +184,7 @@ lazy val `scalafix-rules` = (project in file("scalafix/rules"))
     crossScalaVersions := versionsBase,
     libraryDependencies ++= Seq(
       "ch.epfl.scala" %% "scalafix-core" % _root_.scalafix.sbt.BuildInfo.scalafixVersion
-    ),
+    )
   )
 
 lazy val `scalafix-input` = (project in file("scalafix/input"))
@@ -192,18 +192,18 @@ lazy val `scalafix-input` = (project in file("scalafix/input"))
     crossScalaVersions := versionsBase,
     publish / skip := true,
     libraryDependencies ++= Seq(
-      "com.typesafe" % "config" % "1.3.3",
+      "com.typesafe" % "config" % "1.3.3"
     ),
     scalacOptions ~= { _.filterNot(_ == "-Xfatal-warnings") },
     semanticdbEnabled := true,
-    semanticdbVersion := scalafixSemanticdb.revision,
+    semanticdbVersion := scalafixSemanticdb.revision
   )
 
 lazy val `scalafix-output` = (project in file("scalafix/output"))
   .settings(
     crossScalaVersions := versionsBase,
     publish / skip := true,
-    scalacOptions ~= { _.filterNot(_ == "-Xfatal-warnings") },
+    scalacOptions ~= { _.filterNot(_ == "-Xfatal-warnings") }
   )
   .dependsOn(sconfigJVM)
 
@@ -216,7 +216,7 @@ lazy val `scalafix-tests` = (project in file("scalafix/tests"))
     scalafixTestkitInputSourceDirectories := (`scalafix-input` / Compile / unmanagedSourceDirectories).value,
     scalafixTestkitInputClasspath := (`scalafix-input` / Compile / fullClasspath).value,
     scalafixTestkitInputScalacOptions := (`scalafix-input` / Compile / scalacOptions).value,
-    scalafixTestkitInputScalaVersion := (`scalafix-input` / Compile / scalaVersion).value,
+    scalafixTestkitInputScalaVersion := (`scalafix-input` / Compile / scalaVersion).value
   )
   .dependsOn(`scalafix-rules`)
   .enablePlugins(ScalafixTestkitPlugin)

@@ -53,7 +53,8 @@ object Path {
     }
 }
 
-final class Path @throws(classOf[ConfigException]) (val first: String, val remainder: Path) {
+final class Path @throws(classOf[ConfigException]) (val first: String,
+                                                    val remainder: Path) {
   if (first == null)
     throw new ConfigException.BugOrBroken("empty path")
 

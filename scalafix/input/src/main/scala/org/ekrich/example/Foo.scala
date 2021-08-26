@@ -1,6 +1,6 @@
 /*
 rule = ReplaceTypesafeConfig
-*/
+ */
 package org.ekrich.example
 
 import com.typesafe.config.Config

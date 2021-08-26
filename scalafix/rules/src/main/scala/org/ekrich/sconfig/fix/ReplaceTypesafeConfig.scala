@@ -13,10 +13,12 @@ class ReplaceTypesafeConfig extends SemanticRule("ReplaceTypesafeConfig") {
     )
 
   def rewriteEntrySet(implicit doc: SemanticDocument): Patch =
-    doc.tree.collect {
-      case tree@ConfigEntrySetFunCall(term) =>
-        Patch.replaceTree(tree, term.toString())
-    }.fold(Patch.empty)(_ + _)
+    doc.tree
+      .collect {
+        case tree @ ConfigEntrySetFunCall(term) =>
+          Patch.replaceTree(tree, term.toString())
+      }
+      .fold(Patch.empty)(_ + _)
 }
 
 private object ConfigEntrySetFunCall {
@@ -31,14 +33,18 @@ private object ConfigEntrySetFunCall {
 private object ConfigEntrySet {
   def unapply(tree: Tree)(implicit doc: SemanticDocument): Option[Term] =
     PartialFunction.condOpt(tree) {
-      case term@Term.Select(_, ConfigEntrySetMethod(_)) => term
+      case term @ Term.Select(_, ConfigEntrySetMethod(_)) => term
     }
 }
 
 private object ConfigEntrySetMethod {
-  def unapply(term: Term.Name)(implicit doc: SemanticDocument): Option[MethodSignature] =
+  def unapply(term: Term.Name)(
+      implicit doc: SemanticDocument): Option[MethodSignature] =
     PartialFunction.condOpt(term) {
-      case Term.Name("entrySet") & XSymbol(XSymbol.Owner(IsSymbolATypeOfTypesafeConfig()) & XSignature(sig: MethodSignature)) => sig
+      case Term.Name("entrySet") & XSymbol(
+            XSymbol.Owner(IsSymbolATypeOfTypesafeConfig()) & XSignature(
+              sig: MethodSignature)) =>
+        sig
     }
 }
 
