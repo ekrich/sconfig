@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup Scala and Java
-      uses: olafurpg/setup-scala@v12
+      uses: olafurpg/setup-scala@v13
       with:
           java-version: ${{ matrix.java }}
     - run: sbt +test
