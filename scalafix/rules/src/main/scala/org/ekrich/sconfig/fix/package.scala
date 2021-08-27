@@ -77,12 +77,14 @@ package object fix {
               && Properties.isJavaAtLeast("10")
               && Properties.versionString.startsWith("version 2.11") =>
           /*
-           * when we're on Scala 2.11 and Java versions greater than 9,
+           * When we're on Scala 2.11 and Java versions greater than 9,
            * the scala-asm method ultimately called by `sym.info` above
            * throws an IllegalArgumentException because it doesn't support
            * inspecting class versions > 9. We don't need to return a
            * value when the symbol is java.* anyway, so work around the
-           * limitation by ignoring the exception and returning None
+           * limitation by ignoring the exception and returning None.
+           *
+           * This can be removed when support for Scala 2.11 is dropped.
            */
           None
         case NonFatal(ex) =>
