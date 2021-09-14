@@ -43,7 +43,7 @@ val isScala3 = Def.setting {
 }
 
 val scala211 = "2.11.12"
-val scala212 = "2.12.14"
+val scala212 = "2.12.15"
 val scala213 = "2.13.6"
 val scala300 = "3.0.2"
 
