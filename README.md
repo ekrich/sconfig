@@ -110,7 +110,7 @@ At a high level, the process is as follows:
 
 ## Versions
 
-Release [1.4.5](https://github.com/ekrich/sconfig/releases/tag/v1.4.5) - (2021-09-0X)<br/>
+Release [1.4.5](https://github.com/ekrich/sconfig/releases/tag/v1.4.5) - (2021-10-18)<br/>
 Release [1.4.4](https://github.com/ekrich/sconfig/releases/tag/v1.4.4) - (2021-05-13)<br/>
 Release [1.4.3](https://github.com/ekrich/sconfig/releases/tag/v1.4.3) - (2021-05-12)<br/>
 Release [1.4.2](https://github.com/ekrich/sconfig/releases/tag/v1.4.2) - (2021-04-01)<br/>
