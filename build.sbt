@@ -18,16 +18,12 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
   else nextVersion + "-SNAPSHOT"
 }
 
-val scalacOpts = List(
-  "-unchecked",
-  "-deprecation",
-  "-feature",
+val dotcOpts = List("-unchecked", "-deprecation", "-feature")
+val scalacOpts = dotcOpts ++ List(
   //"-Ywarn-unused:imports", // no 2.11 - maybe time for sbt-tpolecat
   "-Xsource:3"
   //"-Xlint:nonlocal-return" // no 2.11/2.12
 )
-
-val dotcOpts = List("-unchecked", "-deprecation", "-feature")
 
 Compile / console / scalacOptions --= Seq(
   "-Xlint:nonlocal-return", // for 2.12 console
