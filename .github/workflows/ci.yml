@@ -8,12 +8,12 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        java: [ '8', '11', '17' ]
+        java: [ '1.8', '11', '17' ]
     name: Test using Java ${{ matrix.java }}
     steps:
     - uses: actions/checkout@v2
     - name: Setup Scala and Java
-      uses: olafurpg/setup-scala@v12
+      uses: olafurpg/setup-scala@v13
       with:
           java-version: ${{ matrix.java }}
     - run: sbt +test

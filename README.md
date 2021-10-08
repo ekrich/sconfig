@@ -97,12 +97,12 @@ At a high level, the process is as follows:
    (The old dependency needs to stay on the classpath until after the rule runs, because the 
    code must compile before it will run.)
 
-3. Run the scalafix sbt task shown below to apply the rule  using the version of `sconfig`
+3. Run the scalafix sbt task shown below to apply the rule using the version of `sconfig`
    selected. Replace the `x.y.z` below with the version (must be greater than version `1.4.5`
    when scalafix was added):
 
     ```
-    scalafixAll dependency:ReplaceTypesafeConfig@org.ekrich:sconfig-scalafix:1.4.5
+    scalafixAll dependency:ReplaceTypesafeConfig@org.ekrich:sconfig-scalafix:x.y.x
     ```
    
 4. Remove the old config dependency from the project's `libraryDependencies`
@@ -110,6 +110,7 @@ At a high level, the process is as follows:
 
 ## Versions
 
+Release [1.4.5](https://github.com/ekrich/sconfig/releases/tag/v1.4.5) - (2021-10-08)<br/>
 Release [1.4.4](https://github.com/ekrich/sconfig/releases/tag/v1.4.4) - (2021-05-13)<br/>
 Release [1.4.3](https://github.com/ekrich/sconfig/releases/tag/v1.4.3) - (2021-05-12)<br/>
 Release [1.4.2](https://github.com/ekrich/sconfig/releases/tag/v1.4.2) - (2021-04-01)<br/>

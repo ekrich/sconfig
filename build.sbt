@@ -18,16 +18,12 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
   else nextVersion + "-SNAPSHOT"
 }
 
-val scalacOpts = List(
-  "-unchecked",
-  "-deprecation",
-  "-feature",
+val dotcOpts = List("-unchecked", "-deprecation", "-feature")
+val scalacOpts = dotcOpts ++ List(
   //"-Ywarn-unused:imports", // no 2.11 - maybe time for sbt-tpolecat
   "-Xsource:3"
   //"-Xlint:nonlocal-return" // no 2.11/2.12
 )
-
-val dotcOpts = List("-unchecked", "-deprecation", "-feature")
 
 Compile / console / scalacOptions --= Seq(
   "-Xlint:nonlocal-return", // for 2.12 console
@@ -117,7 +113,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     scalacOptions ++= {
       if (isScala3.value) dotcOpts else scalacOpts
     },
-    sharedScala2or3Source,
     libraryDependencies ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, n)) if n <= 12 =>
@@ -220,25 +215,6 @@ lazy val `scalafix-tests` = (project in file("scalafix/tests"))
   )
   .dependsOn(`scalafix-rules`)
   .enablePlugins(ScalafixTestkitPlugin)
-
-lazy val sharedScala2or3Source: Seq[Setting[_]] = Def.settings(
-  Compile / unmanagedSourceDirectories ++= {
-    val projectDir = baseDirectory.value.getParentFile()
-    sourceDir(projectDir, scalaVersion.value)
-  }
-)
-
-// For Scala 2/3 enums
-def sourceDir(projectDir: File, scalaVersion: String): Seq[File] = {
-  def versionDir(versionDir: String): File =
-    projectDir / "shared" / "src" / "main" / versionDir
-
-  CrossVersion.partialVersion(scalaVersion) match {
-    case Some((3, _)) => Seq(versionDir("scala-3"))
-    case Some((2, _)) => Seq(versionDir("scala-2"))
-    case _            => Seq() // unknown version
-  }
-}
 
 lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
   Compile / unmanagedSourceDirectories += {
