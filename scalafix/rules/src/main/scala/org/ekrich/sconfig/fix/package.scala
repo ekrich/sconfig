@@ -19,9 +19,12 @@ package org.ekrich.sconfig
 import scalafix.v1._
 
 import scala.meta._
+import scala.util.Properties
+import scala.util.control.NonFatal
 
 /*
- * Copied from https://github.com/http4s/http4s/blob/9a19b6e201a6a0751517fd8b763078323c75dd66/scalafix/rules/src/main/scala/fix/package.scala
+ * Originally copied from
+ * https://github.com/http4s/http4s/blob/9a19b6e201a6a0751517fd8b763078323c75dd66/scalafix/rules/src/main/scala/fix/package.scala
  */
 package object fix {
 
@@ -66,7 +69,30 @@ package object fix {
     def unapply(symInfo: SymbolInformation): Option[Signature] =
       Some(symInfo.signature)
     def unapply(sym: Symbol)(implicit doc: Symtab): Option[Signature] =
-      sym.info.flatMap(unapply)
+      try {
+        sym.info.flatMap(unapply)
+      } catch {
+        case _: IllegalArgumentException
+            if sym.value.startsWith("java")
+              && Properties.isJavaAtLeast("10")
+              && Properties.versionString.startsWith("version 2.11") =>
+          /*
+           * When we're on Scala 2.11 and Java versions greater than 9,
+           * the scala-asm method ultimately called by `sym.info` above
+           * throws an IllegalArgumentException because it doesn't support
+           * inspecting class versions > 9. We don't need to return a
+           * value when the symbol is java.* anyway, so work around the
+           * limitation by ignoring the exception and returning None.
+           *
+           * This can be removed when support for Scala 2.11 is dropped.
+           */
+          None
+        case NonFatal(ex) =>
+          throw UnexpectedException(sym,
+                                    Properties.javaVersion,
+                                    Properties.versionString,
+                                    ex)
+      }
   }
 
   object XSemanticType {
@@ -90,3 +116,17 @@ package object fix {
       }
   }
 }
+
+case class UnexpectedException(sym: Symbol,
+                               java: String,
+                               scala: String,
+                               cause: Throwable)
+    extends RuntimeException(
+      s"""An unexpected exception occurred. Please report this as an issue at https://github.com/ekrich/sconfig/issues and include the following information:
+         |
+         |Failing symbol: ${sym.value}
+         |Java version:   $java
+         |Scala version:  $scala
+         |""".stripMargin,
+      cause
+    )
