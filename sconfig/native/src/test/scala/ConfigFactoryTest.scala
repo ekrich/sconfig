@@ -5,7 +5,7 @@ import org.ekrich.config.ConfigFactory
 import org.junit.Assert._
 import org.junit.Test
 
-import scalanative.junit.utils.AssertThrows._
+import scala.scalanative.junit.utils.AssertThrows.assertThrows
 
 class ConfigFactoryTest {
   @Test def loadNotImplemented(): Unit = {
