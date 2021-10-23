@@ -15,6 +15,7 @@ import java.io.StringReader
 import java.net.URL
 import java.time.Duration
 import java.util.concurrent.TimeUnit
+import FileUtils._
 
 class PublicApiTest extends TestUtils {
   @Before

@@ -10,7 +10,6 @@ import java.io.StringReader
 import org.ekrich.config.ConfigParseOptions
 import org.ekrich.config.ConfigSyntax
 import org.ekrich.config.ConfigFactory
-import java.io.File
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.io.ByteArrayInputStream
@@ -20,7 +19,6 @@ import java.io.OutputStream
 import java.io.InputStream
 import scala.annotation.tailrec
 import java.net.URL
-import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.concurrent.Callable
 import org.ekrich.config._
@@ -828,37 +826,10 @@ abstract trait TestUtils {
   def nodeSubstitution(expression: Token*) =
     new ConfigNodeSimpleValue(tokenSubstitution(expression: _*))
 
-  def isWindows: Boolean =
-    sys.props
-      .get("os.name")
-      .exists(_.toLowerCase(Locale.ROOT).contains("windows"))
-  def userDrive: String =
-    if (isWindows)
-      sys.props.get("user.dir").fold("")(_.takeWhile(_ != File.separatorChar))
-    else ""
-
   // this is importantly NOT using Path.newPath, which relies on
   // the parser; in the test suite we are often testing the parser,
   // so we don't want to use the parser to build the expected result.
   def path(elements: String*) = new Path(elements: _*)
-
-  val resourceDir = {
-    val f = new File("src/test/resources")
-    if (!f.exists()) {
-      val here = new File(".").getAbsolutePath
-      throw new Exception(
-        s"Tests must be run from the root project directory containing ${f
-          .getPath()}, however the current directory is $here"
-      )
-    }
-    f
-  }
-
-  protected def resourceFile(filename: String): File =
-    new File(resourceDir, filename)
-
-  protected def jsonQuotedResourceFile(filename: String): String =
-    quoteJsonString(resourceFile(filename).toString)
 
   protected class TestClassLoader(
       parent: ClassLoader,
@@ -1011,42 +982,6 @@ abstract trait TestUtils {
       expecteds.size,
       problems.size
     )
-  }
-
-  protected def writeFile(f: File, content: String): Unit = {
-    val writer = new java.io.PrintWriter(f, "UTF-8")
-    writer.append(content)
-    writer.close()
-  }
-
-  private def deleteRecursive(f: File): Unit = {
-    if (f.exists) {
-      if (f.isDirectory) {
-        val children = f.listFiles()
-        if (children ne null) {
-          for (c <- children)
-            deleteRecursive(c)
-        }
-      }
-      f.delete()
-    }
-  }
-
-  protected def withScratchDirectory[T](
-      testcase: String
-  )(body: File => T): Unit = {
-    val target = new File("target")
-    if (!target.isDirectory)
-      throw new RuntimeException(s"Expecting $target to exist")
-    val suffix = java.lang.Integer
-      .toHexString(java.util.concurrent.ThreadLocalRandom.current.nextInt)
-    val scratch = new File(target, s"$testcase-$suffix")
-    scratch.mkdirs()
-    try {
-      body(scratch)
-    } finally {
-      deleteRecursive(scratch)
-    }
   }
 
   protected def checkSerializableWithCustomSerializer[T: ClassTag](o: T): T = {

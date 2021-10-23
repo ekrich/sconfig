@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit.{
   NANOSECONDS,
   SECONDS
 }
+import FileUtils._
 
 class ConfigTest extends TestUtils {
   private def resolveNoSystem(
