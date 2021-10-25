@@ -244,6 +244,7 @@ abstract trait TestUtils {
     }
   }
 
+  // no ObjectOutputStream / Serialization on Scala.js
   protected def checkNotSerializable(o: AnyRef): Unit = {
     val byteStream   = new ByteArrayOutputStream()
     val objectStream = new ObjectOutputStream(byteStream)

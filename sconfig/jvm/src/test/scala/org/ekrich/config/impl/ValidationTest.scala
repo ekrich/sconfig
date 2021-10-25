@@ -10,6 +10,7 @@ import org.ekrich.config.ConfigParseOptions
 import org.ekrich.config.ConfigException
 import scala.jdk.CollectionConverters._
 import scala.io.Source
+
 import FileUtils._
 
 class ValidationTest extends TestUtils {
