@@ -1,11 +1,11 @@
 // versions
 val crossVer           = "1.1.0"
 val scalaJSVersion     = "1.7.1"
-val scalaNativeVersion = "0.4.0"
+val scalaNativeVersion = "0.4.1"
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
 addSbtPlugin("com.github.sbt" % "sbt-ci-release"  % "1.5.10")
-addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "1.0.1")
+addSbtPlugin("com.typesafe"   % "sbt-mima-plugin" % "1.0.1")
 
 // Scala Native support
 addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % crossVer)
