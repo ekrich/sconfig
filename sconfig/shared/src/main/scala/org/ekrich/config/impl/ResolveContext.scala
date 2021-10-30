@@ -207,7 +207,8 @@ private[impl] final class ResolveContext(
             .identityHashCode(resolved)
         )
       var withMemo = result.context
-      if (resolved == null || (resolved.resolveStatus eq ResolveStatus.RESOLVED)) { // if the resolved object is fully resolved by resolving
+      if (resolved == null || (resolved.resolveStatus eq ResolveStatus.RESOLVED)) {
+        // if the resolved object is fully resolved by resolving
         // only the restrictToChildOrNull, then it can be cached
         // under fullKey since the child we were restricted to
         // turned out to be the only unresolved thing.

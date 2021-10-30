@@ -480,7 +480,8 @@ object SimpleConfig {
       // allows things like getMilliseconds including domain-specific
       // interpretations of strings
       return true
-    } else if (value.isInstanceOf[ConfigString]) { // assume a string could be gotten as any non-collection type
+    } else if (value.isInstanceOf[ConfigString]) {
+      // assume a string could be gotten as any non-collection type
       return true
     } else if (referenceType eq value.valueType) return true
     else return false
