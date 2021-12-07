@@ -5,7 +5,7 @@ import java.io.InputStreamReader
 import org.ekrich.config.{ConfigException, ConfigFactory, ConfigParseOptions}
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert.assertEquals
+import org.junit.Assert._
 import org.junit.Test
 
 class ParseableReaderTest extends TestUtils {

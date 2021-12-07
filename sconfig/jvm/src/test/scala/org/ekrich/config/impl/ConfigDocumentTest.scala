@@ -9,6 +9,7 @@ import org.junit.Assert._
 import org.junit.Test
 
 import scala.jdk.CollectionConverters._
+import FileUtils._
 
 class ConfigDocumentTest extends TestUtils {
   private def configDocumentReplaceJsonTest(

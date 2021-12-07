@@ -220,8 +220,8 @@ final class ConfigDelayedMerge(
     throw new ConfigException.BugOrBroken("creating empty delayed merge value")
 
   for (v <- stack.asScala) {
-    if (v.isInstanceOf[ConfigDelayedMerge] || v
-          .isInstanceOf[ConfigDelayedMergeObject])
+    if (v.isInstanceOf[ConfigDelayedMerge] ||
+        v.isInstanceOf[ConfigDelayedMergeObject])
       throw new ConfigException.BugOrBroken(
         "placed nested DelayedMerge in a ConfigDelayedMerge, should have consolidated stack"
       )

@@ -10,6 +10,8 @@ import org.junit._
 
 import org.ekrich.config._
 
+import FileUtils._
+
 class EquivalentsTest extends TestUtils {
   private def equivDirs() = {
     val rawEquivs = resourceDir.listFiles()

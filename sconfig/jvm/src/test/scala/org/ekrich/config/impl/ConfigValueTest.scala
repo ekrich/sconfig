@@ -17,6 +17,8 @@ import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValueFactory
 import org.ekrich.config.ConfigFactory
 
+import FileUtils._
+
 class ConfigValueTest extends TestUtils {
   @Test
   def configOriginEquality(): Unit = {

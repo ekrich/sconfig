@@ -13,6 +13,8 @@ import scala.jdk.CollectionConverters._
 import java.net.URL
 import java.util.Properties
 
+import FileUtils._
+
 class ConfParserTest extends TestUtils {
   def parseWithoutResolving(s: String) = {
     val options = ConfigParseOptions.defaults

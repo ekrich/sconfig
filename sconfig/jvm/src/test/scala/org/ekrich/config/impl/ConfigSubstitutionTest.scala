@@ -12,6 +12,7 @@ import org.ekrich.config.Config
 import org.ekrich.config.ConfigFactory
 import scala.jdk.CollectionConverters._
 
+// remove checkNotSerializable so this can work for Scala.js
 class ConfigSubstitutionTest extends TestUtils {
   private def resolveWithoutFallbacks(v: AbstractConfigObject) = {
     val options = ConfigResolveOptions.noSystem
