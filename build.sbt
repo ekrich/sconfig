@@ -119,7 +119,8 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
           Seq("org.scala-lang.modules" %%% "scala-collection-compat" % scCompat)
         case _ => Nil
       }
-    }
+    },
+    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
   )
   .jvmSettings(
     crossScalaVersions := versionsJVM,
@@ -165,8 +166,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     addCompilerPlugin(
       "org.scala-native" % "junit-plugin" % nativeVersion cross CrossVersion.full
     ),
-    libraryDependencies += "org.scala-native" %%% "junit-runtime" % nativeVersion,
-    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
+    libraryDependencies += "org.scala-native" %%% "junit-runtime" % nativeVersion
   )
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
