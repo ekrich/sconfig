@@ -128,7 +128,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     libraryDependencies ++= Seq(
       ("io.crashbox" %% "spray-json" % "1.3.5-7" % Test)
         .cross(CrossVersion.for3Use2_13),
-      "com.github.sbt" % "junit-interface" % "0.13.2" % Test
+      "com.github.sbt" % "junit-interface" % "0.13.3" % Test
       // includes junit 4.13.2
     ),
     Compile / compile / javacOptions ++= Seq(
