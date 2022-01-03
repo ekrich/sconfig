@@ -1,3 +1,6 @@
+// To test snapshots
+resolvers += Resolver.sonatypeRepo("snapshots")
+
 // versions
 val crossVer           = "1.1.0"
 val scalaJSVersion     = "1.8.0"
