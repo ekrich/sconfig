@@ -1,3 +1,6 @@
+// To test snapshots
+resolvers += Resolver.sonatypeRepo("snapshots")
+
 // versions
 val crossVer           = "1.1.0"
 val scalaJSVersion     = "1.8.0"
@@ -17,6 +20,3 @@ addSbtPlugin("org.scala-js"       % "sbt-scalajs"              % scalaJSVersion)
 
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.33")
 
-// Workaround until Scala.js 1.8.0 released
-// See https://github.com/scala-js/scala-js-js-envs/issues/12
-libraryDependencies += "org.scala-js" %% "scalajs-env-nodejs" % "1.2.1"

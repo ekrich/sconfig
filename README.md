@@ -43,7 +43,7 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 | 2.11.x                 | ✅  |          ✅           |       ✅       |
 | 2.12.x                 | ✅  |          ✅           |       ✅       |
 | 2.13.x                 | ✅  |          ✅           |       ✅       |
-| 3.0.x                  | ✅  |          ✅           |      n/a       |
+| 3.x.x                  | ✅  |          ✅           |      n/a       |
 
 ## Usage and Help
 [![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.11.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.11)
@@ -110,6 +110,7 @@ At a high level, the process is as follows:
 
 ## Versions
 
+Release [1.4.7](https://github.com/ekrich/sconfig/releases/tag/v1.4.7) - (2022-01-03)<br/>
 Release [1.4.6](https://github.com/ekrich/sconfig/releases/tag/v1.4.6) - (2021-12-06)<br/>
 Release [1.4.5](https://github.com/ekrich/sconfig/releases/tag/v1.4.5) - (2021-10-08)<br/>
 Release [1.4.4](https://github.com/ekrich/sconfig/releases/tag/v1.4.4) - (2021-05-13)<br/>

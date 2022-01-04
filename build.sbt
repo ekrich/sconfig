@@ -55,6 +55,7 @@ ThisBuild / scalaVersion := scala212
 ThisBuild / crossScalaVersions := versionsBase
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / mimaFailOnNoPrevious := false
+ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 
 Compile / packageBin / packageOptions +=
   Package.ManifestAttributes("Automatic-Module-Name" -> "org.ekrich.sconfig")
