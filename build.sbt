@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.4.6"
-val nextVersion = "1.4.7"
+val prevVersion = "1.4.7"
+val nextVersion = "1.4.8"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -43,16 +43,16 @@ val scala212 = "2.12.15"
 val scala213 = "2.13.7"
 val scala300 = "3.1.0"
 
-val javaTime = "1.1.6"
+val javaTime = "1.1.7"
 val scCompat = "2.6.0"
 
 val versionsBase   = Seq(scala211, scala212, scala213)
 val versionsJVM    = versionsBase :+ scala300
 val versionsJS     = versionsJVM
-val versionsNative = versionsBase
+val versionsNative = versionsJVM
 
 ThisBuild / scalaVersion := scala212
-ThisBuild / crossScalaVersions := versionsBase
+ThisBuild / crossScalaVersions := versionsJVM
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / mimaFailOnNoPrevious := false
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
