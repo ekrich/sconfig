@@ -165,17 +165,13 @@ object Parseable {
   private val hoconContentType      = "application/hocon"
   private object ParseableURL {
     private def acceptContentType(options: ConfigParseOptions): String = {
-      if (options.getSyntax == null) return null
-      options.getSyntax match {
-        case ConfigSyntax.JSON =>
-          return jsonContentType
-        case ConfigSyntax.CONF =>
-          return hoconContentType
-        case ConfigSyntax.PROPERTIES =>
-          return propertiesContentType
-      }
-      // not sure this is reachable but javac thinks it is
-      null
+      if (options.getSyntax == null) null
+      else
+        options.getSyntax match {
+          case ConfigSyntax.JSON => jsonContentType
+          case ConfigSyntax.CONF => hoconContentType
+          case ConfigSyntax.PROPERTIES => propertiesContentType
+        }
     }
   }
 
