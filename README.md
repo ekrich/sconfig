@@ -49,7 +49,9 @@ Note: Scala 3 support on Scala Native 0.4.3-RC1 or greater.
 
 ## Usage and Help
 [![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.11.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.11)
-[![Join chat https://gitter.im/ekrich/sconfig](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ekrich/sconfig?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![scaladoc](https://javadoc.io/badge/org.ekrich/sconfig_3.svg?label=scaladoc3)](https://javadoc.io/doc/org.ekrich/sconfig_3)
+[![Discord](https://img.shields.io/discord/633356833498595365.svg?label=&logo=discord&logoColor=ffffff&color=404244&labelColor=6A7EC2)](https://discord.gg/XSj6hQs)
+
 
 Please refer to the original library documentation [here](https://github.com/lightbend/config).
 This is to reduce the maintenance burden of this library.
