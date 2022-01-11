@@ -18,5 +18,4 @@ addSbtPlugin("org.scala-native"   % "sbt-scala-native"              % scalaNativ
 addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % crossVer)
 addSbtPlugin("org.scala-js"       % "sbt-scalajs"              % scalaJSVersion)
 
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.33")
-
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.34")
