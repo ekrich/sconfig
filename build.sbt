@@ -129,9 +129,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
         Seq()
       else
         old
-    },
-    Compile / packageDoc / publishArtifact := {
-      if (isScala3.value) false else true
     }
   )
   .jvmSettings(
