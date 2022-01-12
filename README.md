@@ -43,11 +43,15 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 | 2.11.x                 | ✅  |          ✅           |       ✅       |
 | 2.12.x                 | ✅  |          ✅           |       ✅       |
 | 2.13.x                 | ✅  |          ✅           |       ✅       |
-| 3.x.x                  | ✅  |          ✅           |      n/a       |
+| 3.x.x                  | ✅  |          ✅           |       ✅       |
+
+Note: Scala 3 support on Scala Native 0.4.3-RC2 or greater.
 
 ## Usage and Help
 [![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.11.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.11)
-[![Join chat https://gitter.im/ekrich/sconfig](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ekrich/sconfig?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![scaladoc](https://javadoc.io/badge/org.ekrich/sconfig_3.svg?label=scaladoc3)](https://javadoc.io/doc/org.ekrich/sconfig_3)
+[![Discord](https://img.shields.io/discord/633356833498595365.svg?label=&logo=discord&logoColor=ffffff&color=404244&labelColor=6A7EC2)](https://discord.gg/XSj6hQs)
+
 
 Please refer to the original library documentation [here](https://github.com/lightbend/config).
 This is to reduce the maintenance burden of this library.
@@ -110,6 +114,7 @@ At a high level, the process is as follows:
 
 ## Versions
 
+Release [1.4.8](https://github.com/ekrich/sconfig/releases/tag/v1.4.8) - (2022-01-11)<br/>
 Release [1.4.7](https://github.com/ekrich/sconfig/releases/tag/v1.4.7) - (2022-01-03)<br/>
 Release [1.4.6](https://github.com/ekrich/sconfig/releases/tag/v1.4.6) - (2021-12-06)<br/>
 Release [1.4.5](https://github.com/ekrich/sconfig/releases/tag/v1.4.5) - (2021-10-08)<br/>

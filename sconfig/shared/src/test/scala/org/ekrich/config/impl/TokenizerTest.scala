@@ -275,9 +275,7 @@ class TokenizerTest extends TestUtils {
 
     val tests = List[UnescapeTest](
       (""" "" """, ""),
-      // Was Character.toString(0))
-      // See https://github.com/scala-native/scala-native/issues/2445
-      (" \"\\u0000\" ", Character.toString('\u0000')), // nul byte
+      (" \"\\u0000\" ", Character.toString(0)), // nul byte
       (""" "\"\\\/\b\f\n\r\t" """, "\"\\/\b\f\n\r\t"),
       (" \"\\u0046\" ", "F"),
       (" \"\\u0046\\u0046\" ", "FF")
