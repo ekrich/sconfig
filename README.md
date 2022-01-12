@@ -45,7 +45,7 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 | 2.13.x                 | ✅  |          ✅           |       ✅       |
 | 3.x.x                  | ✅  |          ✅           |       ✅       |
 
-Note: Scala 3 support on Scala Native 0.4.3-RC1 or greater.
+Note: Scala 3 support on Scala Native 0.4.3-RC2 or greater.
 
 ## Usage and Help
 [![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.11.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.11)
@@ -114,7 +114,7 @@ At a high level, the process is as follows:
 
 ## Versions
 
-Release [1.4.8](https://github.com/ekrich/sconfig/releases/tag/v1.4.8) - (2022-01-04)<br/>
+Release [1.4.8](https://github.com/ekrich/sconfig/releases/tag/v1.4.8) - (2022-01-11)<br/>
 Release [1.4.7](https://github.com/ekrich/sconfig/releases/tag/v1.4.7) - (2022-01-03)<br/>
 Release [1.4.6](https://github.com/ekrich/sconfig/releases/tag/v1.4.6) - (2021-12-06)<br/>
 Release [1.4.5](https://github.com/ekrich/sconfig/releases/tag/v1.4.5) - (2021-10-08)<br/>
