@@ -114,7 +114,7 @@ At a high level, the process is as follows:
 
 ## Versions
 
-Release [1.4.8](https://github.com/ekrich/sconfig/releases/tag/v1.4.8) - (2022-01-11)<br/>
+Release [1.4.8](https://github.com/ekrich/sconfig/releases/tag/v1.4.8) - (2022-01-12)<br/>
 Release [1.4.7](https://github.com/ekrich/sconfig/releases/tag/v1.4.7) - (2022-01-03)<br/>
 Release [1.4.6](https://github.com/ekrich/sconfig/releases/tag/v1.4.6) - (2021-12-06)<br/>
 Release [1.4.5](https://github.com/ekrich/sconfig/releases/tag/v1.4.5) - (2021-10-08)<br/>
