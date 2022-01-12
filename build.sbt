@@ -121,7 +121,18 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
         case _ => Nil
       }
     },
-    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
+    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
+    // dottydoc really doesn't work at all right now
+    Compile / doc / sources := {
+      val old = (Compile / doc / sources).value
+      if (isScala3.value)
+        Seq()
+      else
+        old
+    },
+    Compile / packageDoc / publishArtifact := {
+      if (isScala3.value) false else true
+    }
   )
   .jvmSettings(
     crossScalaVersions := versionsJVM,
