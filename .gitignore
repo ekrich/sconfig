@@ -12,3 +12,7 @@ target/
 
 # vscode
 /.vscode/
+
+# scripts generated
+/scripts/.coursier
+/scripts/.scalafmt*
