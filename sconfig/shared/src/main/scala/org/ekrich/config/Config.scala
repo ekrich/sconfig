@@ -606,7 +606,7 @@ trait Config extends ConfigMergeable {
   /**
    * @param enumClass
    *          an enum class
-   * @param < T>
+   * @param [T]
    *          a generic denoting a specific type of enum
    * @param path
    *          path expression
@@ -900,7 +900,7 @@ trait Config extends ConfigMergeable {
    *
    * @param enumClass
    *          the enum class
-   * @param < T>
+   * @param [T]
    *          a generic denoting a specific type of enum
    * @param path
    *          the path to the list value.

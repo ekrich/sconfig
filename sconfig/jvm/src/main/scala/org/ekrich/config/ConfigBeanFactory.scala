@@ -33,7 +33,7 @@ object ConfigBeanFactory {
    * @since 1.3.0
    * @param config source of config information
    * @param clazz class to be instantiated
-   * @param <T> the type of the class to be instantiated
+   * @param [T] the type of the class to be instantiated
    * @return an instance of the class populated with data from the config
    * @throws ConfigException#BadBean
    *     If something is wrong with the JavaBean

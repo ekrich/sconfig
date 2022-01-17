@@ -35,7 +35,7 @@ object ConfigBeanImpl {
    * This is public ONLY for use by the "config" package, DO NOT USE this ABI
    * may change.
    *
-   * @param <T> type of the bean
+   * @param [T] type of the bean
    * @param config config to use
    * @param clazz class of the bean
    * @return the bean instance
