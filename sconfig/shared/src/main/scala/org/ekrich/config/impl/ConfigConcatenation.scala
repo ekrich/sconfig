@@ -37,11 +37,11 @@ object ConfigConcatenation {
     var right = origRight
     // check for an object which can be converted to a list
     // (this will be an object with numeric keys, like foo.0, foo.1)
-    if (left.isInstanceOf[ConfigObject] && right
-          .isInstanceOf[SimpleConfigList])
+    if (left.isInstanceOf[ConfigObject] &&
+        right.isInstanceOf[SimpleConfigList])
       left = DefaultTransformer.transform(left, ConfigValueType.LIST)
-    else if (left.isInstanceOf[SimpleConfigList] && right
-          .isInstanceOf[ConfigObject])
+    else if (left.isInstanceOf[SimpleConfigList] &&
+        right.isInstanceOf[ConfigObject])
       right = DefaultTransformer.transform(right, ConfigValueType.LIST)
     // Since this depends on the type of two instances, I couldn't think
     // of much alternative to an instanceof chain. Visitors are sometimes
@@ -49,20 +49,20 @@ object ConfigConcatenation {
     var joined: AbstractConfigValue = null
     if (left.isInstanceOf[ConfigObject] && right.isInstanceOf[ConfigObject])
       joined = right.withFallback(left)
-    else if (left.isInstanceOf[SimpleConfigList] && right
-          .isInstanceOf[SimpleConfigList])
+    else if (left.isInstanceOf[SimpleConfigList] &&
+        right.isInstanceOf[SimpleConfigList])
       joined = left
         .asInstanceOf[SimpleConfigList]
         .concatenate(right.asInstanceOf[SimpleConfigList])
-    else if ((left.isInstanceOf[SimpleConfigList] || left
-          .isInstanceOf[ConfigObject]) && isIgnoredWhitespace(right)) {
+    else if ((left.isInstanceOf[SimpleConfigList] ||
+          left.isInstanceOf[ConfigObject]) && isIgnoredWhitespace(right)) {
       joined = left
       // it should be impossible that left is whitespace and right is a list or object
-    } else if (left.isInstanceOf[ConfigConcatenation] || right
-          .isInstanceOf[ConfigConcatenation])
+    } else if (left.isInstanceOf[ConfigConcatenation] ||
+        right.isInstanceOf[ConfigConcatenation])
       throw new ConfigException.BugOrBroken("unflattened ConfigConcatenation")
-    else if (left.isInstanceOf[Unmergeable] || right
-          .isInstanceOf[Unmergeable]) {
+    else if (left.isInstanceOf[Unmergeable] ||
+        right.isInstanceOf[Unmergeable]) {
       // leave joined=null, cannot join
     } else { // handle primitive type or primitive type mixed with object or list
       val s1 = left.transformToString

@@ -27,7 +27,7 @@ object ConfigSyntax {
 
   /**
    * The JSON-superset <a
-   * href="https://github.com/lightbend/config/blob/master/HOCON.md" >HOCON</a>
+   * href="https://github.com/lightbend/config/blob/master/HOCON.md">HOCON</a>
    * format. Associated with the <code>.conf</code> file extension and
    * <code>application/hocon</code> Content-Type.
    */

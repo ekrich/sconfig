@@ -421,10 +421,8 @@ final class SimpleConfigOrigin protected (
   private[impl] def prependComments(
       comments: ju.List[String]
   ): SimpleConfigOrigin =
-    if (ConfigImplUtil.equalsHandlingNull(
-          comments,
-          this.commentsOrNull
-        ) || comments == null)
+    if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull) ||
+        comments == null)
       this
     else if (this.commentsOrNull == null) withComments(comments)
     else {
@@ -437,10 +435,8 @@ final class SimpleConfigOrigin protected (
   private[impl] def appendComments(
       comments: ju.List[String]
   ): SimpleConfigOrigin =
-    if (ConfigImplUtil.equalsHandlingNull(
-          comments,
-          this.commentsOrNull
-        ) || comments == null)
+    if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull) ||
+        comments == null)
       this
     else if (this.commentsOrNull == null) withComments(comments)
     else {

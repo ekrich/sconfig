@@ -25,7 +25,6 @@ final class MemoKey private[impl] (
     } else false
 
   override final def toString: String =
-    "MemoKey(" + value + "@" + System.identityHashCode(
-      value
-    ) + "," + restrictToChildOrNull + ")"
+    "MemoKey(" + value + "@" + System.identityHashCode(value) + "," +
+      restrictToChildOrNull + ")"
 }

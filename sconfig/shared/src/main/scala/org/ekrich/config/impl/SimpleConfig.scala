@@ -573,13 +573,13 @@ object SimpleConfig {
           value.asInstanceOf[AbstractConfigObject],
           accumulator
         )
-      } else if (reference.isInstanceOf[SimpleConfigList] && value
-            .isInstanceOf[SimpleConfigList]) {
+      } else if (reference.isInstanceOf[SimpleConfigList] &&
+          value.isInstanceOf[SimpleConfigList]) {
         val listRef = reference.asInstanceOf[SimpleConfigList]
         val listValue = value.asInstanceOf[SimpleConfigList]
         checkListCompatibility(path, listRef, listValue, accumulator)
-      } else if (reference.isInstanceOf[SimpleConfigList] && value
-            .isInstanceOf[SimpleConfigObject]) {
+      } else if (reference.isInstanceOf[SimpleConfigList] &&
+          value.isInstanceOf[SimpleConfigObject]) {
         val listRef = reference.asInstanceOf[SimpleConfigList]
         val listValue =
           DefaultTransformer.transform(value, ConfigValueType.LIST)

@@ -71,9 +71,9 @@ object ConfigImplUtil {
     // to ensure we end up with a string and not a number
     val first = s.codePointAt(0)
     if (Character.isDigit(first) || first == '-') return renderJsonString(s)
-    if (s.startsWith("include") || s
-          .startsWith("true") || s.startsWith("false") ||
-        s.startsWith("null") || s.contains("//")) return renderJsonString(s)
+    if (s.startsWith("include") || s.startsWith("true") || s.startsWith("false")
+        || s.startsWith("null") || s.contains("//"))
+      return renderJsonString(s)
     // only unquote if it's pure alphanumeric
     var i = 0
     while (i < s.length) {

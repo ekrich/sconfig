@@ -66,8 +66,7 @@ object ConfigDocumentParser {
     private def nextToken: Token = {
       val t = popToken
       if (flavor eq ConfigSyntax.JSON)
-        if (Tokens.isUnquotedText(t) && !ParseContext
-              .isUnquotedWhitespace(t))
+        if (Tokens.isUnquotedText(t) && !ParseContext.isUnquotedWhitespace(t))
           throw parseError(
             "Token not allowed in valid JSON: '" + Tokens
               .getUnquotedText(t) + "'"
@@ -84,9 +83,8 @@ object ConfigDocumentParser {
       breakable {
         while (true) {
           val t: Token = nextToken
-          if (Tokens
-                .isIgnoredWhitespace(t) || Tokens.isNewline(t) || ParseContext
-                .isUnquotedWhitespace(t)) {
+          if (Tokens.isIgnoredWhitespace(t) || Tokens.isNewline(t) ||
+              ParseContext.isUnquotedWhitespace(t)) {
             nodes.add(new ConfigNodeSingleToken(t))
             if (Tokens.isNewline(t)) {
               lineNumber = t.lineNumber + 1
@@ -175,8 +173,8 @@ object ConfigDocumentParser {
           var v: AbstractConfigNodeValue = null
           if (Tokens.isIgnoredWhitespace(t)) {
             values.add(new ConfigNodeSingleToken(t))
-          } else if (Tokens.isValue(t) || Tokens.isUnquotedText(t) || Tokens
-                .isSubstitution(t) ||
+          } else if (Tokens.isValue(t) || Tokens.isUnquotedText(t) ||
+              Tokens.isSubstitution(t) ||
               (t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE)) {
             // there may be newlines _within_ the objects and arrays
             v = parseValue(t)
@@ -190,24 +188,6 @@ object ConfigDocumentParser {
         }
       }
 
-      // original converted Java code
-      // while (true) {
-      //    var v: : AbstractConfigNodeValue = null
-      //    if (Tokens.isIgnoredWhitespace(t)) {
-      //        values.add(new ConfigNodeSingleToken(t))
-      //        t = nextToken
-      //        continue //todo: continue is not supported
-      //    } else if (Tokens.isValue(t) || Tokens.isUnquotedText(t) || Tokens.isSubstitution(
-      //        t
-      //    ) || (t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE)) { // there may be newlines _within_ the objects and arrays
-      //        v = parseValue(t)
-      //        valueCount += 1
-      //    } else break//todo: break is not supported
-      //    if (v == null) throw new ConfigException.BugOrBroken("no value")
-      //    values.add(v)
-      //    t = nextToken // but don't consolidate across a newline
-      //
-      // }
       putBack(t)
       // No concatenation was seen, but a single value may have been parsed, so return it, and put back
       // all succeeding tokens
@@ -562,10 +542,9 @@ object ConfigDocumentParser {
         if (t eq Tokens.CLOSE_SQUARE) {
           children.add(new ConfigNodeSingleToken(t))
           return new ConfigNodeArray(children)
-        } else if (Tokens.isValue(
-              t
-            ) || (t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE) || Tokens
-              .isUnquotedText(t) || Tokens.isSubstitution(t)) {
+        } else if (Tokens.isValue(t) || (t eq Tokens.OPEN_CURLY) ||
+            (t eq Tokens.OPEN_SQUARE) || Tokens.isUnquotedText(t) ||
+            Tokens.isSubstitution(t)) {
           nextValue = parseValue(t)
           children.add(nextValue)
         } else
@@ -596,10 +575,9 @@ object ConfigDocumentParser {
           if (nextValue != null) children.add(nextValue)
           else {
             t = nextTokenCollectingWhitespace(children)
-            if (Tokens.isValue(
-                  t
-                ) || (t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE) || Tokens
-                  .isUnquotedText(t) || Tokens.isSubstitution(t)) {
+            if (Tokens.isValue(t) || (t eq Tokens.OPEN_CURLY) ||
+                (t eq Tokens.OPEN_SQUARE) || Tokens.isUnquotedText(t) ||
+                Tokens.isSubstitution(t)) {
               nextValue = parseValue(t)
               children.add(nextValue)
             } else if ((flavor ne ConfigSyntax.JSON) && (t eq Tokens.CLOSE_SQUARE)) {

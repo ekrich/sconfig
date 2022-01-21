@@ -60,9 +60,8 @@ object ConfigBeanImpl {
       val camelName = ConfigImplUtil.toCamelCase(originalName)
       // if a setting is in there both as some hyphen name and the camel name,
       // the camel one wins
-      if (originalNames.containsKey(
-            camelName
-          ) && !(originalName == camelName)) {
+      if (originalNames.containsKey(camelName) &&
+          !(originalName == camelName)) {
         // if we aren't a camel name to start with, we lose.
         // if we are or we are the first matching key, we win.
       } else {
@@ -171,21 +170,17 @@ object ConfigBeanImpl {
       config: Config,
       configPropName: String
   ): Any =
-    if ((parameterClass == classOf[jl.Boolean]) || (parameterClass == classOf[
-          Boolean
-        ])) config.getBoolean(configPropName)
-    else if ((parameterClass == classOf[Integer]) || (parameterClass == classOf[
-          Int
-        ]))
+    if ((parameterClass == classOf[jl.Boolean]) ||
+        (parameterClass == classOf[Boolean]))
+      config.getBoolean(configPropName)
+    else if ((parameterClass == classOf[Integer]) ||
+        (parameterClass == classOf[Int]))
       config.getInt(configPropName)
-    else if ((parameterClass == classOf[
-          jl.Double
-        ]) || (parameterClass == classOf[
-          Double
-        ])) config.getDouble(configPropName)
-    else if ((parameterClass == classOf[jl.Long]) || (parameterClass == classOf[
-          Long
-        ]))
+    else if ((parameterClass == classOf[jl.Double]) ||
+        (parameterClass == classOf[Double]))
+      config.getDouble(configPropName)
+    else if ((parameterClass == classOf[jl.Long]) ||
+        (parameterClass == classOf[Long]))
       config.getLong(configPropName)
     else if (parameterClass == classOf[String])
       config.getString(configPropName)
@@ -216,11 +211,10 @@ object ConfigBeanImpl {
         .getActualTypeArguments
       if ((typeArgs(0) != classOf[String]) || (typeArgs(1) != classOf[Any]))
         throw new ConfigException.BadBean(
-          "Bean property '" + configPropName + "' of class " + beanClass.getName + " has unsupported Map<" + typeArgs(
-            0
-          ) + "," + typeArgs(
-            1
-          ) + ">, only Map<String,Object> is supported right now"
+          "Bean property '" + configPropName + "' of class " +
+            beanClass.getName + " has unsupported Map[" +
+            typeArgs(0) + ", " + typeArgs(1) +
+            "], only Map[String, Object] is supported right now"
         )
       config.getObject(configPropName).unwrapped
     } else if (parameterClass == classOf[Config])
@@ -316,20 +310,18 @@ object ConfigBeanImpl {
 
   // null if we can't easily say; this is heuristic/best-effort
   private def getValueTypeOrNull(parameterClass: Class[_]) =
-    if ((parameterClass == classOf[jl.Boolean]) || (parameterClass == classOf[
-          Boolean
-        ])) ConfigValueType.BOOLEAN
-    else if ((parameterClass == classOf[Integer]) || (parameterClass == classOf[
-          Int
-        ])) ConfigValueType.NUMBER
-    else if ((parameterClass == classOf[
-          jl.Double
-        ]) || (parameterClass == classOf[
-          Double
-        ])) ConfigValueType.NUMBER
-    else if ((parameterClass == classOf[jl.Long]) || (parameterClass == classOf[
-          Long
-        ])) ConfigValueType.NUMBER
+    if ((parameterClass == classOf[jl.Boolean]) ||
+        (parameterClass == classOf[Boolean]))
+      ConfigValueType.BOOLEAN
+    else if ((parameterClass == classOf[Integer]) ||
+        (parameterClass == classOf[Int]))
+      ConfigValueType.NUMBER
+    else if ((parameterClass == classOf[jl.Double]) ||
+        (parameterClass == classOf[Double]))
+      ConfigValueType.NUMBER
+    else if ((parameterClass == classOf[jl.Long]) ||
+        (parameterClass == classOf[Long]))
+      ConfigValueType.NUMBER
     else if (parameterClass == classOf[String]) ConfigValueType.STRING
     else if (parameterClass == classOf[Duration]) null
     else if (parameterClass == classOf[ConfigMemorySize]) null

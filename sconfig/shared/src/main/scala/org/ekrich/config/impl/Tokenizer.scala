@@ -469,9 +469,8 @@ object Tokenizer {
           } else if (ConfigImplUtil.isC0Control(c))
             throw problem(
               asString(c),
-              "JSON does not allow unescaped " + asString(
-                c
-              ) + " in quoted strings, use a backslash escape"
+              "JSON does not allow unescaped " +
+                asString(c) + " in quoted strings, use a backslash escape"
             )
           else {
             sb.appendCodePoint(c)
@@ -575,9 +574,8 @@ object Tokenizer {
             else if (TokenIterator.notInUnquotedText.indexOf(c) >= 0)
               throw problem(
                 asString(c),
-                "Reserved character '" + asString(
-                  c
-                ) + "' is not allowed outside quotes",
+                "Reserved character '" + asString(c) +
+                  "' is not allowed outside quotes",
                 true
               )
             else {
