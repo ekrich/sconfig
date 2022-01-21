@@ -1,6 +1,8 @@
 package org.ekrich.config.impl
 
-/** The key used to memoize already-traversed nodes when resolving substitutions */
+/**
+ * The key used to memoize already-traversed nodes when resolving substitutions
+ */
 final class MemoKey private[impl] (
     val value: AbstractConfigValue,
     val restrictToChildOrNull: Path
@@ -23,5 +25,7 @@ final class MemoKey private[impl] (
     } else false
 
   override final def toString: String =
-    "MemoKey(" + value + "@" + System.identityHashCode(value) + "," + restrictToChildOrNull + ")"
+    "MemoKey(" + value + "@" + System.identityHashCode(
+      value
+    ) + "," + restrictToChildOrNull + ")"
 }

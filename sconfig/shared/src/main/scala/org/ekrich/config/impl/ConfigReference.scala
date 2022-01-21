@@ -39,7 +39,7 @@ final class ConfigReference(
       context: ResolveContext,
       source: ResolveSource
   ): ResolveResult[_ <: AbstractConfigValue] = {
-    var newContext             = context.addCycleMarker(this)
+    var newContext = context.addCycleMarker(this)
     var v: AbstractConfigValue = null
     try {
       val resultWithPath =

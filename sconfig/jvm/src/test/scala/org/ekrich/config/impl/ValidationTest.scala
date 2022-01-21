@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -79,7 +79,7 @@ class ValidationTest extends TestUtils {
   @Test
   def validationCatchesUnresolved(): Unit = {
     val reference = parseConfig("""{ a : 2 }""")
-    val conf      = parseConfig("""{ b : ${c}, c : 42 }""")
+    val conf = parseConfig("""{ b : ${c}, c : 42 }""")
     val e = intercept[ConfigException.NotResolved] {
       conf.checkValid(reference)
     }
@@ -92,7 +92,7 @@ class ValidationTest extends TestUtils {
   @Test
   def validationCatchesListOverriddenWithNumber(): Unit = {
     val reference = parseConfig("""{ a : [{},{},{}] }""")
-    val conf      = parseConfig("""{ a : 42 }""")
+    val conf = parseConfig("""{ a : 42 }""")
     val e = intercept[ConfigException.ValidationFailed] {
       conf.checkValid(reference)
     }
@@ -105,7 +105,7 @@ class ValidationTest extends TestUtils {
   @Test
   def validationCatchesListOverriddenWithDifferentList(): Unit = {
     val reference = parseConfig("""{ a : [true,false,false] }""")
-    val conf      = parseConfig("""{ a : [42,43] }""")
+    val conf = parseConfig("""{ a : [42,43] }""")
     val e = intercept[ConfigException.ValidationFailed] {
       conf.checkValid(reference)
     }
@@ -119,7 +119,7 @@ class ValidationTest extends TestUtils {
   def validationFailedSerializable(): Unit = {
     // Reusing a previous test case to generate an error
     val reference = parseConfig("""{ a : [{},{},{}] }""")
-    val conf      = parseConfig("""{ a : 42 }""")
+    val conf = parseConfig("""{ a : 42 }""")
     val e = intercept[ConfigException.ValidationFailed] {
       conf.checkValid(reference)
     }
@@ -132,14 +132,14 @@ class ValidationTest extends TestUtils {
   @Test
   def validationAllowsListOverriddenWithSameTypeList(): Unit = {
     val reference = parseConfig("""{ a : [1,2,3] }""")
-    val conf      = parseConfig("""{ a : [4,5] }""")
+    val conf = parseConfig("""{ a : [4,5] }""")
     conf.checkValid(reference)
   }
 
   @Test
   def validationCatchesListOverriddenWithNoIndexesObject(): Unit = {
     val reference = parseConfig("""{ a : [1,2,3] }""")
-    val conf      = parseConfig("""{ a : { notANumber: foo } }""")
+    val conf = parseConfig("""{ a : { notANumber: foo } }""")
     val e = intercept[ConfigException.ValidationFailed] {
       conf.checkValid(reference)
     }
@@ -152,7 +152,7 @@ class ValidationTest extends TestUtils {
   @Test
   def validationAllowsListOverriddenWithIndexedObject(): Unit = {
     val reference = parseConfig("""{ a : [a,b,c] }""")
-    val conf      = parseConfig("""{ a : { "0" : x, "1" : y } }""")
+    val conf = parseConfig("""{ a : { "0" : x, "1" : y } }""")
     conf.checkValid(reference)
     assertEquals(
       "got the sequence from overriding list with indexed object",

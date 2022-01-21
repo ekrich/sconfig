@@ -138,7 +138,7 @@ class ConfigBeanFactoryTest extends TestUtils {
     assertEquals(List(1, 2, 3).asJava, beanConfig.getOfInt)
     assertEquals(List(32L, 42L, 52L).asJava, beanConfig.getOfLong)
     assertEquals(List("a", "b", "c").asJava, beanConfig.getOfString)
-    //assertEquals(List(List("a", "b", "c").asJava,
+    // assertEquals(List(List("a", "b", "c").asJava,
     //    List("a", "b", "c").asJava,
     //    List("a", "b", "c").asJava).asJava,
     //    beanConfig.getOfArray)

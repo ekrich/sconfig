@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -18,22 +18,20 @@ import org.ekrich.config.ConfigValue
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
 
 /**
- *
  * Trying very hard to avoid a parent reference in config values; when you have
  * a tree like this, the availability of parent() tends to result in a lot of
  * improperly-factored and non-modular code. Please don't add parent().
- *
  */
 object AbstractConfigValue {
 
   /**
    * This exception means that a value is inherently not resolveable, at the
-   * moment the only known cause is a cycle of substitutions. This is a
-   * checked exception since it's internal to the library and we want to be
-   * sure we handle it before passing it out to public API. This is only
-   * supposed to be thrown by the target of a cyclic reference and it's
-   * supposed to be caught by the ConfigReference looking up that reference,
-   * so it should be impossible for an outermost resolve() to throw this.
+   * moment the only known cause is a cycle of substitutions. This is a checked
+   * exception since it's internal to the library and we want to be sure we
+   * handle it before passing it out to public API. This is only supposed to be
+   * thrown by the target of a cyclic reference and it's supposed to be caught
+   * by the ConfigReference looking up that reference, so it should be
+   * impossible for an outermost resolve() to throw this.
    *
    * Contrast with ConfigException.NotResolved which just means nobody called
    * resolve().
@@ -133,10 +131,11 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
    * Called only by ResolveContext.resolve().
    *
    * @param context
-   *            state of the current resolve
+   *   state of the current resolve
    * @param source
-   *            where to look up values
-   * @return a new value if there were changes, or this if no changes
+   *   where to look up values
+   * @return
+   *   a new value if there were changes, or this if no changes
    */
   @throws[NotPossibleToResolve]
   def resolveSubstitutions(
@@ -149,15 +148,15 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
 
   /**
    * This is used when including one file in another; the included file is
-   * relativized to the path it's included into in the parent file. The point
-   * is that if you include a file at `foo.bar` in the parent, and the included
+   * relativized to the path it's included into in the parent file. The point is
+   * that if you include a file at `foo.bar` in the parent, and the included
    * file as a substitution `\${a.b.c}`, the included substitution now needs to
    * be `\${foo.bar.a.b.c}` because we resolve substitutions globally only after
    * parsing everything.
    *
    * @param prefix
-   * @return value relativized to the given path or the same value if nothing
-   *         to do
+   * @return
+   *   value relativized to the given path or the same value if nothing to do
    */
   private[impl] def relativized(prefix: Path) = this
 

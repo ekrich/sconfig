@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -7,11 +7,11 @@ import java.io.File
 import java.util.Locale
 
 /**
- * Extracted from TestUtils as they contain
- * File and Path and are not useful on Scala.js
+ * Extracted from TestUtils as they contain File and Path and are not useful on
+ * Scala.js
  *
- * Note: Some functions may only be used in this file so they
- * could be made private.
+ * Note: Some functions may only be used in this file so they could be made
+ * private.
  */
 object FileUtils {
   // Some functions duplicated in TestUtils

@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -16,7 +16,7 @@ import org.ekrich.config.ConfigResolveOptions
 class PropertiesTest extends TestUtils {
   @Test
   def pathSplitting(): Unit = {
-    def last(s: String)       = PropertiesParser.lastElement(s)
+    def last(s: String) = PropertiesParser.lastElement(s)
     def exceptLast(s: String) = PropertiesParser.exceptLastElement(s)
 
     assertEquals("a", last("a"))
@@ -170,13 +170,13 @@ class PropertiesTest extends TestUtils {
       ConfigFactory.parseProperties(props, ConfigParseOptions.defaults)
     assertEquals(Seq(0, 1, 2), conf1.getIntList("a").asScala.toSeq)
 
-    val conf2     = ConfigFactory.parseString("""
+    val conf2 = ConfigFactory.parseString("""
                 a += 3
                 a += 4
                 a = ${a} [ 5, 6 ]
                 a = [-2, -1] ${a}
                 """)
-    val conf      = conf2.withFallback(conf1).resolve()
+    val conf = conf2.withFallback(conf1).resolve()
     val reference = ConfigFactory.parseString("{ a : [-2,-1,0,1,2,3,4,5,6] }")
 
     assertEquals(

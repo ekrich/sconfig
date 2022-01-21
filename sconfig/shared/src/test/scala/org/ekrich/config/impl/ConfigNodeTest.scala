@@ -45,9 +45,9 @@ class ConfigNodeTest extends TestUtils {
       nodeCloseBrace
     )
     val complexNode = configNodeObject(complexNodeChildren)
-    val newNode     = complexNode.setValueOnPath(key, newValue)
-    val origText    = "{" + key + " : " + value.render + "}"
-    val finalText   = "{" + key + " : " + newValue.render + "}"
+    val newNode = complexNode.setValueOnPath(key, newValue)
+    val origText = "{" + key + " : " + value.render + "}"
+    val finalText = "{" + key + " : " + newValue.render + "}"
 
     assertEquals(origText, complexNode.render)
     assertEquals(finalText, newNode.render)
@@ -58,14 +58,14 @@ class ConfigNodeTest extends TestUtils {
       value2: AbstractConfigNodeValue,
       value3: AbstractConfigNodeValue
   ): Unit = {
-    val key         = configNodeKey("foo")
+    val key = configNodeKey("foo")
     val keyValPair1 = nodeKeyValuePair(key, value1)
     val keyValPair2 = nodeKeyValuePair(key, value2)
     val keyValPair3 = nodeKeyValuePair(key, value3)
     val complexNode = configNodeObject(
       List(keyValPair1, keyValPair2, keyValPair3)
     )
-    val origText  = keyValPair1.render + keyValPair2.render + keyValPair3.render
+    val origText = keyValPair1.render + keyValPair2.render + keyValPair3.render
     val finalText = key.render + " : 15"
 
     assertEquals(origText, complexNode.render)
@@ -80,14 +80,14 @@ class ConfigNodeTest extends TestUtils {
       List(nodeKeyValuePair(configNodeKey("bar"), nodeInt(15)))
     )
     assertEquals("bar : 15", node.render)
-    val newNode   = node.setValueOnPath("foo", value)
+    val newNode = node.setValueOnPath("foo", value)
     val finalText = "bar : 15, foo : " + value.render
     assertEquals(finalText, newNode.render)
   }
 
   @Test
   def createBasicConfigNode(): Unit = {
-    //Ensure a ConfigNodeSingleToken can handle all its required token types
+    // Ensure a ConfigNodeSingleToken can handle all its required token types
     singleTokenNodeTest(Tokens.START)
     singleTokenNodeTest(Tokens.END)
     singleTokenNodeTest(Tokens.OPEN_CURLY)
@@ -109,7 +109,7 @@ class ConfigNodeTest extends TestUtils {
 
   @Test
   def createConfigNodeSetting(): Unit = {
-    //Ensure a ConfigNodeSetting can handle the normal key types
+    // Ensure a ConfigNodeSetting can handle the normal key types
     keyNodeTest("foo")
     keyNodeTest("\"Hello I am a key how are you today\"")
   }
@@ -125,7 +125,7 @@ class ConfigNodeTest extends TestUtils {
 
   @Test
   def createConfigNodeSimpleValue(): Unit = {
-    //Ensure a ConfigNodeSimpleValue can handle the normal value types
+    // Ensure a ConfigNodeSimpleValue can handle the normal value types
     simpleValueNodeTest(tokenInt(10))
     simpleValueNodeTest(tokenLong(10000))
     simpleValueNodeTest(tokenDouble(3.14159))
@@ -160,7 +160,7 @@ class ConfigNodeTest extends TestUtils {
 
   @Test
   def replaceNodes(): Unit = {
-    //Ensure simple values can be replaced by other simple values
+    // Ensure simple values can be replaced by other simple values
     topLevelValueReplaceTest(nodeInt(10), nodeInt(15))
     topLevelValueReplaceTest(nodeLong(10000), nodeInt(20))
     topLevelValueReplaceTest(nodeDouble(3.14159), nodeLong(10000))
@@ -238,7 +238,7 @@ class ConfigNodeTest extends TestUtils {
     topLevelValueReplaceTest(array, concatenation)
     topLevelValueReplaceTest(concatenation, array)
 
-    //Ensure a key with format "a.b" will be properly replaced
+    // Ensure a key with format "a.b" will be properly replaced
     topLevelValueReplaceTest(nodeInt(10), nestedMap, "foo.bar")
   }
 
@@ -248,7 +248,7 @@ class ConfigNodeTest extends TestUtils {
     val emptyArrayNode = configNodeArray(
       List(nodeOpenBracket, nodeCloseBracket)
     )
-    //Ensure duplicates of a key are removed from a map
+    // Ensure duplicates of a key are removed from a map
     replaceDuplicatesTest(nodeInt(10), nodeTrue, nodeNull)
     replaceDuplicatesTest(emptyMapNode, emptyMapNode, emptyMapNode)
     replaceDuplicatesTest(emptyArrayNode, emptyArrayNode, emptyArrayNode)
@@ -345,7 +345,7 @@ class ConfigNodeTest extends TestUtils {
       "foo : bar\nbaz : {\n\t\"abc.def\" : true\n\t//This is a comment about the below setting\n\n\tabc : {\n\t\t" +
         "def : false\n\t\t\n\t\t\"this.does.not.exist@@@+$#\" : {\n\t\t  end : doesnotexist\n\t\t}\n\t}\n}\n\nbaz.abc.ghi : randomunquotedString\n}"
 
-    //Can replace settings in nested maps
+    // Can replace settings in nested maps
     // Paths with quotes in the name are treated as a single Path, rather than multiple sub-paths
     var newNode = origNode.setValueOnPath(
       "baz.\"abc.def\"",

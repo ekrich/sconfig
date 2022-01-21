@@ -26,8 +26,8 @@ import org.ekrich.config.ConfigValueType
 import org.ekrich.config.Optional
 
 /**
- * Internal implementation detail, not ABI stable, do not touch.
- * For use only by the {@link org.ekrich.config} package.
+ * Internal implementation detail, not ABI stable, do not touch. For use only by
+ * the {@link org.ekrich.config} package.
  */
 object ConfigBeanImpl {
 
@@ -35,10 +35,14 @@ object ConfigBeanImpl {
    * This is public ONLY for use by the "config" package, DO NOT USE this ABI
    * may change.
    *
-   * @param [T] type of the bean
-   * @param config config to use
-   * @param clazz class of the bean
-   * @return the bean instance
+   * @param [T]
+   *   type of the bean
+   * @param config
+   *   config to use
+   * @param clazz
+   *   class of the bean
+   * @return
+   *   the bean instance
    */
   def createInternal[T](config: Config, clazz: Class[T]): T = {
     if (config
@@ -53,10 +57,12 @@ object ConfigBeanImpl {
     val originalNames = new ju.HashMap[String, String]
     for (configProp <- config.root.entrySet.asScala) {
       val originalName = configProp.getKey
-      val camelName    = ConfigImplUtil.toCamelCase(originalName)
+      val camelName = ConfigImplUtil.toCamelCase(originalName)
       // if a setting is in there both as some hyphen name and the camel name,
       // the camel one wins
-      if (originalNames.containsKey(camelName) && !(originalName == camelName)) {
+      if (originalNames.containsKey(
+            camelName
+          ) && !(originalName == camelName)) {
         // if we aren't a camel name to start with, we lose.
         // if we are or we are the first matching key, we win.
       } else {
@@ -90,9 +96,9 @@ object ConfigBeanImpl {
       // find every issue, but it should find common ones).
       val problems = new ju.ArrayList[ConfigException.ValidationProblem]
       for (beanProp <- beanProps.asScala) {
-        val setter: Method           = beanProp.getWriteMethod
+        val setter: Method = beanProp.getWriteMethod
         val parameterClass: Class[_] = setter.getParameterTypes()(0)
-        val expectedType             = getValueTypeOrNull(parameterClass)
+        val expectedType = getValueTypeOrNull(parameterClass)
         if (expectedType != null) {
           var name = originalNames.get(beanProp.getName)
           if (name == null) name = beanProp.getName
@@ -111,8 +117,8 @@ object ConfigBeanImpl {
       val bean = clazz.getConstructor().newInstance()
       for (beanProp <- beanProps.asScala) {
         breakable {
-          val setter         = beanProp.getWriteMethod
-          val parameterType  = setter.getGenericParameterTypes()(0)
+          val setter = beanProp.getWriteMethod
+          val parameterType = setter.getGenericParameterTypes()(0)
           val parameterClass = setter.getParameterTypes()(0)
           val configPropName = originalNames.get(beanProp.getName)
           // Is the property key missing in the config?
@@ -169,15 +175,17 @@ object ConfigBeanImpl {
           Boolean
         ])) config.getBoolean(configPropName)
     else if ((parameterClass == classOf[Integer]) || (parameterClass == classOf[
-               Int
-             ]))
+          Int
+        ]))
       config.getInt(configPropName)
-    else if ((parameterClass == classOf[jl.Double]) || (parameterClass == classOf[
-               Double
-             ])) config.getDouble(configPropName)
+    else if ((parameterClass == classOf[
+          jl.Double
+        ]) || (parameterClass == classOf[
+          Double
+        ])) config.getDouble(configPropName)
     else if ((parameterClass == classOf[jl.Long]) || (parameterClass == classOf[
-               Long
-             ]))
+          Long
+        ]))
       config.getLong(configPropName)
     else if (parameterClass == classOf[String])
       config.getString(configPropName)
@@ -210,7 +218,9 @@ object ConfigBeanImpl {
         throw new ConfigException.BadBean(
           "Bean property '" + configPropName + "' of class " + beanClass.getName + " has unsupported Map<" + typeArgs(
             0
-          ) + "," + typeArgs(1) + ">, only Map<String,Object> is supported right now"
+          ) + "," + typeArgs(
+            1
+          ) + ">, only Map<String,Object> is supported right now"
         )
       config.getObject(configPropName).unwrapped
     } else if (parameterClass == classOf[Config])
@@ -310,14 +320,16 @@ object ConfigBeanImpl {
           Boolean
         ])) ConfigValueType.BOOLEAN
     else if ((parameterClass == classOf[Integer]) || (parameterClass == classOf[
-               Int
-             ])) ConfigValueType.NUMBER
-    else if ((parameterClass == classOf[jl.Double]) || (parameterClass == classOf[
-               Double
-             ])) ConfigValueType.NUMBER
+          Int
+        ])) ConfigValueType.NUMBER
+    else if ((parameterClass == classOf[
+          jl.Double
+        ]) || (parameterClass == classOf[
+          Double
+        ])) ConfigValueType.NUMBER
     else if ((parameterClass == classOf[jl.Long]) || (parameterClass == classOf[
-               Long
-             ])) ConfigValueType.NUMBER
+          Long
+        ])) ConfigValueType.NUMBER
     else if (parameterClass == classOf[String]) ConfigValueType.STRING
     else if (parameterClass == classOf[Duration]) null
     else if (parameterClass == classOf[ConfigMemorySize]) null
@@ -336,7 +348,8 @@ object ConfigBeanImpl {
         beanInfo
           .getPropertyDescriptors()
           .exists(beanProp =>
-            beanProp.getReadMethod != null && beanProp.getWriteMethod != null)
+            beanProp.getReadMethod != null && beanProp.getWriteMethod != null
+          )
     }
   }
 

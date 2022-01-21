@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -32,16 +32,16 @@ object SimpleConfigList {
       i: ju.ListIterator[AbstractConfigValue]
   ): ju.ListIterator[ConfigValue] =
     new ju.ListIterator[ConfigValue]() {
-      override def hasNext: Boolean  = i.hasNext
+      override def hasNext: Boolean = i.hasNext
       override def next: ConfigValue = i.next
       override def remove(): Unit =
         throw weAreImmutable("listIterator().remove")
       override def add(arg0: ConfigValue): Unit =
         throw weAreImmutable("listIterator().add")
-      override def hasPrevious: Boolean  = i.hasPrevious
-      override def nextIndex: Int        = i.nextIndex
+      override def hasPrevious: Boolean = i.hasPrevious
+      override def nextIndex: Int = i.nextIndex
       override def previous: ConfigValue = i.previous
-      override def previousIndex: Int    = i.previousIndex
+      override def previousIndex: Int = i.previousIndex
       override def set(arg0: ConfigValue): Unit = {
         throw weAreImmutable("listIterator().set")
       }
@@ -114,7 +114,7 @@ final class SimpleConfigList(
   ): SimpleConfigList = {
     // lazy-create for optimization
     var changed: ju.List[AbstractConfigValue] = null
-    var i                                     = 0
+    var i = 0
     for (v <- value.asScala) {
       val modified = modifier.modifyChildMayThrow(null /* key */, v)
       // lazy-create the new list if required
@@ -170,13 +170,16 @@ final class SimpleConfigList(
       }
   }
   override def relativized(prefix: Path): SimpleConfigList =
-    modify(new NoExceptionsModifier() {
-      override def modifyChild(
-          key: String,
-          v: AbstractConfigValue
-      ): AbstractConfigValue =
-        v.relativized(prefix)
-    }, resolveStatus)
+    modify(
+      new NoExceptionsModifier() {
+        override def modifyChild(
+            key: String,
+            v: AbstractConfigValue
+        ): AbstractConfigValue =
+          v.relativized(prefix)
+      },
+      resolveStatus
+    )
   override def canEqual(other: Any): Boolean =
     other.isInstanceOf[SimpleConfigList]
   override def equals(other: Any): Boolean = {
@@ -186,7 +189,7 @@ final class SimpleConfigList(
       canEqual(other) && ((value eq other
         .asInstanceOf[SimpleConfigList]
         .value) ||
-      value == other.asInstanceOf[SimpleConfigList].value)
+        value == other.asInstanceOf[SimpleConfigList].value)
     } else false
   }
   override def hashCode: Int = value.hashCode
@@ -235,15 +238,15 @@ final class SimpleConfigList(
       sb.append("]")
     }
   }
-  override def contains(o: Any): Boolean                 = value.contains(o)
+  override def contains(o: Any): Boolean = value.contains(o)
   override def containsAll(c: ju.Collection[_]): Boolean = value.containsAll(c)
-  override def get(index: Int): AbstractConfigValue      = value.get(index)
-  override def indexOf(o: Any): Int                      = value.indexOf(o)
-  override def isEmpty: Boolean                          = value.isEmpty
+  override def get(index: Int): AbstractConfigValue = value.get(index)
+  override def indexOf(o: Any): Int = value.indexOf(o)
+  override def isEmpty: Boolean = value.isEmpty
   override def iterator: ju.Iterator[ConfigValue] = {
     val i = value.iterator
     new ju.Iterator[ConfigValue]() {
-      override def hasNext: Boolean  = return i.hasNext
+      override def hasNext: Boolean = return i.hasNext
       override def next: ConfigValue = return i.next
       override def remove(): Unit =
         throw SimpleConfigList.weAreImmutable("iterator().remove")

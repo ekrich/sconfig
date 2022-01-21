@@ -38,8 +38,8 @@ class SimpleLibSettings(config: Config) {
 
   // note that these fields are NOT lazy, because if we're going to
   // get any exceptions, we want to get them on startup.
-  val foo      = config.getString("simple-lib.foo")
-  val hello    = config.getString("simple-lib.hello")
+  val foo = config.getString("simple-lib.foo")
+  val hello = config.getString("simple-lib.hello")
   val whatever = config.getString("simple-lib.whatever")
 }
 

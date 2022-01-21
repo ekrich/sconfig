@@ -2,10 +2,10 @@ import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigRenderOptions
 
 object RenderExample extends App {
-  val formatted      = args.contains("--formatted")
+  val formatted = args.contains("--formatted")
   val originComments = args.contains("--origin-comments")
-  val comments       = args.contains("--comments")
-  val hocon          = args.contains("--hocon")
+  val comments = args.contains("--comments")
+  val hocon = args.contains("--hocon")
   val options = ConfigRenderOptions.defaults
     .setFormatted(formatted)
     .setOriginComments(originComments)
@@ -65,10 +65,10 @@ object RenderOptions extends App {
 
   val rendered =
     allBooleanLists(4).foldLeft(0) { (count, values) =>
-      val formatted      = values(0)
+      val formatted = values(0)
       val originComments = values(1)
-      val comments       = values(2)
-      val json           = values(3)
+      val comments = values(2)
+      val json = values(3)
 
       val options = ConfigRenderOptions.defaults
         .setFormatted(formatted)

@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -22,14 +22,14 @@ object Path {
   }
 
   /**
-   *
-   * @return path minus the first element or null if no more elements
+   * @return
+   *   path minus the first element or null if no more elements
    */
   private def create(elements: String*): (String, Path) = {
     val first = if (elements.length > 0) elements(0) else null
     val remainder = if (elements.length > 1) {
       val pb = new PathBuilder
-      var i  = 1
+      var i = 1
       while (i < elements.length) {
         pb.appendKey(elements(i))
         i += 1
@@ -42,7 +42,7 @@ object Path {
   private def create(i: ju.Iterator[Path]): (String, Path) =
     if (i.hasNext) {
       val firstPath = i.next
-      val pb        = new PathBuilder
+      val pb = new PathBuilder
       if (firstPath.remainder != null)
         pb.appendPath(firstPath.remainder)
       while (i.hasNext) pb.appendPath(i.next)
@@ -53,8 +53,10 @@ object Path {
     }
 }
 
-final class Path @throws(classOf[ConfigException]) (val first: String,
-                                                    val remainder: Path) {
+final class Path @throws(classOf[ConfigException]) (
+    val first: String,
+    val remainder: Path
+) {
   if (first == null)
     throw new ConfigException.BugOrBroken("empty path")
 
@@ -70,13 +72,13 @@ final class Path @throws(classOf[ConfigException]) (val first: String,
   def this(pathsToConcat: ju.List[Path]) = this(pathsToConcat.iterator)
 
   /**
-   *
-   * @return path minus the last element or null if we have just one element
+   * @return
+   *   path minus the last element or null if we have just one element
    */
   private[impl] def parent: Path = {
     if (remainder == null) return null
     val pb = new PathBuilder
-    var p  = this
+    var p = this
     while (p.remainder != null) {
       pb.appendKey(p.first)
       p = p.remainder
@@ -85,8 +87,8 @@ final class Path @throws(classOf[ConfigException]) (val first: String,
   }
 
   /**
-   *
-   * @return last element in the path
+   * @return
+   *   last element in the path
    */
   private[impl] def last: String = {
     var p = this
@@ -103,7 +105,7 @@ final class Path @throws(classOf[ConfigException]) (val first: String,
 
   private[impl] def length = {
     var count = 1
-    var p     = remainder
+    var p = remainder
     while (p != null) {
       count += 1
       p = p.remainder
@@ -113,7 +115,7 @@ final class Path @throws(classOf[ConfigException]) (val first: String,
 
   private[impl] def subPath(removeFromFront: Int): Path = {
     var count = removeFromFront
-    var p     = this
+    var p = this
     while (p != null && count > 0) {
       count -= 1
       p = p.remainder
@@ -124,8 +126,8 @@ final class Path @throws(classOf[ConfigException]) (val first: String,
   private[impl] def subPath(firstIndex: Int, lastIndex: Int): Path = {
     if (lastIndex < firstIndex)
       throw new ConfigException.BugOrBroken("bad call to subPath")
-    var from  = subPath(firstIndex)
-    val pb    = new PathBuilder
+    var from = subPath(firstIndex)
+    val pb = new PathBuilder
     var count = lastIndex - firstIndex
     while (count > 0) {
       count -= 1
@@ -140,7 +142,7 @@ final class Path @throws(classOf[ConfigException]) (val first: String,
   }
 
   private[impl] def startsWith(other: Path): Boolean = {
-    var myRemainder    = this
+    var myRemainder = this
     var otherRemainder = other
     if (otherRemainder.length <= myRemainder.length) {
       while (otherRemainder != null) {

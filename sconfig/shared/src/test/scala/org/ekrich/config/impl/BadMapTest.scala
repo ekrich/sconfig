@@ -6,7 +6,7 @@ import org.junit.Test
 class BadMapTest extends TestUtils {
   @Test
   def copyingPut(): Unit = {
-    val map  = new BadMap[String, String]()
+    val map = new BadMap[String, String]()
     val copy = map.copyingPut("key", "value")
 
     assertNull(map.get("key"))
@@ -45,7 +45,7 @@ class BadMapTest extends TestUtils {
   @Test
   def putMany(): Unit = {
     val entries = (1 to 1000).map(i => (s"key$i", s"value$i"))
-    var map     = new BadMap[String, String]()
+    var map = new BadMap[String, String]()
 
     for ((key, value) <- entries) {
       map = map.copyingPut(key, value)
@@ -58,9 +58,9 @@ class BadMapTest extends TestUtils {
 
   @Test
   def putSameHash(): Unit = {
-    val hash    = 2
+    val hash = 2
     val entries = (1 to 10).map(i => (new UniqueKeyWithHash(hash), s"value$i"))
-    var map     = new BadMap[UniqueKeyWithHash, String]()
+    var map = new BadMap[UniqueKeyWithHash, String]()
 
     for ((key, value) <- entries) {
       map = map.copyingPut(key, value)

@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -44,8 +44,8 @@ object ConfigDelayedMerge {
     // we won't be a delayed merge anymore. If restrictToChildOrNull
     // is non-null, or resolve options allow partial resolves,
     // we may remain a delayed merge though.
-    var newContext                  = context
-    var count                       = 0
+    var newContext = context
+    var count = 0
     var merged: AbstractConfigValue = null
     for (end <- stack.asScala) { // the end value may or may not be resolved already
       var sourceForEnd: ResolveSource = null
@@ -201,7 +201,7 @@ object ConfigDelayedMerge {
     sb.setLength(sb.length - 1)
     if (options.getFormatted) {
       sb.setLength(sb.length - 1) // also chop comma
-      sb.append("\n")             // put a newline back
+      sb.append("\n") // put a newline back
     }
     if (commentMerge) {
       indent(sb, indentVal, options)

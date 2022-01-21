@@ -66,7 +66,7 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
   }
 
   private def handleRequest(socket: Socket): Unit = {
-    val in  = socket.getInputStream
+    val in = socket.getInputStream
     val out = socket.getOutputStream
     try {
       // HTTP requests look like this:
@@ -75,11 +75,11 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
       // OtherHeader: foo
       // \r\n
       val reader = new BufferedReader(new java.io.InputStreamReader(in))
-      val path   = parsePath(reader)
+      val path = parsePath(reader)
       val header = parseHeader(reader)
-      //System.err.println(s"request path '$path' headers $header")
+      // System.err.println(s"request path '$path' headers $header")
       val response = handler(Request(path, header))
-      //System.err.println(s"response $response")
+      // System.err.println(s"response $response")
       sendResponse(out, response)
     } finally {
       in.close()
@@ -89,10 +89,10 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
 
   private def parseHeader(reader: BufferedReader): Map[String, String] = {
     def readHeaders(sofar: Map[String, String]): Map[String, String] = {
-      val line  = reader.readLine()
+      val line = reader.readLine()
       val colon = line.indexOf(':')
       if (colon > 0) {
-        val name  = line.substring(0, colon).toLowerCase()
+        val name = line.substring(0, colon).toLowerCase()
         val value = line.substring(colon + 1).replaceAll("^[ \t]+", "")
         readHeaders(sofar + (name -> value))
       } else {
@@ -105,8 +105,8 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
 
   private def parsePath(reader: BufferedReader): String = {
     val methodPathProto = reader.readLine().split(" +")
-    val method          = methodPathProto(0)
-    val path            = methodPathProto(1)
+    val method = methodPathProto(0)
+    val path = methodPathProto(1)
 
     path
   }
@@ -119,8 +119,8 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
   }
 
   private def sendResponse(out: OutputStream, response: Response): Unit = {
-    //val stuff = new java.io.ByteArrayOutputStream
-    //val writer = new PrintWriter(new OutputStreamWriter(stuff, StandardCharsets.UTF_8))
+    // val stuff = new java.io.ByteArrayOutputStream
+    // val writer = new PrintWriter(new OutputStreamWriter(stuff, StandardCharsets.UTF_8))
     val writer = new PrintWriter(
       new OutputStreamWriter(out, StandardCharsets.UTF_8)
     )

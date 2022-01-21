@@ -5,9 +5,9 @@ import java.net.MalformedURLException
 import java.net.URL
 
 /**
- * Default config loading strategy. Able to load resource, file or URL.
- * Behavior may be altered by defining one of VM properties
- * {@code config.resource}, {@code config.file} or {@code config.url}
+ * Default config loading strategy. Able to load resource, file or URL. Behavior
+ * may be altered by defining one of VM properties {@code config.resource},
+ * {@code config.file} or {@code config.url}
  */
 class DefaultConfigLoadingStrategy extends ConfigLoadingStrategy {
   override def parseApplicationConfig(

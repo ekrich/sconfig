@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -23,13 +23,12 @@ import org.ekrich.config._
 import org.ekrich.config.parser._
 
 /**
- * Internal implementation detail, not ABI stable, do not touch.
- * For use only by the {@link org.ekrich.config} package.
- * The point of this class is to avoid "propagating" each
- * overload on "thing which can be parsed" through multiple
- * interfaces. Most interfaces can have just one overload that
- * takes a Parseable. Also it's used as an abstract "resource
- * handle" in the ConfigIncluder interface.
+ * Internal implementation detail, not ABI stable, do not touch. For use only by
+ * the {@link org.ekrich.config} package. The point of this class is to avoid
+ * "propagating" each overload on "thing which can be parsed" through multiple
+ * interfaces. Most interfaces can have just one overload that takes a
+ * Parseable. Also it's used as an abstract "resource handle" in the
+ * ConfigIncluder interface.
  */
 object Parseable {
 
@@ -83,7 +82,7 @@ object Parseable {
     if (new File(filename).isAbsolute()) return null
     try {
       val siblingURI = url.toURI()
-      val relative   = new URI(filename)
+      val relative = new URI(filename)
       // this seems wrong, but it's documented that the last
       // element of the path in siblingURI gets stripped out,
       // so to get something in the same directory as
@@ -160,16 +159,16 @@ object Parseable {
   }
   def newString(input: String, options: ConfigParseOptions) =
     new ParseableString(input, options)
-  private val jsonContentType       = "application/json"
+  private val jsonContentType = "application/json"
   private val propertiesContentType = "text/x-java-properties"
-  private val hoconContentType      = "application/hocon"
+  private val hoconContentType = "application/hocon"
   private object ParseableURL {
     private def acceptContentType(options: ConfigParseOptions): String = {
       if (options.getSyntax == null) null
       else
         options.getSyntax match {
-          case ConfigSyntax.JSON => jsonContentType
-          case ConfigSyntax.CONF => hoconContentType
+          case ConfigSyntax.JSON       => jsonContentType
+          case ConfigSyntax.CONF       => hoconContentType
           case ConfigSyntax.PROPERTIES => propertiesContentType
         }
     }
@@ -424,7 +423,7 @@ object Parseable {
       resource.substring(1)
     } else {
       val className = klass.getName()
-      val i         = className.lastIndexOf('.')
+      val i = className.lastIndexOf('.')
       if (i < 0) { // no package
         resource
       } else { // need to be relative to the package
@@ -472,7 +471,7 @@ abstract class Parseable protected (
     private var initialOptions: ConfigParseOptions
 ) extends ConfigParseable {
   private var includeContext: ConfigIncludeContext = null
-  private var initialOrigin: ConfigOrigin          = null
+  private var initialOrigin: ConfigOrigin = null
   def this() = this(null)
   private def fixupOptions(baseOptions: ConfigParseOptions) = {
     var syntax = baseOptions.getSyntax
@@ -505,8 +504,8 @@ abstract class Parseable protected (
   protected def reader(): Reader
   @throws[IOException]
   protected def reader(options: ConfigParseOptions): Reader = reader()
-  private[impl] def guessSyntax: ConfigSyntax               = null
-  private[impl] def contentType: ConfigSyntax               = null
+  private[impl] def guessSyntax: ConfigSyntax = null
+  private[impl] def contentType: ConfigSyntax = null
   private[impl] def relativeTo(filename: String): ConfigParseable = {
     // fall back to classpath; we treat the "filename" as absolute
     // (don't add a package name in front),
@@ -649,7 +648,7 @@ abstract class Parseable protected (
       origin: ConfigOrigin,
       finalOptions: ConfigParseOptions
   ): ConfigDocument = {
-    val readerVal: Reader            = reader(finalOptions)
+    val readerVal: Reader = reader(finalOptions)
     val contentTypeVal: ConfigSyntax = contentType
     val optionsWithContentType =
       if (contentType != null) {
@@ -678,10 +677,10 @@ abstract class Parseable protected (
 
   def parse(): ConfigObject =
     Parseable.forceParsedToObject(parseValue(options()))
-  def parseConfigDocument(): ConfigDocument           = parseDocument(options())
+  def parseConfigDocument(): ConfigDocument = parseDocument(options())
   private[impl] def parseValue(): AbstractConfigValue = parseValue(options())
-  override final def origin(): ConfigOrigin           = initialOrigin
+  override final def origin(): ConfigOrigin = initialOrigin
   protected def createOrigin(): ConfigOrigin
   override def options(): ConfigParseOptions = initialOptions
-  override def toString(): String            = getClass.getSimpleName
+  override def toString(): String = getClass.getSimpleName
 }

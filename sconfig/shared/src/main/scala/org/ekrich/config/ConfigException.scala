@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config
 
@@ -15,8 +15,7 @@ import jl.reflect.Field
 import org.ekrich.config.impl.ConfigImplUtil
 
 /**
- * All exceptions thrown by the library are subclasses of
- * `ConfigException`.
+ * All exceptions thrown by the library are subclasses of `ConfigException`.
  */
 @SerialVersionUID(1L)
 abstract class ConfigException(message: String, cause: Throwable)
@@ -24,7 +23,11 @@ abstract class ConfigException(message: String, cause: Throwable)
     with Serializable {
   @transient var origin: ConfigOrigin = null
 
-  protected def this(origin: ConfigOrigin, message: String, cause: Throwable) = {
+  protected def this(
+      origin: ConfigOrigin,
+      message: String,
+      cause: Throwable
+  ) = {
     this(ConfigException.makeMessage(origin, message), cause)
     this.origin = origin
   }
@@ -96,7 +99,6 @@ object ConfigException {
   /**
    * Exception indicating that the type of a value does not match the type you
    * requested.
-   *
    */
   @SerialVersionUID(1L)
   class WrongType(origin: ConfigOrigin, message: String, cause: Throwable)
@@ -150,8 +152,8 @@ object ConfigException {
   }
 
   /**
-   * Exception indicates that the setting was treated as missing because it
-   * was set to null.
+   * Exception indicates that the setting was treated as missing because it was
+   * set to null.
    */
   @SerialVersionUID(1L)
   object Null {
@@ -178,9 +180,7 @@ object ConfigException {
 
   /**
    * Exception indicating that a value was messed up, for example you may have
-   * asked for a duration and the value can't be sensibly parsed as a
-   * duration.
-   *
+   * asked for a duration and the value can't be sensibly parsed as a duration.
    */
   @SerialVersionUID(1L)
   class BadValue(origin: ConfigOrigin, message: String, cause: Throwable)
@@ -207,9 +207,8 @@ object ConfigException {
   }
 
   /**
-   * Exception indicating that a path expression was invalid. Try putting
-   * double quotes around path elements that contain "special" characters.
-   *
+   * Exception indicating that a path expression was invalid. Try putting double
+   * quotes around path elements that contain "special" characters.
    */
   @SerialVersionUID(1L)
   class BadPath(origin: ConfigOrigin, message: String, cause: Throwable)
@@ -245,11 +244,10 @@ object ConfigException {
   }
 
   /**
-   * Exception indicating that there's a bug in something (possibly the
-   * library itself) or the runtime environment is broken. This exception
-   * should never be handled; instead, something should be fixed to keep the
-   * exception from occurring. This exception can be thrown by any method in
-   * the library.
+   * Exception indicating that there's a bug in something (possibly the library
+   * itself) or the runtime environment is broken. This exception should never
+   * be handled; instead, something should be fixed to keep the exception from
+   * occurring. This exception can be thrown by any method in the library.
    */
   @SerialVersionUID(1L)
   class BugOrBroken(message: String, cause: Throwable)
@@ -259,7 +257,6 @@ object ConfigException {
 
   /**
    * Exception indicating that there was an IO error.
-   *
    */
   @SerialVersionUID(1L)
   class IO(origin: ConfigOrigin, message: String, cause: Throwable)
@@ -270,7 +267,6 @@ object ConfigException {
 
   /**
    * Exception indicating that there was a parse error.
-   *
    */
   @SerialVersionUID(1L)
   class Parse(origin: ConfigOrigin, message: String, cause: Throwable)
@@ -317,8 +313,9 @@ object ConfigException {
    */
   @SerialVersionUID(1L)
   class ValidationProblem(
-      val path: String,                           // the path of the problem setting
-      @transient val origin: ConfigOrigin = null, // the origin of the problem setting
+      val path: String, // the path of the problem setting
+      @transient val origin: ConfigOrigin =
+        null, // the origin of the problem setting
       val problem: String
   ) // description of the problem
       extends Serializable {
@@ -343,10 +340,10 @@ object ConfigException {
   }
 
   /**
-   * Exception indicating that [[Config#checkValid]] found validity
-   * problems. The problems are available via the [[ValidationFailed#problems]] method.
-   * The `getMessage` of this exception is a potentially very
-   * long string listing all the problems found.
+   * Exception indicating that [[Config#checkValid]] found validity problems.
+   * The problems are available via the [[ValidationFailed#problems]] method.
+   * The `getMessage` of this exception is a potentially very long string
+   * listing all the problems found.
    */
   @SerialVersionUID(1L)
   object ValidationFailed {

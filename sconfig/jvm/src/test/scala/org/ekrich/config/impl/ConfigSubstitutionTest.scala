@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -212,7 +212,7 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def substitutionsLookForward(): Unit = {
-    val obj      = parseObject("""a=1,b=${a},a=2""")
+    val obj = parseObject("""a=1,b=${a},a=2""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("b"))
   }
@@ -353,7 +353,7 @@ class ConfigSubstitutionTest extends TestUtils {
   @Test
   def ignoreHiddenUndefinedSubst(): Unit = {
     // if a substitution is overridden then it shouldn't matter that it's undefined
-    val obj      = parseObject("""a=${nonexistent},a=42""")
+    val obj = parseObject("""a=${nonexistent},a=42""")
     val resolved = resolve(obj)
     assertEquals(42, resolved.getInt("a"))
   }
@@ -375,7 +375,7 @@ class ConfigSubstitutionTest extends TestUtils {
   @Test
   def ignoreHiddenCircularSubst(): Unit = {
     // if a substitution is overridden then it shouldn't matter that it's circular
-    val obj      = parseObject("""a=${a},a=42""")
+    val obj = parseObject("""a=${a},a=42""")
     val resolved = resolve(obj)
     assertEquals(42, resolved.getInt("a"))
   }
@@ -860,7 +860,7 @@ class ConfigSubstitutionTest extends TestUtils {
                               |"a": ${testList}
                             """.stripMargin)
 
-    //"testList.0" and "testList.1" are defined as envVars in build.sbt
+    // "testList.0" and "testList.1" are defined as envVars in build.sbt
     val resolved = resolve(props)
 
     assertEquals(List("0", "1"), resolved.getList("a").unwrapped.asScala)
@@ -912,7 +912,7 @@ class ConfigSubstitutionTest extends TestUtils {
     var existed = 0
     for (k <- resolved.root.keySet().asScala) {
       val envVarName = k.replace("key_", "")
-      val e          = System.getenv(envVarName)
+      val e = System.getenv(envVarName)
       if (e != null) {
         existed += 1
         assertEquals(e, resolved.getString(k))
@@ -959,7 +959,7 @@ class ConfigSubstitutionTest extends TestUtils {
     var existed = 0
     for (k <- resolved.getObject("a").keySet().asScala) {
       val envVarName = k.replace("key_", "")
-      val e          = System.getenv(envVarName)
+      val e = System.getenv(envVarName)
       if (e != null) {
         existed += 1
         assertEquals(e, resolved.getConfig("a").getString(k))
@@ -984,28 +984,28 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def optionalOverrideNotProvided(): Unit = {
-    val obj      = parseObject("""{ a: 42, a : ${?NOT_HERE} }""")
+    val obj = parseObject("""{ a: 42, a : ${?NOT_HERE} }""")
     val resolved = resolve(obj)
     assertEquals(42, resolved.getInt("a"))
   }
 
   @Test
   def optionalOverrideProvided(): Unit = {
-    val obj      = parseObject("""{ HERE : 43, a: 42, a : ${?HERE} }""")
+    val obj = parseObject("""{ HERE : 43, a: 42, a : ${?HERE} }""")
     val resolved = resolve(obj)
     assertEquals(43, resolved.getInt("a"))
   }
 
   @Test
   def optionalOverrideOfObjectNotProvided(): Unit = {
-    val obj      = parseObject("""{ a: { b : 42 }, a : ${?NOT_HERE} }""")
+    val obj = parseObject("""{ a: { b : 42 }, a : ${?NOT_HERE} }""")
     val resolved = resolve(obj)
     assertEquals(42, resolved.getInt("a.b"))
   }
 
   @Test
   def optionalOverrideOfObjectProvided(): Unit = {
-    val obj      = parseObject("""{ HERE : 43, a: { b : 42 }, a : ${?HERE} }""")
+    val obj = parseObject("""{ HERE : 43, a: { b : 42 }, a : ${?HERE} }""")
     val resolved = resolve(obj)
     assertEquals(43, resolved.getInt("a"))
     assertFalse(resolved.hasPath("a.b"))
@@ -1013,21 +1013,21 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def optionalVanishesFromArray(): Unit = {
-    val obj      = parseObject("""{ a : [ 1, 2, 3, ${?NOT_HERE} ] }""")
+    val obj = parseObject("""{ a : [ 1, 2, 3, ${?NOT_HERE} ] }""")
     val resolved = resolve(obj)
     assertEquals(Seq(1, 2, 3), resolved.getIntList("a").asScala)
   }
 
   @Test
   def optionalUsedInArray(): Unit = {
-    val obj      = parseObject("""{ HERE: 4, a : [ 1, 2, 3, ${?HERE} ] }""")
+    val obj = parseObject("""{ HERE: 4, a : [ 1, 2, 3, ${?HERE} ] }""")
     val resolved = resolve(obj)
     assertEquals(Seq(1, 2, 3, 4), resolved.getIntList("a").asScala)
   }
 
   @Test
   def substSelfReference(): Unit = {
-    val obj      = parseObject("""a=1, a=${a}""")
+    val obj = parseObject("""a=1, a=${a}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a"))
   }
@@ -1046,21 +1046,21 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def substSelfReferenceOptional(): Unit = {
-    val obj      = parseObject("""a=${?a}""")
+    val obj = parseObject("""a=${?a}""")
     val resolved = resolve(obj)
     assertEquals("optional self reference disappears", 0, resolved.root.size)
   }
 
   @Test
   def substSelfReferenceAlongPath(): Unit = {
-    val obj      = parseObject("""a.b=1, a.b=${a.b}""")
+    val obj = parseObject("""a.b=1, a.b=${a.b}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a.b"))
   }
 
   @Test
   def substSelfReferenceAlongLongerPath(): Unit = {
-    val obj      = parseObject("""a.b.c=1, a.b.c=${a.b.c}""")
+    val obj = parseObject("""a.b.c=1, a.b.c=${a.b.c}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a.b.c"))
   }
@@ -1068,7 +1068,7 @@ class ConfigSubstitutionTest extends TestUtils {
   @Test
   def substSelfReferenceAlongPathMoreComplex(): Unit = {
     // this is an example from the spec
-    val obj      = parseObject("""
+    val obj = parseObject("""
     foo : { a : { c : 1 } }
     foo : ${foo.a}
     foo : { a : 2 }
@@ -1084,7 +1084,7 @@ class ConfigSubstitutionTest extends TestUtils {
     // we resolve and memoize a first or b first. currently
     // java 8's hash table makes it resolve OK, but
     // it's also allowed to throw an exception.
-    val obj      = parseObject("""a=1, b=${a}, a=${b}""")
+    val obj = parseObject("""a=1, b=${a}, a=${b}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a"))
   }
@@ -1095,7 +1095,7 @@ class ConfigSubstitutionTest extends TestUtils {
     // resolve and memoize a, b, or c first. currently java
     // 8's hash table makes it resolve OK, but it's also
     // allowed to throw an exception.
-    val obj      = parseObject("""a=1, b=${c}, c=${a}, a=${b}""")
+    val obj = parseObject("""a=1, b=${c}, c=${a}, a=${b}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a"))
   }
@@ -1104,10 +1104,10 @@ class ConfigSubstitutionTest extends TestUtils {
   def substSelfReferenceIndirectStackCycle(): Unit = {
     // this situation is undefined, depends on
     // whether we resolve a or b first.
-    val obj      = parseObject("""a=1, b={c=5}, b=${a}, a=${b}""")
+    val obj = parseObject("""a=1, b={c=5}, b=${a}, a=${b}""")
     val resolved = resolve(obj)
-    val option1  = parseObject(""" b={c=5}, a={c=5} """).toConfig
-    val option2  = parseObject(""" b=1, a=1 """).toConfig
+    val option1 = parseObject(""" b={c=5}, a={c=5} """).toConfig
+    val option2 = parseObject(""" b=1, a=1 """).toConfig
     assertTrue(
       "not an expected possibility: " + resolved +
         " expected 1: " + option1 + " or 2: " + option2,
@@ -1117,21 +1117,21 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def substSelfReferenceObject(): Unit = {
-    val obj      = parseObject("""a={b=5}, a=${a}""")
+    val obj = parseObject("""a={b=5}, a=${a}""")
     val resolved = resolve(obj)
     assertEquals(5, resolved.getInt("a.b"))
   }
 
   @Test
   def substSelfReferenceObjectAlongPath(): Unit = {
-    val obj      = parseObject("""a.b={c=5}, a.b=${a.b}""")
+    val obj = parseObject("""a.b={c=5}, a.b=${a.b}""")
     val resolved = resolve(obj)
     assertEquals(5, resolved.getInt("a.b.c"))
   }
 
   @Test
   def substSelfReferenceInConcat(): Unit = {
-    val obj      = parseObject("""a=1, a=${a}foo""")
+    val obj = parseObject("""a=1, a=${a}foo""")
     val resolved = resolve(obj)
     assertEquals("1foo", resolved.getString("a"))
   }
@@ -1160,35 +1160,35 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def substOptionalSelfReferenceInConcat(): Unit = {
-    val obj      = parseObject("""a=${?a}foo""")
+    val obj = parseObject("""a=${?a}foo""")
     val resolved = resolve(obj)
     assertEquals("foo", resolved.getString("a"))
   }
 
   @Test
   def substOptionalIndirectSelfReferenceInConcat(): Unit = {
-    val obj      = parseObject("""a=${?b}foo,b=${?a}""")
+    val obj = parseObject("""a=${?b}foo,b=${?a}""")
     val resolved = resolve(obj)
     assertEquals("foo", resolved.getString("a"))
   }
 
   @Test
   def substTwoOptionalSelfReferencesInConcat(): Unit = {
-    val obj      = parseObject("""a=${?a}foo${?a}""")
+    val obj = parseObject("""a=${?a}foo${?a}""")
     val resolved = resolve(obj)
     assertEquals("foo", resolved.getString("a"))
   }
 
   @Test
   def substTwoOptionalSelfReferencesInConcatWithPriorValue(): Unit = {
-    val obj      = parseObject("""a=1,a=${?a}foo${?a}""")
+    val obj = parseObject("""a=1,a=${?a}foo${?a}""")
     val resolved = resolve(obj)
     assertEquals("1foo1", resolved.getString("a"))
   }
 
   @Test
   def substSelfReferenceMiddleOfStack(): Unit = {
-    val obj      = parseObject("""a=1, a=${a}, a=2""")
+    val obj = parseObject("""a=1, a=${a}, a=2""")
     val resolved = resolve(obj)
     // the substitution would be 1, but then 2 overrides
     assertEquals(2, resolved.getInt("a"))
@@ -1196,7 +1196,7 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def substSelfReferenceObjectMiddleOfStack(): Unit = {
-    val obj      = parseObject("""a={b=5}, a=${a}, a={c=6}""")
+    val obj = parseObject("""a={b=5}, a=${a}, a={c=6}""")
     val resolved = resolve(obj)
     assertEquals(5, resolved.getInt("a.b"))
     assertEquals(6, resolved.getInt("a.c"))
@@ -1204,7 +1204,7 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def substOptionalSelfReferenceMiddleOfStack(): Unit = {
-    val obj      = parseObject("""a=1, a=${?a}, a=2""")
+    val obj = parseObject("""a=1, a=${?a}, a=2""")
     val resolved = resolve(obj)
     // the substitution would be 1, but then 2 overrides
     assertEquals(2, resolved.getInt("a"))
@@ -1214,28 +1214,28 @@ class ConfigSubstitutionTest extends TestUtils {
   def substSelfReferenceBottomOfStack(): Unit = {
     // self-reference should just be ignored since it's
     // overridden
-    val obj      = parseObject("""a=${a}, a=1, a=2""")
+    val obj = parseObject("""a=${a}, a=1, a=2""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("a"))
   }
 
   @Test
   def substOptionalSelfReferenceBottomOfStack(): Unit = {
-    val obj      = parseObject("""a=${?a}, a=1, a=2""")
+    val obj = parseObject("""a=${?a}, a=1, a=2""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("a"))
   }
 
   @Test
   def substSelfReferenceTopOfStack(): Unit = {
-    val obj      = parseObject("""a=1, a=2, a=${a}""")
+    val obj = parseObject("""a=1, a=2, a=${a}""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("a"))
   }
 
   @Test
   def substOptionalSelfReferenceTopOfStack(): Unit = {
-    val obj      = parseObject("""a=1, a=2, a=${?a}""")
+    val obj = parseObject("""a=1, a=2, a=${?a}""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("a"))
   }
@@ -1245,7 +1245,7 @@ class ConfigSubstitutionTest extends TestUtils {
     // ${a} in the middle of the stack means "${a} in the stack
     // below us" and so ${a.b} means b inside the "${a} below us"
     // not b inside the final "${a}"
-    val obj      = parseObject("""a={b={c=5}}, a=${a.b}, a={b=2}""")
+    val obj = parseObject("""a={b={c=5}}, a=${a.b}, a={b=2}""")
     val resolved = resolve(obj)
     assertEquals(5, resolved.getInt("a.c"))
   }
@@ -1254,7 +1254,7 @@ class ConfigSubstitutionTest extends TestUtils {
   def substSelfReferenceAlongAPathInsideObject(): Unit = {
     // if the ${a.b} is _inside_ a field value instead of
     // _being_ the field value, it does not look backward.
-    val obj      = parseObject("""a={b={c=5}}, a={ x : ${a.b} }, a={b=2}""")
+    val obj = parseObject("""a={b={c=5}}, a={ x : ${a.b} }, a={b=2}""")
     val resolved = resolve(obj)
     assertEquals(2, resolved.getInt("a.x"))
   }
@@ -1265,7 +1265,7 @@ class ConfigSubstitutionTest extends TestUtils {
     // it's the value of a child field of bar, not bar
     // itself; so we use bar's current value, rather than
     // looking back in the merge stack
-    val obj      = parseObject("""
+    val obj = parseObject("""
          bar : { foo : 42,
                  baz : ${bar.foo}
          }
@@ -1279,7 +1279,7 @@ class ConfigSubstitutionTest extends TestUtils {
   def substInChildFieldNotASelfReference2(): Unit = {
     // checking that having bar.foo later in the stack
     // doesn't break the behavior
-    val obj      = parseObject("""
+    val obj = parseObject("""
          bar : { foo : 42,
                  baz : ${bar.foo}
          }
@@ -1294,7 +1294,7 @@ class ConfigSubstitutionTest extends TestUtils {
   def substInChildFieldNotASelfReference3(): Unit = {
     // checking that having bar.foo earlier in the merge
     // stack doesn't break the behavior.
-    val obj      = parseObject("""
+    val obj = parseObject("""
          bar : { foo : 43 }
          bar : { foo : 42,
                  baz : ${bar.foo}
@@ -1309,7 +1309,7 @@ class ConfigSubstitutionTest extends TestUtils {
   def substInChildFieldNotASelfReference4(): Unit = {
     // checking that having bar set to non-object earlier
     // doesn't break the behavior.
-    val obj      = parseObject("""
+    val obj = parseObject("""
          bar : 101
          bar : { foo : 42,
                  baz : ${bar.foo}
@@ -1324,7 +1324,7 @@ class ConfigSubstitutionTest extends TestUtils {
   def substInChildFieldNotASelfReference5(): Unit = {
     // checking that having bar set to unresolved array earlier
     // doesn't break the behavior.
-    val obj      = parseObject("""
+    val obj = parseObject("""
          x : 0
          bar : [ ${x}, 1, 2, 3 ]
          bar : { foo : 42,
@@ -1338,7 +1338,7 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def mutuallyReferringNotASelfReference(): Unit = {
-    val obj      = parseObject("""
+    val obj = parseObject("""
     // bar.a should end up as 4
     bar : { a : ${foo.d}, b : 1 }
     bar.b = 3
@@ -1353,14 +1353,14 @@ class ConfigSubstitutionTest extends TestUtils {
 
   @Test
   def substSelfReferenceMultipleTimes(): Unit = {
-    val obj      = parseObject("""a=1,a=${a},a=${a},a=${a}""")
+    val obj = parseObject("""a=1,a=${a},a=${a},a=${a}""")
     val resolved = resolve(obj)
     assertEquals(1, resolved.getInt("a"))
   }
 
   @Test
   def substSelfReferenceInConcatMultipleTimes(): Unit = {
-    val obj      = parseObject("""a=1,a=${a}x,a=${a}y,a=${a}z""")
+    val obj = parseObject("""a=1,a=${a}x,a=${a}y,a=${a}z""")
     val resolved = resolve(obj)
     assertEquals("1xyz", resolved.getString("a"))
   }
@@ -1396,7 +1396,7 @@ class ConfigSubstitutionTest extends TestUtils {
     // this is testing that we can still refer to another
     // field in the same object, even though we are overriding
     // an earlier object.
-    val obj      = parseObject("""a={ x : 42, y : ${a.x} }""")
+    val obj = parseObject("""a={ x : 42, y : ${a.x} }""")
     val resolved = resolve(obj)
     assertEquals(
       parseObject("{ x : 42, y : 42 }"),
@@ -1405,7 +1405,7 @@ class ConfigSubstitutionTest extends TestUtils {
 
     // this is expected because if adding "a=1" here affects the outcome,
     // it would be flat-out bizarre.
-    val obj2      = parseObject("""a=1, a={ x : 42, y : ${a.x} }""")
+    val obj2 = parseObject("""a=1, a={ x : 42, y : ${a.x} }""")
     val resolved2 = resolve(obj2)
     assertEquals(
       parseObject("{ x : 42, y : 42 }"),

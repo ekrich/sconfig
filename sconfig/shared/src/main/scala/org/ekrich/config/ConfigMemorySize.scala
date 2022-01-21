@@ -1,24 +1,24 @@
 /**
- *   Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config
 
 /**
- * An immutable class representing an amount of memory.  Use
- * static factory methods such as
- * {@link ConfigMemorySize#ofBytes} to create instances.
+ * An immutable class representing an amount of memory. Use static factory
+ * methods such as {@link ConfigMemorySize#ofBytes} to create instances.
  *
  * @since 1.3.0
  */
 object ConfigMemorySize {
 
   /**
-   * Constructs a ConfigMemorySize representing the given
-   * number of bytes.
+   * Constructs a ConfigMemorySize representing the given number of bytes.
    *
    * @since 1.3.0
-   * @param bytes a number of bytes
-   * @return an instance representing the number of bytes
+   * @param bytes
+   *   a number of bytes
+   * @return
+   *   an instance representing the number of bytes
    */
   def ofBytes(bytes: Long) = new ConfigMemorySize(bytes)
 }
@@ -33,7 +33,8 @@ final class ConfigMemorySize private (val bytes: Long) {
    * Gets the size in bytes.
    *
    * @since 1.3.0
-   * @return how many bytes
+   * @return
+   *   how many bytes
    */
   def toBytes: Long = bytes
 
@@ -46,6 +47,6 @@ final class ConfigMemorySize private (val bytes: Long) {
 
   override def hashCode: Int =
     // in Java 8 this can become Long.hashCode(bytes)
-    //Long.valueOf(bytes).hashCode
+    // Long.valueOf(bytes).hashCode
     bytes.hashCode()
 }

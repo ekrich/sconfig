@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -10,7 +10,7 @@ final class FromMapMode private (name: String, ordinal: Int)
 
 object FromMapMode {
   final val KEYS_ARE_PATHS = new FromMapMode("KEYS_ARE_PATHS", 0)
-  final val KEYS_ARE_KEYS  = new FromMapMode("KEYS_ARE_KEYS", 1)
+  final val KEYS_ARE_KEYS = new FromMapMode("KEYS_ARE_KEYS", 1)
 
   private[this] final val _values: Array[FromMapMode] =
     Array(KEYS_ARE_PATHS, KEYS_ARE_KEYS)

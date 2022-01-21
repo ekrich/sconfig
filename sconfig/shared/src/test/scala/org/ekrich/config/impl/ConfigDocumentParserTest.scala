@@ -132,7 +132,7 @@ class ConfigDocumentParserTest extends TestUtils {
     parseTest("""{include "foo.conf"}""")
     parseTest("   \n{foo:bar}\n    ")
 
-    //Can parse a map with all simple types
+    // Can parse a map with all simple types
     parseTest("""{
           aUnquoted : bar
           aString = "qux"

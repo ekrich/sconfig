@@ -112,7 +112,7 @@ private[impl] final class ResolveContext(
   private[impl] def unrestricted: ResolveContext = restrict(null)
   private[impl] def traceString: String = {
     val separator = ", "
-    val sb        = new StringBuilder
+    val sb = new StringBuilder
     import scala.jdk.CollectionConverters._
     for (value <- resolveStack.asScala) {
       if (value.isInstanceOf[ConfigReference]) {
@@ -163,9 +163,9 @@ private[impl] final class ResolveContext(
   ): ResolveResult[_ <: AbstractConfigValue] = {
     // a fully-resolved (no restrictToChild) object can satisfy a
     // request for a restricted object, so always check that first.
-    val fullKey                = new MemoKey(original, null)
+    val fullKey = new MemoKey(original, null)
     var restrictedKey: MemoKey = null
-    var cached                 = memos.get(fullKey)
+    var cached = memos.get(fullKey)
     // but if there was no fully-resolved object cached, we'll only
     // compute the restrictToChild object so use a more limited
     // memo key

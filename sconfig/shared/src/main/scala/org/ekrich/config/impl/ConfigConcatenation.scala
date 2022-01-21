@@ -33,7 +33,7 @@ object ConfigConcatenation {
       builder: ju.ArrayList[AbstractConfigValue],
       origRight: AbstractConfigValue
   ): Unit = {
-    var left  = builder.get(builder.size - 1)
+    var left = builder.get(builder.size - 1)
     var right = origRight
     // check for an object which can be converted to a list
     // (this will be an object with numeric keys, like foo.0, foo.1)
@@ -41,7 +41,7 @@ object ConfigConcatenation {
           .isInstanceOf[SimpleConfigList])
       left = DefaultTransformer.transform(left, ConfigValueType.LIST)
     else if (left.isInstanceOf[SimpleConfigList] && right
-               .isInstanceOf[ConfigObject])
+          .isInstanceOf[ConfigObject])
       right = DefaultTransformer.transform(right, ConfigValueType.LIST)
     // Since this depends on the type of two instances, I couldn't think
     // of much alternative to an instanceof chain. Visitors are sometimes
@@ -50,19 +50,19 @@ object ConfigConcatenation {
     if (left.isInstanceOf[ConfigObject] && right.isInstanceOf[ConfigObject])
       joined = right.withFallback(left)
     else if (left.isInstanceOf[SimpleConfigList] && right
-               .isInstanceOf[SimpleConfigList])
+          .isInstanceOf[SimpleConfigList])
       joined = left
         .asInstanceOf[SimpleConfigList]
         .concatenate(right.asInstanceOf[SimpleConfigList])
     else if ((left.isInstanceOf[SimpleConfigList] || left
-               .isInstanceOf[ConfigObject]) && isIgnoredWhitespace(right)) {
+          .isInstanceOf[ConfigObject]) && isIgnoredWhitespace(right)) {
       joined = left
       // it should be impossible that left is whitespace and right is a list or object
     } else if (left.isInstanceOf[ConfigConcatenation] || right
-                 .isInstanceOf[ConfigConcatenation])
+          .isInstanceOf[ConfigConcatenation])
       throw new ConfigException.BugOrBroken("unflattened ConfigConcatenation")
     else if (left.isInstanceOf[Unmergeable] || right
-               .isInstanceOf[Unmergeable]) {
+          .isInstanceOf[Unmergeable]) {
       // leave joined=null, cannot join
     } else { // handle primitive type or primitive type mixed with object or list
       val s1 = left.transformToString
@@ -182,7 +182,7 @@ final class ConfigConcatenation(
     // content of ConfigConcatenation should not need to replaceChild,
     // but if it did we'd have to do this.
     val sourceWithParent = source // .pushParent(this)
-    var newContext       = context
+    var newContext = context
     val resolved =
       new ju.ArrayList[AbstractConfigValue](pieces.size)
     for (p <- pieces.asScala) { // to concat into a string we have to do a full resolve,

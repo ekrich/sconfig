@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -27,7 +27,7 @@ final class PathBuilder private[impl] () {
 
   private[impl] def appendPath(path: Path): Unit = {
     checkCanAppend()
-    var first     = path.first
+    var first = path.first
     var remainder = path.remainder
     breakable {
       while (true) {

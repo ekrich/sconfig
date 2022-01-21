@@ -97,7 +97,8 @@ private object ConfigParseOptionsEmptyParenFunCall
       "getClassLoader",
       "getIncluder",
       "getOriginDescription",
-      "getSyntax")
+      "getSyntax"
+    )
 
 private object ConfigRenderOptionsEmptyParenFunCall
     extends AbstractEmptyParenFunCall(
@@ -107,7 +108,8 @@ private object ConfigRenderOptionsEmptyParenFunCall
       "getComments",
       "getFormatted",
       "getJson",
-      "getOriginComments")
+      "getOriginComments"
+    )
 
 private object ConfigResolveOptionsEmptyParenFunCall
     extends AbstractEmptyParenFunCall(
@@ -116,31 +118,38 @@ private object ConfigResolveOptionsEmptyParenFunCall
       "getAllowUnresolved",
       "getResolver",
       "getUseSystemEnvironment",
-      "noSystem")
+      "noSystem"
+    )
 
 private object ConfigDocumentEmptyParenFunCall
     extends AbstractEmptyParenFunCall(
       Symbol("com/typesafe/config/parser/ConfigDocument#"),
-      "render")
+      "render"
+    )
 
 private object ConfigNodeEmptyParenFunCall
     extends AbstractEmptyParenFunCall(
       Symbol("com/typesafe/config/parser/ConfigNode#"),
-      "render")
+      "render"
+    )
 
 private abstract class AbstractEmptyParenFunCall(
     typesafeConfigSymbol: Symbol,
     atLeastOneMethodName: String,
-    emptyParenMethodNames: String*) {
+    emptyParenMethodNames: String*
+) {
   def unapply(tree: Tree)(implicit doc: SemanticDocument): Option[Term] =
-    EmptyParenFunCallsOnSymbol(typesafeConfigSymbol,
-                               atLeastOneMethodName +: emptyParenMethodNames,
-                               tree)
+    EmptyParenFunCallsOnSymbol(
+      typesafeConfigSymbol,
+      atLeastOneMethodName +: emptyParenMethodNames,
+      tree
+    )
 }
 
 private object EmptyParenFunCallsOnSymbol {
-  def apply(symbol: Symbol, methodNames: Seq[String], tree: Tree)(
-      implicit doc: SemanticDocument): Option[Term] = {
+  def apply(symbol: Symbol, methodNames: Seq[String], tree: Tree)(implicit
+      doc: SemanticDocument
+  ): Option[Term] = {
 
     object SelectSymbolEmptyParenMethod {
       def unapply(subtree: Tree)(implicit doc: SemanticDocument): Option[Term] =
@@ -156,12 +165,15 @@ private object EmptyParenFunCallsOnSymbol {
     }
 
     object SymbolEmptyParenMethod {
-      def unapply(term: Term.Name)(
-          implicit doc: SemanticDocument): Option[MethodSignature] =
+      def unapply(
+          term: Term.Name
+      )(implicit doc: SemanticDocument): Option[MethodSignature] =
         PartialFunction.condOpt(term) {
           case Term.Name(name) & XSymbol(
                 XSymbol.Owner(DoesSymbolHaveCorrectType()) & XSignature(
-                  sig: MethodSignature)) if methodNames contains name =>
+                  sig: MethodSignature
+                )
+              ) if methodNames contains name =>
             sig
         }
     }

@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -44,7 +44,7 @@ object SimpleConfig {
   ): Unit = {
     for (entry <- obj.entrySet.asScala) {
       val elem = entry.getKey
-      val v    = entry.getValue
+      val v = entry.getValue
       var path = Path.newKey(elem)
       if (parent != null) path = path.prepend(parent)
       if (v.isInstanceOf[AbstractConfigObject])
@@ -111,7 +111,7 @@ object SimpleConfig {
       originalPath: Path
   ): AbstractConfigValue =
     try {
-      val key  = path.first
+      val key = path.first
       val next = path.remainder
       if (next == null) findKeyOrNull(self, key, expected, originalPath)
       else {
@@ -142,28 +142,29 @@ object SimpleConfig {
 
   /**
    * Parses a period string. If no units are specified in the string, it is
-   * assumed to be in days. The returned period is in days.
-   * The purpose of this function is to implement the period-related methods
-   * in the ConfigObject interface.
+   * assumed to be in days. The returned period is in days. The purpose of this
+   * function is to implement the period-related methods in the ConfigObject
+   * interface.
    *
    * @param input
-   *            the string to parse
+   *   the string to parse
    * @param originForException
-   *            origin of the value being parsed
+   *   origin of the value being parsed
    * @param pathForException
-   *            path to include in exceptions
-   * @return duration in days
+   *   path to include in exceptions
+   * @return
+   *   duration in days
    * @throws ConfigException
-   *             if string is invalid
+   *   if string is invalid
    */
   def parsePeriod(
       input: String,
       originForException: ConfigOrigin,
       pathForException: String
   ) = {
-    val s                  = ConfigImplUtil.unicodeTrim(input)
+    val s = ConfigImplUtil.unicodeTrim(input)
     val originalUnitString = getUnits(s)
-    var unitString         = originalUnitString
+    var unitString = originalUnitString
     val numberString =
       ConfigImplUtil.unicodeTrim(s.substring(0, s.length - unitString.length))
     var units: ChronoUnit = null
@@ -225,28 +226,29 @@ object SimpleConfig {
 
   /**
    * Parses a duration string. If no units are specified in the string, it is
-   * assumed to be in milliseconds. The returned duration is in nanoseconds.
-   * The purpose of this function is to implement the duration-related methods
-   * in the ConfigObject interface.
+   * assumed to be in milliseconds. The returned duration is in nanoseconds. The
+   * purpose of this function is to implement the duration-related methods in
+   * the ConfigObject interface.
    *
    * @param input
-   *            the string to parse
+   *   the string to parse
    * @param originForException
-   *            origin of the value being parsed
+   *   origin of the value being parsed
    * @param pathForException
-   *            path to include in exceptions
-   * @return duration in nanoseconds
+   *   path to include in exceptions
+   * @return
+   *   duration in nanoseconds
    * @throws ConfigException
-   *             if string is invalid
+   *   if string is invalid
    */
   def parseDuration(
       input: String,
       originForException: ConfigOrigin,
       pathForException: String
   ): Long = {
-    val s                  = ConfigImplUtil.unicodeTrim(input)
+    val s = ConfigImplUtil.unicodeTrim(input)
     val originalUnitString = getUnits(s)
-    var unitString         = originalUnitString
+    var unitString = originalUnitString
     val numberString =
       ConfigImplUtil.unicodeTrim(s.substring(0, s.length - unitString.length))
     var units: TimeUnit = null
@@ -303,27 +305,28 @@ object SimpleConfig {
   }
 
   /**
-   * Parses a size-in-bytes string. If no units are specified in the string,
-   * it is assumed to be in bytes. The returned value is in bytes. The purpose
-   * of this function is to implement the size-in-bytes-related methods in the
+   * Parses a size-in-bytes string. If no units are specified in the string, it
+   * is assumed to be in bytes. The returned value is in bytes. The purpose of
+   * this function is to implement the size-in-bytes-related methods in the
    * Config interface.
    *
    * @param input
-   *            the string to parse
+   *   the string to parse
    * @param originForException
-   *            origin of the value being parsed
+   *   origin of the value being parsed
    * @param pathForException
-   *            path to include in exceptions
-   * @return size in bytes
+   *   path to include in exceptions
+   * @return
+   *   size in bytes
    * @throws ConfigException
-   *             if string is invalid
+   *   if string is invalid
    */
   def parseBytes(
       input: String,
       originForException: ConfigOrigin,
       pathForException: String
   ): Long = {
-    val s          = ConfigImplUtil.unicodeTrim(input)
+    val s = ConfigImplUtil.unicodeTrim(input)
     val unitString = getUnits(s)
     val numberString =
       ConfigImplUtil.unicodeTrim(s.substring(0, s.length - unitString.length))
@@ -571,12 +574,12 @@ object SimpleConfig {
           accumulator
         )
       } else if (reference.isInstanceOf[SimpleConfigList] && value
-                   .isInstanceOf[SimpleConfigList]) {
-        val listRef   = reference.asInstanceOf[SimpleConfigList]
+            .isInstanceOf[SimpleConfigList]) {
+        val listRef = reference.asInstanceOf[SimpleConfigList]
         val listValue = value.asInstanceOf[SimpleConfigList]
         checkListCompatibility(path, listRef, listValue, accumulator)
       } else if (reference.isInstanceOf[SimpleConfigList] && value
-                   .isInstanceOf[SimpleConfigObject]) {
+            .isInstanceOf[SimpleConfigObject]) {
         val listRef = reference.asInstanceOf[SimpleConfigList]
         val listValue =
           DefaultTransformer.transform(value, ConfigValueType.LIST)
@@ -602,8 +605,8 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     with MergeableValue
     with Serializable {
   override def root: AbstractConfigObject = confObj
-  override def origin: ConfigOrigin       = confObj.origin
-  override def resolve(): SimpleConfig    = resolve(ConfigResolveOptions.defaults)
+  override def origin: ConfigOrigin = confObj.origin
+  override def resolve(): SimpleConfig = resolve(ConfigResolveOptions.defaults)
   override def resolve(options: ConfigResolveOptions): SimpleConfig =
     resolveWith(this, options)
   override def resolveWith(source: Config): SimpleConfig =
@@ -621,7 +624,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     else new SimpleConfig(resolved.asInstanceOf[AbstractConfigObject])
   }
   private def hasPathPeek(pathExpression: String) = {
-    val path                        = Path.newPath(pathExpression)
+    val path = Path.newPath(pathExpression)
     var peeked: AbstractConfigValue = null
     try peeked = confObj.peekPath(path)
     catch {
@@ -693,7 +696,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     val n = getConfigNumber(path)
     n.intValueRangeChecked(path)
   }
-  override def getLong(path: String): Long     = getNumber(path).longValue
+  override def getLong(path: String): Long = getNumber(path).longValue
   override def getDouble(path: String): Double = getNumber(path).doubleValue
   override def getString(path: String): String = {
     val v = find(path, ConfigValueType.STRING)
@@ -766,7 +769,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
       path: String,
       expected: ConfigValueType
   ): ju.List[T] = {
-    val l    = new ju.ArrayList[T]
+    val l = new ju.ArrayList[T]
     val list = getList(path)
     for (cv <- list.asScala) {
       // variance would be nice, but stupid cast will do
@@ -798,7 +801,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     l
   }
   override def getLongList(path: String): ju.List[jl.Long] = {
-    val l       = new ju.ArrayList[jl.Long]
+    val l = new ju.ArrayList[jl.Long]
     val numbers = getNumberList(path)
     for (n <- numbers.asScala) {
       l.add(n.longValue)
@@ -806,7 +809,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     l
   }
   override def getDoubleList(path: String): ju.List[jl.Double] = {
-    val l       = new ju.ArrayList[jl.Double]
+    val l = new ju.ArrayList[jl.Double]
     val numbers = getNumberList(path)
     for (n <- numbers.asScala) {
       l.add(n.doubleValue)
@@ -840,7 +843,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
       jl.Enum.valueOf(enumClass, enumName)
     } catch {
       case e: IllegalArgumentException =>
-        val enumNames     = new ju.ArrayList[String]
+        val enumNames = new ju.ArrayList[String]
         val enumConstants = enumClass.getEnumConstants
         if (enumConstants != null) for (enumConstant <- enumConstants) {
           enumNames.add(enumConstant.name)
@@ -862,7 +865,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
       path: String,
       expected: ConfigValueType
   ): ju.List[T] = {
-    val l    = new ju.ArrayList[T]
+    val l = new ju.ArrayList[T]
     val list = getList(path)
     for (cv <- list.asScala) {
       var v = cv.asInstanceOf[AbstractConfigValue]
@@ -882,14 +885,14 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     getHomogeneousWrappedList(path, ConfigValueType.OBJECT)
   override def getConfigList(path: String): ju.List[_ <: Config] = {
     val objects = getObjectList(path)
-    val l       = new ju.ArrayList[Config]
+    val l = new ju.ArrayList[Config]
     for (o <- objects.asScala) {
       l.add(o.toConfig)
     }
     l
   }
   override def getAnyRefList(path: String): ju.List[_ <: AnyRef] = {
-    val l    = new ju.ArrayList[AnyRef]
+    val l = new ju.ArrayList[AnyRef]
     val list = getList(path)
     for (v <- list.asScala) {
       l.add(v.unwrapped)
@@ -897,7 +900,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     l
   }
   override def getBytesList(path: String): ju.List[jl.Long] = {
-    val l    = new ju.ArrayList[jl.Long]
+    val l = new ju.ArrayList[jl.Long]
     val list = getList(path)
     for (v <- list.asScala) {
       if (v.valueType eq ConfigValueType.NUMBER) {
@@ -918,7 +921,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     l
   }
   override def getMemorySizeList(path: String): ju.List[ConfigMemorySize] = {
-    val list    = getBytesList(path)
+    val list = getBytesList(path)
     val builder = new ju.ArrayList[ConfigMemorySize]
     for (v <- list.asScala) {
       builder.add(ConfigMemorySize.ofBytes(v))
@@ -929,7 +932,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
       path: String,
       unit: TimeUnit
   ): ju.List[jl.Long] = {
-    val l    = new ju.ArrayList[jl.Long]
+    val l = new ju.ArrayList[jl.Long]
     val list = getList(path)
     for (v <- list.asScala) {
       if (v.valueType eq ConfigValueType.NUMBER) {
@@ -957,7 +960,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     l
   }
   override def getDurationList(path: String): ju.List[Duration] = {
-    val l       = getDurationList(path, TimeUnit.NANOSECONDS)
+    val l = getDurationList(path, TimeUnit.NANOSECONDS)
     val builder = new ju.ArrayList[Duration](l.size)
     for (value <- l.asScala) {
       builder.add(Duration.ofNanos(value))
@@ -980,7 +983,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     // making it not match might catch some kinds of bug.
     41 * confObj.hashCode
   }
-  override def toString: String                         = "Config(" + confObj.toString + ")"
+  override def toString: String = "Config(" + confObj.toString + ")"
   private def peekPath(path: Path): AbstractConfigValue = root.peekPath(path)
   override def isResolved: Boolean =
     root.resolveStatus eq ResolveStatus.RESOLVED
@@ -1004,7 +1007,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
       SimpleConfig.checkValidObject(null, ref.root, root, problems)
     else
       for (p <- restrictToPaths) {
-        val path     = Path.newPath(p)
+        val path = Path.newPath(p)
         val refValue = ref.peekPath(path)
         if (refValue != null) {
           val child = peekPath(path)
@@ -1033,7 +1036,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   private[impl] def atKey(origin: ConfigOrigin, key: String) =
     root.atKey(origin, key)
   override def atKey(key: String): SimpleConfig = root.atKey(key)
-  override def atPath(path: String): Config     = root.atPath(path)
+  override def atPath(path: String): Config = root.atPath(path)
   // serialization all goes through SerializedConfigValue
   @throws[ObjectStreamException]
   private def writeReplace(): AnyRef = new SerializedConfigValue(this)

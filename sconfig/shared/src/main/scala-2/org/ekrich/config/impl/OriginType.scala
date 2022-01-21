@@ -7,9 +7,9 @@ final class OriginType private (name: String, ordinal: Int)
     extends jl.Enum[OriginType](name, ordinal)
 
 object OriginType {
-  final val GENERIC  = new OriginType("GENERIC", 0)
-  final val FILE     = new OriginType("FILE", 1)
-  final val URL      = new OriginType("URL", 2)
+  final val GENERIC = new OriginType("GENERIC", 0)
+  final val FILE = new OriginType("FILE", 1)
+  final val URL = new OriginType("URL", 2)
   final val RESOURCE = new OriginType("RESOURCE", 3)
 
   private[this] final val _values: Array[OriginType] =
