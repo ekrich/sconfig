@@ -14,11 +14,11 @@ class HttpTest extends TestUtils {
 
   private def foreachSyntax(body: Option[ConfigSyntax] => Unit): Unit = {
     for (syntax <- Seq(
-           Some(ConfigSyntax.JSON),
-           Some(ConfigSyntax.CONF),
-           Some(ConfigSyntax.PROPERTIES),
-           None
-         ))
+          Some(ConfigSyntax.JSON),
+          Some(ConfigSyntax.CONF),
+          Some(ConfigSyntax.PROPERTIES),
+          None
+        ))
       body(syntax)
   }
 
@@ -113,9 +113,9 @@ class HttpTest extends TestUtils {
 object HttpTest {
   import ToyHttp.{Request, Response}
 
-  final val jsonContentType       = "application/json"
+  final val jsonContentType = "application/json"
   final val propertiesContentType = "text/x-java-properties"
-  final val hoconContentType      = "application/hocon"
+  final val hoconContentType = "application/hocon"
 
   private var server: Option[ToyHttp] = None
 
@@ -160,10 +160,14 @@ object HttpTest {
         // currently, a suffix-less include like this will cause
         // us to search for foo.conf, foo.json, foo.properties, but
         // not load plain foo.
-        Response(200, hoconContentType, """
+        Response(
+          200,
+          hoconContentType,
+          """
                   include "foo"
                   include "foo/bar"
-                  """)
+                  """
+        )
 
       case "/foo/bar.conf" =>
         Response(200, hoconContentType, "{ bar = 43 }")

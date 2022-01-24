@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -22,14 +22,14 @@ import org.ekrich.config.ConfigParseable
 import org.ekrich.config.ConfigValue
 
 /**
- * Internal implementation detail, not ABI stable, do not touch.
- * For use only by the {@link org.ekrich.config} package.
+ * Internal implementation detail, not ABI stable, do not touch. For use only by
+ * the {@link org.ekrich.config} package.
  */
 object ConfigImpl {
   private[impl] class LoaderCache private[impl] () {
     private[impl] var currentSystemProperties: Config = null
-    private var currentLoader                         = new WeakReference[ClassLoader](null)
-    private val cache                                 = new ju.HashMap[String, Config]
+    private var currentLoader = new WeakReference[ClassLoader](null)
+    private val cache = new ju.HashMap[String, Config]
 
     // for now, caching as long as the loader remains the same,
     // drop entire cache if it changes.
@@ -303,7 +303,7 @@ object ConfigImpl {
 
   private def getSystemProperties: ju.Properties = {
     // Avoid ConcurrentModificationException due to parallel setting of system properties by copying properties
-    val systemProperties     = System.getProperties
+    val systemProperties = System.getProperties
     val systemPropertiesCopy = new ju.Properties
     systemProperties.synchronized {
       for (entry <- systemProperties.entrySet().asScala) {
@@ -397,7 +397,7 @@ object ConfigImpl {
   }
 
   private object DebugHolder {
-    private val LOADS         = "loads"
+    private val LOADS = "loads"
     private val SUBSTITUTIONS = "substitutions"
     private def loadDiagnostics: ju.Map[String, jl.Boolean] = {
       val result = new ju.HashMap[String, jl.Boolean]
@@ -422,7 +422,7 @@ object ConfigImpl {
       }
     }
     private[impl] val diagnostics: ju.Map[String, jl.Boolean] = loadDiagnostics
-    private[impl] val traceLoadsEnabled: Boolean              = diagnostics.get(LOADS)
+    private[impl] val traceLoadsEnabled: Boolean = diagnostics.get(LOADS)
     private[impl] val traceSubstitutionsEnabled: Boolean =
       diagnostics.get(SUBSTITUTIONS)
     // two methods for the two previous vals are not needed in Scala

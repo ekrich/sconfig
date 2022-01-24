@@ -20,9 +20,9 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
 
 val dotcOpts = List("-unchecked", "-deprecation", "-feature")
 val scalacOpts = dotcOpts ++ List(
-  //"-Ywarn-unused:imports", // no 2.11 - maybe time for sbt-tpolecat
+  // "-Ywarn-unused:imports", // no 2.11 - maybe time for sbt-tpolecat
   "-Xsource:3"
-  //"-Xlint:nonlocal-return" // no 2.11/2.12
+  // "-Xlint:nonlocal-return" // no 2.11/2.12
 )
 
 Compile / console / scalacOptions --= Seq(
@@ -46,9 +46,9 @@ val scala300 = "3.1.0"
 val javaTime = "1.1.8"
 val scCompat = "2.6.0"
 
-val versionsBase   = Seq(scala211, scala212, scala213)
-val versionsJVM    = versionsBase :+ scala300
-val versionsJS     = versionsJVM
+val versionsBase = Seq(scala211, scala212, scala213)
+val versionsJVM = versionsBase :+ scala300
+val versionsJS = versionsJVM
 val versionsNative = versionsJVM
 
 ThisBuild / scalaVersion := scala212
@@ -156,12 +156,12 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     Test / run / fork := true,
     // env vars for tests
     Test / envVars ++= Map(
-      "testList.0"      -> "0",
-      "testList.1"      -> "1",
+      "testList.0" -> "0",
+      "testList.1" -> "1",
       "testClassesPath" -> (Test / classDirectory).value.getPath
     ),
     // uncomment for debugging
-    //Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
+    // Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
     // mima settings
     mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems
@@ -236,7 +236,7 @@ lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
 lazy val sconfigNative = sconfig.native
-lazy val sconfigJS     = sconfig.js
+lazy val sconfigJS = sconfig.js
 
 lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._

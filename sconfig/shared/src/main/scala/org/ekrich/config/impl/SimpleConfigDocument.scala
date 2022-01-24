@@ -44,10 +44,9 @@ final class SimpleConfigDocument private[impl] (
       parseOptions
     )
   override def hasPath(path: String): Boolean = configNodeTree.hasValue(path)
-  override def render: String                 = configNodeTree.render
+  override def render: String = configNodeTree.render
   override def equals(other: Any): Boolean =
-    other.isInstanceOf[ConfigDocument] && render == other
-      .asInstanceOf[ConfigDocument]
-      .render
+    other.isInstanceOf[ConfigDocument] &&
+      render == other.asInstanceOf[ConfigDocument].render
   override def hashCode: Int = render.hashCode
 }

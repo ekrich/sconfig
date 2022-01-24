@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -42,7 +42,7 @@ import org.ekrich.config.ConfigValueType
 object SerializedConfigValue {
   private[impl] class FieldOut private[impl] (val code: SerializedField) {
     final private[impl] var bytes = new ByteArrayOutputStream
-    final private[impl] var data  = new DataOutputStream(bytes)
+    final private[impl] var data = new DataOutputStream(bytes)
   }
 
   // this is a separate function to prevent bugs writing to the
@@ -90,7 +90,7 @@ object SerializedConfigValue {
       m = ju.Collections.emptyMap[SerializedField, AnyRef]
     for (e <- m.entrySet.asScala) {
       val field = new FieldOut(e.getKey)
-      val v     = e.getValue
+      val v = e.getValue
       writeOriginField(field.data, field.code, v)
       writeField(out, field)
     }
@@ -133,7 +133,7 @@ object SerializedConfigValue {
             in.readInt
             val size = in.readInt
             val list = new ju.ArrayList[String](size)
-            var i    = 0
+            var i = 0
             while (i < size) {
               list.add(in.readUTF)
               i += 1
@@ -204,7 +204,7 @@ object SerializedConfigValue {
   ): AbstractConfigValue = {
     import SerializedValueType._
     val stb = in.readUnsignedByte
-    val st  = SerializedValueType.forInt(stb)
+    val st = SerializedValueType.forInt(stb)
 
     st match {
       case BOOLEAN =>
@@ -227,8 +227,8 @@ object SerializedConfigValue {
         new ConfigString.Quoted(origin, in.readUTF)
       case LIST =>
         val listSize = in.readInt
-        val list     = new ju.ArrayList[AbstractConfigValue](listSize)
-        var i        = 0
+        val list = new ju.ArrayList[AbstractConfigValue](listSize)
+        var i = 0
         while (i < listSize) {
           val v = readValue(in, origin)
           list.add(v)
@@ -237,11 +237,11 @@ object SerializedConfigValue {
         new SimpleConfigList(origin, list)
       case OBJECT =>
         val mapSize = in.readInt
-        val map     = new ju.HashMap[String, AbstractConfigValue](mapSize)
-        var i       = 0
+        val map = new ju.HashMap[String, AbstractConfigValue](mapSize)
+        var i = 0
         while (i < mapSize) {
           val key = in.readUTF
-          val v   = readValue(in, origin)
+          val v = readValue(in, origin)
           map.put(key, v)
           i += 1
         }

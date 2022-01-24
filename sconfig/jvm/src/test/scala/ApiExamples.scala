@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 import org.junit.Assert._
 import org.junit._
@@ -10,9 +10,9 @@ import language.implicitConversions
 import java.util.concurrent.TimeUnit
 
 /**
- * This is to show how the API works and to be sure it's usable
- * from outside of the library's package and in Scala.
- * It isn't intended to be asserting anything or adding test coverage.
+ * This is to show how the API works and to be sure it's usable from outside of
+ * the library's package and in Scala. It isn't intended to be asserting
+ * anything or adding test coverage.
  */
 class ApiExamples {
   @Test
@@ -21,9 +21,9 @@ class ApiExamples {
 
     // you don't have to write the types explicitly of course,
     // just doing that to show what they are.
-    val a: Int        = conf.getInt("ints.fortyTwo")
+    val a: Int = conf.getInt("ints.fortyTwo")
     val child: Config = conf.getConfig("ints")
-    val b: Int        = child.getInt("fortyTwo")
+    val b: Int = child.getInt("fortyTwo")
     val ms: Long =
       conf.getDuration("durations.halfSecond", TimeUnit.MILLISECONDS)
 

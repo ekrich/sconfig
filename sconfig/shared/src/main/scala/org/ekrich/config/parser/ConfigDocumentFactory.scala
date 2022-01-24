@@ -6,8 +6,7 @@ import java.io.File
 import java.io.Reader
 
 /**
- * Factory for creating
- * [[org.ekrich.config.parser.ConfigDocument]] instances.
+ * Factory for creating [[org.ekrich.config.parser.ConfigDocument]] instances.
  */
 object ConfigDocumentFactory {
 
@@ -15,11 +14,13 @@ object ConfigDocumentFactory {
    * Parses a Reader into a ConfigDocument instance.
    *
    * @param reader
-   *       the reader to parse
+   *   the reader to parse
    * @param options
-   *       parse options to control how the reader is interpreted
-   * @return the parsed configuration
-   * @throws ConfigException on IO or parse errors
+   *   parse options to control how the reader is interpreted
+   * @return
+   *   the parsed configuration
+   * @throws ConfigException
+   *   on IO or parse errors
    */
   def parseReader(reader: Reader, options: ConfigParseOptions): ConfigDocument =
     Parseable.newReader(reader, options).parseConfigDocument()
@@ -30,9 +31,11 @@ object ConfigDocumentFactory {
    * but always uses the default parse options.
    *
    * @param reader
-   *       the reader to parse
-   * @return the parsed configuration
-   * @throws org.ekrich.config.ConfigException on IO or parse errors
+   *   the reader to parse
+   * @return
+   *   the parsed configuration
+   * @throws org.ekrich.config.ConfigException
+   *   on IO or parse errors
    */
   def parseReader(reader: Reader): ConfigDocument =
     parseReader(reader, ConfigParseOptions.defaults)
@@ -41,11 +44,13 @@ object ConfigDocumentFactory {
    * Parses a file into a ConfigDocument instance.
    *
    * @param file
-   *       the file to parse
+   *   the file to parse
    * @param options
-   *       parse options to control how the file is interpreted
-   * @return the parsed configuration
-   * @throws org.ekrich.config.ConfigException on IO or parse errors
+   *   parse options to control how the file is interpreted
+   * @return
+   *   the parsed configuration
+   * @throws org.ekrich.config.ConfigException
+   *   on IO or parse errors
    */
   def parseFile(file: File, options: ConfigParseOptions): ConfigDocument =
     Parseable.newFile(file, options).parseConfigDocument()
@@ -56,9 +61,11 @@ object ConfigDocumentFactory {
    * but always uses the default parse options.
    *
    * @param file
-   *       the file to parse
-   * @return the parsed configuration
-   * @throws org.ekrich.config.ConfigException on IO or parse errors
+   *   the file to parse
+   * @return
+   *   the parsed configuration
+   * @throws org.ekrich.config.ConfigException
+   *   on IO or parse errors
    */
   def parseFile(file: File): ConfigDocument =
     parseFile(file, ConfigParseOptions.defaults)
@@ -66,19 +73,24 @@ object ConfigDocumentFactory {
   /**
    * Parses a string which should be valid HOCON or JSON.
    *
-   * @param s string to parse
-   * @param options parse options
-   * @return the parsed configuration
+   * @param s
+   *   string to parse
+   * @param options
+   *   parse options
+   * @return
+   *   the parsed configuration
    */
   def parseString(s: String, options: ConfigParseOptions): ConfigDocument =
     Parseable.newString(s, options).parseConfigDocument()
 
   /**
-   * Parses a string (which should be valid HOCON or JSON). Uses the
-   * default parse options.
+   * Parses a string (which should be valid HOCON or JSON). Uses the default
+   * parse options.
    *
-   * @param s string to parse
-   * @return the parsed configuration
+   * @param s
+   *   string to parse
+   * @return
+   *   the parsed configuration
    */
   def parseString(s: String): ConfigDocument =
     parseString(s, ConfigParseOptions.defaults)

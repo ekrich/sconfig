@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -158,18 +158,18 @@ final class ConfigDelayedMergeObject(
   ): Unit = {
     render(sb, indent, atRoot, null, options)
   }
-  override def unwrapped        = throw ConfigDelayedMergeObject.notResolved
-  override def get(key: Any)    = throw ConfigDelayedMergeObject.notResolved
+  override def unwrapped = throw ConfigDelayedMergeObject.notResolved
+  override def get(key: Any) = throw ConfigDelayedMergeObject.notResolved
   override def remove(key: Any) = throw ConfigDelayedMergeObject.notResolved
   override def containsKey(key: Any) =
     throw ConfigDelayedMergeObject.notResolved
   override def containsValue(value: Any) =
     throw ConfigDelayedMergeObject.notResolved
   override def entrySet = throw ConfigDelayedMergeObject.notResolved
-  override def isEmpty  = throw ConfigDelayedMergeObject.notResolved
-  override def keySet   = throw ConfigDelayedMergeObject.notResolved
-  override def size     = throw ConfigDelayedMergeObject.notResolved
-  override def values   = throw ConfigDelayedMergeObject.notResolved
+  override def isEmpty = throw ConfigDelayedMergeObject.notResolved
+  override def keySet = throw ConfigDelayedMergeObject.notResolved
+  override def size = throw ConfigDelayedMergeObject.notResolved
+  override def values = throw ConfigDelayedMergeObject.notResolved
 
   // exercised in ValidationTest.validationFailedSerializable
   // and ConfigTest.test01Serializable

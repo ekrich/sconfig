@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -38,7 +38,7 @@ object Tokens {
         .asInstanceOf[Tokens.Line]
         .lineNumber == lineNumber
     override def hashCode: Int = 41 * (41 + super.hashCode) + lineNumber
-    override def tokenText     = "\n"
+    override def tokenText = "\n"
   }
 
   // This is not a Value, because it requires special processing
@@ -53,7 +53,7 @@ object Tokens {
       super.equals(other) && other
         .asInstanceOf[Tokens.UnquotedText]
         .value == value
-    override def hashCode(): Int   = 41 * (41 + super.hashCode) + value.hashCode
+    override def hashCode(): Int = 41 * (41 + super.hashCode) + value.hashCode
     override def tokenText: String = value
   }
 
@@ -68,7 +68,7 @@ object Tokens {
       super.equals(other) && other
         .asInstanceOf[Tokens.IgnoredWhitespace]
         .value == value
-    override def hashCode(): Int   = 41 * (41 + super.hashCode) + value.hashCode
+    override def hashCode(): Int = 41 * (41 + super.hashCode) + value.hashCode
     override def tokenText: String = value
   }
 

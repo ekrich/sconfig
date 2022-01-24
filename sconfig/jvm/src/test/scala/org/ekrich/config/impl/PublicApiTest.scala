@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -31,10 +31,10 @@ class PublicApiTest extends TestUtils {
   def basicLoadAndGet(): Unit = {
     val conf = ConfigFactory.load("test01")
 
-    val a     = conf.getInt("ints.fortyTwo")
+    val a = conf.getInt("ints.fortyTwo")
     val child = conf.getConfig("ints")
-    val c     = child.getInt("fortyTwo")
-    val ms    = conf.getDuration("durations.halfSecond", TimeUnit.MILLISECONDS)
+    val c = child.getInt("fortyTwo")
+    val ms = conf.getDuration("durations.halfSecond", TimeUnit.MILLISECONDS)
 
     // should have used system variables
     if (System.getenv("HOME") != null)
@@ -160,9 +160,9 @@ class PublicApiTest extends TestUtils {
 
     class WeirdNumber(v: Double) extends java.lang.Number {
       override def doubleValue = v
-      override def intValue    = v.intValue
-      override def longValue   = v.longValue
-      override def floatValue  = v.floatValue
+      override def intValue = v.intValue
+      override def longValue = v.longValue
+      override def floatValue = v.floatValue
     }
 
     val weirdNumber = new WeirdNumber(5.1)
@@ -208,7 +208,7 @@ class PublicApiTest extends TestUtils {
   @Test
   def fromJavaCollection(): Unit = {
     val emptyListValue = Collections.emptyList[AbstractConfigValue]
-    val aListValue     = List(1, 2, 3).map(intValue(_): AbstractConfigValue).asJava
+    val aListValue = List(1, 2, 3).map(intValue(_): AbstractConfigValue).asJava
 
     testFromValue(
       new SimpleConfigList(fakeOrigin(), emptyListValue),
@@ -476,8 +476,8 @@ class PublicApiTest extends TestUtils {
 
   sealed trait IncludeKind
   case object IncludeKindHeuristic extends IncludeKind
-  case object IncludeKindFile      extends IncludeKind
-  case object IncludeKindURL       extends IncludeKind
+  case object IncludeKindFile extends IncludeKind
+  case object IncludeKindURL extends IncludeKind
   case object IncludeKindClasspath extends IncludeKind
 
   case class Included(name: String, fallback: ConfigIncluder, kind: IncludeKind)
@@ -1065,39 +1065,39 @@ class PublicApiTest extends TestUtils {
 
     // check the various overloads that take a loader parameter
     for (c <- Seq(
-           ConfigFactory.parseResources(loaderA1, "reference.conf"),
-           ConfigFactory.parseResourcesAnySyntax(loaderA1, "reference"),
-           ConfigFactory.parseResources(
-             loaderA1,
-             "reference.conf",
-             ConfigParseOptions.defaults
-           ),
-           ConfigFactory.parseResourcesAnySyntax(
-             loaderA1,
-             "reference",
-             ConfigParseOptions.defaults
-           ),
-           ConfigFactory.load(loaderA1, "application"),
-           ConfigFactory.load(
-             loaderA1,
-             "application",
-             ConfigParseOptions.defaults,
-             ConfigResolveOptions.defaults
-           ),
-           ConfigFactory.load(
-             loaderA1,
-             "application",
-             ConfigParseOptions.defaults,
-             ConfigResolveOptions.defaults
-           ),
-           ConfigFactory.load(loaderA1, ConfigFactory.parseString("")),
-           ConfigFactory.load(
-             loaderA1,
-             ConfigFactory.parseString(""),
-             ConfigResolveOptions.defaults
-           ),
-           ConfigFactory.defaultReference(loaderA1)
-         )) {
+          ConfigFactory.parseResources(loaderA1, "reference.conf"),
+          ConfigFactory.parseResourcesAnySyntax(loaderA1, "reference"),
+          ConfigFactory.parseResources(
+            loaderA1,
+            "reference.conf",
+            ConfigParseOptions.defaults
+          ),
+          ConfigFactory.parseResourcesAnySyntax(
+            loaderA1,
+            "reference",
+            ConfigParseOptions.defaults
+          ),
+          ConfigFactory.load(loaderA1, "application"),
+          ConfigFactory.load(
+            loaderA1,
+            "application",
+            ConfigParseOptions.defaults,
+            ConfigResolveOptions.defaults
+          ),
+          ConfigFactory.load(
+            loaderA1,
+            "application",
+            ConfigParseOptions.defaults,
+            ConfigResolveOptions.defaults
+          ),
+          ConfigFactory.load(loaderA1, ConfigFactory.parseString("")),
+          ConfigFactory.load(
+            loaderA1,
+            ConfigFactory.parseString(""),
+            ConfigResolveOptions.defaults
+          ),
+          ConfigFactory.defaultReference(loaderA1)
+        )) {
       assertEquals(1, c.getInt("a"))
       assertFalse("no b", c.hasPath("b"))
     }
@@ -1105,36 +1105,36 @@ class PublicApiTest extends TestUtils {
     // check providing the loader via ConfigParseOptions
     val withLoader = ConfigParseOptions.defaults.setClassLoader(loaderA1)
     for (c <- Seq(
-           ConfigFactory.parseResources("reference.conf", withLoader),
-           ConfigFactory.parseResourcesAnySyntax("reference", withLoader),
-           ConfigFactory
-             .load("application", withLoader, ConfigResolveOptions.defaults)
-         )) {
+          ConfigFactory.parseResources("reference.conf", withLoader),
+          ConfigFactory.parseResourcesAnySyntax("reference", withLoader),
+          ConfigFactory
+            .load("application", withLoader, ConfigResolveOptions.defaults)
+        )) {
       assertEquals(1, c.getInt("a"))
       assertFalse("no b", c.hasPath("b"))
     }
 
     // check not providing the loader
     for (c <- Seq(
-           ConfigFactory.parseResources("reference.conf"),
-           ConfigFactory.parseResourcesAnySyntax("reference"),
-           ConfigFactory
-             .parseResources("reference.conf", ConfigParseOptions.defaults),
-           ConfigFactory
-             .parseResourcesAnySyntax("reference", ConfigParseOptions.defaults),
-           ConfigFactory.load("application"),
-           ConfigFactory.load(
-             "application",
-             ConfigParseOptions.defaults,
-             ConfigResolveOptions.defaults
-           ),
-           ConfigFactory.load(ConfigFactory.parseString("")),
-           ConfigFactory.load(
-             ConfigFactory.parseString(""),
-             ConfigResolveOptions.defaults
-           ),
-           ConfigFactory.defaultReference()
-         )) {
+          ConfigFactory.parseResources("reference.conf"),
+          ConfigFactory.parseResourcesAnySyntax("reference"),
+          ConfigFactory
+            .parseResources("reference.conf", ConfigParseOptions.defaults),
+          ConfigFactory
+            .parseResourcesAnySyntax("reference", ConfigParseOptions.defaults),
+          ConfigFactory.load("application"),
+          ConfigFactory.load(
+            "application",
+            ConfigParseOptions.defaults,
+            ConfigResolveOptions.defaults
+          ),
+          ConfigFactory.load(ConfigFactory.parseString("")),
+          ConfigFactory.load(
+            ConfigFactory.parseString(""),
+            ConfigResolveOptions.defaults
+          ),
+          ConfigFactory.defaultReference()
+        )) {
       assertFalse("no a", c.hasPath("a"))
       assertFalse("no b", c.hasPath("b"))
     }
@@ -1142,27 +1142,27 @@ class PublicApiTest extends TestUtils {
     // check providing the loader via current context
     withContextClassLoader(loaderA1) {
       for (c <- Seq(
-             ConfigFactory.parseResources("reference.conf"),
-             ConfigFactory.parseResourcesAnySyntax("reference"),
-             ConfigFactory
-               .parseResources("reference.conf", ConfigParseOptions.defaults),
-             ConfigFactory.parseResourcesAnySyntax(
-               "reference",
-               ConfigParseOptions.defaults
-             ),
-             ConfigFactory.load("application"),
-             ConfigFactory.load(
-               "application",
-               ConfigParseOptions.defaults,
-               ConfigResolveOptions.defaults
-             ),
-             ConfigFactory.load(ConfigFactory.parseString("")),
-             ConfigFactory.load(
-               ConfigFactory.parseString(""),
-               ConfigResolveOptions.defaults
-             ),
-             ConfigFactory.defaultReference()
-           )) {
+            ConfigFactory.parseResources("reference.conf"),
+            ConfigFactory.parseResourcesAnySyntax("reference"),
+            ConfigFactory
+              .parseResources("reference.conf", ConfigParseOptions.defaults),
+            ConfigFactory.parseResourcesAnySyntax(
+              "reference",
+              ConfigParseOptions.defaults
+            ),
+            ConfigFactory.load("application"),
+            ConfigFactory.load(
+              "application",
+              ConfigParseOptions.defaults,
+              ConfigResolveOptions.defaults
+            ),
+            ConfigFactory.load(ConfigFactory.parseString("")),
+            ConfigFactory.load(
+              ConfigFactory.parseString(""),
+              ConfigResolveOptions.defaults
+            ),
+            ConfigFactory.defaultReference()
+          )) {
         assertEquals(1, c.getInt("a"))
         assertFalse("no b", c.hasPath("b"))
       }
@@ -1196,27 +1196,27 @@ class PublicApiTest extends TestUtils {
 
     // check the various overloads that take a loader parameter
     for (c <- Seq(
-           ConfigFactory.parseResources(loaderA1, "application.conf"),
-           ConfigFactory.parseResourcesAnySyntax(loaderA1, "application"),
-           ConfigFactory.parseResources(
-             loaderA1,
-             "application.conf",
-             ConfigParseOptions.defaults
-           ),
-           ConfigFactory.parseResourcesAnySyntax(
-             loaderA1,
-             "application",
-             ConfigParseOptions.defaults
-           ),
-           ConfigFactory.load(loaderA1, "application"),
-           ConfigFactory.load(
-             loaderA1,
-             "application",
-             ConfigParseOptions.defaults,
-             ConfigResolveOptions.defaults
-           ),
-           ConfigFactory.defaultApplication(loaderA1)
-         )) {
+          ConfigFactory.parseResources(loaderA1, "application.conf"),
+          ConfigFactory.parseResourcesAnySyntax(loaderA1, "application"),
+          ConfigFactory.parseResources(
+            loaderA1,
+            "application.conf",
+            ConfigParseOptions.defaults
+          ),
+          ConfigFactory.parseResourcesAnySyntax(
+            loaderA1,
+            "application",
+            ConfigParseOptions.defaults
+          ),
+          ConfigFactory.load(loaderA1, "application"),
+          ConfigFactory.load(
+            loaderA1,
+            "application",
+            ConfigParseOptions.defaults,
+            ConfigResolveOptions.defaults
+          ),
+          ConfigFactory.defaultApplication(loaderA1)
+        )) {
       assertEquals(1, c.getInt("a"))
       assertFalse("no b", c.hasPath("b"))
     }
@@ -1224,35 +1224,35 @@ class PublicApiTest extends TestUtils {
     // check providing the loader via ConfigParseOptions
     val withLoader = ConfigParseOptions.defaults.setClassLoader(loaderA1)
     for (c <- Seq(
-           ConfigFactory.parseResources("application.conf", withLoader),
-           ConfigFactory.parseResourcesAnySyntax("application", withLoader),
-           ConfigFactory.defaultApplication(withLoader),
-           ConfigFactory.load(withLoader, ConfigResolveOptions.defaults),
-           ConfigFactory
-             .load("application", withLoader, ConfigResolveOptions.defaults)
-         )) {
+          ConfigFactory.parseResources("application.conf", withLoader),
+          ConfigFactory.parseResourcesAnySyntax("application", withLoader),
+          ConfigFactory.defaultApplication(withLoader),
+          ConfigFactory.load(withLoader, ConfigResolveOptions.defaults),
+          ConfigFactory
+            .load("application", withLoader, ConfigResolveOptions.defaults)
+        )) {
       assertEquals(1, c.getInt("a"))
       assertFalse("no b", c.hasPath("b"))
     }
 
     // check not providing the loader
     for (c <- Seq(
-           ConfigFactory.parseResources("application.conf"),
-           ConfigFactory.parseResourcesAnySyntax("application"),
-           ConfigFactory
-             .parseResources("application.conf", ConfigParseOptions.defaults),
-           ConfigFactory.parseResourcesAnySyntax(
-             "application",
-             ConfigParseOptions.defaults
-           ),
-           ConfigFactory.load("application"),
-           ConfigFactory.defaultApplication(),
-           ConfigFactory.load(
-             "application",
-             ConfigParseOptions.defaults,
-             ConfigResolveOptions.defaults
-           )
-         )) {
+          ConfigFactory.parseResources("application.conf"),
+          ConfigFactory.parseResourcesAnySyntax("application"),
+          ConfigFactory
+            .parseResources("application.conf", ConfigParseOptions.defaults),
+          ConfigFactory.parseResourcesAnySyntax(
+            "application",
+            ConfigParseOptions.defaults
+          ),
+          ConfigFactory.load("application"),
+          ConfigFactory.defaultApplication(),
+          ConfigFactory.load(
+            "application",
+            ConfigParseOptions.defaults,
+            ConfigResolveOptions.defaults
+          )
+        )) {
       assertFalse("no a", c.hasPath("a"))
       assertFalse("no b", c.hasPath("b"))
     }
@@ -1260,22 +1260,22 @@ class PublicApiTest extends TestUtils {
     // check providing the loader via current context
     withContextClassLoader(loaderA1) {
       for (c <- Seq(
-             ConfigFactory.parseResources("application.conf"),
-             ConfigFactory.parseResourcesAnySyntax("application"),
-             ConfigFactory
-               .parseResources("application.conf", ConfigParseOptions.defaults),
-             ConfigFactory.parseResourcesAnySyntax(
-               "application",
-               ConfigParseOptions.defaults
-             ),
-             ConfigFactory.load("application"),
-             ConfigFactory.defaultApplication(),
-             ConfigFactory.load(
-               "application",
-               ConfigParseOptions.defaults,
-               ConfigResolveOptions.defaults
-             )
-           )) {
+            ConfigFactory.parseResources("application.conf"),
+            ConfigFactory.parseResourcesAnySyntax("application"),
+            ConfigFactory
+              .parseResources("application.conf", ConfigParseOptions.defaults),
+            ConfigFactory.parseResourcesAnySyntax(
+              "application",
+              ConfigParseOptions.defaults
+            ),
+            ConfigFactory.load("application"),
+            ConfigFactory.defaultApplication(),
+            ConfigFactory.load(
+              "application",
+              ConfigParseOptions.defaults,
+              ConfigResolveOptions.defaults
+            )
+          )) {
         assertEquals(1, c.getInt("a"))
         assertFalse("no b", c.hasPath("b"))
       }
@@ -1492,18 +1492,18 @@ class PublicApiTest extends TestUtils {
   @Test
   def invalidateCaches(): Unit = {
     val conf0 = ConfigFactory.load()
-    val sys0  = ConfigFactory.systemProperties()
+    val sys0 = ConfigFactory.systemProperties()
     val conf1 = ConfigFactory.load()
-    val sys1  = ConfigFactory.systemProperties()
+    val sys1 = ConfigFactory.systemProperties()
     ConfigFactory.invalidateCaches()
     val conf2 = ConfigFactory.load()
-    val sys2  = ConfigFactory.systemProperties()
+    val sys2 = ConfigFactory.systemProperties()
     System.setProperty("invalidateCachesTest", "Hello!")
     ConfigFactory.invalidateCaches()
     val conf3 = ConfigFactory.load()
-    val sys3  = ConfigFactory.systemProperties()
+    val sys3 = ConfigFactory.systemProperties()
     val conf4 = ConfigFactory.load()
-    val sys4  = ConfigFactory.systemProperties()
+    val sys4 = ConfigFactory.systemProperties()
     System.clearProperty("invalidateCachesTest")
 
     assertTrue("stuff gets cached sys", sys0 eq sys1)
@@ -1571,7 +1571,7 @@ class PublicApiTest extends TestUtils {
 
   @Test
   def invalidateReferenceConfig(): Unit = {
-    val orig   = ConfigFactory.defaultReference()
+    val orig = ConfigFactory.defaultReference()
     val cached = ConfigFactory.defaultReference()
     assertTrue("reference config was cached", orig eq cached)
 
@@ -1582,7 +1582,7 @@ class PublicApiTest extends TestUtils {
 
   @Test
   def invalidateFullConfig(): Unit = {
-    val orig   = ConfigFactory.load()
+    val orig = ConfigFactory.load()
     val cached = ConfigFactory.load()
     assertTrue("full config was cached", orig eq cached)
 
@@ -1605,9 +1605,12 @@ class PublicApiTest extends TestUtils {
     // from https://github.com/lightbend/config/issues/188
     withScratchDirectory("heuristicIncludeChecksClasspath") { dir =>
       val f = new File(dir, "foo.conf")
-      writeFile(f, """
+      writeFile(
+        f,
+        """
 include "onclasspath"
-""")
+"""
+      )
       val conf = ConfigFactory.parseFile(f)
       assertEquals(42, conf.getInt("onclasspath"))
     }
@@ -1625,8 +1628,8 @@ include "onclasspath"
     // treat the filename as relative to the including file
     // if file() is specified, so `include file("bar-file.conf")`
     // fails.
-    //assertEquals("got bar-file.conf", 44, conf.getInt("bar-file"))
-    //assertEquals("got subdir/baz.conf", 45, conf.getInt("baz"))
+    // assertEquals("got bar-file.conf", 44, conf.getInt("bar-file"))
+    // assertEquals("got subdir/baz.conf", 45, conf.getInt("baz"))
     assertFalse("did not get bar-file.conf", conf.hasPath("bar-file"))
     assertFalse("did not get subdir/baz.conf", conf.hasPath("baz"))
   }
@@ -1695,6 +1698,6 @@ class TestStrategy extends DefaultConfigLoadingStrategy {
 
 object TestStrategy {
   private var invocations = 0
-  def getIncovations()    = invocations
-  def increment()         = invocations += 1
+  def getIncovations() = invocations
+  def increment() = invocations += 1
 }

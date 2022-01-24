@@ -14,7 +14,9 @@ final class ConfigNodeRoot private[impl] (
     throw new ConfigException.BugOrBroken("Tried to indent the root object")
 
   private[impl] def value: ConfigNodeComplexValue =
-    children.asScala.find(node => node.isInstanceOf[ConfigNodeComplexValue]) match {
+    children.asScala.find(node =>
+      node.isInstanceOf[ConfigNodeComplexValue]
+    ) match {
       case Some(node) => node.asInstanceOf[ConfigNodeComplexValue]
       case None =>
         throw new ConfigException.BugOrBroken(

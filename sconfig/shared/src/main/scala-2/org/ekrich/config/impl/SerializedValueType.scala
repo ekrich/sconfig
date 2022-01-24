@@ -17,7 +17,7 @@ object SerializedValueType {
   final val NULL = new SerializedValueType("NULL", 0, ConfigValueType.NULL)
   final val BOOLEAN =
     new SerializedValueType("BOOLEAN", 1, ConfigValueType.BOOLEAN)
-  final val INT  = new SerializedValueType("INT", 2, ConfigValueType.NUMBER)
+  final val INT = new SerializedValueType("INT", 2, ConfigValueType.NUMBER)
   final val LONG = new SerializedValueType("LONG", 3, ConfigValueType.NUMBER)
   final val DOUBLE =
     new SerializedValueType("DOUBLE", 4, ConfigValueType.NUMBER)

@@ -39,7 +39,7 @@ final class ConfigNodeObject private[impl] (
     var seenNonMatching = false
     // Copy the value so we can change it to null but not modify the original parameter
     var valueCopy = value
-    var i         = childrenCopy.size - 1
+    var i = childrenCopy.size - 1
     while (i >= 0) {
       breakable {
         if (childrenCopy.get(i).isInstanceOf[ConfigNodeSingleToken]) {
@@ -72,7 +72,7 @@ final class ConfigNodeObject private[impl] (
                   childrenCopy.remove(j)
                   j -= 1
                 } else break() // break
-              } else break()   // break
+              } else break() // break
 
               j += 1
             }
@@ -186,7 +186,7 @@ final class ConfigNodeObject private[impl] (
             .asInstanceOf[ConfigNodeSingleToken]
             .token == Tokens.CLOSE_CURLY)) {
         val beforeLast = children.get(children.size - 2)
-        var indent     = ""
+        var indent = ""
         if (beforeLast.isInstanceOf[ConfigNodeSingleToken] && Tokens
               .isIgnoredWhitespace(
                 beforeLast.asInstanceOf[ConfigNodeSingleToken].token
@@ -209,8 +209,8 @@ final class ConfigNodeObject private[impl] (
       value: AbstractConfigNodeValue,
       flavor: ConfigSyntax
   ): ConfigNodeObject = {
-    val path            = desiredPath.value
-    val childrenCopy    = new ju.ArrayList[AbstractConfigNode](children)
+    val path = desiredPath.value
+    val childrenCopy = new ju.ArrayList[AbstractConfigNode](children)
     val indentationCopy = new ju.ArrayList[AbstractConfigNode](indentation)
     // If the value we're inserting is a complex value, we'll need to indent it for insertion
     var indentedValue: AbstractConfigNodeValue = null
@@ -236,11 +236,11 @@ final class ConfigNodeObject private[impl] (
         }
       }
       if (index != -1) {
-        val i             = lastIndex - index
-        val node          = children.get(i).asInstanceOf[ConfigNodeField]
-        val key: Path     = node.path.value
+        val i = lastIndex - index
+        val node = children.get(i).asInstanceOf[ConfigNodeField]
+        val key: Path = node.path.value
         val remainingPath = desiredPath.subPath(key.length)
-        val newValue      = node.value.asInstanceOf[ConfigNodeObject]
+        val newValue = node.value.asInstanceOf[ConfigNodeObject]
         childrenCopy.set(
           i,
           node.replaceValue(
@@ -318,19 +318,19 @@ final class ConfigNodeObject private[impl] (
               childrenCopy.add(i - 1, new ConfigNodeField(newNodes))
               i -= 1
             } else if (previous.isInstanceOf[ConfigNodeSingleToken] &&
-                       Tokens.isIgnoredWhitespace(
-                         previous.asInstanceOf[ConfigNodeSingleToken].token
-                       )) {
+                Tokens.isIgnoredWhitespace(
+                  previous.asInstanceOf[ConfigNodeSingleToken].token
+                )) {
               val beforePrevious = childrenCopy.get(i - 2)
               if (sameLine) {
                 childrenCopy.add(i - 1, new ConfigNodeField(newNodes))
                 i -= 1
               } else if (beforePrevious.isInstanceOf[ConfigNodeSingleToken] &&
-                         Tokens.isNewline(
-                           beforePrevious
-                             .asInstanceOf[ConfigNodeSingleToken]
-                             .token
-                         )) {
+                  Tokens.isNewline(
+                    beforePrevious
+                      .asInstanceOf[ConfigNodeSingleToken]
+                      .token
+                  )) {
                 childrenCopy.add(i - 2, new ConfigNodeField(newNodes))
                 i -= 2
               } else childrenCopy.add(i, new ConfigNodeField(newNodes))

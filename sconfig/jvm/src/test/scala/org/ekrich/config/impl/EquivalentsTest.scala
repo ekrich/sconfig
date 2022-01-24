@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -15,7 +15,7 @@ import FileUtils._
 class EquivalentsTest extends TestUtils {
   private def equivDirs() = {
     val rawEquivs = resourceDir.listFiles()
-    val equivs    = rawEquivs.filter({ f => f.getName().startsWith("equiv") })
+    val equivs = rawEquivs.filter({ f => f.getName().startsWith("equiv") })
     equivs
   }
 
@@ -53,7 +53,7 @@ class EquivalentsTest extends TestUtils {
   // to be a test, but not sure how to convince junit to do that.
   @Test
   def testEquivalents(): Unit = {
-    var dirCount  = 0
+    var dirCount = 0
     var fileCount = 0
     for (equiv <- equivDirs()) {
       dirCount += 1

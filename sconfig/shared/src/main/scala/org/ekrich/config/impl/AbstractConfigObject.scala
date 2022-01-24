@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -26,7 +26,7 @@ object AbstractConfigObject {
       // we'll fail if anything along the path can't
       // be looked at without resolving.
       val next = path.remainder
-      val v    = self.attemptPeekWithPartialResolve(path.first)
+      val v = self.attemptPeekWithPartialResolve(path.first)
       if (next == null) v
       else if (v.isInstanceOf[AbstractConfigObject])
         peekPath(v.asInstanceOf[AbstractConfigObject], next)
@@ -41,9 +41,9 @@ object AbstractConfigObject {
   ): ConfigOrigin = {
     if (stack.isEmpty)
       throw new ConfigException.BugOrBroken("can't merge origins on empty list")
-    val origins                   = new ju.ArrayList[ConfigOrigin]
+    val origins = new ju.ArrayList[ConfigOrigin]
     var firstOrigin: ConfigOrigin = null
-    var numMerged                 = 0
+    var numMerged = 0
     for (v <- stack.asScala) {
       if (firstOrigin == null) firstOrigin = v.origin
       if (v.isInstanceOf[AbstractConfigObject] && (v
@@ -70,7 +70,7 @@ object AbstractConfigObject {
   ): ConfigOrigin = {
     val javaColl = stack.asJavaCollection
     mergeOrigins(javaColl)
-    //throws NotPossibleToResolve
+    // throws NotPossibleToResolve
   }
 
   private def weAreImmutable(method: String) =
@@ -113,7 +113,8 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
    * ConfigException.NotResolved will be thrown.
    *
    * @param key
-   * @return the unmodified raw value or null
+   * @return
+   *   the unmodified raw value or null
    */
   final private[impl] def peekAssumingResolved(
       key: String,
@@ -132,11 +133,11 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
    * then try to look up the key anyway if possible.
    *
    * @param key
-   *            key to look up
-   * @return the value of the key, or null if known not to exist
+   *   key to look up
+   * @return
+   *   the value of the key, or null if known not to exist
    * @throws ConfigException.NotResolved
-   *             if can't figure out key's value (or existence) without more
-   *             resolving
+   *   if can't figure out key's value (or existence) without more resolving
    */
   private[impl] def attemptPeekWithPartialResolve(
       key: String
@@ -144,8 +145,8 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
 
   /**
    * Looks up the path with no transformation or type conversion. Returns null
-   * if the path is not found; throws ConfigException.NotResolved if we need
-   * to go through an unresolved node to look up the path.
+   * if the path is not found; throws ConfigException.NotResolved if we need to
+   * go through an unresolved node to look up the path.
    */
   private[impl] def peekPath(path: Path): AbstractConfigValue =
     AbstractConfigObject.peekPath(this, path)

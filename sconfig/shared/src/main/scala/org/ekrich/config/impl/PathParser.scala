@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -178,7 +178,7 @@ object PathParser {
   ): ju.List[Token] = {
     val tokenText: String = t.tokenText
     if (tokenText == ".") return ju.Collections.singletonList(t)
-    val splitToken  = tokenText.split("\\.")
+    val splitToken = tokenText.split("\\.")
     val splitTokens = new ju.ArrayList[Token]
     for (s <- splitToken) {
       if (flavor eq ConfigSyntax.CONF)
@@ -197,7 +197,7 @@ object PathParser {
       wasQuoted: Boolean,
       newText: String
   ): Unit = {
-    val i       = if (wasQuoted) -1 else newText.indexOf('.')
+    val i = if (wasQuoted) -1 else newText.indexOf('.')
     val current = buf.get(buf.size - 1)
     if (i < 0) {
       // add to current path element
@@ -223,7 +223,7 @@ object PathParser {
     if (s.charAt(0) == '.') return true
     if (s.charAt(len - 1) == '.') return true
 
-    var i         = 0
+    var i = 0
     var returnNow = false
 
     while (i < len) {

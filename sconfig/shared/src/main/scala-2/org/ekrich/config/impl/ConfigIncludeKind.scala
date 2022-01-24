@@ -6,8 +6,8 @@ final class ConfigIncludeKind private (name: String, ordinal: Int)
     extends jl.Enum[ConfigIncludeKind](name, ordinal)
 
 object ConfigIncludeKind {
-  final val URL       = new ConfigIncludeKind("URL", 0)
-  final val FILE      = new ConfigIncludeKind("FILE", 1)
+  final val URL = new ConfigIncludeKind("URL", 0)
+  final val FILE = new ConfigIncludeKind("FILE", 1)
   final val CLASSPATH = new ConfigIncludeKind("CLASSPATH", 2)
   final val HEURISTIC = new ConfigIncludeKind("HEURISTIC", 3)
 

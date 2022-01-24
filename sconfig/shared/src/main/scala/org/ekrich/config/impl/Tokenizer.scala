@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -153,11 +153,11 @@ object Tokenizer {
       val input: Reader,
       val allowComments: Boolean
   ) extends ju.Iterator[Token] {
-    val origin     = _origin.asInstanceOf[SimpleConfigOrigin]
-    val buffer     = new ju.LinkedList[Integer]
+    val origin = _origin.asInstanceOf[SimpleConfigOrigin]
+    val buffer = new ju.LinkedList[Integer]
     var lineNumber = 1
     var lineOrigin = origin.withLineNumber(lineNumber)
-    val tokens     = new ju.LinkedList[Token]
+    val tokens = new ju.LinkedList[Token]
     tokens.add(Tokens.START)
     val whitespaceSaver = new TokenIterator.WhitespaceSaver
 
@@ -250,7 +250,7 @@ object Tokenizer {
           )
         doubleSlash = true
       }
-      val sb           = new jl.StringBuilder
+      val sb = new jl.StringBuilder
       var token: Token = null
       breakable {
         while (true) {
@@ -275,10 +275,10 @@ object Tokenizer {
     // that parses as JSON is treated the JSON way and otherwise
     // we assume it's a string and let the parser sort it out.
     private def pullUnquotedText: Token = {
-      val origin   = lineOrigin
-      val sb       = new jl.StringBuilder
+      val origin = lineOrigin
+      val sb = new jl.StringBuilder
       var t: Token = null
-      var c        = nextCharRaw
+      var c = nextCharRaw
       var retToken = false
       breakable {
         while (true) {
@@ -286,7 +286,7 @@ object Tokenizer {
           else if (TokenIterator.notInUnquotedText.indexOf(c) >= 0)
             break() // break
           else if (TokenIterator.isWhitespace(c))
-            break()                           // break
+            break() // break
           else if (startOfComment(c)) break() // break
           else sb.appendCodePoint(c)
           // we parse true/false/null tokens as such no matter
@@ -327,7 +327,7 @@ object Tokenizer {
       val sb = new jl.StringBuilder
       sb.appendCodePoint(firstChar)
       var containedDecimalOrE = false
-      var c                   = nextCharRaw
+      var c = nextCharRaw
       while (c != -1 && TokenIterator.numberChars.indexOf(c) >= 0) {
         if (c == '.' || c == 'e' || c == 'E') containedDecimalOrE = true
         sb.appendCodePoint(c)
@@ -336,12 +336,14 @@ object Tokenizer {
       // the last character we looked at wasn't part of the number, put it back
       putBack(c)
       val s = sb.toString
-      try if (containedDecimalOrE) {
-        // force floating point representation
-        Tokens.newDouble(lineOrigin, s.toDouble, s)
-      } else { // this should throw if the integer is too large for Long
-        Tokens.newLong(lineOrigin, s.toLong, s)
-      } catch {
+      try
+        if (containedDecimalOrE) {
+          // force floating point representation
+          Tokens.newDouble(lineOrigin, s.toDouble, s)
+        } else { // this should throw if the integer is too large for Long
+          Tokens.newLong(lineOrigin, s.toLong, s)
+        }
+      catch {
         case e: NumberFormatException =>
           // not a number after all, see if it's an unquoted string.
           for (u <- s.toCharArray) {
@@ -467,7 +469,8 @@ object Tokenizer {
           } else if (ConfigImplUtil.isC0Control(c))
             throw problem(
               asString(c),
-              "JSON does not allow unescaped " + asString(c) + " in quoted strings, use a backslash escape"
+              "JSON does not allow unescaped " +
+                asString(c) + " in quoted strings, use a backslash escape"
             )
           else {
             sb.appendCodePoint(c)
@@ -502,7 +505,7 @@ object Tokenizer {
     private def pullSubstitution: Tokens.Substitution = {
       // the initial '$' has already been consumed
       val origin = lineOrigin
-      var c      = nextCharRaw
+      var c = nextCharRaw
       if (c != '{')
         throw problem(
           asString(c),
@@ -515,7 +518,7 @@ object Tokenizer {
       val saver =
         new TokenIterator.WhitespaceSaver
       val expression = new ju.ArrayList[Token]
-      var t: Token   = null
+      var t: Token = null
       breakable {
         while ({
           t = pullNextToken(saver)
@@ -523,7 +526,7 @@ object Tokenizer {
           // the substitution here; we even allow nested substitutions
           // in the tokenizer. The parser sorts it out.
           if (t eq Tokens.CLOSE_CURLY) { // end the loop, done!
-            break()                      // break
+            break() // break
           } else if (t eq Tokens.END) {
             throw TokenIterator.problem(
               origin,
@@ -571,7 +574,8 @@ object Tokenizer {
             else if (TokenIterator.notInUnquotedText.indexOf(c) >= 0)
               throw problem(
                 asString(c),
-                "Reserved character '" + asString(c) + "' is not allowed outside quotes",
+                "Reserved character '" + asString(c) +
+                  "' is not allowed outside quotes",
                 true
               )
             else {
@@ -588,7 +592,7 @@ object Tokenizer {
     }
     @throws[ProblemException]
     private def queueNextToken(): Unit = {
-      val t          = pullNextToken(whitespaceSaver)
+      val t = pullNextToken(whitespaceSaver)
       val whitespace = whitespaceSaver.check(t, origin, lineNumber)
       if (whitespace != null) tokens.add(whitespace)
       tokens.add(t)

@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -122,8 +122,8 @@ object SimpleIncluder {
       val propsHandle =
         source.nameToParseable(name + ".properties", options)
       var gotSomething = false
-      val fails        = new ju.ArrayList[ConfigException.IO]
-      val syntax       = options.getSyntax
+      val fails = new ju.ArrayList[ConfigException.IO]
+      val syntax = options.getSyntax
       obj = SimpleConfigObject.empty(SimpleConfigOrigin.newSimple(name))
       if (syntax == null || (syntax eq ConfigSyntax.CONF)) try {
         obj = confHandle.parse(

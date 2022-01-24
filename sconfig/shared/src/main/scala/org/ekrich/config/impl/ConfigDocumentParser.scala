@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -52,7 +52,7 @@ object ConfigDocumentParser {
       val baseOrigin: ConfigOrigin,
       val tokens: ju.Iterator[Token]
   ) {
-    private var lineNumber   = 1
+    private var lineNumber = 1
     final private var buffer = new ArrayStack[Token]
     // this is the number of "equals" we are inside,
     // used to modify the error message to reflect that
@@ -66,8 +66,7 @@ object ConfigDocumentParser {
     private def nextToken: Token = {
       val t = popToken
       if (flavor eq ConfigSyntax.JSON)
-        if (Tokens.isUnquotedText(t) && !ParseContext
-              .isUnquotedWhitespace(t))
+        if (Tokens.isUnquotedText(t) && !ParseContext.isUnquotedWhitespace(t))
           throw parseError(
             "Token not allowed in valid JSON: '" + Tokens
               .getUnquotedText(t) + "'"
@@ -84,8 +83,8 @@ object ConfigDocumentParser {
       breakable {
         while (true) {
           val t: Token = nextToken
-          if (Tokens.isIgnoredWhitespace(t) || Tokens.isNewline(t) || ParseContext
-                .isUnquotedWhitespace(t)) {
+          if (Tokens.isIgnoredWhitespace(t) || Tokens.isNewline(t) ||
+              ParseContext.isUnquotedWhitespace(t)) {
             nodes.add(new ConfigNodeSingleToken(t))
             if (Tokens.isNewline(t)) {
               lineNumber = t.lineNumber + 1
@@ -95,7 +94,7 @@ object ConfigDocumentParser {
           } else {
             val newNumber = t.lineNumber
             if (newNumber >= 0) lineNumber = newNumber
-            //return t
+            // return t
             retToken = t
             break() // break - added for Scala to "return"
           }
@@ -125,8 +124,8 @@ object ConfigDocumentParser {
         }
       } else {
         var sawSeparatorOrNewline = false
-        var t                     = nextToken
-        var retTrue               = false // added for Scala for break below
+        var t = nextToken
+        var retTrue = false // added for Scala for break below
         breakable {
           while (true) {
             if (Tokens.isIgnoredWhitespace(t) || ParseContext
@@ -141,13 +140,13 @@ object ConfigDocumentParser {
               // a comma if there is one.
             } else if (t eq Tokens.COMMA) {
               nodes.add(new ConfigNodeSingleToken(t))
-              //return true
+              // return true
               retTrue = true
               break() // break - added for Scala to "return"
             } else {
               // non-newline-or-comma
               putBack(t)
-              //return sawSeparatorOrNewline
+              // return sawSeparatorOrNewline
               break() // break - added for Scala to "return"
             }
             t = nextToken
@@ -174,9 +173,9 @@ object ConfigDocumentParser {
           var v: AbstractConfigNodeValue = null
           if (Tokens.isIgnoredWhitespace(t)) {
             values.add(new ConfigNodeSingleToken(t))
-          } else if (Tokens.isValue(t) || Tokens.isUnquotedText(t) || Tokens
-                       .isSubstitution(t) ||
-                     (t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE)) {
+          } else if (Tokens.isValue(t) || Tokens.isUnquotedText(t) ||
+              Tokens.isSubstitution(t) ||
+              (t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE)) {
             // there may be newlines _within_ the objects and arrays
             v = parseValue(t)
             valueCount += 1
@@ -189,24 +188,6 @@ object ConfigDocumentParser {
         }
       }
 
-      // original converted Java code
-      //while (true) {
-      //    var v: : AbstractConfigNodeValue = null
-      //    if (Tokens.isIgnoredWhitespace(t)) {
-      //        values.add(new ConfigNodeSingleToken(t))
-      //        t = nextToken
-      //        continue //todo: continue is not supported
-      //    } else if (Tokens.isValue(t) || Tokens.isUnquotedText(t) || Tokens.isSubstitution(
-      //        t
-      //    ) || (t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE)) { // there may be newlines _within_ the objects and arrays
-      //        v = parseValue(t)
-      //        valueCount += 1
-      //    } else break//todo: break is not supported
-      //    if (v == null) throw new ConfigException.BugOrBroken("no value")
-      //    values.add(v)
-      //    t = nextToken // but don't consolidate across a newline
-      //
-      //}
       putBack(t)
       // No concatenation was seen, but a single value may have been parsed, so return it, and put back
       // all succeeding tokens
@@ -273,7 +254,7 @@ object ConfigDocumentParser {
     }
     private def parseValue(t: Token): AbstractConfigNodeValue = {
       var v: AbstractConfigNodeValue = null
-      val startingEqualsCount        = equalsCount
+      val startingEqualsCount = equalsCount
       if (Tokens.isValue(t) || Tokens.isUnquotedText(t) || Tokens
             .isSubstitution(t)) v = new ConfigNodeSimpleValue(t)
       else if (t eq Tokens.OPEN_CURLY) v = parseObject(true)
@@ -304,7 +285,7 @@ object ConfigDocumentParser {
           )
       else {
         val expression = new ju.ArrayList[Token]
-        var t          = token
+        var t = token
         while (Tokens.isValue(t) || Tokens.isUnquotedText(t)) {
           expression.add(t)
           t = nextToken // note: don't cross a newline
@@ -335,7 +316,7 @@ object ConfigDocumentParser {
           val r = kindText.replaceFirst("required\\(", "")
           if (r.length > 0) putBack(Tokens.newUnquotedText(t.origin, r))
           children.add(new ConfigNodeSingleToken(t))
-          //children.add(new ConfigNodeSingleToken(tOpen));
+          // children.add(new ConfigNodeSingleToken(tOpen));
           val res = parseIncludeResource(children, true)
           t = nextTokenCollectingWhitespace(children)
           if (Tokens.isUnquotedText(t) && Tokens.getUnquotedText(t) == ")") {
@@ -359,9 +340,9 @@ object ConfigDocumentParser {
       // we either have a quoted string or the "file()" syntax
       if (Tokens.isUnquotedText(t)) {
         // get foo(
-        val kindText                = Tokens.getUnquotedText(t)
+        val kindText = Tokens.getUnquotedText(t)
         var kind: ConfigIncludeKind = null
-        var prefix: String          = null
+        var prefix: String = null
         if (kindText.startsWith("url(")) {
           kind = ConfigIncludeKind.URL
           prefix = "url("
@@ -405,13 +386,13 @@ object ConfigDocumentParser {
     }
     private def parseObject(hadOpenCurly: Boolean): ConfigNodeComplexValue = {
       // invoked just after the OPEN_CURLY (or START, if !hadOpenCurly)
-      var afterComma       = false
-      val lastPath: Path   = null // always null here ??
+      var afterComma = false
+      val lastPath: Path = null // always null here ??
       var lastInsideEquals = false
       val objectNodes =
         new ju.ArrayList[AbstractConfigNode]
       var keyValueNodes: ju.ArrayList[AbstractConfigNode] = null
-      val keys                                            = new ju.HashMap[String, jl.Boolean]
+      val keys = new ju.HashMap[String, jl.Boolean]
       if (hadOpenCurly)
         objectNodes.add(new ConfigNodeSingleToken(Tokens.OPEN_CURLY))
       breakable {
@@ -438,7 +419,7 @@ object ConfigDocumentParser {
             putBack(t)
             break() // break
           } else if ((flavor ne ConfigSyntax.JSON) && ParseContext
-                       .isIncludeKeyword(t)) {
+                .isIncludeKeyword(t)) {
             val includeNodes =
               new ju.ArrayList[AbstractConfigNode]
             includeNodes.add(new ConfigNodeSingleToken(t))
@@ -447,10 +428,10 @@ object ConfigDocumentParser {
           } else {
             keyValueNodes = new ju.ArrayList[AbstractConfigNode]
             val keyToken = t
-            val path     = parseKey(keyToken)
+            val path = parseKey(keyToken)
             keyValueNodes.add(path)
-            val afterKey                           = nextTokenCollectingWhitespace(keyValueNodes)
-            var insideEquals                       = false
+            val afterKey = nextTokenCollectingWhitespace(keyValueNodes)
+            var insideEquals = false
             var nextValue: AbstractConfigNodeValue = null
             if ((flavor eq ConfigSyntax.CONF) && (afterKey eq Tokens.OPEN_CURLY)) {
               // can omit the ':' or '=' before an object value
@@ -476,7 +457,7 @@ object ConfigDocumentParser {
             keyValueNodes.add(nextValue)
             if (insideEquals) equalsCount -= 1
             lastInsideEquals = insideEquals
-            val key       = path.value.first
+            val key = path.value.first
             val remaining = path.value.remainder
             if (remaining == null) {
               val existing = keys.get(key)
@@ -552,7 +533,7 @@ object ConfigDocumentParser {
         new ju.ArrayList[AbstractConfigNode]
       children.add(new ConfigNodeSingleToken(Tokens.OPEN_SQUARE))
       // invoked just after the OPEN_SQUARE
-      var t: Token  = null
+      var t: Token = null
       var nextValue = consolidateValues(children)
       if (nextValue != null) children.add(nextValue)
       else {
@@ -561,8 +542,9 @@ object ConfigDocumentParser {
         if (t eq Tokens.CLOSE_SQUARE) {
           children.add(new ConfigNodeSingleToken(t))
           return new ConfigNodeArray(children)
-        } else if (Tokens.isValue(t) || (t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE) || Tokens
-                     .isUnquotedText(t) || Tokens.isSubstitution(t)) {
+        } else if (Tokens.isValue(t) || (t eq Tokens.OPEN_CURLY) ||
+            (t eq Tokens.OPEN_SQUARE) || Tokens.isUnquotedText(t) ||
+            Tokens.isSubstitution(t)) {
           nextValue = parseValue(t)
           children.add(nextValue)
         } else
@@ -580,7 +562,7 @@ object ConfigDocumentParser {
             t = nextTokenCollectingWhitespace(children)
             if (t eq Tokens.CLOSE_SQUARE) {
               children.add(new ConfigNodeSingleToken(t))
-              //return new ConfigNodeArray(children)
+              // return new ConfigNodeArray(children)
               break() // break - added for Scala to force return from while loop
             } else
               throw parseError(
@@ -593,8 +575,9 @@ object ConfigDocumentParser {
           if (nextValue != null) children.add(nextValue)
           else {
             t = nextTokenCollectingWhitespace(children)
-            if (Tokens.isValue(t) || (t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE) || Tokens
-                  .isUnquotedText(t) || Tokens.isSubstitution(t)) {
+            if (Tokens.isValue(t) || (t eq Tokens.OPEN_CURLY) ||
+                (t eq Tokens.OPEN_SQUARE) || Tokens.isUnquotedText(t) ||
+                Tokens.isSubstitution(t)) {
               nextValue = parseValue(t)
               children.add(nextValue)
             } else if ((flavor ne ConfigSyntax.JSON) && (t eq Tokens.CLOSE_SQUARE)) {
@@ -614,7 +597,7 @@ object ConfigDocumentParser {
 
     private[impl] def parse: ConfigNodeRoot = {
       val children = new ju.ArrayList[AbstractConfigNode]
-      var t        = nextToken
+      var t = nextToken
       if (t eq Tokens.START) {
         // OK
       } else
@@ -623,7 +606,7 @@ object ConfigDocumentParser {
         )
       t = nextTokenCollectingWhitespace(children)
       var result: AbstractConfigNode = null
-      var missingCurly               = false
+      var missingCurly = false
       if ((t eq Tokens.OPEN_CURLY) || (t eq Tokens.OPEN_SQUARE))
         result = parseValue(t)
       else if (flavor eq ConfigSyntax.JSON)
@@ -688,7 +671,7 @@ object ConfigDocumentParser {
       } else {
         putBack(t)
         val nodes = new ju.ArrayList[AbstractConfigNode]
-        val node  = consolidateValues(nodes)
+        val node = consolidateValues(nodes)
         t = nextToken
         if (t eq Tokens.END) return node
         else

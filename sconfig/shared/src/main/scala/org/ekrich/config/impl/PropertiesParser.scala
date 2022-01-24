@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -29,9 +29,9 @@ object PropertiesParser {
     if (i < 0) null else path.substring(0, i)
   }
   private[impl] def pathFromPropertyKey(key: String) = {
-    var last       = lastElement(key)
+    var last = lastElement(key)
     var exceptLast = exceptLastElement(key)
-    var path       = new Path(last, null: Path)
+    var path = new Path(last, null: Path)
     while ({ exceptLast != null }) {
       last = lastElement(exceptLast)
       exceptLast = exceptLastElement(exceptLast)
@@ -133,7 +133,7 @@ object PropertiesParser {
     /*
      * Create maps for the object-valued values.
      */
-    val root   = new ju.HashMap[String, AbstractConfigValue]
+    val root = new ju.HashMap[String, AbstractConfigValue]
     val scopes = new ju.HashMap[Path, ju.Map[String, AbstractConfigValue]]
     for (path <- scopePaths.asScala) {
       val scope = new ju.HashMap[String, AbstractConfigValue]
@@ -144,8 +144,8 @@ object PropertiesParser {
       val parentPath = path.parent
       val parent =
         if (parentPath != null) scopes.get(parentPath) else root
-      val last                       = path.last
-      val rawValue                   = pathMap.get(path)
+      val last = path.last
+      val rawValue = pathMap.get(path)
       var value: AbstractConfigValue = null
       if (convertedFromProperties) {
         if (rawValue.isInstanceOf[String]) {
@@ -189,7 +189,7 @@ object PropertiesParser {
      * where we need the sorted list.
      */
     for (scopePath <- sortedScopePaths.asScala) {
-      val scope      = scopes.get(scopePath)
+      val scope = scopes.get(scopePath)
       val parentPath = scopePath.parent
       val parent =
         if (parentPath != null) scopes.get(parentPath) else root

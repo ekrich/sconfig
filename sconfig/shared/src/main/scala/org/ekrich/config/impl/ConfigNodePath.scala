@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -11,11 +11,11 @@ final class ConfigNodePath private[impl] (
     tokensArg: ju.Collection[Token]
 ) extends AbstractConfigNode {
   override def tokens: ju.Collection[Token] = tokensArg
-  private[impl] def value: Path             = path
+  private[impl] def value: Path = path
   private[impl] def subPath(toRemove: Int): ConfigNodePath = {
     var periodCount = 0
-    val tokensCopy  = new ju.ArrayList[Token](tokensArg)
-    var i           = 0
+    val tokensCopy = new ju.ArrayList[Token](tokensArg)
+    var i = 0
     while (i < tokensCopy.size) {
       if (Tokens.isUnquotedText(tokensCopy.get(i)) && tokensCopy
             .get(i)
@@ -36,7 +36,7 @@ final class ConfigNodePath private[impl] (
   }
   private[impl] def first: ConfigNodePath = {
     val tokensCopy = new ju.ArrayList[Token](tokens)
-    var i          = 0
+    var i = 0
     while (i < tokensCopy.size) {
       if (Tokens.isUnquotedText(tokensCopy.get(i)) && tokensCopy
             .get(i)

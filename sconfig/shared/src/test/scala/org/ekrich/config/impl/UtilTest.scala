@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -10,8 +10,8 @@ import org.junit._
 class UtilTest extends TestUtils {
   private lazy val supplementaryChars = {
     val sb = new java.lang.StringBuilder()
-    val codepoints = Seq(0x2070E, 0x20731, 0x20779, 0x20C53, 0x20C78, 0x20C96,
-      0x20CCF, 0x20CD5, 0x20D15, 0x20D7C)
+    val codepoints = Seq(0x2070e, 0x20731, 0x20779, 0x20c53, 0x20c78, 0x20c96,
+      0x20ccf, 0x20cd5, 0x20d15, 0x20d7c)
     for (c <- codepoints) {
       sb.appendCodePoint(c)
     }
@@ -30,9 +30,9 @@ class UtilTest extends TestUtils {
       ConfigImplUtil.unicodeTrim(supplementaryChars)
     )
 
-    val s            = " \u00A0 \n  " + supplementaryChars + "  \n  \u00A0 "
+    val s = " \u00A0 \n  " + supplementaryChars + "  \n  \u00A0 "
     val asciiTrimmed = s.trim()
-    val unitrimmed   = ConfigImplUtil.unicodeTrim(s)
+    val unitrimmed = ConfigImplUtil.unicodeTrim(s)
 
     assertFalse(asciiTrimmed.equals(unitrimmed))
     assertEquals(supplementaryChars, unitrimmed)
@@ -64,7 +64,7 @@ class UtilTest extends TestUtils {
 
   private def roundtripJson(s: String): Unit = {
     val rendered = ConfigImplUtil.renderJsonString(s)
-    val parsed   = parseConfig("{ foo: " + rendered + "}").getString("foo")
+    val parsed = parseConfig("{ foo: " + rendered + "}").getString("foo")
     assertTrue(
       "String round-tripped through maybe-unquoted escaping '" + s + "' " + s.length +
         " rendering '" + rendered + "' " + rendered.length +
@@ -75,7 +75,7 @@ class UtilTest extends TestUtils {
 
   private def roundtripUnquoted(s: String): Unit = {
     val rendered = ConfigImplUtil.renderStringUnquotedIfPossible(s)
-    val parsed   = parseConfig("{ foo: " + rendered + "}").getString("foo")
+    val parsed = parseConfig("{ foo: " + rendered + "}").getString("foo")
     assertTrue(
       "String round-tripped through maybe-unquoted escaping '" + s + "' " + s.length +
         " rendering '" + rendered + "' " + rendered.length +

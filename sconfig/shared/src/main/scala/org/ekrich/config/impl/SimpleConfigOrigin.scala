@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -65,9 +65,9 @@ object SimpleConfigOrigin {
       a: SimpleConfigOrigin,
       b: SimpleConfigOrigin
   ): SimpleConfigOrigin = {
-    var mergedDesc: String              = null
-    var mergedStartLine                 = 0
-    var mergedEndLine                   = 0
+    var mergedDesc: String = null
+    var mergedStartLine = 0
+    var mergedEndLine = 0
     var mergedComments: ju.List[String] = null
     val mergedType =
       if (a.originType eq b.originType) a.originType else OriginType.GENERIC
@@ -421,7 +421,8 @@ final class SimpleConfigOrigin protected (
   private[impl] def prependComments(
       comments: ju.List[String]
   ): SimpleConfigOrigin =
-    if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull) || comments == null)
+    if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull) ||
+        comments == null)
       this
     else if (this.commentsOrNull == null) withComments(comments)
     else {
@@ -434,7 +435,8 @@ final class SimpleConfigOrigin protected (
   private[impl] def appendComments(
       comments: ju.List[String]
   ): SimpleConfigOrigin =
-    if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull) || comments == null)
+    if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull) ||
+        comments == null)
       this
     else if (this.commentsOrNull == null) withComments(comments)
     else {
@@ -454,7 +456,10 @@ final class SimpleConfigOrigin protected (
       val otherOrigin = other.asInstanceOf[SimpleConfigOrigin]
       this._description == otherOrigin._description && this.lineNumber == otherOrigin.lineNumber &&
       this.endLineNumber == otherOrigin.endLineNumber && (this.originType eq otherOrigin.originType) &&
-      ConfigImplUtil.equalsHandlingNull(this.urlOrNull, otherOrigin.urlOrNull) &&
+      ConfigImplUtil.equalsHandlingNull(
+        this.urlOrNull,
+        otherOrigin.urlOrNull
+      ) &&
       ConfigImplUtil.equalsHandlingNull(
         this.resourceOrNull,
         otherOrigin.resourceOrNull
@@ -493,7 +498,7 @@ final class SimpleConfigOrigin protected (
           null
       }
   override def resource: String = resourceOrNull
-  override def lineNumber: Int  = _lineNumber
+  override def lineNumber: Int = _lineNumber
   override def comments: ju.List[String] =
     if (commentsOrNull != null) ju.Collections.unmodifiableList(commentsOrNull)
     else ju.Collections.emptyList[String]

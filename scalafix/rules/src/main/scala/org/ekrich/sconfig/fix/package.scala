@@ -28,7 +28,9 @@ import scala.util.control.NonFatal
  */
 package object fix {
 
-  /** Allows to apply multiple extractors/matchers to a single expression in a `case` block.
+  /**
+   * Allows to apply multiple extractors/matchers to a single expression in a
+   * `case` block.
    */
   object & {
     def unapply[A](a: A): Option[(A, A)] = Some((a, a))
@@ -88,26 +90,31 @@ package object fix {
            */
           None
         case NonFatal(ex) =>
-          throw UnexpectedException(sym,
-                                    Properties.javaVersion,
-                                    Properties.versionString,
-                                    ex)
+          throw UnexpectedException(
+            sym,
+            Properties.javaVersion,
+            Properties.versionString,
+            ex
+          )
       }
   }
 
   object XSemanticType {
 
-    /** Tries to infer a result SemanticType of a particular Stat.
+    /**
+     * Tries to infer a result SemanticType of a particular Stat.
      *
-     * @note Not all possible cases are handled.
+     * @note
+     *   Not all possible cases are handled.
      */
-    def unapply(stat: Stat)(
-        implicit doc: SemanticDocument): Option[SemanticType] =
+    def unapply(
+        stat: Stat
+    )(implicit doc: SemanticDocument): Option[SemanticType] =
       PartialFunction.condOpt(stat) {
         case Term.Name(_) & XSymbol(XSignature(ValueSignature(tpe))) => tpe
 
         case Term.Apply(_, _) &
-              XSymbol(XSignature(ValueSignature(TypeRef(_, funcSym, _ :+ tpe))))
+            XSymbol(XSignature(ValueSignature(TypeRef(_, funcSym, _ :+ tpe))))
             if funcSym.value.startsWith("scala/Function") && funcSym.value
               .endsWith("#") =>
           tpe
@@ -117,11 +124,12 @@ package object fix {
   }
 }
 
-case class UnexpectedException(sym: Symbol,
-                               java: String,
-                               scala: String,
-                               cause: Throwable)
-    extends RuntimeException(
+case class UnexpectedException(
+    sym: Symbol,
+    java: String,
+    scala: String,
+    cause: Throwable
+) extends RuntimeException(
       s"""An unexpected exception occurred. Please report this as an issue at https://github.com/ekrich/sconfig/issues and include the following information:
          |
          |Failing symbol: ${sym.value}

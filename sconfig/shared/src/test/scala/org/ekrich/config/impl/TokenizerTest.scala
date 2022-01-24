@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -20,14 +20,14 @@ class TokenizerTest extends TestUtils {
 
   @Test
   def tokenizeEmptyString(): Unit = {
-    val source   = ""
+    val source = ""
     val expected = List()
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizeNewlines(): Unit = {
-    val source   = "\n\n"
+    val source = "\n\n"
     val expected = List(tokenLine(1), tokenLine(2))
     tokenizerTest(expected, source)
   }
@@ -161,49 +161,49 @@ class TokenizerTest extends TestUtils {
 
   @Test
   def tokenizeTrueAndUnquotedText(): Unit = {
-    val source   = """truefoo"""
+    val source = """truefoo"""
     val expected = List(tokenTrue, tokenUnquoted("foo"))
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizeFalseAndUnquotedText(): Unit = {
-    val source   = """falsefoo"""
+    val source = """falsefoo"""
     val expected = List(tokenFalse, tokenUnquoted("foo"))
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizeNullAndUnquotedText(): Unit = {
-    val source   = """nullfoo"""
+    val source = """nullfoo"""
     val expected = List(tokenNull, tokenUnquoted("foo"))
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizeUnquotedTextContainingRoundBrace(): Unit = {
-    val source   = """(footrue)"""
+    val source = """(footrue)"""
     val expected = List(tokenUnquoted("(footrue)"))
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizeUnquotedTextContainingTrue(): Unit = {
-    val source   = """footrue"""
+    val source = """footrue"""
     val expected = List(tokenUnquoted("footrue"))
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizeUnquotedTextContainingSpaceTrue(): Unit = {
-    val source   = """foo true"""
+    val source = """foo true"""
     val expected = List(tokenUnquoted("foo"), tokenUnquoted(" "), tokenTrue)
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizeTrueAndSpaceAndUnquotedText(): Unit = {
-    val source   = """true foo"""
+    val source = """true foo"""
     val expected = List(tokenTrue, tokenUnquoted(" "), tokenUnquoted("foo"))
     tokenizerTest(expected, source)
   }
@@ -296,21 +296,21 @@ class TokenizerTest extends TestUtils {
   @Test
   def tokenizerReturnsProblemOnInvalidStrings(): Unit = {
     val invalidTests = List(
-      """ "\" """,     // nothing after a backslash
-      """ "\q" """,    // there is no \q escape sequence
-      "\"\\u123\"",    // too short
-      "\"\\u12\"",     // too short
-      "\"\\u1\"",      // too short
-      "\"\\u\"",       // too short
-      "\"",            // just a single quote
+      """ "\" """, // nothing after a backslash
+      """ "\q" """, // there is no \q escape sequence
+      "\"\\u123\"", // too short
+      "\"\\u12\"", // too short
+      "\"\\u1\"", // too short
+      "\"\\u\"", // too short
+      "\"", // just a single quote
       """ "abcdefg""", // no end quote
-      """\"\""",       // file ends with a backslash
-      "$",             // file ends with a $
-      "${"             // file ends with a ${
+      """\"\""", // file ends with a backslash
+      "$", // file ends with a $
+      "${" // file ends with a ${
     )
 
     for (t <- invalidTests) {
-      val tokenized    = tokenizeAsList(t)
+      val tokenized = tokenizeAsList(t)
       val maybeProblem = tokenized.find(Tokens.isProblem(_))
       assertTrue(
         s"expected failure for <$t> but got ${t}",
@@ -321,35 +321,35 @@ class TokenizerTest extends TestUtils {
 
   @Test
   def tokenizerEmptyTripleQuoted(): Unit = {
-    val source   = "\"\"\"\"\"\""
+    val source = "\"\"\"\"\"\""
     val expected = List(tokenString(""))
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizerTrivialTripleQuoted(): Unit = {
-    val source   = "\"\"\"bar\"\"\""
+    val source = "\"\"\"bar\"\"\""
     val expected = List(tokenString("bar"))
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizerNoEscapesInTripleQuoted(): Unit = {
-    val source   = "\"\"\"\\n\"\"\""
+    val source = "\"\"\"\\n\"\"\""
     val expected = List(tokenString("\\n"))
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizerTrailingQuotesInTripleQuoted(): Unit = {
-    val source   = "\"\"\"\"\"\"\"\"\""
+    val source = "\"\"\"\"\"\"\"\"\""
     val expected = List(tokenString("\"\"\""))
     tokenizerTest(expected, source)
   }
 
   @Test
   def tokenizerNewlineInTripleQuoted(): Unit = {
-    val source   = "\"\"\"foo\nbar\"\"\""
+    val source = "\"\"\"foo\nbar\"\"\""
     val expected = List(tokenString("foo\nbar"))
     tokenizerTest(expected, source)
   }

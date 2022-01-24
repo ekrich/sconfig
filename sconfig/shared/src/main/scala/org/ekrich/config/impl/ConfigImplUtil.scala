@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -18,8 +18,8 @@ import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
 
 /**
- * Internal implementation detail, not ABI stable, do not touch.
- * For use only by the {@link org.ekrich.config} package.
+ * Internal implementation detail, not ABI stable, do not touch. For use only by
+ * the {@link org.ekrich.config} package.
  */
 object ConfigImplUtil {
   def equalsHandlingNull(a: AnyRef, b: AnyRef) =
@@ -31,7 +31,7 @@ object ConfigImplUtil {
     } else a == b
 
   def isC0Control(codepoint: Int) =
-    codepoint >= 0x0000 && codepoint <= 0x001F
+    codepoint >= 0x0000 && codepoint <= 0x001f
 
   def renderJsonString(s: String): String = {
     val sb = new StringBuilder
@@ -71,8 +71,9 @@ object ConfigImplUtil {
     // to ensure we end up with a string and not a number
     val first = s.codePointAt(0)
     if (Character.isDigit(first) || first == '-') return renderJsonString(s)
-    if (s.startsWith("include") || s.startsWith("true") || s.startsWith("false") ||
-        s.startsWith("null") || s.contains("//")) return renderJsonString(s)
+    if (s.startsWith("include") || s.startsWith("true") || s.startsWith("false")
+        || s.startsWith("null") || s.contains("//"))
+      return renderJsonString(s)
     // only unquote if it's pure alphanumeric
     var i = 0
     while (i < s.length) {
@@ -127,7 +128,7 @@ object ConfigImplUtil {
         val c = s.charAt(end - 1)
         if (c == ' ' || c == '\n') end -= 1
         else {
-          var cp    = 0
+          var cp = 0
           var delta = 0
           if (Character.isLowSurrogate(c)) {
             cp = s.codePointAt(end - 2)
@@ -152,7 +153,7 @@ object ConfigImplUtil {
   private[impl] def urlToFile(url: URL): File = {
     // this isn't really right, clearly, but not sure what to do.
     try // this will properly handle hex escapes, etc.
-    return new File(url.toURI())
+      return new File(url.toURI())
     catch {
       case e: URISyntaxException =>
         // this handles some stuff like file:///c:/Whatever/
@@ -169,7 +170,7 @@ object ConfigImplUtil {
   def joinPath(elements: ju.List[String]): String =
     joinPath(elements.asScala.toSeq: _*)
   def splitPath(path: String): ju.List[String] = {
-    var p        = Path.newPath(path)
+    var p = Path.newPath(path)
     val elements = new ju.ArrayList[String]
     while (p != null) {
       elements.add(p.first)
@@ -190,7 +191,7 @@ object ConfigImplUtil {
     )
 
   private[impl] def toCamelCase(originalName: String): String = {
-    val words       = originalName.split("-+")
+    val words = originalName.split("-+")
     val nameBuilder = new StringBuilder(originalName.length)
     for (word <- words) {
       if (nameBuilder.length == 0) nameBuilder.append(word)
@@ -205,8 +206,10 @@ object ConfigImplUtil {
   /**
    * Guess configuration syntax from given filename.
    *
-   * @param filename configuration filename
-   * @return configuration syntax if a match is found. Otherwise, null.
+   * @param filename
+   *   configuration filename
+   * @return
+   *   configuration syntax if a match is found. Otherwise, null.
    */
   def syntaxFromExtension(filename: String): ConfigSyntax =
     if (filename == null) null

@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -91,7 +91,7 @@ class UnitParserTest extends TestUtils {
     val oneYear =
       ChronoUnit.DAYS.between(epochDate, epochDate.plus(Period.ofYears(1)))
     for (y <- oneYears) {
-      val period   = SimpleConfig.parsePeriod(y, fakeOrigin(), "test")
+      val period = SimpleConfig.parsePeriod(y, fakeOrigin(), "test")
       val dayCount = ChronoUnit.DAYS.between(epochDate, epochDate.plus(period))
       assertEquals(oneYear, dayCount)
     }
@@ -119,7 +119,7 @@ class UnitParserTest extends TestUtils {
   // this broke because "1d" is a valid double for parseDouble
   @Test
   def parseOneDayAsMilliseconds(): Unit = {
-    val result     = SimpleConfig.parseDuration("1d", fakeOrigin(), "test")
+    val result = SimpleConfig.parseDuration("1d", fakeOrigin(), "test")
     val dayInNanos = TimeUnit.DAYS.toNanos(1)
     assertEquals("could parse 1d", dayInNanos, result)
 

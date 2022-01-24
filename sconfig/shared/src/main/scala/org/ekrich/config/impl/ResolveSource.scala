@@ -44,8 +44,8 @@ object ResolveSource {
       path: Path
   ): ValueWithPath =
     try // we'll fail if anything along the path can't
-    // be looked at without resolving.
-    findInObject(obj, path, null)
+      // be looked at without resolving.
+      findInObject(obj, path, null)
     catch {
       case e: ConfigException.NotResolved =>
         throw ConfigImpl.improveNotResolved(path, e)
@@ -55,7 +55,7 @@ object ResolveSource {
       path: Path,
       parents: Node[Container]
   ): ValueWithPath = {
-    val key  = path.first
+    val key = path.first
     val next = path.remainder
     if (ConfigImpl.traceSubstitutionsEnabled)
       ConfigImpl.trace("*** looking up '" + key + "' in " + obj)
@@ -118,7 +118,7 @@ object ResolveSource {
     def this(value: T) = this(value, null)
     private[impl] def prepend(value: T) =
       new ResolveSource.Node[T](value, this)
-    private[impl] def head: T       = value
+    private[impl] def head: T = value
     private[impl] def tail: Node[T] = next
     private[impl] def last = {
       var i = this
@@ -129,7 +129,7 @@ object ResolveSource {
       if (next == null) this
       else {
         var reversed = new ResolveSource.Node[T](value)
-        var i        = next
+        var i = next
         while ({ i != null }) {
           reversed = reversed.prepend(i.value)
           i = i.next

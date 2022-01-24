@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -70,7 +70,7 @@ class ConfParserTest extends TestUtils {
   }
 
   private def parsePath(s: String): Path = {
-    var firstException: ConfigException  = null
+    var firstException: ConfigException = null
     var secondException: ConfigException = null
 
     // parse first by wrapping into a whole document and using
@@ -158,16 +158,16 @@ class ConfParserTest extends TestUtils {
     assertEquals(path("1", "2", "3", "4"), parsePath("1.2.3.4"))
 
     for (invalid <- Seq(
-           "",
-           " ",
-           "  \n   \n  ",
-           "a.",
-           ".b",
-           "a..b",
-           "a${b}c",
-           "\"\".",
-           ".\"\""
-         )) {
+          "",
+          " ",
+          "  \n   \n  ",
+          "a.",
+          ".b",
+          "a..b",
+          "a${b}c",
+          "\"\".",
+          ".\"\""
+        )) {
       try {
         intercept[ConfigException.BadPath] {
           parsePath(invalid)
@@ -284,7 +284,7 @@ class ConfParserTest extends TestUtils {
     def dropCurlies(s: String) = {
       // drop the outside curly braces
       val first = s.indexOf('{')
-      val last  = s.lastIndexOf('}')
+      val last = s.lastIndexOf('}')
       s.substring(0, first) + s.substring(first + 1, last) + s.substring(
         last + 1,
         s.length()
@@ -902,7 +902,7 @@ class ConfParserTest extends TestUtils {
       )
     }
 
-    val actual   = ex.getMessage
+    val actual = ex.getMessage
     val expected = ".*resource not found on classpath.*"
     assertTrue(
       s"expected match for <$expected> but got <$actual>",
@@ -922,7 +922,7 @@ class ConfParserTest extends TestUtils {
     )
 
     val expected = "This is in the included file"
-    val actual   = conf.getString("foo")
+    val actual = conf.getString("foo")
     assertTrue(
       s"expected match for <$expected> but got <$actual>",
       actual.matches(expected)
@@ -961,7 +961,7 @@ class ConfParserTest extends TestUtils {
 
   @Test
   def includeURLHeuristically(): Unit = {
-    val url  = resourceFile("test01.conf").toURI().toURL().toExternalForm()
+    val url = resourceFile("test01.conf").toURI().toURL().toExternalForm()
     val conf = ConfigFactory.parseString("include " + quoteJsonString(url))
 
     assertEquals(42, conf.getInt("ints.fortyTwo"))
@@ -972,7 +972,7 @@ class ConfParserTest extends TestUtils {
   @Test
   def includeURLBasenameHeuristically(): Unit = {
     // "AnySyntax" trick doesn't work for url includes
-    val url  = resourceFile("test01").toURI().toURL().toExternalForm()
+    val url = resourceFile("test01").toURI().toURL().toExternalForm()
     val conf = ConfigFactory.parseString("include " + quoteJsonString(url))
 
     assertTrue("including basename URL doesn't load anything", conf.isEmpty)

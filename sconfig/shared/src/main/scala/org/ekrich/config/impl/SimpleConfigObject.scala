@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -59,7 +59,7 @@ object SimpleConfigObject {
       val length = s.length
       // empty string doesn't count as a number
       if (length == 0) return false
-      var i         = 0
+      var i = 0
       var allDigits = true
       while (i < length) {
         breakable {
@@ -176,8 +176,8 @@ final class SimpleConfigObject(
   // withOnlyPath("a.b.c") that we don't keep an empty
   // "a" object.
   override def withOnlyPathOrNull(path: Path): SimpleConfigObject = {
-    val key                    = path.first
-    val next                   = path.remainder
+    val key = path.first
+    val next = path.remainder
     var v: AbstractConfigValue = value.get(key)
     if (next != null) {
       if (v != null && v.isInstanceOf[AbstractConfigObject]) {
@@ -211,9 +211,9 @@ final class SimpleConfigObject(
   }
 
   override def withoutPath(path: Path): SimpleConfigObject = {
-    val key  = path.first
+    val key = path.first
     val next = path.remainder
-    var v    = value.get(key)
+    var v = value.get(key)
     if (v != null && next != null && v.isInstanceOf[AbstractConfigObject]) {
       v = v.asInstanceOf[AbstractConfigObject].withoutPath(next)
       val updated = new ju.HashMap[String, AbstractConfigValue](value)
@@ -262,7 +262,7 @@ final class SimpleConfigObject(
   }
 
   override def withValue(path: Path, v: ConfigValue): SimpleConfigObject = {
-    val key  = path.first
+    val key = path.first
     val next = path.remainder
     if (next == null) withValue(key, v)
     else {
@@ -358,17 +358,17 @@ final class SimpleConfigObject(
       throw new ConfigException.BugOrBroken(
         "should not be reached (merging non-SimpleConfigObject)"
       )
-    val fallback    = abstractFallback.asInstanceOf[SimpleConfigObject]
-    var changed     = false
+    val fallback = abstractFallback.asInstanceOf[SimpleConfigObject]
+    var changed = false
     var allResolved = true
-    val merged      = new ju.HashMap[String, AbstractConfigValue]
-    val allKeys     = new ju.HashSet[String]
+    val merged = new ju.HashMap[String, AbstractConfigValue]
+    val allKeys = new ju.HashSet[String]
     allKeys.addAll(this.keySet)
     allKeys.addAll(fallback.keySet)
 
     for (key <- allKeys.asScala) {
-      val first                     = this.value.get(key)
-      val second                    = fallback.value.get(key)
+      val first = this.value.get(key)
+      val second = fallback.value.get(key)
       var kept: AbstractConfigValue = null
       if (first == null) kept = second
       else if (second == null) kept = first
@@ -377,7 +377,7 @@ final class SimpleConfigObject(
       if (first ne kept) changed = true
       if (kept.resolveStatus eq ResolveStatus.UNRESOLVED) allResolved = false
     }
-    val newResolveStatus    = ResolveStatus.fromBoolean(allResolved)
+    val newResolveStatus = ResolveStatus.fromBoolean(allResolved)
     val newIgnoresFallbacks = fallback.ignoresFallbacks
     if (changed)
       new SimpleConfigObject(
@@ -416,7 +416,7 @@ final class SimpleConfigObject(
     }
     if (changes == null) this
     else {
-      val modified      = new ju.HashMap[String, AbstractConfigValue]
+      val modified = new ju.HashMap[String, AbstractConfigValue]
       var sawUnresolved = false
       for (k <- keySet.asScala) {
         if (changes.containsKey(k)) {
@@ -426,7 +426,7 @@ final class SimpleConfigObject(
             if (newValue.resolveStatus eq ResolveStatus.UNRESOLVED)
               sawUnresolved = true
           } else {
-            //remove this child; don't put it in the new map.
+            // remove this child; don't put it in the new map.
           }
         } else {
           val newValue = value.get(k)
@@ -493,7 +493,7 @@ final class SimpleConfigObject(
         if (options.getFormatted) sb.append('\n')
       } else innerIndent = indentVal
       var separatorCount = 0
-      val keys           = new ju.ArrayList[String]
+      val keys = new ju.ArrayList[String]
       keys.addAll(keySet)
       ju.Collections.sort(keys, new SimpleConfigObject.RenderComparator)
       //            val keys: Array[String] = keySet.toArray(new Array[String](size))

@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2014 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2014 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -24,8 +24,8 @@ trait Container extends ConfigValue {
   ): AbstractConfigValue
 
   /**
-   * Super-expensive full traversal to see if descendant is anywhere
-   * underneath this container.
+   * Super-expensive full traversal to see if descendant is anywhere underneath
+   * this container.
    */
   def hasDescendant(descendant: AbstractConfigValue): Boolean
 }

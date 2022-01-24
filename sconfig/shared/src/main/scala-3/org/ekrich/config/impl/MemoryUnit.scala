@@ -4,19 +4,17 @@ import java.{lang => jl}
 import java.{math => jm}
 import java.{util => ju}
 
-enum MemoryUnit(val prefix: String,
-                val powerOf: Int,
-                val power: Int)
+enum MemoryUnit(val prefix: String, val powerOf: Int, val power: Int)
     extends jl.Enum[MemoryUnit] {
   val bytes = jm.BigInteger.valueOf(powerOf.toLong).pow(power)
 
-  case BYTES      extends MemoryUnit("", 1024, 0)
-  case KILOBYTES  extends MemoryUnit("kilo", 1000, 1)
-  case MEGABYTES  extends MemoryUnit("mega", 1000, 2)
-  case GIGABYTES  extends MemoryUnit("giga", 1000, 3)
-  case TERABYTES  extends MemoryUnit("tera", 1000, 4)
-  case PETABYTES  extends MemoryUnit("peta", 1000, 5)
-  case EXABYTES   extends MemoryUnit("exa", 1000, 6)
+  case BYTES extends MemoryUnit("", 1024, 0)
+  case KILOBYTES extends MemoryUnit("kilo", 1000, 1)
+  case MEGABYTES extends MemoryUnit("mega", 1000, 2)
+  case GIGABYTES extends MemoryUnit("giga", 1000, 3)
+  case TERABYTES extends MemoryUnit("tera", 1000, 4)
+  case PETABYTES extends MemoryUnit("peta", 1000, 5)
+  case EXABYTES extends MemoryUnit("exa", 1000, 6)
   case ZETTABYTES extends MemoryUnit("zetta", 1000, 7)
   case YOTTABYTES extends MemoryUnit("yotta", 1000, 8)
 
@@ -27,7 +25,7 @@ enum MemoryUnit(val prefix: String,
   case PEBIBYTES extends MemoryUnit("pebi", 1024, 5)
   case EXBIBYTES extends MemoryUnit("exbi", 1024, 6)
   case ZEBIBYTES extends MemoryUnit("zebi", 1024, 7)
-  case OBIBYTES  extends MemoryUnit("yobi", 1024, 8)
+  case OBIBYTES extends MemoryUnit("yobi", 1024, 8)
 
 }
 
@@ -43,12 +41,12 @@ private object MemoryUnit {
         map.put("B", unit)
         map.put("", unit) // no unit specified means bytes
       } else {
-        val first      = unit.prefix.substring(0, 1)
+        val first = unit.prefix.substring(0, 1)
         val firstUpper = first.toUpperCase
         if (unit.powerOf == 1024) {
-          map.put(first, unit)             // 512m
-          map.put(firstUpper, unit)        // 512M
-          map.put(firstUpper + "i", unit)  // 512Mi
+          map.put(first, unit) // 512m
+          map.put(firstUpper, unit) // 512M
+          map.put(firstUpper + "i", unit) // 512Mi
           map.put(firstUpper + "iB", unit) // 512MiB
         } else if (unit.powerOf == 1000) {
           if (unit.power == 1) map.put(first + "B", unit) // 512kB

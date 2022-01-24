@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -36,8 +36,8 @@ object ConfigParser {
     ): AbstractConfigObject = {
       // for path foo.bar, we are creating
       // { "foo" : { "bar" : value } }
-      val keys      = new ju.ArrayList[String]
-      var key       = path.first
+      val keys = new ju.ArrayList[String]
+      var key = path.first
       var remaining = path.remainder
       breakable {
         while (key != null) {
@@ -54,7 +54,7 @@ object ConfigParser {
       // on the exact leaf node they apply to.
       // a comment before "foo.bar" applies to the full setting
       // "foo.bar" not also to "foo"
-      val i       = keys.listIterator(keys.size)
+      val i = keys.listIterator(keys.size)
       val deepest = i.previous
       var o = new SimpleConfigObject(
         value.origin.withComments(null),
@@ -78,7 +78,7 @@ object ConfigParser {
       val includer: FullIncluder,
       val includeContext: ConfigIncludeContext
   ) {
-    private var lineNumber      = 1
+    private var lineNumber = 1
     final private var pathStack = new ju.LinkedList[Path]
     // the number of lists we are inside; this is used to detect the "cannot
     // generate a reference to a list element" problem, and once we fix that
@@ -130,7 +130,7 @@ object ConfigParser {
         comments: ju.List[String]
     ): AbstractConfigValue = {
       var v: AbstractConfigValue = null
-      val startingArrayCount     = arrayCount
+      val startingArrayCount = arrayCount
       if (n.isInstanceOf[ConfigNodeSimpleValue])
         v = n.asInstanceOf[ConfigNodeSimpleValue].value
       else if (n.isInstanceOf[ConfigNodeObject])
@@ -201,7 +201,7 @@ object ConfigParser {
         obj = obj.relativized(prefix)
       }
       for (key <- obj.keySet.asScala) {
-        val v        = obj.get(key)
+        val v = obj.get(key)
         val existing = values.get(key)
         if (existing != null) values.put(key, v.withFallback(existing))
         else values.put(key, v)
@@ -211,28 +211,26 @@ object ConfigParser {
     private def parseObject(n: ConfigNodeObject): AbstractConfigObject = {
       val values =
         new ju.HashMap[String, AbstractConfigValue]
-      val objectOrigin   = lineOrigin
+      val objectOrigin = lineOrigin
       var lastWasNewline = false
       val nodes =
         new ju.ArrayList[AbstractConfigNode](n.children)
       val comments = new ju.ArrayList[String]
-      var i        = 0
+      var i = 0
       while (i < nodes.size) {
         val node = nodes.get(i)
         if (node.isInstanceOf[ConfigNodeComment]) {
           lastWasNewline = false
           comments.add(node.asInstanceOf[ConfigNodeComment].commentText)
-        } else if (node
-                     .isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
-                     node.asInstanceOf[ConfigNodeSingleToken].token
-                   )) {
+        } else if (node.isInstanceOf[ConfigNodeSingleToken] &&
+            Tokens.isNewline(node.asInstanceOf[ConfigNodeSingleToken].token)) {
           lineNumber += 1
           if (lastWasNewline) { // Drop all comments if there was a blank line and start a new comment block
             comments.clear()
           }
           lastWasNewline = true
-        } else if ((flavor ne ConfigSyntax.JSON) && node
-                     .isInstanceOf[ConfigNodeInclude]) {
+        } else if ((flavor ne ConfigSyntax.JSON) &&
+            node.isInstanceOf[ConfigNodeInclude]) {
           parseInclude(values, node.asInstanceOf[ConfigNodeInclude])
           lastWasNewline = false
         } else if (node.isInstanceOf[ConfigNodeField]) {
@@ -257,7 +255,7 @@ object ConfigParser {
             arrayCount += 1
           }
           var valueNode: AbstractConfigNodeValue = null
-          var newValue: AbstractConfigValue      = null
+          var newValue: AbstractConfigValue = null
           valueNode = node.asInstanceOf[ConfigNodeField].value
           // comments from the key token go to the value token
           newValue = parseValue(valueNode, comments)
@@ -316,7 +314,7 @@ object ConfigParser {
             }
           }
           pathStack.pop
-          val key       = path.first
+          val key = path.first
           val remaining = path.remainder
           if (remaining == null) {
             val existing = values.get(key)
@@ -350,19 +348,17 @@ object ConfigParser {
 
     private def parseArray(n: ConfigNodeArray) = {
       arrayCount += 1
-      val arrayOrigin            = lineOrigin
-      val values                 = new ju.ArrayList[AbstractConfigValue]
-      var lastWasNewLine         = false
-      val comments               = new ju.ArrayList[String]
+      val arrayOrigin = lineOrigin
+      val values = new ju.ArrayList[AbstractConfigValue]
+      var lastWasNewLine = false
+      val comments = new ju.ArrayList[String]
       var v: AbstractConfigValue = null
       for (node <- n.children.asScala) {
         if (node.isInstanceOf[ConfigNodeComment]) {
           comments.add(node.asInstanceOf[ConfigNodeComment].commentText)
           lastWasNewLine = false
-        } else if (node
-                     .isInstanceOf[ConfigNodeSingleToken] && Tokens.isNewline(
-                     node.asInstanceOf[ConfigNodeSingleToken].token
-                   )) {
+        } else if (node.isInstanceOf[ConfigNodeSingleToken] &&
+            Tokens.isNewline(node.asInstanceOf[ConfigNodeSingleToken].token)) {
           lineNumber += 1
           if (lastWasNewLine && v == null) comments.clear()
           else if (v != null) {
@@ -400,8 +396,8 @@ object ConfigParser {
     }
     private[impl] def parse: AbstractConfigValue = {
       var result: AbstractConfigValue = null
-      val comments                    = new ju.ArrayList[String]
-      var lastWasNewLine              = false
+      val comments = new ju.ArrayList[String]
+      var lastWasNewLine = false
       breakable {
         for (node <- document.children.asScala) {
           if (node.isInstanceOf[ConfigNodeComment]) {

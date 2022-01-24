@@ -11,7 +11,7 @@ class ResolveStatus private (name: String, ordinal: Int)
 
 object ResolveStatus {
   final val UNRESOLVED = new ResolveStatus("UNRESOLVED", 0)
-  final val RESOLVED   = new ResolveStatus("RESOLVED", 1)
+  final val RESOLVED = new ResolveStatus("RESOLVED", 1)
 
   private[this] final val _values: Array[ResolveStatus] =
     Array(UNRESOLVED, RESOLVED)

@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -72,14 +72,14 @@ class ConfigTest extends TestUtils {
         case n => {
           val leftSplits = for {
             i <- (1 until n)
-            pair   = objects.splitAt(i)
-            first  = pair._1.reduceLeft(_.withFallback(_))
+            pair = objects.splitAt(i)
+            first = pair._1.reduceLeft(_.withFallback(_))
             second = pair._2.reduceLeft(_.withFallback(_))
           } yield first.withFallback(second)
           val rightSplits = for {
             i <- (1 until n)
-            pair   = objects.splitAt(i)
-            first  = pair._1.reduceRight(_.withFallback(_))
+            pair = objects.splitAt(i)
+            first = pair._1.reduceRight(_.withFallback(_))
             second = pair._2.reduceRight(_.withFallback(_))
           } yield first.withFallback(second)
           leftSplits.iterator ++ rightSplits.iterator
@@ -106,8 +106,8 @@ class ConfigTest extends TestUtils {
 
   @Test
   def mergeTrivial(): Unit = {
-    val obj1   = parseObject("""{ "a" : 1 }""")
-    val obj2   = parseObject("""{ "b" : 2 }""")
+    val obj1 = parseObject("""{ "a" : 1 }""")
+    val obj2 = parseObject("""{ "b" : 2 }""")
     val merged = merge(obj1, obj2).toConfig
 
     assertEquals(1, merged.getInt("a"))
@@ -124,7 +124,7 @@ class ConfigTest extends TestUtils {
 
   @Test
   def mergeOne(): Unit = {
-    val obj1   = parseObject("""{ "a" : 1 }""")
+    val obj1 = parseObject("""{ "a" : 1 }""")
     val merged = merge(obj1).toConfig
 
     assertEquals(1, merged.getInt("a"))
@@ -133,8 +133,8 @@ class ConfigTest extends TestUtils {
 
   @Test
   def mergeOverride(): Unit = {
-    val obj1   = parseObject("""{ "a" : 1 }""")
-    val obj2   = parseObject("""{ "a" : 2 }""")
+    val obj1 = parseObject("""{ "a" : 1 }""")
+    val obj2 = parseObject("""{ "a" : 2 }""")
     val merged = merge(obj1, obj2).toConfig
 
     assertEquals(1, merged.getInt("a"))
@@ -181,8 +181,8 @@ class ConfigTest extends TestUtils {
 
   @Test
   def mergeNested(): Unit = {
-    val obj1   = parseObject("""{ "root" : { "a" : 1, "z" : 101 } }""")
-    val obj2   = parseObject("""{ "root" : { "b" : 2, "z" : 102 } }""")
+    val obj1 = parseObject("""{ "root" : { "a" : 1, "z" : 101 } }""")
+    val obj2 = parseObject("""{ "root" : { "b" : 2, "z" : 102 } }""")
     val merged = merge(obj1, obj2).toConfig
 
     assertEquals(1, merged.getInt("root.a"))
@@ -194,8 +194,8 @@ class ConfigTest extends TestUtils {
 
   @Test
   def mergeWithEmpty(): Unit = {
-    val obj1   = parseObject("""{ "a" : 1 }""")
-    val obj2   = parseObject("""{ }""")
+    val obj1 = parseObject("""{ "a" : 1 }""")
+    val obj2 = parseObject("""{ }""")
     val merged = merge(obj1, obj2).toConfig
 
     assertEquals(1, merged.getInt("a"))
@@ -209,8 +209,8 @@ class ConfigTest extends TestUtils {
 
   @Test
   def mergeOverrideObjectAndPrimitive(): Unit = {
-    val obj1   = parseObject("""{ "a" : 1 }""")
-    val obj2   = parseObject("""{ "a" : { "b" : 42 } }""")
+    val obj1 = parseObject("""{ "a" : 1 }""")
+    val obj2 = parseObject("""{ "a" : { "b" : 42 } }""")
     val merged = merge(obj1, obj2).toConfig
 
     assertEquals(1, merged.getInt("a"))
@@ -226,8 +226,8 @@ class ConfigTest extends TestUtils {
 
   @Test
   def mergeOverrideObjectAndSubstitution(): Unit = {
-    val obj1   = parseObject("""{ "a" : 1 }""")
-    val obj2   = parseObject("""{ "a" : { "b" : ${c} }, "c" : 42 }""")
+    val obj1 = parseObject("""{ "a" : 1 }""")
+    val obj2 = parseObject("""{ "a" : { "b" : ${c} }, "c" : 42 }""")
     val merged = merge(obj1, obj2).toConfig
 
     assertEquals(1, merged.getInt("a"))
@@ -376,8 +376,8 @@ class ConfigTest extends TestUtils {
     )
 
     val fixUpCycle = parseObject(""" { "a" : { "b" : { "c" : 57 } } } """)
-    val merged     = mergeUnresolved(fixUpCycle, cycleObject)
-    val v          = resolveNoSystem(subst("foo"), merged)
+    val merged = mergeUnresolved(fixUpCycle, cycleObject)
+    val v = resolveNoSystem(subst("foo"), merged)
     assertEquals(intValue(57), v)
   }
 
@@ -403,7 +403,7 @@ class ConfigTest extends TestUtils {
     }
     // TODO: it would be nicer if the above threw BadValue with an
     // explanation about the cycle.
-    //assertTrue(e2.getMessage().contains("cycle"))
+    // assertTrue(e2.getMessage().contains("cycle"))
   }
 
   @Test
@@ -494,9 +494,9 @@ class ConfigTest extends TestUtils {
     // can return a new object anytime it likes) but want to be sure we do the
     // optimizations.
 
-    val empty                     = SimpleConfigObject.empty(null)
-    val primitive                 = intValue(42)
-    val emptyIgnoringFallbacks    = empty.withFallback(primitive)
+    val empty = SimpleConfigObject.empty(null)
+    val primitive = intValue(42)
+    val emptyIgnoringFallbacks = empty.withFallback(primitive)
     val nonEmptyIgnoringFallbacks = nonEmpty.withFallback(primitive)
 
     assertEquals(false, empty.ignoresFallbacks)
@@ -563,8 +563,8 @@ class ConfigTest extends TestUtils {
 
   @Test
   def testListsWithFallback(): Unit = {
-    val list1   = ConfigValueFactory.fromIterable(Seq(1, 2, 3).asJava)
-    val list2   = ConfigValueFactory.fromIterable(Seq(4, 5, 6).asJava)
+    val list1 = ConfigValueFactory.fromIterable(Seq(1, 2, 3).asJava)
+    val list2 = ConfigValueFactory.fromIterable(Seq(4, 5, 6).asJava)
     val merged1 = list1.withFallback(list2)
     val merged2 = list2.withFallback(list1)
     assertEquals("lists did not merge 1", list1, merged1)
@@ -911,7 +911,7 @@ class ConfigTest extends TestUtils {
     def assertDurationAsTimeUnit(unit: TimeUnit): Unit = {
       def ns2unit(l: Long) = unit.convert(l, NANOSECONDS)
       def ms2unit(l: Long) = unit.convert(l, MILLISECONDS)
-      def s2unit(i: Int)   = unit.convert(i.toLong, SECONDS)
+      def s2unit(i: Int) = unit.convert(i.toLong, SECONDS)
       assertEquals(ms2unit(1000L), conf.getDuration("durations.second", unit))
       assertEquals(s2unit(1), conf.getDuration("durations.second", unit))
       assertEquals(
@@ -1012,7 +1012,7 @@ class ConfigTest extends TestUtils {
   @Test
   def test01SystemFallbacks(): Unit = {
     val conf = ConfigFactory.load("test01")
-    val jv   = System.getProperty("java.version")
+    val jv = System.getProperty("java.version")
     assertNotNull(jv)
     assertEquals(jv, conf.getString("system.javaversion"))
     val home = System.getenv("HOME")
@@ -1099,7 +1099,7 @@ class ConfigTest extends TestUtils {
     // we can't ever test an expected serialization here because it
     // will have system props in it that vary by test system,
     // and the ConfigOrigin in there will also vary by test system
-    val conf     = ConfigFactory.load("test01")
+    val conf = ConfigFactory.load("test01")
     val confCopy = checkSerializable(conf)
   }
 
@@ -1313,10 +1313,10 @@ class ConfigTest extends TestUtils {
   def renderRoundTrip(): Unit = {
     val allBooleans = true :: false :: Nil
     val optionsCombos = {
-      for (formatted      <- allBooleans;
-           originComments <- allBooleans;
-           comments       <- allBooleans;
-           json           <- allBooleans)
+      for (formatted <- allBooleans;
+          originComments <- allBooleans;
+          comments <- allBooleans;
+          json <- allBooleans)
         yield ConfigRenderOptions.defaults
           .setFormatted(formatted)
           .setOriginComments(originComments)
@@ -1326,7 +1326,7 @@ class ConfigTest extends TestUtils {
 
     for (i <- 1 to 10) {
       val numString = i.toString
-      val name      = "/test" + { if (numString.size == 1) "0" else "" } + numString
+      val name = "/test" + { if (numString.size == 1) "0" else "" } + numString
       val conf = ConfigFactory.parseResourcesAnySyntax(
         classOf[ConfigTest],
         name,
@@ -1334,8 +1334,8 @@ class ConfigTest extends TestUtils {
       )
       for (renderOptions <- optionsCombos) {
         val unresolvedRender = conf.root.render(renderOptions)
-        val resolved         = conf.resolve()
-        val resolvedRender   = resolved.root.render(renderOptions)
+        val resolved = conf.resolve()
+        val resolvedRender = resolved.root.render(renderOptions)
         val unresolvedParsed = ConfigFactory.parseString(
           unresolvedRender,
           ConfigParseOptions.defaults
@@ -1398,7 +1398,7 @@ class ConfigTest extends TestUtils {
   def serializeRoundTrip(): Unit = {
     for (i <- 1 to 10) {
       val numString = i.toString
-      val name      = "/test" + { if (numString.size == 1) "0" else "" } + numString
+      val name = "/test" + { if (numString.size == 1) "0" else "" } + numString
       val conf = ConfigFactory.parseResourcesAnySyntax(
         classOf[ConfigTest],
         name,
@@ -1508,7 +1508,7 @@ class ConfigTest extends TestUtils {
     // the a=42 is present here to be sure it gets ignored when we resolveWith
     val unresolved = ConfigFactory.parseString("foo = ${a}, a = 42")
     assertEquals(42, unresolved.resolve().getInt("foo"))
-    val source   = ConfigFactory.parseString("a = 43")
+    val source = ConfigFactory.parseString("a = 43")
     val resolved = unresolved.resolveWith(source)
     assertEquals(43, resolved.getInt("foo"))
   }

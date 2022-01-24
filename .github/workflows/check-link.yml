@@ -1,0 +1,11 @@
+name: Check Lint
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+jobs:
+  check-lint:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - run: ./scripts/check-lint.sh

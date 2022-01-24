@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -59,7 +59,7 @@ object DefaultTransformer {
       // get a missing-value error if you tried to get a null value
       // as a string.
       value.valueType match {
-        //case NUMBER => // FALL THROUGH
+        // case NUMBER => // FALL THROUGH
         case NUMBER | BOOLEAN =>
           retVal =
             new ConfigString.Quoted(value.origin, value.transformToString)
@@ -76,7 +76,7 @@ object DefaultTransformer {
       // as lists in most cases, we'll refuse to convert if the object
       // does not contain any numeric keys. This means we don't allow
       // empty objects here though :-/
-      val o      = value.asInstanceOf[AbstractConfigObject]
+      val o = value.asInstanceOf[AbstractConfigObject]
       val values = new ju.HashMap[Integer, AbstractConfigValue]
       for (key <- o.keySet.asScala) {
         breakable {

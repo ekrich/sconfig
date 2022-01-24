@@ -1,5 +1,5 @@
 /**
- *   Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
+ * Copyright (C) 2011-2012 Typesafe Inc. <http://typesafe.com>
  */
 package org.ekrich.config.impl
 
@@ -16,7 +16,6 @@ import org.ekrich.config.ConfigValueType
  * where it was set to null) in case someone asks for the value. Also, null
  * overrides values set "earlier" in the search path, while missing values do
  * not.
- *
  */
 @SerialVersionUID(2L)
 final class ConfigNull(origin: ConfigOrigin)
