@@ -21,7 +21,7 @@ If you are looking for the original Java API, see
 
 
 ## Sonatype
-[![Maven Central](https://img.shields.io/maven-central/v/org.ekrich/sconfig_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig_2.11)
+[![Maven Central](https://img.shields.io/maven-central/v/org.ekrich/sconfig_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig_2.13)
 
 ```scala
 libraryDependencies += "org.ekrich" %% "sconfig" % "x.y.z"
@@ -29,7 +29,7 @@ libraryDependencies += "org.ekrich" %% "sconfig" % "x.y.z"
 
 To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above.
 
-For non-JVM projects use `%%%` but please refer to the guide below for **critical** Scala Native and Scala.js usage information. The TLDR is that you must add a `java.time` library dependency to your project. Currently, the only library available is `sjavatime`. Refer to the [`sjavatime` home page](https://github.com/ekrich/sjavatime) for the current version.
+For non-JVM projects use `%%%` but please refer to the guide below for **critical** Scala Native and Scala.js usage information. The TLDR is that you must add a `java.time` library dependency to your project. Refer to the [`sjavatime` home page](https://github.com/ekrich/sjavatime) for the current version or alternative `java.time` libraries.
 
 [Scala Native and Scala.js](docs/SCALA-NATIVE.md) - A guide to using Scala Native and Scala.js.
 
@@ -48,7 +48,7 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 Note: Scala 3 support on Scala Native 0.4.3-RC2 or greater.
 
 ## Usage and Help
-[![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.11.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.11)
+[![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.13.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.13)
 [![scaladoc](https://javadoc.io/badge/org.ekrich/sconfig_3.svg?label=scaladoc3)](https://javadoc.io/doc/org.ekrich/sconfig_3)
 [![Discord](https://img.shields.io/discord/633356833498595365.svg?label=&logo=discord&logoColor=ffffff&color=404244&labelColor=6A7EC2)](https://discord.gg/XSj6hQs)
 
@@ -114,6 +114,7 @@ At a high level, the process is as follows:
 
 ## Versions
 
+Release [1.4.9](https://github.com/ekrich/sconfig/releases/tag/v1.4.9) - (2022-01-25)<br/>
 Release [1.4.8](https://github.com/ekrich/sconfig/releases/tag/v1.4.8) - (2022-01-12)<br/>
 Release [1.4.7](https://github.com/ekrich/sconfig/releases/tag/v1.4.7) - (2022-01-03)<br/>
 Release [1.4.6](https://github.com/ekrich/sconfig/releases/tag/v1.4.6) - (2021-12-06)<br/>
