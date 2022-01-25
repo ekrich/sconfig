@@ -43,16 +43,14 @@ val scala212 = "2.12.15"
 val scala213 = "2.13.8"
 val scala300 = "3.1.0"
 
-val javaTime = "1.1.8"
+val javaTime = "1.1.9"
 val scCompat = "2.6.0"
 
 val versionsBase = Seq(scala211, scala212, scala213)
-val versionsJVM = versionsBase :+ scala300
-val versionsJS = versionsJVM
-val versionsNative = versionsJVM
+val versions = versionsBase :+ scala300
 
 ThisBuild / scalaVersion := scala212
-ThisBuild / crossScalaVersions := versionsJVM
+ThisBuild / crossScalaVersions := versions
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / mimaFailOnNoPrevious := false
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
@@ -132,7 +130,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     }
   )
   .jvmSettings(
-    crossScalaVersions := versionsJVM,
+    crossScalaVersions := versions,
     sharedJvmNativeSource,
     libraryDependencies ++= Seq(
       ("io.crashbox" %% "spray-json" % "1.3.5-7" % Test)
@@ -167,7 +165,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
   .nativeSettings(
-    crossScalaVersions := versionsNative,
+    crossScalaVersions := versions,
     sharedJvmNativeSource,
     nativeLinkStubs := true,
     logLevel := Level.Info, // Info or Debug
@@ -179,7 +177,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   )
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
-    crossScalaVersions := versionsJS,
+    crossScalaVersions := versions,
     libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
   )
 
