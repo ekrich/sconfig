@@ -455,15 +455,15 @@ final class SimpleConfigOrigin protected (
     if (other.isInstanceOf[SimpleConfigOrigin]) {
       val otherOrigin = other.asInstanceOf[SimpleConfigOrigin]
       this._description == otherOrigin._description && this.lineNumber == otherOrigin.lineNumber &&
-      this.endLineNumber == otherOrigin.endLineNumber && (this.originType eq otherOrigin.originType) &&
-      ConfigImplUtil.equalsHandlingNull(
-        this.urlOrNull,
-        otherOrigin.urlOrNull
-      ) &&
-      ConfigImplUtil.equalsHandlingNull(
-        this.resourceOrNull,
-        otherOrigin.resourceOrNull
-      )
+        this.endLineNumber == otherOrigin.endLineNumber && (this.originType eq otherOrigin.originType) &&
+        ConfigImplUtil.equalsHandlingNull(
+          this.urlOrNull,
+          otherOrigin.urlOrNull
+        ) &&
+        ConfigImplUtil.equalsHandlingNull(
+          this.resourceOrNull,
+          otherOrigin.resourceOrNull
+        )
     } else false
 
   override def hashCode: Int = {

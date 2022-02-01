@@ -4,7 +4,7 @@
 # set -x
 
 HERE="`dirname $0`"
-VERSION="3.3.2"
+VERSION="3.4.0"
 COURSIER="$HERE/.coursier"
 SCALAFMT="$HERE/.scalafmt-$VERSION"
 
