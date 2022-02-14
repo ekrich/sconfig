@@ -52,8 +52,8 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
           case _: EOFException =>
           case e: IOException =>
             System.err.println(
-              s"error handling http request: ${e.getClass.getName}: ${e.getMessage} ${e.getStackTrace
-                .mkString("\n")}"
+              s"""error handling http request: ${e.getClass.getName}: ${e.getMessage}
+                 | ${e.getStackTrace.mkString("\n")}""".stripMargin
             )
         }
         false

@@ -31,8 +31,9 @@ object FileUtils {
     if (!f.exists()) {
       val here = new File(".").getAbsolutePath
       throw new Exception(
-        s"Tests must be run from the root project directory containing ${f
-          .getPath()}, however the current directory is $here"
+        s"""Tests must be run from the root project directory containing
+           | ${f.getPath()}, however the current directory is
+           | ${here}""".stripMargin
       )
     }
     f
