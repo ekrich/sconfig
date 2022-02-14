@@ -4,11 +4,11 @@
 package org.ekrich.config
 
 /**
- * Implement this interface and provide an instance to {@link
- * ConfigParseOptions#setIncluder ConfigParseOptions.setIncluder()} to customize
- * handling of {@code include} statements in config files. You may also want to
- * implement {@link ConfigIncluderClasspath}, {@link ConfigIncluderFile}, and
- * {@link ConfigIncluderURL}, or not.
+ * Implement this interface and provide an instance to
+ * [[ConfigParseOptions#setIncluder ConfigParseOptions.setIncluder()]] to
+ * customize handling of {@code include} statements in config files. You may
+ * also want to implement {@link ConfigIncluderClasspath},
+ * [[ConfigIncluderFile]], and {@link ConfigIncluderURL}, or not.
  */
 trait ConfigIncluder {
 

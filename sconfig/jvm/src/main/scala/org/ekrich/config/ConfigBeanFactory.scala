@@ -11,8 +11,7 @@ import org.ekrich.config.impl.ConfigBeanImpl
 object ConfigBeanFactory {
 
   /**
-   * Creates an instance of a class, initializing its fields from a {@link
-   * Config}.
+   * Creates an instance of a class, initializing its fields from a [[Config]].
    *
    * Example usage:
    *

@@ -173,8 +173,8 @@ final class ConfigParseOptions private (
 
   /**
    * Prepends a {@link ConfigIncluder} which customizes how includes are
-   * handled. To prepend your includer, the library calls {@link
-   * ConfigIncluder#withFallback} on your includer to append the existing
+   * handled. To prepend your includer, the library calls
+   * [[ConfigIncluder#withFallback]] on your includer to append the existing
    * includer to it.
    *
    * @param includer

@@ -9,12 +9,12 @@ import java.{util => ju}
  * Subtype of {@link ConfigValue} representing an object (AKA dictionary or map)
  * value, as in JSON's curly brace <code>{ "a" : 42 }</code> syntax.
  *
- * <p> An object may also be viewed as a {@link Config} by calling {@link
- * ConfigObject#toConfig}.
+ * <p> An object may also be viewed as a {@link Config} by calling
+ * [[ConfigObject#toConfig]].
  *
  * <p> {@code ConfigObject} implements {@code java.util.Map<String,
- * ConfigValue>} so you can use it like a regular Java map. Or call {@link
- * #unwrapped} to unwrap the map to a map with plain Java values rather than
+ * ConfigValue>} so you can use it like a regular Java map. Or call
+ * [[#unwrapped]] to unwrap the map to a map with plain Java values rather than
  * {@code ConfigValue}.
  *
  * <p> Like all {@link ConfigValue} subtypes, {@code ConfigObject} is immutable.
@@ -22,8 +22,8 @@ import java.{util => ju}
  * mutator methods from `java.util.Map` all throw
  * `java.lang.UnsupportedOperationException`.
  *
- * <p> The {@link ConfigValue#valueType} method on an object returns {@link
- * ConfigValueType#OBJECT}.
+ * <p> The {@link ConfigValue#valueType} method on an object returns
+ * [[ConfigValueType#OBJECT]].
  *
  * <p> In most cases you want to use the {@link Config} interface rather than
  * this one. Call {@link #toConfig} to convert a {@code ConfigObject} to a
@@ -39,9 +39,9 @@ import java.{util => ju}
  * [[ConfigUtil$.splitPath ConfigUtil.splitPath(String)]] to convert between
  * path expressions and individual path elements (keys).
  *
- * <p> A {@code ConfigObject} may contain null values, which will have {@link
- * ConfigValue#valueType} equal to {@link ConfigValueType#NULL}. If {@link
- * ConfigObject#get} returns Java's null then the key was not present in the
+ * <p> A {@code ConfigObject} may contain null values, which will have
+ * [[ConfigValue#valueType]] equal to {@link ConfigValueType#NULL}. If
+ * [[ConfigObject#get]] returns Java's null then the key was not present in the
  * parsed file (or wherever this value tree came from). If {@code get("key")}
  * returns a {@link ConfigValue} with type {@code ConfigValueType#NULL} then the
  * key was set to null explicitly in the config file.
@@ -77,9 +77,9 @@ trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
 
   /**
    * Gets a {@link ConfigValue} at the given key, or returns null if there is no
-   * value. The returned {@link ConfigValue} may have {@link
-   * ConfigValueType#NULL} or any other type, and the passed-in key must be a
-   * key in this object (rather than a path expression).
+   * value. The returned {@link ConfigValue} may have [[ConfigValueType#NULL]]
+   * or any other type, and the passed-in key must be a key in this object
+   * (rather than a path expression).
    *
    * @param key
    *   key to look up

@@ -13,11 +13,11 @@ package org.ekrich.config
  * is an example of creating a custom {@code ConfigResolveOptions}:
  *
  * <pre> ConfigResolveOptions options = ConfigResolveOptions.defaults()
- * .setUseSystemEnvironment(false) </pre> <p> In addition to {@link
- * ConfigResolveOptions#defaults}, there's a prebuilt {@link
- * ConfigResolveOptions#noSystem} which avoids looking at any system environment
- * variables or other external system information. (Right now, environment
- * variables are the only example.)
+ * .setUseSystemEnvironment(false) </pre> <p> In addition to
+ * [[ConfigResolveOptions#defaults]], there's a prebuilt
+ * [[ConfigResolveOptions#noSystem]] which avoids looking at any system
+ * environment variables or other external system information. (Right now,
+ * environment variables are the only example.)
  */
 object ConfigResolveOptions {
 

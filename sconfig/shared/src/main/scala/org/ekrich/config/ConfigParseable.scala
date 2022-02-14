@@ -4,8 +4,8 @@
 package org.ekrich.config
 
 /**
- * An opaque handle to something that can be parsed, obtained from {@link
- * ConfigIncludeContext}.
+ * An opaque handle to something that can be parsed, obtained from
+ * [[ConfigIncludeContext]].
  *
  * <p> <em>Do not implement this interface</em>; it should only be implemented
  * by the config library. Arbitrary implementations will not work because the
@@ -16,12 +16,12 @@ package org.ekrich.config
 trait ConfigParseable {
 
   /**
-   * Parse whatever it is. The options should come from {@link
-   * ConfigParseable#options options()} but you could tweak them if you like.
+   * Parse whatever it is. The options should come from
+   * [[ConfigParseable#options options()]] but you could tweak them if you like.
    *
    * @param options
-   *   parse options, should be based on the ones from {@link
-   *   ConfigParseable#options options()}
+   *   parse options, should be based on the ones from
+   *   [[ConfigParseable#options options()]]
    * @return
    *   the parsed object
    */

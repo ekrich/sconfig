@@ -67,8 +67,8 @@ object ConfigValueFactory {
    * See the
    * [[#fromAnyRef(obj:Object,originDescription:String)* fromAnyRef(Object,String)]]
    * documentation for details. This is a typesafe wrapper that only works on
-   * `java.util.Map` and returns {@link ConfigObject} rather than {@link
-   * ConfigValue}.
+   * `java.util.Map` and returns {@link ConfigObject} rather than
+   * [[ConfigValue]].
    *
    * <p> If your <code>Map</code> has a key "foo.bar" then you will get one
    * object with a key called "foo.bar", rather than an object with a key "foo"
@@ -99,8 +99,8 @@ object ConfigValueFactory {
    * See the
    * [[#fromAnyRef(obj:Object,originDescription:String)* fromAnyRef(Object,String)]]
    * documentation for details. This is a typesafe wrapper that only works on
-   * `java.lang.Iterable` and returns {@link ConfigList} rather than {@link
-   * ConfigValue}.
+   * `java.lang.Iterable` and returns {@link ConfigList} rather than
+   * [[ConfigValue]].
    *
    * @param values
    *   list of plain Java values

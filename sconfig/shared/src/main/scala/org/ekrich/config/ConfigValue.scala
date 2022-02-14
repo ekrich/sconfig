@@ -39,8 +39,8 @@ trait ConfigValue extends ConfigMergeable {
    * Returns the value as a plain Java boxed value, that is, a {@code String},
    * {@code Number}, {@code Boolean}, {@code Map<String,Object>}, {@code
    * List<Object>}, or {@code null}, matching the {@link #valueType} of this
-   * {@code ConfigValue}. If the value is a {@link ConfigObject} or {@link
-   * ConfigList}, it is recursively unwrapped.
+   * {@code ConfigValue}. If the value is a {@link ConfigObject} or
+   * [[ConfigList]], it is recursively unwrapped.
    *
    * @return
    *   a plain Java value corresponding to this ConfigValue
@@ -89,8 +89,8 @@ trait ConfigValue extends ConfigMergeable {
   override def withFallback(other: ConfigMergeable): ConfigValue
 
   /**
-   * Places the value inside a {@link Config} at the given path. See also {@link
-   * ConfigValue#atKey}.
+   * Places the value inside a {@link Config} at the given path. See also
+   * [[ConfigValue#atKey]].
    *
    * @param path
    *   path to store this value at.
@@ -100,8 +100,8 @@ trait ConfigValue extends ConfigMergeable {
   def atPath(path: String): Config
 
   /**
-   * Places the value inside a {@link Config} at the given key. See also {@link
-   * ConfigValue#atPath}.
+   * Places the value inside a {@link Config} at the given key. See also
+   * [[ConfigValue#atPath]].
    *
    * @param key
    *   key to store this value at.

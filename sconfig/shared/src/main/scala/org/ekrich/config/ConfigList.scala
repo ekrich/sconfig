@@ -18,8 +18,8 @@ import java.{util => ju}
  * mutator methods from `java.util.List` all throw
  * `java.lang.UnsupportedOperationException`.
  *
- * <p> The {@link ConfigValue#valueType} method on a list returns {@link
- * ConfigValueType#LIST}.
+ * <p> The {@link ConfigValue#valueType} method on a list returns
+ * [[ConfigValueType#LIST]].
  *
  * <p> <em>Do not implement {@code ConfigList}</em>; it should only be
  * implemented by the config library. Arbitrary implementations will not work

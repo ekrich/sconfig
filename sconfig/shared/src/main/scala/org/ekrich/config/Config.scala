@@ -15,8 +15,8 @@ import scala.annotation.varargs
 /**
  * An immutable map from config paths to config values. Paths are dot-separated
  * expressions such as <code>foo.bar.baz</code>. Values are as in JSON
- * (booleans, strings, numbers, lists, or objects), represented by {@link
- * ConfigValue} instances. Values accessed through the <code>Config</code>
+ * (booleans, strings, numbers, lists, or objects), represented by
+ * [[ConfigValue]] instances. Values accessed through the <code>Config</code>
  * interface are never null.
  *
  * <p> {@code Config} is an immutable object and thus safe to use from multiple
@@ -74,8 +74,8 @@ import scala.annotation.varargs
  * <p> <strong>Getting configuration values</strong>
  *
  * <p> The "getters" on a {@code Config} all work in the same way. They never
- * return null, nor do they return a {@code ConfigValue} with {@link
- * ConfigValue#valueType valueType} of {@link ConfigValueType#NULL NULL}.
+ * return null, nor do they return a {@code ConfigValue} with
+ * [[ConfigValue#valueType valueType]] of {@link ConfigValueType#NULL NULL}.
  * Instead, they throw {@link ConfigException.Missing} if the value is
  * completely absent or set to null. If the value is set to null, a subtype of
  * {@code ConfigException.Missing} called {@link ConfigException.Null} will be
@@ -363,19 +363,19 @@ trait Config extends ConfigMergeable {
 
   /**
    * Checks whether a value is present and non-null at the given path. This
-   * differs in two ways from {@code Map.containsKey} as implemented by {@link
-   * ConfigObject}: it looks for a path expression, not a key; and it returns
+   * differs in two ways from {@code Map.containsKey} as implemented by
+   * [[ConfigObject]]: it looks for a path expression, not a key; and it returns
    * false for null values, while {@code containsKey} returns true indicating
    * that the object contains a null value for the key.
    *
    * <p> If a path exists according to {@link #hasPath}, then {@link #getValue}
-   * will never throw an exception. However, the typed getters, such as {@link
-   * #getInt}, will still throw if the value is not convertible to the requested
-   * type.
+   * will never throw an exception. However, the typed getters, such as
+   * [[#getInt]], will still throw if the value is not convertible to the
+   * requested type.
    *
    * <p> Note that path expressions have a syntax and sometimes require quoting
-   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link
-   * ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and
+   * [[ConfigUtil#splitPath]]).
    *
    * @param path
    *   the path expression
@@ -389,9 +389,9 @@ trait Config extends ConfigMergeable {
   /**
    * Checks whether a value is present at the given path, even if the value is
    * null. Most of the getters on <code>Config</code> will throw if you try to
-   * get a null value, so if you plan to call {@link #getValue}, {@link
-   * #getInt}, or another getter you may want to use plain {@link #hasPath}
-   * rather than this method.
+   * get a null value, so if you plan to call {@link #getValue}, [[#getInt]], or
+   * another getter you may want to use plain {@link #hasPath} rather than this
+   * method.
    *
    * <p> To handle all three cases (unset, null, and a non-null value) the code
    * might look like:
@@ -409,12 +409,12 @@ trait Config extends ConfigMergeable {
    *
    * <p> However, the usual thing is to allow entirely unset paths to be a bug
    * that throws an exception (because you set a default in your
-   * <code>reference.conf</code>), so in that case it's OK to call {@link
-   * #getIsNull} without checking <code>hasPathOrNull</code> first.
+   * <code>reference.conf</code>), so in that case it's OK to call
+   * [[#getIsNull]] without checking <code>hasPathOrNull</code> first.
    *
    * <p> Note that path expressions have a syntax and sometimes require quoting
-   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link
-   * ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and
+   * [[ConfigUtil#splitPath]]).
    *
    * @param path
    *   the path expression
@@ -465,8 +465,8 @@ trait Config extends ConfigMergeable {
    * should never be unset unless something is broken).
    *
    * <p> Note that path expressions have a syntax and sometimes require quoting
-   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link
-   * ConfigUtil#splitPath}).
+   * (see [[ConfigUtil$.joinPath(elements:String*)*]] and
+   * [[ConfigUtil#splitPath]]).
    *
    * @param path
    *   the path expression
@@ -604,8 +604,8 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets the value at the path as an unwrapped Java boxed value (
-   * `java.lang.Boolean` `java.lang.Integer`, and so on - see {@link
-   * ConfigValue#unwrapped}).
+   * `java.lang.Boolean` `java.lang.Integer`, and so on - see
+   * [[ConfigValue#unwrapped]]).
    *
    * @param path
    *   path expression
@@ -916,8 +916,8 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets a list value with any kind of elements. Throws if the path is unset or
-   * null or not a list. Each element is "unwrapped" (see {@link
-   * ConfigValue#unwrapped}).
+   * null or not a list. Each element is "unwrapped" (see
+   * [[ConfigValue#unwrapped]]).
    *
    * @param path
    *   the path to the list value.
@@ -1005,8 +1005,7 @@ trait Config extends ConfigMergeable {
   /**
    * Clone the config with the given path removed. <p> Note that path
    * expressions have a syntax and sometimes require quoting (see
-   * [[ConfigUtil$.joinPath(elements:String*)*]] and {@link
-   * ConfigUtil#splitPath}).
+   * [[ConfigUtil$.joinPath(elements:String*)*]] and [[ConfigUtil#splitPath]]).
    *
    * @param path
    *   path expression to remove
@@ -1018,8 +1017,7 @@ trait Config extends ConfigMergeable {
   /**
    * Places the config inside another {@code Config} at the given path. <p> Note
    * that path expressions have a syntax and sometimes require quoting (see
-   * [[ConfigUtil$.joinPath(elements:String*)*]] and {@link
-   * ConfigUtil#splitPath}).
+   * [[ConfigUtil$.joinPath(elements:String*)*]] and [[ConfigUtil#splitPath]]).
    *
    * @param path
    *   path expression to store this config at.
@@ -1031,8 +1029,7 @@ trait Config extends ConfigMergeable {
   /**
    * Places the config inside a {@code Config} at the given key. See also
    * atPath. Note that a key is NOT a path expression (see
-   * [[ConfigUtil$.joinPath(elements:String*)*]] and {@link
-   * ConfigUtil#splitPath}).
+   * [[ConfigUtil$.joinPath(elements:String*)*]] and [[ConfigUtil#splitPath]]).
    *
    * @param key
    *   key to store this config at.
@@ -1046,8 +1043,8 @@ trait Config extends ConfigMergeable {
    * the given value. Does not modify this instance (since it's immutable). If
    * the path already has a value, that value is replaced. To remove a value,
    * use withoutPath. <p> Note that path expressions have a syntax and sometimes
-   * require quoting (see [[ConfigUtil$.joinPath(elements:String*)*]] and {@link
-   * ConfigUtil#splitPath}).
+   * require quoting (see [[ConfigUtil$.joinPath(elements:String*)*]] and
+   * [[ConfigUtil#splitPath]]).
    *
    * @param path
    *   path expression for the value's new location

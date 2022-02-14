@@ -1,10 +1,10 @@
 package org.ekrich.config
 
 /**
- * Implement this interface and provide an instance to {@link
- * ConfigResolveOptions#appendResolver ConfigResolveOptions.appendResolver()} to
- * provide custom behavior when unresolved substitutions are encountered during
- * resolution.
+ * Implement this interface and provide an instance to
+ * [[ConfigResolveOptions#appendResolver ConfigResolveOptions.appendResolver()]]
+ * to provide custom behavior when unresolved substitutions are encountered
+ * during resolution.
  *
  * @since 1.3.2
  */

@@ -7,10 +7,10 @@ import java.net.URL
 import java.util.List
 
 /**
- * Represents the origin (such as filename and line number) of a {@link
- * ConfigValue} for use in error messages. Obtain the origin of a value with
- * {@link ConfigValue#origin}. Exceptions may have an origin, see {@link
- * ConfigException#origin}, but be careful because
+ * Represents the origin (such as filename and line number) of a [[ConfigValue]]
+ * for use in error messages. Obtain the origin of a value with
+ * [[ConfigValue#origin]]. Exceptions may have an origin, see
+ * [[ConfigException#origin]], but be careful because
  * <code>ConfigException.origin()</code> may return null.
  *
  * <p> It's best to use this interface only for debugging; its accuracy is "best
@@ -105,8 +105,8 @@ trait ConfigOrigin {
    * Returns a {@code ConfigOrigin} based on this one, but with the given line
    * number. This origin must be a FILE, URL or RESOURCE. Does not modify this
    * instance or any {@code ConfigValue}s with this origin (since they are
-   * immutable). To set the returned origin to a {@code ConfigValue}, use {@link
-   * ConfigValue#withOrigin}.
+   * immutable). To set the returned origin to a {@code ConfigValue}, use
+   * [[ConfigValue#withOrigin]].
    *
    * <p> Note that when the given lineNumber are equal to the lineNumber on this
    * object, a new instance may not be created and {@code this} is returned
