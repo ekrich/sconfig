@@ -415,7 +415,7 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
       canEqual(other) && (this.wasConfig == other
         .asInstanceOf[SerializedConfigValue]
         .wasConfig) &&
-      (this.value == other.asInstanceOf[SerializedConfigValue].value)
+        (this.value == other.asInstanceOf[SerializedConfigValue].value)
     else false
   }
   override def hashCode: Int = {
