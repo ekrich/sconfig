@@ -20,7 +20,7 @@ If you are looking for the original Java API, see
 [https://github.com/lightbend/config](https://github.com/lightbend/config).
 
 
-## Sonatype
+## Getting Started
 [![Maven Central](https://img.shields.io/maven-central/v/org.ekrich/sconfig_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig_2.13)
 
 ```scala
@@ -62,7 +62,7 @@ in this library.
 
 For specific changes, refer to the releases below.
 
-### Migrating an existing Scala project from [lightbend/config](https://github.com/lightbend/config) to sconfig
+## Migrating an existing [lightbend/config](https://github.com/lightbend/config) project to sconfig
 
 [![sconfig Scala version support](https://index.scala-lang.org/ekrich/sconfig/sconfig/latest.svg)](https://index.scala-lang.org/ekrich/sconfig/sconfig)
 [![Latest scalafix version](https://index.scala-lang.org/scalacenter/scalafix/scalafix-core/latest.svg)](https://index.scala-lang.org/scalacenter/scalafix/scalafix-core)
