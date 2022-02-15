@@ -121,9 +121,12 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     },
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
     // dottydoc really doesn't work at all right now
+    // also avoid 2.11 and Java 9+ https://github.com/scala/bug/issues/11635
     Compile / doc / sources := {
       val old = (Compile / doc / sources).value
-      if (isScala3.value)
+      val is211 =
+        CrossVersion.partialVersion(scalaVersion.value) == Some((2, 11))
+      if (isScala3.value || is211)
         Seq()
       else
         old
