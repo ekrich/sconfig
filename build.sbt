@@ -167,16 +167,13 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
+  .nativeConfigure(_.enablePlugins(ScalaNativeJUnitPlugin))
   .nativeSettings(
     crossScalaVersions := versions,
     sharedJvmNativeSource,
     nativeLinkStubs := true,
     logLevel := Level.Info, // Info or Debug
-    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided",
-    addCompilerPlugin(
-      "org.scala-native" % "junit-plugin" % nativeVersion cross CrossVersion.full
-    ),
-    libraryDependencies += "org.scala-native" %%% "junit-runtime" % nativeVersion
+    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
   )
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
