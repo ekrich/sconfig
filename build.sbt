@@ -44,12 +44,12 @@ val scala213 = "2.13.8"
 val scala300 = "3.1.1"
 
 val javaTime = "1.1.9"
-val scCompat = "2.7.0"
+val scCompat = "2.6.0"
 
 val versionsBase = Seq(scala211, scala212, scala213)
 val versions = versionsBase :+ scala300
 
-ThisBuild / scalaVersion := scala212
+ThisBuild / scalaVersion := scala213
 ThisBuild / crossScalaVersions := versions
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / mimaFailOnNoPrevious := false
@@ -112,13 +112,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     scalacOptions ++= {
       if (isScala3.value) dotcOpts else scalacOpts
     },
-    libraryDependencies ++= {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, n)) if n <= 12 =>
-          Seq("org.scala-lang.modules" %%% "scala-collection-compat" % scCompat)
-        case _ => Nil
-      }
-    },
+    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat,
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
     // dottydoc really doesn't work at all right now
     // also avoid 2.11 and Java 9+ https://github.com/scala/bug/issues/11635
