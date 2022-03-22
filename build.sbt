@@ -134,7 +134,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   )
   .jvmSettings(
     crossScalaVersions := versions,
-    sharedJvmNativeSource,
     libraryDependencies ++= Seq(
       ("io.crashbox" %% "spray-json" % "1.3.5-7" % Test)
         .cross(CrossVersion.for3Use2_13),
@@ -170,7 +169,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .nativeConfigure(_.enablePlugins(ScalaNativeJUnitPlugin))
   .nativeSettings(
     crossScalaVersions := versions,
-    sharedJvmNativeSource,
     nativeLinkStubs := true,
     logLevel := Level.Info, // Info or Debug
     libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
@@ -223,13 +221,6 @@ lazy val `scalafix-tests` = (project in file("scalafix/tests"))
   )
   .dependsOn(`scalafix-rules`)
   .enablePlugins(ScalafixTestkitPlugin)
-
-lazy val sharedJvmNativeSource: Seq[Setting[_]] = Def.settings(
-  Compile / unmanagedSourceDirectories += {
-    val projectDir = baseDirectory.value.getParentFile()
-    projectDir / "shared" / "src" / "main" / "scala-jvm-native"
-  }
-)
 
 lazy val sconfigJVM = sconfig.jvm
   .dependsOn(testLibJVM % "test->test")
