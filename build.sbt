@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.4.7"
-val nextVersion = "1.4.8"
+val prevVersion = "1.4.9"
+val nextVersion = "1.5.0"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
