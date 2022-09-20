@@ -121,7 +121,7 @@ import scala.annotation.varargs
  *
  * <p> Convert a <code>Config</code> to a JSON or HOCON string by calling
  * [[#root root]] to get the [[ConfigObject]] and then call
- * [[ConfigValue!.render:String* render]] on the root object,
+ * [[ConfigValue!.render():String render]] on the root object,
  * <code>myConfig.root.render</code>. There's also a variant
  * [[ConfigValue!.render(options:org\.ekrich\.config\.ConfigRenderOptions)* render(ConfigRenderOptions)]]
  * inherited from [[ConfigValue]] which allows you to control the format of the
@@ -130,9 +130,10 @@ import scala.annotation.varargs
  * if you load, modify, and re-save a config file, it will be substantially
  * reformatted.
  *
- * <p> As an alternative to [[ConfigValue!.render:String* render]], the
+ * <p> As an alternative to [[ConfigValue!.render render]], the
  * <code>toString</code> method produces a debug-output-oriented representation
  * (which is not valid JSON).
+ * Note: no arg render links do not link correctly. See https://github.com/lampepfl/dotty/issues/14212
  *
  * <p> Java serialization is supported as well for <code>Config</code> and all
  * subtypes of <code>ConfigValue</code>.

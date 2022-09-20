@@ -40,7 +40,7 @@ object DefaultTransformer {
             case e: NumberFormatException =>
             // oh well.
           }
-          value
+          retVal
         case NULL =>
           if (s == "null") // this case needs test
             retVal = new ConfigNull(value.origin)

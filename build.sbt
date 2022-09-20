@@ -38,22 +38,21 @@ val isScala3 = Def.setting {
   }
 }
 
-val scala211 = "2.11.12"
-val scala212 = "2.12.16"
+val scala212 = "2.12.17"
 val scala213 = "2.13.8"
-val scala300 = "3.2.0"
+val scala3 = "3.2.0"
 
 val javaTime = "1.1.9"
 val scCompat = "2.8.1"
 
-val versionsBase = Seq(scala211, scala212, scala213)
-val versions = versionsBase :+ scala300
+val versionsBase = Seq(scala212, scala213)
+val versions = versionsBase :+ scala3
 
-ThisBuild / scalaVersion := scala213
+ThisBuild / scalaVersion := scala3
 ThisBuild / crossScalaVersions := versions
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / mimaFailOnNoPrevious := false
-ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
+ThisBuild / resolvers ++= Resolver.sonatypeOssRepos("snapshots")
 
 Compile / packageBin / packageOptions +=
   Package.ManifestAttributes("Automatic-Module-Name" -> "org.ekrich.sconfig")
@@ -113,18 +112,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       if (isScala3.value) dotcOpts else scalacOpts
     },
     libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat,
-    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
-    // dottydoc really doesn't work at all right now
-    // also avoid 2.11 and Java 9+ https://github.com/scala/bug/issues/11635
-    Compile / doc / sources := {
-      val old = (Compile / doc / sources).value
-      val is211 =
-        CrossVersion.partialVersion(scalaVersion.value) == Some((2, 11))
-      if (isScala3.value || is211)
-        Seq()
-      else
-        old
-    }
+    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
   )
   .jvmSettings(
     crossScalaVersions := versions,
