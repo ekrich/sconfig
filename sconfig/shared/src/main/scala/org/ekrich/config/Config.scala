@@ -133,7 +133,9 @@ import scala.annotation.varargs
  * <p> As an alternative to [[ConfigValue!.render render]], the
  * <code>toString</code> method produces a debug-output-oriented representation
  * (which is not valid JSON).
- * Note: no arg render links do not link correctly. See https://github.com/lampepfl/dotty/issues/14212
+ *
+ * Note: no arg render links do not link correctly. See
+ * https://github.com/lampepfl/dotty/issues/14212
  *
  * <p> Java serialization is supported as well for <code>Config</code> and all
  * subtypes of <code>ConfigValue</code>.
