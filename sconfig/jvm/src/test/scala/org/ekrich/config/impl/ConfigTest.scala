@@ -3,15 +3,17 @@
  */
 package org.ekrich.config.impl
 
-import java.time.temporal.{ChronoUnit, TemporalUnit}
+import java.time.temporal.ChronoUnit
 
 import org.junit.Assert._
 import org.junit._
+
 import org.ekrich.config._
-import java.util.concurrent.TimeUnit
+import org.ekrich.config.ConfigResolveOptions
 
 import scala.jdk.CollectionConverters._
-import org.ekrich.config.ConfigResolveOptions
+
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.{
   DAYS,
   HOURS,

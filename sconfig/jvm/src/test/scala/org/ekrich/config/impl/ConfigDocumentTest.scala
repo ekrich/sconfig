@@ -1,7 +1,6 @@
 package org.ekrich.config.impl
 
 import java.io.{BufferedReader, FileReader}
-import java.nio.file.{Paths, Files}
 
 import org.ekrich.config._
 import org.ekrich.config.parser._
