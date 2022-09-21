@@ -1,6 +1,6 @@
 package org.ekrich.config.impl
 
-import java.net.{URI, URL}
+import java.net.URL
 
 /**
  * To workaround missing implementation in Scala.js

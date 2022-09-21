@@ -20,8 +20,8 @@ class ConfigFactoryTests {
 
     val conf = ConfigFactory.parseString(configStr)
 
-    assert(conf.getInt("maxColumn") == 100)
-    assert(conf.getBoolean("project.git") == true)
+    assertEquals(conf.getInt("maxColumn"), 100)
+    assertEquals(conf.getBoolean("project.git"), true)
   }
 
   @Test def resolve: Unit = {
@@ -37,10 +37,10 @@ class ConfigFactoryTests {
     """.stripMargin
 
     val conf = ConfigFactory.parseString(configStr)
-    assert(conf.isResolved == false)
+    assertEquals(conf.isResolved, false)
     val rconf = conf.resolve()
-    assert(rconf.isResolved == true)
+    assertEquals(rconf.isResolved, true)
     val pattern = rconf.getList("core.extends").get(0).unwrapped
-    assert(pattern == "default")
+    assertEquals(pattern, "default")
   }
 }

@@ -5,7 +5,7 @@ package org.ekrich.config.impl
 
 import org.junit.Assert._
 import org.junit.Test
-import org.ekrich.config.ConfigException
+
 import language.implicitConversions
 
 class TokenizerTest extends TestUtils {

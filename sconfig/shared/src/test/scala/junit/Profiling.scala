@@ -1,10 +1,10 @@
 /**
  * Copyright (C) 2011 Typesafe Inc. <http://typesafe.com>
  */
-import org.ekrich.config.Config
+
 import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigException
-import java.util.concurrent.TimeUnit
+
 import scala.annotation.tailrec
 
 object Util {

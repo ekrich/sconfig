@@ -21,12 +21,11 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
 val dotcOpts = List("-unchecked", "-deprecation", "-feature")
 val scalacOpts = dotcOpts ++ List(
   "-Ywarn-unused:imports",
-  "-Xsource:3",
-  "-Xlint:nonlocal-return"
+  "-Xsource:3"
 )
 
 Compile / console / scalacOptions --= Seq(
-  "-Xlint:nonlocal-return", // for 2.12 console
+  // "-Xlint:nonlocal-return", // for 2.12 console
   "-Ywarn-unused:imports",
   "-Xfatal-warnings"
 )
@@ -39,7 +38,7 @@ val isScala3 = Def.setting {
 }
 
 val scala212 = "2.12.17"
-val scala213 = "2.13.8"
+val scala213 = "2.13.9"
 val scala3 = "3.2.0"
 
 val javaTime = "1.1.9"

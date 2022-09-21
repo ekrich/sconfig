@@ -12,7 +12,6 @@ import java.lang.reflect.Type
 import java.{util => ju}
 import java.{lang => jl}
 import java.time.Duration
-import scala.reflect.ClassTag
 import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 import scala.util.Try

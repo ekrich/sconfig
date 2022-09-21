@@ -3,7 +3,6 @@
  */
 package org.ekrich.config.impl
 
-import org.junit.Assert._
 import org.junit._
 
 class TokenTest extends TestUtils {

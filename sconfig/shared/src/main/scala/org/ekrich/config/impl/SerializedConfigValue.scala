@@ -27,7 +27,6 @@ import org.ekrich.config.ConfigList
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigValue
-import org.ekrich.config.ConfigValueType
 
 /**
  * Deliberately shoving all the serialization code into this class instead of

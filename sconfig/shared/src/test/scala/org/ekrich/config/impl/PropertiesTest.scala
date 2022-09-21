@@ -5,13 +5,13 @@ package org.ekrich.config.impl
 
 import org.junit.Assert._
 import org.junit._
+
 import java.util.{Date, Properties}
 import scala.jdk.CollectionConverters._
-import org.ekrich.config.Config
+
 import org.ekrich.config.ConfigParseOptions
 import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigException
-import org.ekrich.config.ConfigResolveOptions
 
 class PropertiesTest extends TestUtils {
   @Test
