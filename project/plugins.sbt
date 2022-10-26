@@ -8,7 +8,7 @@ val scalaNativeVersion = "0.4.7"
 val scalafix = "0.10.4"
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
-addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.10")
+addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.11")
 addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "1.1.1")
 
 // Scala Native support
