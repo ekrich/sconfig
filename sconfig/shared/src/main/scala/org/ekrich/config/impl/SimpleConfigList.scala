@@ -188,7 +188,7 @@ final class SimpleConfigList(
       // optimization to avoid unwrapped() for two ConfigList
       canEqual(other) &&
       ((value eq other.asInstanceOf[SimpleConfigList].value) ||
-        value == other.asInstanceOf[SimpleConfigList].value)
+      value == other.asInstanceOf[SimpleConfigList].value)
     } else false
   }
   override def hashCode: Int = value.hashCode
