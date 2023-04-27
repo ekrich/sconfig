@@ -42,7 +42,7 @@ val scala213 = "2.13.10"
 val scala3 = "3.2.2"
 
 val javaTime = "1.1.9"
-val scCompat = "2.9.0"
+val scCompat = "2.10.0"
 
 val versionsBase = Seq(scala212, scala213)
 val versions = versionsBase :+ scala3
