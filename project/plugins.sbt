@@ -5,7 +5,7 @@ resolvers ++= Resolver.sonatypeOssRepos("snapshots")
 val crossVer = "1.3.1"
 val scalaJSVersion = "1.13.1"
 val scalaNativeVersion = "0.4.12"
-val scalafix = "0.10.4"
+val scalafix = "0.11.0"
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
 addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.12")
