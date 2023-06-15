@@ -113,7 +113,7 @@ package object fix {
       PartialFunction.condOpt(stat) {
         case Term.Name(_) & XSymbol(XSignature(ValueSignature(tpe))) => tpe
 
-        case Term.Apply(_, _) &
+        case Term.Apply.Initial(_, _) &
             XSymbol(XSignature(ValueSignature(TypeRef(_, funcSym, _ :+ tpe))))
             if funcSym.value.startsWith("scala/Function") && funcSym.value
               .endsWith("#") =>

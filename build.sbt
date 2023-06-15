@@ -164,6 +164,7 @@ lazy val `scalafix-rules` = (project in file("scalafix/rules"))
   .settings(
     moduleName := "sconfig-scalafix",
     crossScalaVersions := versionsBase,
+    scalacOptions ++= scalacOpts,
     libraryDependencies ++= Seq(
       "ch.epfl.scala" %% "scalafix-core" % _root_.scalafix.sbt.BuildInfo.scalafixVersion
     )
