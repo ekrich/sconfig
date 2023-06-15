@@ -179,7 +179,7 @@ private object EmptyParenFunCallsOnSymbol {
     }
 
     PartialFunction.condOpt(tree) {
-      case Term.Apply(SelectSymbolEmptyParenMethod(term), List()) =>
+      case Term.Apply.Initial(SelectSymbolEmptyParenMethod(term), List()) =>
         term
     }
   }
