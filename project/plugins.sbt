@@ -3,7 +3,7 @@ resolvers ++= Resolver.sonatypeOssRepos("snapshots")
 
 // versions
 val crossVer = "1.3.1"
-val scalaJSVersion = "1.13.1"
+val scalaJSVersion = "1.13.2"
 val scalaNativeVersion = "0.4.14"
 val scalafix = "0.11.0"
 
