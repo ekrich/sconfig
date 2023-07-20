@@ -9,7 +9,7 @@ val scalafix = "0.11.0"
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
 addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.12")
-addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "1.1.2")
+addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "1.1.3")
 
 // Scala Native support
 addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % crossVer)
