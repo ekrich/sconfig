@@ -80,32 +80,23 @@ Complete setup documentation and the current `scalafix` version can be found in 
 [scalafix user guide](https://scalacenter.github.io/scalafix/docs/users/installation.html).
 At a high level, the process is as follows:
 
-1. Enable scalafix in the project's build:
+1. Add scalafix to the project's `project/plugins.sbt` file using the version found above:
 
-    * Add this to the project's `project/plugins.sbt` file using the version found above:
-
-        ```scala
-        addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "a.b.c")
-        ```
-    
-    * Add this to the project's `build.sbt`:
-    
-        ```scala
-        ThisBuild / semanticdbEnabled := true
-        ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
-        ```
+   ```scala
+   addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "a.b.c")
+   ```
    
 2. Add this project to the project's `libraryDependencies`, but don't remove the old one yet!
    
    (The old dependency needs to stay on the classpath until after the rule runs, because the 
    code must compile before it will run.)
 
-3. Run the scalafix sbt task shown below to apply the rule using the version of `sconfig`
+3. Run the scalafix sbt command shown below to apply the rule using the version of `sconfig`
    selected. Replace the `x.y.z` below with the version (must be greater than version `1.4.5`
    when scalafix was added):
 
     ```
-    scalafixAll dependency:ReplaceTypesafeConfig@org.ekrich:sconfig-scalafix:x.y.x
+    scalafixEnable; scalafixAll dependency:ReplaceTypesafeConfig@org.ekrich:sconfig-scalafix:x.y.x
     ```
    
 4. Remove the old config dependency from the project's `libraryDependencies`
