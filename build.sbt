@@ -21,7 +21,8 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
 val dotcOpts = List("-unchecked", "-deprecation", "-feature")
 val scalacOpts = dotcOpts ++ List(
   "-Ywarn-unused:imports",
-  "-Xsource:3"
+  "-Xsource:3",
+  "-Wconf:any:warning-verbose" // -quickfix:any - apply all available quick fixes
 )
 
 Compile / console / scalacOptions --= Seq(
