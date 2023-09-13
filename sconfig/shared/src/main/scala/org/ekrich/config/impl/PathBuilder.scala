@@ -9,7 +9,7 @@ import org.ekrich.config.ConfigException
 import scala.collection.mutable
 
 final class PathBuilder private[impl] () {
-  final private val keys = new mutable.ArrayStack[String]
+  final private val keys = new mutable.Stack[String]
   // the keys are kept "backward" (top of stack is end of path)
   private var resultPath: Path = null
 
