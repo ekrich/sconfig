@@ -7,7 +7,7 @@ import java.{util => ju}
 
 /**
  * Subtype of [[ConfigValue]] representing an object (AKA dictionary or map)
- * value, as in JSON's curly brace <code>{ "a" : 42 }</code> syntax.
+ * value, as in JSON's curly brace `{ "a" : 42 }` syntax.
  *
  * <p> An object may also be viewed as a [[Config]] by calling
  * [[ConfigObject#toConfig]].

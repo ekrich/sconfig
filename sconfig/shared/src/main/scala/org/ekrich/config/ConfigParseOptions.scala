@@ -19,7 +19,7 @@ import org.ekrich.config.impl.PlatformThread
 object ConfigParseOptions {
 
   /**
-   * Gets an instance of <code>ConfigParseOptions</code> with all fields set to
+   * Gets an instance of `ConfigParseOptions` with all fields set to
    * the default values. Start with this instance and make any changes you need.
    *
    * @return
@@ -224,7 +224,7 @@ final class ConfigParseOptions private (
 
   /**
    * Set the class loader. If set to null,
-   * <code>Thread.currentThread().getContextClassLoader()</code> will be used.
+   * `Thread.currentThread().getContextClassLoader()` will be used.
    *
    * @param loader
    *   a class loader or `null` to use thread context class loader
@@ -245,7 +245,7 @@ final class ConfigParseOptions private (
 
   /**
    * Get the class loader; never returns `null`, if the class loader was
-   * unset, returns <code>Thread.currentThread().getContextClassLoader()</code>.
+   * unset, returns `Thread.currentThread().getContextClassLoader()`.
    *
    * @return
    *   class loader to use

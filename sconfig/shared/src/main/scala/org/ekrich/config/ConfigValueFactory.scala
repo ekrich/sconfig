@@ -16,18 +16,18 @@ object ConfigValueFactory {
 
   /**
    * Creates a [[ConfigValue]] from a plain Java boxed value, which may be a
-   * <code>Boolean</code>, <code>Number</code>, <code>String</code>,
-   * <code>Map</code>, <code>Iterable</code>, or <code>null</code>. A
-   * <code>Map</code> must be a <code>Map</code> from String to more values that
-   * can be supplied to <code>fromAnyRef()</code>. An <code>Iterable</code> must
-   * iterate over more values that can be supplied to <code>fromAnyRef()</code>.
-   * A <code>Map</code> will become a [[ConfigObject]] and an
-   * <code>Iterable</code> will become a [[ConfigList]]. If the
-   * <code>Iterable</code> is not an ordered collection, results could be
-   * strange, since <code>ConfigList</code> is ordered.
+   * `Boolean</code>, <code>Number</code>, <code>String`,
+   * `Map</code>, <code>Iterable</code>, or <code>null`. A
+   * `Map</code> must be a <code>Map` from String to more values that
+   * can be supplied to `fromAnyRef()</code>. An <code>Iterable` must
+   * iterate over more values that can be supplied to `fromAnyRef()`.
+   * A `Map` will become a [[ConfigObject]] and an
+   * `Iterable` will become a [[ConfigList]]. If the
+   * `Iterable` is not an ordered collection, results could be
+   * strange, since `ConfigList` is ordered.
    *
-   * <p> In a <code>Map</code> passed to <code>fromAnyRef()</code>, the map's
-   * keys are plain keys, not path expressions. So if your <code>Map</code> has
+   * <p> In a `Map</code> passed to <code>fromAnyRef()`, the map's
+   * keys are plain keys, not path expressions. So if your `Map` has
    * a key "foo.bar" then you will get one object with a key called "foo.bar",
    * rather than an object with a key "foo" containing another object with a key
    * "bar".
@@ -44,8 +44,8 @@ object ConfigValueFactory {
    * information that was present in the original such as its origin, but it
    * will have matching values.
    *
-   * <p> If you pass in a <code>ConfigValue</code> to this function, it will be
-   * returned unmodified. (The <code>originDescription</code> will be ignored in
+   * <p> If you pass in a `ConfigValue` to this function, it will be
+   * returned unmodified. (The `originDescription` will be ignored in
    * this case.)
    *
    * <p> This function throws if you supply a value that cannot be converted to
@@ -70,10 +70,10 @@ object ConfigValueFactory {
    * `java.util.Map` and returns [[ConfigObject]] rather than
    * [[ConfigValue]].
    *
-   * <p> If your <code>Map</code> has a key "foo.bar" then you will get one
+   * <p> If your `Map` has a key "foo.bar" then you will get one
    * object with a key called "foo.bar", rather than an object with a key "foo"
    * containing another object with a key "bar". The keys in the map are keys;
-   * not path expressions. That is, the <code>Map</code> corresponds exactly to
+   * not path expressions. That is, the `Map` corresponds exactly to
    * a single `ConfigObject`. The keys will not be parsed or modified, and
    * the values are wrapped in ConfigValue. To get nested `ConfigObject`,
    * some of the values in the map would have to be more maps.

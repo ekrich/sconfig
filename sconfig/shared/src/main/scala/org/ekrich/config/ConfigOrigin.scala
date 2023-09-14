@@ -11,7 +11,7 @@ import java.util.List
  * for use in error messages. Obtain the origin of a value with
  * [[ConfigValue#origin]]. Exceptions may have an origin, see
  * [[ConfigException#origin]], but be careful because
- * <code>ConfigException.origin()</code> may return null.
+ * `ConfigException.origin()` may return null.
  *
  * <p> It's best to use this interface only for debugging; its accuracy is "best
  * effort" rather than guaranteed, and a potentially-noticeable amount of memory
