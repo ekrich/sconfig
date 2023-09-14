@@ -5,7 +5,7 @@ package org.ekrich.config
 
 /**
  * Implement this <em>in addition to</em> [[ConfigIncluder]] if you want to
- * support inclusion of files with the {@code include classpath("resource")}
+ * support inclusion of files with the `include classpath("resource")`
  * syntax. If you do not implement this but do implement [[ConfigIncluder]],
  * attempts to load classpath resources will use the default includer.
  */

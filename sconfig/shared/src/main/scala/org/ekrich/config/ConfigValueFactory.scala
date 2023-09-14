@@ -74,8 +74,8 @@ object ConfigValueFactory {
    * object with a key called "foo.bar", rather than an object with a key "foo"
    * containing another object with a key "bar". The keys in the map are keys;
    * not path expressions. That is, the <code>Map</code> corresponds exactly to
-   * a single {@code ConfigObject}. The keys will not be parsed or modified, and
-   * the values are wrapped in ConfigValue. To get nested {@code ConfigObject},
+   * a single `ConfigObject`. The keys will not be parsed or modified, and
+   * the values are wrapped in ConfigValue. To get nested `ConfigObject`,
    * some of the values in the map would have to be more maps.
    *
    * <p> See also

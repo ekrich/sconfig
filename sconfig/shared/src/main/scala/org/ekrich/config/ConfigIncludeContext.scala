@@ -5,7 +5,7 @@ package org.ekrich.config
 
 /**
  * Context provided to a [[ConfigIncluder]]; this interface is only useful
- * inside a {@code ConfigIncluder} implementation, and is not intended for apps
+ * inside a `ConfigIncluder` implementation, and is not intended for apps
  * to implement.
  *
  * <p> <em>Do not implement this interface</em>; it should only be implemented

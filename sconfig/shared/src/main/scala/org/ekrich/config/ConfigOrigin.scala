@@ -84,13 +84,13 @@ trait ConfigOrigin {
   def comments: List[String]
 
   /**
-   * Returns a {@code ConfigOrigin} based on this one, but with the given
-   * comments. Does not modify this instance or any {@code ConfigValue}s with
+   * Returns a `ConfigOrigin` based on this one, but with the given
+   * comments. Does not modify this instance or any `ConfigValue`s with
    * this origin (since they are immutable). To set the returned origin to a
-   * {@code ConfigValue}, use [[ConfigValue#withOrigin]].
+   * `ConfigValue`, use [[ConfigValue#withOrigin]].
    *
    * <p> Note that when the given comments are equal to the comments on this
-   * object, a new instance may not be created and {@code this} is returned
+   * object, a new instance may not be created and `this` is returned
    * directly.
    *
    * @since 1.3.0
@@ -102,14 +102,14 @@ trait ConfigOrigin {
   def withComments(comments: List[String]): ConfigOrigin
 
   /**
-   * Returns a {@code ConfigOrigin} based on this one, but with the given line
+   * Returns a `ConfigOrigin` based on this one, but with the given line
    * number. This origin must be a FILE, URL or RESOURCE. Does not modify this
-   * instance or any {@code ConfigValue}s with this origin (since they are
-   * immutable). To set the returned origin to a {@code ConfigValue}, use
+   * instance or any `ConfigValue`s with this origin (since they are
+   * immutable). To set the returned origin to a `ConfigValue`, use
    * [[ConfigValue#withOrigin]].
    *
    * <p> Note that when the given lineNumber are equal to the lineNumber on this
-   * object, a new instance may not be created and {@code this} is returned
+   * object, a new instance may not be created and `this` is returned
    * directly.
    *
    * @since 1.3.0

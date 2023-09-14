@@ -10,7 +10,7 @@ package org.ekrich.config
  * <p> Because this object is immutable, it is safe to use from multiple threads
  * and there's no need for "defensive copies."
  *
- * <p> <em>Do not implement interface {@code ConfigValue}</em>; it should only
+ * <p> <em>Do not implement interface `ConfigValue`</em>; it should only
  * be implemented by the config library. Arbitrary implementations will not work
  * because the library internals assume a specific concrete implementation.
  * Also, this interface is likely to grow new methods over time, so third-party
@@ -36,10 +36,10 @@ trait ConfigValue extends ConfigMergeable {
   def valueType: ConfigValueType
 
   /**
-   * Returns the value as a plain Java boxed value, that is, a {@code String},
-   * {@code Number}, {@code Boolean}, {@code Map<String,Object>}, {@code
-   * List<Object>}, or {@code null}, matching the [[#valueType]] of this
-   * {@code ConfigValue}. If the value is a [[ConfigObject]] or
+   * Returns the value as a plain Java boxed value, that is, a `String`,
+   * `Number}, {@code Boolean}, {@code Map<String,Object>`, {@code
+   * List<Object>}, or `null`, matching the [[#valueType]] of this
+   * `ConfigValue`. If the value is a [[ConfigObject]] or
    * [[ConfigList]], it is recursively unwrapped.
    *
    * @return
@@ -95,7 +95,7 @@ trait ConfigValue extends ConfigMergeable {
    * @param path
    *   path to store this value at.
    * @return
-   *   a {@code Config} instance containing this value at the given path.
+   *   a `Config` instance containing this value at the given path.
    */
   def atPath(path: String): Config
 
@@ -106,12 +106,12 @@ trait ConfigValue extends ConfigMergeable {
    * @param key
    *   key to store this value at.
    * @return
-   *   a {@code Config} instance containing this value at the given key.
+   *   a `Config` instance containing this value at the given key.
    */
   def atKey(key: String): Config
 
   /**
-   * Returns a {@code ConfigValue} based on this one, but with the given origin.
+   * Returns a `ConfigValue` based on this one, but with the given origin.
    * This is useful when you are parsing a new format of file or setting
    * comments for a single ConfigValue.
    *

@@ -10,7 +10,7 @@ package org.ekrich.config
  * Typically this class would be used with the method
  * [[Config!.resolve(options:org\.ekrich\.config\.ConfigResolveOptions)* Config.resolve(ConfigResolveOptions)]].
  * <p> This object is immutable, so the "setters" return a new object. <p> Here
- * is an example of creating a custom {@code ConfigResolveOptions}:
+ * is an example of creating a custom `ConfigResolveOptions`:
  *
  * <pre> ConfigResolveOptions options = ConfigResolveOptions.defaults()
  * .setUseSystemEnvironment(false) </pre> <p> In addition to

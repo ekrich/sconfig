@@ -9,7 +9,7 @@ import java.{util => ju}
  * Subtype of [[ConfigValue]] representing a list value, as in JSON's {@code
  * [1,2,3]} syntax.
  *
- * <p> {@code ConfigList} implements {@code java.util.List<ConfigValue>} so you
+ * <p> `ConfigList} implements {@code java.util.List<ConfigValue>` so you
  * can use it like a regular Java list. Or call [[#unwrapped]] to unwrap the
  * list elements into plain Java values.
  *
@@ -21,7 +21,7 @@ import java.{util => ju}
  * <p> The [[ConfigValue#valueType]] method on a list returns
  * [[ConfigValueType#LIST]].
  *
- * <p> <em>Do not implement {@code ConfigList}</em>; it should only be
+ * <p> <em>Do not implement `ConfigList`</em>; it should only be
  * implemented by the config library. Arbitrary implementations will not work
  * because the library internals assume a specific concrete implementation.
  * Also, this interface is likely to grow new methods over time, so third-party

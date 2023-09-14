@@ -19,15 +19,15 @@ import scala.annotation.varargs
  * [[ConfigValue]] instances. Values accessed through the <code>Config</code>
  * interface are never null.
  *
- * <p> {@code Config} is an immutable object and thus safe to use from multiple
+ * <p> `Config` is an immutable object and thus safe to use from multiple
  * threads. There's never a need for "defensive copies."
  *
- * <p> Fundamental operations on a {@code Config} include getting configuration
+ * <p> Fundamental operations on a `Config` include getting configuration
  * values, <em>resolving</em> substitutions with [[#resolve()* resolve()]], and
  * merging configs using
  * [[#withFallback(other:org\.ekrich\.config\.ConfigMergeable)* withFallback(ConfigMergeable)]].
  *
- * <p> All operations return a new immutable {@code Config} rather than
+ * <p> All operations return a new immutable `Config` rather than
  * modifying the original instance.
  *
  * <p> <strong>Examples</strong>
@@ -54,8 +54,8 @@ import scala.annotation.varargs
  * in object a in the root object. Sometimes double quotes are needed around
  * special characters in path expressions.
  *
- * <p> The API for a {@code Config} is in terms of path expressions, while the
- * API for a {@code ConfigObject} is in terms of keys. Conceptually, {@code
+ * <p> The API for a `Config` is in terms of path expressions, while the
+ * API for a `ConfigObject` is in terms of keys. Conceptually, {@code
  * Config} is a one-level map from <em>paths</em> to values, while a {@code
  * ConfigObject} is a tree of nested maps from <em>keys</em> to values.
  *
@@ -64,29 +64,29 @@ import scala.annotation.varargs
  * [[ConfigUtil$.splitPath ConfigUtil.splitPath(String)]] to convert between
  * path expressions and individual path elements (keys).
  *
- * <p> Another difference between {@code Config} and {@code ConfigObject} is
- * that conceptually, {@code ConfigValue}s with a {@link ConfigValue#valueType
+ * <p> Another difference between `Config} and {@code ConfigObject` is
+ * that conceptually, `ConfigValue`s with a {@link ConfigValue#valueType
  * valueType} of [[ConfigValueType#NULL NULL]] exist in a {@code
- * ConfigObject}, while a {@code Config} treats null values as if they were
+ * ConfigObject}, while a `Config` treats null values as if they were
  * missing. (With the exception of two methods: [[Config#hasPathOrNull]] and
  * [[Config#getIsNull]] let you detect <code>null</code> values.)
  *
  * <p> <strong>Getting configuration values</strong>
  *
- * <p> The "getters" on a {@code Config} all work in the same way. They never
- * return null, nor do they return a {@code ConfigValue} with
+ * <p> The "getters" on a `Config` all work in the same way. They never
+ * return null, nor do they return a `ConfigValue` with
  * [[ConfigValue#valueType valueType]] of [[ConfigValueType#NULL NULL]].
  * Instead, they throw [[ConfigException.Missing]] if the value is
  * completely absent or set to null. If the value is set to null, a subtype of
- * {@code ConfigException.Missing} called [[ConfigException.Null]] will be
+ * `ConfigException.Missing` called [[ConfigException.Null]] will be
  * thrown. [[ConfigException.WrongType]] will be thrown anytime you ask for
  * a type and the value has an incompatible type. Reasonable type conversions
  * are performed for you though.
  *
  * <p> <strong>Iteration</strong>
  *
- * <p> If you want to iterate over the contents of a {@code Config}, you can get
- * its {@code ConfigObject} with [[#root]], and then iterate over the {@code
+ * <p> If you want to iterate over the contents of a `Config`, you can get
+ * its `ConfigObject` with [[#root]], and then iterate over the {@code
  * ConfigObject} (which implements <code>java.util.Map</code>). Or, you can use
  * [[#entrySet]] which recurses the object tree for you and builds up a
  * <code>Set</code> of all path-value pairs where the value is not null.
@@ -99,7 +99,7 @@ import scala.annotation.varargs
  * >specification</a>. Resolving substitutions replaces these references with
  * real values.
  *
- * <p> Before using a {@code Config} it's necessary to call
+ * <p> Before using a `Config` it's necessary to call
  * [[#resolve()* resolve()]] to handle substitutions (though
  * [[ConfigFactory$.load()* ConfigFactory.load()]] and similar methods will do
  * the resolve for you already).
@@ -142,7 +142,7 @@ import scala.annotation.varargs
  *
  * <p> <strong>This is an interface but don't implement it yourself</strong>
  *
- * <p> <em>Do not implement {@code Config}</em>; it should only be implemented
+ * <p> <em>Do not implement `Config`</em>; it should only be implemented
  * by the config library. Arbitrary implementations will not work because the
  * library internals assume a specific concrete implementation. Also, this
  * interface is likely to grow new methods over time, so third-party
@@ -151,9 +151,9 @@ import scala.annotation.varargs
 trait Config extends ConfigMergeable {
 
   /**
-   * Gets the {@code Config} as a tree of [[ConfigObject]]. This is a
+   * Gets the `Config` as a tree of [[ConfigObject]]. This is a
    * constant-time operation (it is not proportional to the number of values in
-   * the {@code Config}).
+   * the `Config`).
    *
    * @return
    *   the root object in the configuration
@@ -161,11 +161,11 @@ trait Config extends ConfigMergeable {
   def root: ConfigObject
 
   /**
-   * Gets the origin of the {@code Config}, which may be a file, or a file with
+   * Gets the origin of the `Config`, which may be a file, or a file with
    * a line number, or just a descriptive phrase.
    *
    * @return
-   *   the origin of the {@code Config} for use in error messages
+   *   the origin of the `Config` for use in error messages
    */
   def origin: ConfigOrigin
 
@@ -366,9 +366,9 @@ trait Config extends ConfigMergeable {
 
   /**
    * Checks whether a value is present and non-null at the given path. This
-   * differs in two ways from {@code Map.containsKey} as implemented by
+   * differs in two ways from `Map.containsKey` as implemented by
    * [[ConfigObject]]: it looks for a path expression, not a key; and it returns
-   * false for null values, while {@code containsKey} returns true indicating
+   * false for null values, while `containsKey` returns true indicating
    * that the object contains a null value for the key.
    *
    * <p> If a path exists according to [[#hasPath}, then {@link #getValue]]
@@ -429,7 +429,7 @@ trait Config extends ConfigMergeable {
   def hasPathOrNull(path: String): Boolean
 
   /**
-   * Returns true if the {@code Config}'s root object contains no key-value
+   * Returns true if the `Config`'s root object contains no key-value
    * pairs.
    *
    * @return
@@ -597,7 +597,7 @@ trait Config extends ConfigMergeable {
    * @param path
    *   path expression
    * @return
-   *   the nested {@code Config} value at the requested path
+   *   the nested `Config` value at the requested path
    * @throws ConfigException.Missing
    *   if value is absent or null
    * @throws ConfigException.WrongType
@@ -759,7 +759,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets a list value (with any element type) as a [[ConfigList]], which
-   * implements {@code java.util.List<ConfigValue>}. Throws if the path is unset
+   * implements `java.util.List<ConfigValue>`. Throws if the path is unset
    * or null.
    *
    * @param path
@@ -864,8 +864,8 @@ trait Config extends ConfigMergeable {
   def getStringList(path: String): ju.List[String]
 
   /**
-   * Gets a list value with {@code Enum} elements. Throws if the path is unset
-   * or null or not a list or contains values not convertible to {@code Enum}.
+   * Gets a list value with `Enum` elements. Throws if the path is unset
+   * or null or not a list or contains values not convertible to `Enum`.
    *
    * @param enumClass
    *   the enum class
@@ -1018,7 +1018,7 @@ trait Config extends ConfigMergeable {
   def withoutPath(path: String): Config
 
   /**
-   * Places the config inside another {@code Config} at the given path. <p> Note
+   * Places the config inside another `Config` at the given path. <p> Note
    * that path expressions have a syntax and sometimes require quoting (see
    * [[ConfigUtil$.joinPath(elements:String*)*]] and [[ConfigUtil#splitPath]]).
    *
@@ -1030,19 +1030,19 @@ trait Config extends ConfigMergeable {
   def atPath(path: String): Config
 
   /**
-   * Places the config inside a {@code Config} at the given key. See also
+   * Places the config inside a `Config` at the given key. See also
    * atPath. Note that a key is NOT a path expression (see
    * [[ConfigUtil$.joinPath(elements:String*)*]] and [[ConfigUtil#splitPath]]).
    *
    * @param key
    *   key to store this config at.
    * @return
-   *   a {@code Config} instance containing this config at the given key.
+   *   a `Config` instance containing this config at the given key.
    */
   def atKey(key: String): Config
 
   /**
-   * Returns a {@code Config} based on this one, but with the given path set to
+   * Returns a `Config` based on this one, but with the given path set to
    * the given value. Does not modify this instance (since it's immutable). If
    * the path already has a value, that value is replaced. To remove a value,
    * use withoutPath. <p> Note that path expressions have a syntax and sometimes

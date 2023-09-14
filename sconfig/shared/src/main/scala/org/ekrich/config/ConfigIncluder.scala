@@ -6,7 +6,7 @@ package org.ekrich.config
 /**
  * Implement this interface and provide an instance to
  * [[ConfigParseOptions#setIncluder ConfigParseOptions.setIncluder()]] to
- * customize handling of {@code include} statements in config files. You may
+ * customize handling of `include` statements in config files. You may
  * also want to implement [[ConfigIncluderClasspath]],
  * [[ConfigIncluderFile]], and [[ConfigIncluderURL]], or not.
  */

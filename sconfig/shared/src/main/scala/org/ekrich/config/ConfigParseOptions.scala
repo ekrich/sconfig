@@ -11,7 +11,7 @@ import org.ekrich.config.impl.PlatformThread
  *
  * <p> This object is immutable, so the "setters" return a new object.
  *
- * <p> Here is an example of creating a custom {@code ConfigParseOptions}:
+ * <p> Here is an example of creating a custom `ConfigParseOptions`:
  *
  * <pre> ConfigParseOptions options = ConfigParseOptions.defaults()
  * .setSyntax(ConfigSyntax.JSON) .setAllowMissing(false) </pre>
@@ -41,7 +41,7 @@ final class ConfigParseOptions private (
    * filename extension; if guessing fails, assume [[ConfigSyntax#CONF]].
    *
    * @param syntax
-   *   a syntax or {@code null} for best guess
+   *   a syntax or `null` for best guess
    * @return
    *   options with the syntax set
    */
@@ -227,7 +227,7 @@ final class ConfigParseOptions private (
    * <code>Thread.currentThread().getContextClassLoader()</code> will be used.
    *
    * @param loader
-   *   a class loader or {@code null} to use thread context class loader
+   *   a class loader or `null` to use thread context class loader
    * @return
    *   options with the class loader set
    */
@@ -244,7 +244,7 @@ final class ConfigParseOptions private (
       )
 
   /**
-   * Get the class loader; never returns {@code null}, if the class loader was
+   * Get the class loader; never returns `null`, if the class loader was
    * unset, returns <code>Thread.currentThread().getContextClassLoader()</code>.
    *
    * @return

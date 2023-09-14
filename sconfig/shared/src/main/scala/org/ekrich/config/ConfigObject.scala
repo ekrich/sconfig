@@ -12,10 +12,10 @@ import java.{util => ju}
  * <p> An object may also be viewed as a [[Config]] by calling
  * [[ConfigObject#toConfig]].
  *
- * <p> {@code ConfigObject} implements {@code java.util.Map<String,
+ * <p> `ConfigObject` implements {@code java.util.Map<String,
  * ConfigValue>} so you can use it like a regular Java map. Or call
  * [[#unwrapped]] to unwrap the map to a map with plain Java values rather than
- * {@code ConfigValue}.
+ * `ConfigValue`.
  *
  * <p> Like all [[ConfigValue} subtypes, {@code ConfigObject]] is immutable.
  * This makes it threadsafe and you never have to create "defensive copies." The
@@ -27,11 +27,11 @@ import java.{util => ju}
  *
  * <p> In most cases you want to use the [[Config]] interface rather than
  * this one. Call [[#toConfig} to convert a {@code ConfigObject]] to a
- * {@code Config}.
+ * `Config`.
  *
- * <p> The API for a {@code ConfigObject} is in terms of keys, while the API for
+ * <p> The API for a `ConfigObject` is in terms of keys, while the API for
  * a [[Config]] is in terms of path expressions. Conceptually, {@code
- * ConfigObject} is a tree of maps from keys to values, while a {@code Config}
+ * ConfigObject} is a tree of maps from keys to values, while a `Config`
  * is a one-level map from paths to values.
  *
  * <p> Use
@@ -39,14 +39,14 @@ import java.{util => ju}
  * [[ConfigUtil$.splitPath ConfigUtil.splitPath(String)]] to convert between
  * path expressions and individual path elements (keys).
  *
- * <p> A {@code ConfigObject} may contain null values, which will have
+ * <p> A `ConfigObject` may contain null values, which will have
  * [[ConfigValue#valueType]] equal to [[ConfigValueType#NULL]]. If
  * [[ConfigObject#get]] returns Java's null then the key was not present in the
- * parsed file (or wherever this value tree came from). If {@code get("key")}
+ * parsed file (or wherever this value tree came from). If `get("key")`
  * returns a [[ConfigValue} with type {@code ConfigValueType#NULL]] then the
  * key was set to null explicitly in the config file.
  *
- * <p> <em>Do not implement interface {@code ConfigObject}</em>; it should only
+ * <p> <em>Do not implement interface `ConfigObject`</em>; it should only
  * be implemented by the config library. Arbitrary implementations will not work
  * because the library internals assume a specific concrete implementation.
  * Also, this interface is likely to grow new methods over time, so third-party
@@ -111,7 +111,7 @@ trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
   def withoutKey(key: String): ConfigObject
 
   /**
-   * Returns a {@code ConfigObject} based on this one, but with the given key
+   * Returns a `ConfigObject` based on this one, but with the given key
    * set to the given value. Does not modify this instance (since it's
    * immutable). If the key already has a value, that value is replaced. To
    * remove a value, use [[ConfigObject#withoutKey]].

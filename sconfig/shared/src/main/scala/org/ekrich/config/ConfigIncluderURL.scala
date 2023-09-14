@@ -7,7 +7,7 @@ import java.net.URL
 
 /**
  * Implement this <em>in addition to</em> [[ConfigIncluder]] if you want to
- * support inclusion of files with the {@code include url("http://example.com")}
+ * support inclusion of files with the `include url("http://example.com")`
  * syntax. If you do not implement this but do implement [[ConfigIncluder]],
  * attempts to load URLs will use the default includer.
  */
