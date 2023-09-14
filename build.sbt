@@ -22,7 +22,12 @@ val dotcOpts = List("-unchecked", "-deprecation", "-feature")
 val scalacOpts = dotcOpts ++ List(
   "-Ywarn-unused:imports",
   "-Xsource:3",
-  "-Wconf:any:warning-verbose" // -quickfix:any - apply all available quick fixes
+  // 57 inferred return type Scala 2.13 cat=scala3-migration
+  "-Wconf:msg=inferred:ws",
+  // 2 deprecations Scala 2.12 Stack - fixed for 2.13
+  "-Wconf:msg=poorly-performing:ws"
+  // uncomment to see messages
+  // "-Wconf:any:warning-verbose"
 )
 
 Compile / console / scalacOptions --= Seq(
