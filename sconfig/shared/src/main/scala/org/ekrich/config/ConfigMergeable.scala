@@ -40,11 +40,11 @@ trait ConfigMergeable {
    *   foo = { a: 42, b: 43 }
    * }}}
    *
-   * Only [[ConfigObject} and {@link Config]] instances do anything in this
-   * method (they need to merge the fallback keys into themselves). All other
-   * values just return the original value, since they automatically override
-   * any fallback. This means that objects do not merge "across" non-objects; if
-   * you write `object.withFallback(nonObject).withFallback(otherObject)`, then
+   * Only [[ConfigObject]] and [[Config]] instances do anything in this method
+   * (they need to merge the fallback keys into themselves). All other values
+   * just return the original value, since they automatically override any
+   * fallback. This means that objects do not merge "across" non-objects; if you
+   * write `object.withFallback(nonObject).withFallback(otherObject)`, then
    * `otherObject`will simply be ignored. This is an intentional part of how
    * merging works, because non-objects such as strings and integers replace
    * (rather than merging with) any prior value:

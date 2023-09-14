@@ -10,8 +10,8 @@ package org.ekrich.config
  * <p> Because this object is immutable, it is safe to use from multiple threads
  * and there's no need for "defensive copies."
  *
- * <p> <em>Do not implement interface `ConfigValue`</em>; it should only
- * be implemented by the config library. Arbitrary implementations will not work
+ * <p> <em>Do not implement interface `ConfigValue`</em>; it should only be
+ * implemented by the config library. Arbitrary implementations will not work
  * because the library internals assume a specific concrete implementation.
  * Also, this interface is likely to grow new methods over time, so third-party
  * implementations will break.
@@ -37,10 +37,9 @@ trait ConfigValue extends ConfigMergeable {
 
   /**
    * Returns the value as a plain Java boxed value, that is, a `String`,
-   * `Number}, {@code Boolean}, {@code Map<String,Object>`, {@code
-   * List<Object>}, or `null`, matching the [[#valueType]] of this
-   * `ConfigValue`. If the value is a [[ConfigObject]] or
-   * [[ConfigList]], it is recursively unwrapped.
+   * `Number`, `Boolean`, `Map[String, Object]`, `List[Object]`, or `null`,
+   * matching the [[#valueType]] of this `ConfigValue`. If the value is a
+   * [[ConfigObject]] or [[ConfigList]], it is recursively unwrapped.
    *
    * @return
    *   a plain Java value corresponding to this ConfigValue
@@ -57,8 +56,7 @@ trait ConfigValue extends ConfigMergeable {
    * for debugging but you might not be able to parse it. If the value has been
    * resolved, it will always be parseable.
    *
-   * <p> This method is equivalent to {@code
-   * render(ConfigRenderOptions.defaults())}.
+   * <p> This method is equivalent to `render(ConfigRenderOptions.defaults())`.
    *
    * @return
    *   the rendered value
@@ -111,9 +109,9 @@ trait ConfigValue extends ConfigMergeable {
   def atKey(key: String): Config
 
   /**
-   * Returns a `ConfigValue` based on this one, but with the given origin.
-   * This is useful when you are parsing a new format of file or setting
-   * comments for a single ConfigValue.
+   * Returns a `ConfigValue` based on this one, but with the given origin. This
+   * is useful when you are parsing a new format of file or setting comments for
+   * a single ConfigValue.
    *
    * @since 1.3.0
    * @param origin

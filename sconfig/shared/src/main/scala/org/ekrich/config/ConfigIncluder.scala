@@ -6,9 +6,9 @@ package org.ekrich.config
 /**
  * Implement this interface and provide an instance to
  * [[ConfigParseOptions#setIncluder ConfigParseOptions.setIncluder()]] to
- * customize handling of `include` statements in config files. You may
- * also want to implement [[ConfigIncluderClasspath]],
- * [[ConfigIncluderFile]], and [[ConfigIncluderURL]], or not.
+ * customize handling of `include` statements in config files. You may also want
+ * to implement [[ConfigIncluderClasspath]], [[ConfigIncluderFile]], and
+ * [[ConfigIncluderURL]], or not.
  */
 trait ConfigIncluder {
 
@@ -39,7 +39,7 @@ trait ConfigIncluder {
    * This method is used for a "heuristic" include statement that does not
    * specify file, URL, or classpath resource. If the include statement does
    * specify, then the same class implementing [[ConfigIncluder]] must also
-   * implement [[ConfigIncluderClasspath}, {@link ConfigIncluderFile]], or
+   * implement [[ConfigIncluderClasspath]], [[ConfigIncluderFile]], or
    * [[ConfigIncluderURL]] as needed, or a default includer will be used.
    *
    * @param context

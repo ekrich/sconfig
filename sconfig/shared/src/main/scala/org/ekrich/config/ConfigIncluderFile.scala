@@ -7,9 +7,9 @@ import java.io.File
 
 /**
  * Implement this <em>in addition to</em> [[ConfigIncluder]] if you want to
- * support inclusion of files with the `include file("filename")` syntax.
- * If you do not implement this but do implement [[ConfigIncluder]],
- * attempts to load files will use the default includer.
+ * support inclusion of files with the `include file("filename")` syntax. If you
+ * do not implement this but do implement [[ConfigIncluder]], attempts to load
+ * files will use the default includer.
  */
 trait ConfigIncluderFile {
 

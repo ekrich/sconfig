@@ -22,8 +22,8 @@ object ConfigBeanFactory {
    *
    * The Java class should follow JavaBean conventions. Field types can be any
    * of the types you can normally get from a [[Config]], including
-   * `java.time.Duration` or [[ConfigMemorySize]]. Fields may also be
-   * another JavaBean-style class.
+   * `java.time.Duration` or [[ConfigMemorySize]]. Fields may also be another
+   * JavaBean-style class.
    *
    * Fields are mapped to config by converting the config key to camel case. So
    * the key `foo-bar` becomes JavaBean setter `setFooBar`.

@@ -19,8 +19,8 @@ import org.ekrich.config.impl.PlatformThread
 object ConfigParseOptions {
 
   /**
-   * Gets an instance of `ConfigParseOptions` with all fields set to
-   * the default values. Start with this instance and make any changes you need.
+   * Gets an instance of `ConfigParseOptions` with all fields set to the default
+   * values. Start with this instance and make any changes you need.
    *
    * @return
    *   the default parse options
@@ -151,8 +151,8 @@ final class ConfigParseOptions private (
   def getAllowMissing: Boolean = allowMissing
 
   /**
-   * Set a [[ConfigIncluder]] which customizes how includes are handled.
-   * null means to use the default includer.
+   * Set a [[ConfigIncluder]] which customizes how includes are handled. null
+   * means to use the default includer.
    *
    * @param includer
    *   the includer to use or null for default
@@ -172,10 +172,9 @@ final class ConfigParseOptions private (
       )
 
   /**
-   * Prepends a [[ConfigIncluder]] which customizes how includes are
-   * handled. To prepend your includer, the library calls
-   * [[ConfigIncluder#withFallback]] on your includer to append the existing
-   * includer to it.
+   * Prepends a [[ConfigIncluder]] which customizes how includes are handled. To
+   * prepend your includer, the library calls [[ConfigIncluder#withFallback]] on
+   * your includer to append the existing includer to it.
    *
    * @param includer
    *   the includer to prepend (may not be null)
@@ -194,9 +193,9 @@ final class ConfigParseOptions private (
   }
 
   /**
-   * Appends a [[ConfigIncluder]] which customizes how includes are handled.
-   * To append, the library calls [[ConfigIncluder#withFallback]] on the
-   * existing includer.
+   * Appends a [[ConfigIncluder]] which customizes how includes are handled. To
+   * append, the library calls [[ConfigIncluder#withFallback]] on the existing
+   * includer.
    *
    * @param includer
    *   the includer to append (may not be null)
@@ -244,8 +243,8 @@ final class ConfigParseOptions private (
       )
 
   /**
-   * Get the class loader; never returns `null`, if the class loader was
-   * unset, returns `Thread.currentThread().getContextClassLoader()`.
+   * Get the class loader; never returns `null`, if the class loader was unset,
+   * returns `Thread.currentThread().getContextClassLoader()`.
    *
    * @return
    *   class loader to use

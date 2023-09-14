@@ -5,8 +5,8 @@ package org.ekrich.config
 
 /**
  * Context provided to a [[ConfigIncluder]]; this interface is only useful
- * inside a `ConfigIncluder` implementation, and is not intended for apps
- * to implement.
+ * inside a `ConfigIncluder` implementation, and is not intended for apps to
+ * implement.
  *
  * <p> <em>Do not implement this interface</em>; it should only be implemented
  * by the config library. Arbitrary implementations will not work because the
@@ -36,8 +36,7 @@ trait ConfigIncludeContext {
 
   /**
    * Parse options to use (if you use another method to get a
-   * [[ConfigParseable]] then use [[ConfigParseable#options]] instead
-   * though).
+   * [[ConfigParseable]] then use [[ConfigParseable#options]] instead though).
    *
    * @return
    *   the parse options
