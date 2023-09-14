@@ -11,7 +11,7 @@ import org.ekrich.config.impl.PlatformThread
  *
  * <p> This object is immutable, so the "setters" return a new object.
  *
- * <p> Here is an example of creating a custom {@code ConfigParseOptions}:
+ * <p> Here is an example of creating a custom `ConfigParseOptions`:
  *
  * <pre> ConfigParseOptions options = ConfigParseOptions.defaults()
  * .setSyntax(ConfigSyntax.JSON) .setAllowMissing(false) </pre>
@@ -19,8 +19,8 @@ import org.ekrich.config.impl.PlatformThread
 object ConfigParseOptions {
 
   /**
-   * Gets an instance of <code>ConfigParseOptions</code> with all fields set to
-   * the default values. Start with this instance and make any changes you need.
+   * Gets an instance of `ConfigParseOptions` with all fields set to the default
+   * values. Start with this instance and make any changes you need.
    *
    * @return
    *   the default parse options
@@ -38,10 +38,10 @@ final class ConfigParseOptions private (
 
   /**
    * Set the file format. If set to null, try to guess from any available
-   * filename extension; if guessing fails, assume {@link ConfigSyntax#CONF}.
+   * filename extension; if guessing fails, assume [[ConfigSyntax#CONF]].
    *
    * @param syntax
-   *   a syntax or {@code null} for best guess
+   *   a syntax or `null` for best guess
    * @return
    *   options with the syntax set
    */
@@ -57,7 +57,7 @@ final class ConfigParseOptions private (
       )
 
   /**
-   * Set the file format. If set to null, assume {@link ConfigSyntax#CONF}.
+   * Set the file format. If set to null, assume [[ConfigSyntax#CONF]].
    *
    * @param filename
    *   a configuration file name
@@ -82,10 +82,10 @@ final class ConfigParseOptions private (
    * set up for you to something like the filename, but if you provide just an
    * input stream you might want to improve on it. Set to null to allow the
    * library to come up with something automatically. This description is the
-   * basis for the {@link ConfigOrigin} of the parsed values.
+   * basis for the [[ConfigOrigin]] of the parsed values.
    *
    * @param originDescription
-   *   description to put in the {@link ConfigOrigin}
+   *   description to put in the [[ConfigOrigin]]
    * @return
    *   options with the origin description set
    */
@@ -151,8 +151,8 @@ final class ConfigParseOptions private (
   def getAllowMissing: Boolean = allowMissing
 
   /**
-   * Set a {@link ConfigIncluder} which customizes how includes are handled.
-   * null means to use the default includer.
+   * Set a [[ConfigIncluder]] which customizes how includes are handled. null
+   * means to use the default includer.
    *
    * @param includer
    *   the includer to use or null for default
@@ -172,10 +172,9 @@ final class ConfigParseOptions private (
       )
 
   /**
-   * Prepends a {@link ConfigIncluder} which customizes how includes are
-   * handled. To prepend your includer, the library calls
-   * [[ConfigIncluder#withFallback]] on your includer to append the existing
-   * includer to it.
+   * Prepends a [[ConfigIncluder]] which customizes how includes are handled. To
+   * prepend your includer, the library calls [[ConfigIncluder#withFallback]] on
+   * your includer to append the existing includer to it.
    *
    * @param includer
    *   the includer to prepend (may not be null)
@@ -194,9 +193,9 @@ final class ConfigParseOptions private (
   }
 
   /**
-   * Appends a {@link ConfigIncluder} which customizes how includes are handled.
-   * To append, the library calls {@link ConfigIncluder#withFallback} on the
-   * existing includer.
+   * Appends a [[ConfigIncluder]] which customizes how includes are handled. To
+   * append, the library calls [[ConfigIncluder#withFallback]] on the existing
+   * includer.
    *
    * @param includer
    *   the includer to append (may not be null)
@@ -224,10 +223,10 @@ final class ConfigParseOptions private (
 
   /**
    * Set the class loader. If set to null,
-   * <code>Thread.currentThread().getContextClassLoader()</code> will be used.
+   * `Thread.currentThread().getContextClassLoader()` will be used.
    *
    * @param loader
-   *   a class loader or {@code null} to use thread context class loader
+   *   a class loader or `null` to use thread context class loader
    * @return
    *   options with the class loader set
    */
@@ -244,8 +243,8 @@ final class ConfigParseOptions private (
       )
 
   /**
-   * Get the class loader; never returns {@code null}, if the class loader was
-   * unset, returns <code>Thread.currentThread().getContextClassLoader()</code>.
+   * Get the class loader; never returns `null`, if the class loader was unset,
+   * returns `Thread.currentThread().getContextClassLoader()`.
    *
    * @return
    *   class loader to use

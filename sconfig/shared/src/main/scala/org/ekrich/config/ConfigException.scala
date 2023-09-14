@@ -307,9 +307,9 @@ object ConfigException {
   }
 
   /**
-   * Information about a problem that occurred in {@link Config#checkValid}. A
-   * {@link ConfigException.ValidationFailed} exception thrown from
-   * <code>checkValid</code> includes a list of problems encountered.
+   * Information about a problem that occurred in [[Config#checkValid]]. A
+   * [[ConfigException.ValidationFailed]] exception thrown from `checkValid`
+   * includes a list of problems encountered.
    */
   @SerialVersionUID(1L)
   class ValidationProblem(

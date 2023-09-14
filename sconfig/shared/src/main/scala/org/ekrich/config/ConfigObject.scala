@@ -6,48 +6,46 @@ package org.ekrich.config
 import java.{util => ju}
 
 /**
- * Subtype of {@link ConfigValue} representing an object (AKA dictionary or map)
- * value, as in JSON's curly brace <code>{ "a" : 42 }</code> syntax.
+ * Subtype of [[ConfigValue]] representing an object (AKA dictionary or map)
+ * value, as in JSON's curly brace `{ "a" : 42 }` syntax.
  *
- * <p> An object may also be viewed as a {@link Config} by calling
+ * <p> An object may also be viewed as a [[Config]] by calling
  * [[ConfigObject#toConfig]].
  *
- * <p> {@code ConfigObject} implements {@code java.util.Map<String,
- * ConfigValue>} so you can use it like a regular Java map. Or call
- * [[#unwrapped]] to unwrap the map to a map with plain Java values rather than
- * {@code ConfigValue}.
+ * <p> `ConfigObject` implements `java.util.Map[String, ConfigValue]` so you can
+ * use it like a regular Java map. Or call [[#unwrapped]] to unwrap the map to a
+ * map with plain Java values rather than `ConfigValue`.
  *
- * <p> Like all {@link ConfigValue} subtypes, {@code ConfigObject} is immutable.
- * This makes it threadsafe and you never have to create "defensive copies." The
+ * <p> Like all [[ConfigValue]] subtypes, `ConfigObject` is immutable. This
+ * makes it threadsafe and you never have to create "defensive copies." The
  * mutator methods from `java.util.Map` all throw
  * `java.lang.UnsupportedOperationException`.
  *
- * <p> The {@link ConfigValue#valueType} method on an object returns
+ * <p> The [[ConfigValue#valueType]] method on an object returns
  * [[ConfigValueType#OBJECT]].
  *
- * <p> In most cases you want to use the {@link Config} interface rather than
- * this one. Call {@link #toConfig} to convert a {@code ConfigObject} to a
- * {@code Config}.
+ * <p> In most cases you want to use the [[Config]] interface rather than this
+ * one. Call [[#toConfig]] to convert a `ConfigObject` to a `Config`.
  *
- * <p> The API for a {@code ConfigObject} is in terms of keys, while the API for
- * a {@link Config} is in terms of path expressions. Conceptually, {@code
- * ConfigObject} is a tree of maps from keys to values, while a {@code Config}
- * is a one-level map from paths to values.
+ * <p> The API for a `ConfigObject` is in terms of keys, while the API for a
+ * [[Config]] is in terms of path expressions. Conceptually, `ConfigObject` is a
+ * tree of maps from keys to values, while a `Config` is a one-level map from
+ * paths to values.
  *
  * <p> Use
  * [[ConfigUtil$.joinPath(elements:String*)* ConfigUtil.joinPath(String*)]] and
  * [[ConfigUtil$.splitPath ConfigUtil.splitPath(String)]] to convert between
  * path expressions and individual path elements (keys).
  *
- * <p> A {@code ConfigObject} may contain null values, which will have
- * [[ConfigValue#valueType]] equal to {@link ConfigValueType#NULL}. If
+ * <p> A `ConfigObject` may contain null values, which will have
+ * [[ConfigValue#valueType]] equal to [[ConfigValueType#NULL]]. If
  * [[ConfigObject#get]] returns Java's null then the key was not present in the
- * parsed file (or wherever this value tree came from). If {@code get("key")}
- * returns a {@link ConfigValue} with type {@code ConfigValueType#NULL} then the
- * key was set to null explicitly in the config file.
+ * parsed file (or wherever this value tree came from). If `get("key")` returns
+ * a [[ConfigValue]] with type `ConfigValueType#NULL` then the key was set to
+ * null explicitly in the config file.
  *
- * <p> <em>Do not implement interface {@code ConfigObject}</em>; it should only
- * be implemented by the config library. Arbitrary implementations will not work
+ * <p> <em>Do not implement interface `ConfigObject`</em>; it should only be
+ * implemented by the config library. Arbitrary implementations will not work
  * because the library internals assume a specific concrete implementation.
  * Also, this interface is likely to grow new methods over time, so third-party
  * implementations will break.
@@ -55,12 +53,12 @@ import java.{util => ju}
 trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
 
   /**
-   * Converts this object to a {@link Config} instance, enabling you to use path
+   * Converts this object to a [[Config]] instance, enabling you to use path
    * expressions to find values in the object. This is a constant-time operation
    * (it is not proportional to the size of the object).
    *
    * @return
-   *   a {@link Config} with this object as its root
+   *   a [[Config]] with this object as its root
    */
   def toConfig: Config
 
@@ -76,10 +74,10 @@ trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
   override def withFallback(other: ConfigMergeable): ConfigObject
 
   /**
-   * Gets a {@link ConfigValue} at the given key, or returns null if there is no
-   * value. The returned {@link ConfigValue} may have [[ConfigValueType#NULL]]
-   * or any other type, and the passed-in key must be a key in this object
-   * (rather than a path expression).
+   * Gets a [[ConfigValue]] at the given key, or returns null if there is no
+   * value. The returned [[ConfigValue]] may have [[ConfigValueType#NULL]] or
+   * any other type, and the passed-in key must be a key in this object (rather
+   * than a path expression).
    *
    * @param key
    *   key to look up
@@ -111,10 +109,10 @@ trait ConfigObject extends ConfigValue with ju.Map[String, ConfigValue] {
   def withoutKey(key: String): ConfigObject
 
   /**
-   * Returns a {@code ConfigObject} based on this one, but with the given key
-   * set to the given value. Does not modify this instance (since it's
-   * immutable). If the key already has a value, that value is replaced. To
-   * remove a value, use {@link ConfigObject#withoutKey}.
+   * Returns a `ConfigObject` based on this one, but with the given key set to
+   * the given value. Does not modify this instance (since it's immutable). If
+   * the key already has a value, that value is replaced. To remove a value, use
+   * [[ConfigObject#withoutKey]].
    *
    * @param key
    *   key to add

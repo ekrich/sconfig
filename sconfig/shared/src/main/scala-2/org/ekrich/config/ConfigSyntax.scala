@@ -20,24 +20,23 @@ object ConfigSyntax {
   /**
    * Pedantically strict <a href="http://json.org">JSON</a> format; no comments,
    * no unexpected commas, no duplicate keys in the same object. Associated with
-   * the <code>.json</code> file extension and <code>application/json</code>
-   * Content-Type.
+   * the `.json` file extension and `application/json` Content-Type.
    */
   final val JSON = new ConfigSyntax("JSON", 0)
 
   /**
    * The JSON-superset <a
    * href="https://github.com/lightbend/config/blob/master/HOCON.md">HOCON</a>
-   * format. Associated with the <code>.conf</code> file extension and
-   * <code>application/hocon</code> Content-Type.
+   * format. Associated with the `.conf` file extension and `application/hocon`
+   * Content-Type.
    */
   final val CONF = new ConfigSyntax("CONF", 1)
 
   /**
    * Standard <a href=
    * "http://download.oracle.com/javase/7/docs/api/java/util/Properties.html#load%28java.io.Reader%29"
-   * >Java properties</a> format. Associated with the <code>.properties</code>
-   * file extension and <code>text/x-java-properties</code> Content-Type.
+   * >Java properties</a> format. Associated with the `.properties` file
+   * extension and `text/x-java-properties` Content-Type.
    */
   final val PROPERTIES = new ConfigSyntax("PROPERTIES", 2)
 

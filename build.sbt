@@ -225,8 +225,8 @@ lazy val commonSettings: Seq[Setting[_]] =
     skipPublish
   )
 
-def proj(id: String, base: File) =
-  Project(id, base) settings commonSettings
+def proj(id: String, base: File) = Project(id, base)
+  .settings(commonSettings)
 
 lazy val testLibJVM = testLib.jvm
 

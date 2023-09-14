@@ -8,29 +8,26 @@ import java.{lang => jl}
 import org.ekrich.config.impl.ConfigImpl
 
 /**
- * This class holds some static factory methods for building {@link ConfigValue}
- * instances. See also {@link ConfigFactory} which has methods for parsing files
- * and certain in-memory data structures.
+ * This class holds some static factory methods for building [[ConfigValue]]
+ * instances. See also [[ConfigFactory]] which has methods for parsing files and
+ * certain in-memory data structures.
  */
 object ConfigValueFactory {
 
   /**
-   * Creates a {@link ConfigValue} from a plain Java boxed value, which may be a
-   * <code>Boolean</code>, <code>Number</code>, <code>String</code>,
-   * <code>Map</code>, <code>Iterable</code>, or <code>null</code>. A
-   * <code>Map</code> must be a <code>Map</code> from String to more values that
-   * can be supplied to <code>fromAnyRef()</code>. An <code>Iterable</code> must
-   * iterate over more values that can be supplied to <code>fromAnyRef()</code>.
-   * A <code>Map</code> will become a {@link ConfigObject} and an
-   * <code>Iterable</code> will become a {@link ConfigList}. If the
-   * <code>Iterable</code> is not an ordered collection, results could be
-   * strange, since <code>ConfigList</code> is ordered.
+   * Creates a [[ConfigValue]] from a plain Java boxed value, which may be a
+   * `Boolean`, `Number`, `String`, `Map`, `Iterable`, or `null`. A `Map` must
+   * be a `Map` from String to more values that can be supplied to
+   * `fromAnyRef()`. An `Iterable` must iterate over more values that can be
+   * supplied to `fromAnyRef()`. A `Map` will become a [[ConfigObject]] and an
+   * `Iterable` will become a [[ConfigList]]. If the `Iterable` is not an
+   * ordered collection, results could be strange, since `ConfigList` is
+   * ordered.
    *
-   * <p> In a <code>Map</code> passed to <code>fromAnyRef()</code>, the map's
-   * keys are plain keys, not path expressions. So if your <code>Map</code> has
-   * a key "foo.bar" then you will get one object with a key called "foo.bar",
-   * rather than an object with a key "foo" containing another object with a key
-   * "bar".
+   * <p> In a `Map` passed to `fromAnyRef()`, the map's keys are plain keys, not
+   * path expressions. So if your `Map` has a key "foo.bar" then you will get
+   * one object with a key called "foo.bar", rather than an object with a key
+   * "foo" containing another object with a key "bar".
    *
    * <p> The originDescription will be used to set the `origin()` field on the
    * `ConfigValue`. It should normally be the name of the file the values came
@@ -44,9 +41,8 @@ object ConfigValueFactory {
    * information that was present in the original such as its origin, but it
    * will have matching values.
    *
-   * <p> If you pass in a <code>ConfigValue</code> to this function, it will be
-   * returned unmodified. (The <code>originDescription</code> will be ignored in
-   * this case.)
+   * <p> If you pass in a `ConfigValue` to this function, it will be returned
+   * unmodified. (The `originDescription` will be ignored in this case.)
    *
    * <p> This function throws if you supply a value that cannot be converted to
    * a ConfigValue, but supplying such a value is a bug in your program, so you
@@ -67,16 +63,15 @@ object ConfigValueFactory {
    * See the
    * [[#fromAnyRef(obj:Object,originDescription:String)* fromAnyRef(Object,String)]]
    * documentation for details. This is a typesafe wrapper that only works on
-   * `java.util.Map` and returns {@link ConfigObject} rather than
-   * [[ConfigValue]].
+   * `java.util.Map` and returns [[ConfigObject]] rather than [[ConfigValue]].
    *
-   * <p> If your <code>Map</code> has a key "foo.bar" then you will get one
-   * object with a key called "foo.bar", rather than an object with a key "foo"
-   * containing another object with a key "bar". The keys in the map are keys;
-   * not path expressions. That is, the <code>Map</code> corresponds exactly to
-   * a single {@code ConfigObject}. The keys will not be parsed or modified, and
-   * the values are wrapped in ConfigValue. To get nested {@code ConfigObject},
-   * some of the values in the map would have to be more maps.
+   * <p> If your `Map` has a key "foo.bar" then you will get one object with a
+   * key called "foo.bar", rather than an object with a key "foo" containing
+   * another object with a key "bar". The keys in the map are keys; not path
+   * expressions. That is, the `Map` corresponds exactly to a single
+   * `ConfigObject`. The keys will not be parsed or modified, and the values are
+   * wrapped in ConfigValue. To get nested `ConfigObject`, some of the values in
+   * the map would have to be more maps.
    *
    * <p> See also
    * [[ConfigFactory$.parseMap(values:java\.util\.Map[String,_],originDescription:String)* ConfigFactory.parseMap(Map,String)]]
@@ -85,9 +80,9 @@ object ConfigValueFactory {
    * @param values
    *   map from keys to plain Java values
    * @param originDescription
-   *   description to use in {@link ConfigOrigin} of created values
+   *   description to use in [[ConfigOrigin]] of created values
    * @return
-   *   a new {@link ConfigObject} value
+   *   a new [[ConfigObject]] value
    */
   def fromMap(
       values: ju.Map[String, _],
@@ -99,15 +94,15 @@ object ConfigValueFactory {
    * See the
    * [[#fromAnyRef(obj:Object,originDescription:String)* fromAnyRef(Object,String)]]
    * documentation for details. This is a typesafe wrapper that only works on
-   * `java.lang.Iterable` and returns {@link ConfigList} rather than
+   * `java.lang.Iterable` and returns [[ConfigList]] rather than
    * [[ConfigValue]].
    *
    * @param values
    *   list of plain Java values
    * @param originDescription
-   *   description to use in {@link ConfigOrigin} of created values
+   *   description to use in [[ConfigOrigin]] of created values
    * @return
-   *   a new {@link ConfigList} value
+   *   a new [[ConfigList]] value
    */
   def fromIterable(
       values: jl.Iterable[_],
@@ -123,7 +118,7 @@ object ConfigValueFactory {
    * @param object
    *   a plain Java value
    * @return
-   *   a new {@link ConfigValue}
+   *   a new [[ConfigValue]]
    */
   def fromAnyRef(obj: Object): ConfigValue = fromAnyRef(obj, null)
 
@@ -139,7 +134,7 @@ object ConfigValueFactory {
    * @param values
    *   map from keys to plain Java values
    * @return
-   *   a new {@link ConfigObject}
+   *   a new [[ConfigObject]]
    */
   def fromMap(values: ju.Map[String, _]): ConfigObject = fromMap(values, null)
 
@@ -151,7 +146,7 @@ object ConfigValueFactory {
    * @param values
    *   list of plain Java values
    * @return
-   *   a new {@link ConfigList}
+   *   a new [[ConfigList]]
    */
   def fromIterable(values: jl.Iterable[_]): ConfigList =
     fromIterable(values, null)

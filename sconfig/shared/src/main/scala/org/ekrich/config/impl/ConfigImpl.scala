@@ -23,7 +23,7 @@ import org.ekrich.config.ConfigValue
 
 /**
  * Internal implementation detail, not ABI stable, do not touch. For use only by
- * the {@link org.ekrich.config} package.
+ * the [[org.ekrich.config]] package.
  */
 object ConfigImpl {
   private[impl] class LoaderCache private[impl] () {

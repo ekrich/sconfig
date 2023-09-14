@@ -26,7 +26,7 @@ import org.ekrich.config.Optional
 
 /**
  * Internal implementation detail, not ABI stable, do not touch. For use only by
- * the {@link org.ekrich.config} package.
+ * the [[org.ekrich.config]] package.
  */
 object ConfigBeanImpl {
 
@@ -122,7 +122,7 @@ object ConfigBeanImpl {
           // Is the property key missing in the config?
           if (configPropName == null) { // If so, continue if the field is marked as @{link Optional}
             if (isOptionalProperty(clazz, beanProp))
-              break() // continue, Otherwise, raise a {@link Missing} exception right here
+              break() // continue, Otherwise, raise a [[Missing]] exception right here
             throw new ConfigException.Missing(beanProp.getName)
           }
           val unwrapped = getValue(
