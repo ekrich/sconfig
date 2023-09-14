@@ -6,19 +6,19 @@ package org.ekrich.config
 import java.{util => ju}
 
 /**
- * Subtype of {@link ConfigValue} representing a list value, as in JSON's {@code
+ * Subtype of [[ConfigValue]] representing a list value, as in JSON's {@code
  * [1,2,3]} syntax.
  *
  * <p> {@code ConfigList} implements {@code java.util.List<ConfigValue>} so you
- * can use it like a regular Java list. Or call {@link #unwrapped} to unwrap the
+ * can use it like a regular Java list. Or call [[#unwrapped]] to unwrap the
  * list elements into plain Java values.
  *
- * <p> Like all {@link ConfigValue} subtypes, {@code ConfigList} is immutable.
+ * <p> Like all [[ConfigValue} subtypes, {@code ConfigList]] is immutable.
  * This makes it threadsafe and you never have to create "defensive copies." The
  * mutator methods from `java.util.List` all throw
  * `java.lang.UnsupportedOperationException`.
  *
- * <p> The {@link ConfigValue#valueType} method on a list returns
+ * <p> The [[ConfigValue#valueType]] method on a list returns
  * [[ConfigValueType#LIST]].
  *
  * <p> <em>Do not implement {@code ConfigList}</em>; it should only be

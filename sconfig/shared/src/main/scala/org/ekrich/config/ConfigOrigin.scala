@@ -87,7 +87,7 @@ trait ConfigOrigin {
    * Returns a {@code ConfigOrigin} based on this one, but with the given
    * comments. Does not modify this instance or any {@code ConfigValue}s with
    * this origin (since they are immutable). To set the returned origin to a
-   * {@code ConfigValue}, use {@link ConfigValue#withOrigin}.
+   * {@code ConfigValue}, use [[ConfigValue#withOrigin]].
    *
    * <p> Note that when the given comments are equal to the comments on this
    * object, a new instance may not be created and {@code this} is returned

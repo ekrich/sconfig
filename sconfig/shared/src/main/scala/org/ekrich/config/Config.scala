@@ -39,8 +39,8 @@ import scala.annotation.varargs
  *
  * <p> <strong>Paths, keys, and Config vs. ConfigObject</strong>
  *
- * <p> <code>Config</code> is a view onto a tree of {@link ConfigObject}; the
- * corresponding object tree can be found through {@link Config#root}.
+ * <p> <code>Config</code> is a view onto a tree of [[ConfigObject]]; the
+ * corresponding object tree can be found through [[Config#root]].
  * <code>ConfigObject</code> is a map from config <em>keys</em>, rather than
  * paths, to config values. Think of <code>ConfigObject</code> as a JSON object
  * and <code>Config</code> as a configuration API.
@@ -66,29 +66,29 @@ import scala.annotation.varargs
  *
  * <p> Another difference between {@code Config} and {@code ConfigObject} is
  * that conceptually, {@code ConfigValue}s with a {@link ConfigValue#valueType
- * valueType} of {@link ConfigValueType#NULL NULL} exist in a {@code
+ * valueType} of [[ConfigValueType#NULL NULL]] exist in a {@code
  * ConfigObject}, while a {@code Config} treats null values as if they were
- * missing. (With the exception of two methods: {@link Config#hasPathOrNull} and
- * {@link Config#getIsNull} let you detect <code>null</code> values.)
+ * missing. (With the exception of two methods: [[Config#hasPathOrNull]] and
+ * [[Config#getIsNull]] let you detect <code>null</code> values.)
  *
  * <p> <strong>Getting configuration values</strong>
  *
  * <p> The "getters" on a {@code Config} all work in the same way. They never
  * return null, nor do they return a {@code ConfigValue} with
- * [[ConfigValue#valueType valueType]] of {@link ConfigValueType#NULL NULL}.
- * Instead, they throw {@link ConfigException.Missing} if the value is
+ * [[ConfigValue#valueType valueType]] of [[ConfigValueType#NULL NULL]].
+ * Instead, they throw [[ConfigException.Missing]] if the value is
  * completely absent or set to null. If the value is set to null, a subtype of
- * {@code ConfigException.Missing} called {@link ConfigException.Null} will be
- * thrown. {@link ConfigException.WrongType} will be thrown anytime you ask for
+ * {@code ConfigException.Missing} called [[ConfigException.Null]] will be
+ * thrown. [[ConfigException.WrongType]] will be thrown anytime you ask for
  * a type and the value has an incompatible type. Reasonable type conversions
  * are performed for you though.
  *
  * <p> <strong>Iteration</strong>
  *
  * <p> If you want to iterate over the contents of a {@code Config}, you can get
- * its {@code ConfigObject} with {@link #root}, and then iterate over the {@code
+ * its {@code ConfigObject} with [[#root]], and then iterate over the {@code
  * ConfigObject} (which implements <code>java.util.Map</code>). Or, you can use
- * {@link #entrySet} which recurses the object tree for you and builds up a
+ * [[#entrySet]] which recurses the object tree for you and builds up a
  * <code>Set</code> of all path-value pairs where the value is not null.
  *
  * '''Resolving substitutions'''
@@ -125,7 +125,7 @@ import scala.annotation.varargs
  * <code>myConfig.root.render</code>. There's also a variant
  * [[ConfigValue!.render(options:org\.ekrich\.config\.ConfigRenderOptions)* render(ConfigRenderOptions)]]
  * inherited from [[ConfigValue]] which allows you to control the format of the
- * rendered string. (See {@link ConfigRenderOptions}.) Note that
+ * rendered string. (See [[ConfigRenderOptions]].) Note that
  * <code>Config</code> does not remember the formatting of the original file, so
  * if you load, modify, and re-save a config file, it will be substantially
  * reformatted.
@@ -151,7 +151,7 @@ import scala.annotation.varargs
 trait Config extends ConfigMergeable {
 
   /**
-   * Gets the {@code Config} as a tree of {@link ConfigObject}. This is a
+   * Gets the {@code Config} as a tree of [[ConfigObject]]. This is a
    * constant-time operation (it is not proportional to the number of values in
    * the {@code Config}).
    *
@@ -179,14 +179,14 @@ trait Config extends ConfigMergeable {
    * object, that is, a substitution `\${foo.bar}` will be replaced with the
    * result of `getValue("foo.bar")`.
    *
-   * <p> This method uses {@link ConfigResolveOptions#defaults}, there is
+   * <p> This method uses [[ConfigResolveOptions#defaults]], there is
    * another variant
    * [[#resolve(options:org\.ekrich\.config\.ConfigResolveOptions)* resolve(ConfigResolveOptions)]]
    * which lets you specify non-default options.
    *
-   * <p> A given {@link Config} must be resolved before using it to retrieve
+   * <p> A given [[Config]] must be resolved before using it to retrieve
    * config values, but ideally should be resolved one time for your entire
-   * stack of fallbacks (see {@link Config#withFallback}). Otherwise, some
+   * stack of fallbacks (see [[Config#withFallback]]). Otherwise, some
    * substitutions that could have resolved with all fallbacks available may not
    * resolve, which will be potentially confusing for your application's users.
    *
@@ -205,7 +205,7 @@ trait Config extends ConfigMergeable {
    * }
    * }}}
    *
-   * <p> Many methods on {@link ConfigFactory} such as
+   * <p> Many methods on [[ConfigFactory]] such as
    * [[ConfigFactory$.load()* ConfigFactory.load()]] automatically resolve the
    * loaded <code>Config</code> on the loaded stack of config files.
    *
@@ -257,11 +257,11 @@ trait Config extends ConfigMergeable {
    * only needed if you're constructing some sort of app-specific custom
    * approach to configuration. The more usual approach if you have a source of
    * substitution values would be to merge that source into your config stack
-   * using {@link Config#withFallback} and then resolve. <p> Note that this
+   * using [[Config#withFallback]] and then resolve. <p> Note that this
    * method does NOT look in this instance for substitution values. If you want
    * to do that, you could either merge this instance into your value source
-   * using {@link Config#withFallback}, or you could resolve multiple times with
-   * multiple sources (using {@link ConfigResolveOptions#setAllowUnresolved} so
+   * using [[Config#withFallback]], or you could resolve multiple times with
+   * multiple sources (using [[ConfigResolveOptions#setAllowUnresolved]] so
    * the partial resolves don't fail).
    *
    * @param source
@@ -340,7 +340,7 @@ trait Config extends ConfigMergeable {
    * should be.
    *
    * <p> If validation fails, the thrown exception contains a list of all
-   * problems found. See {@link ConfigException.ValidationFailed#problems}. The
+   * problems found. See [[ConfigException.ValidationFailed#problems]]. The
    * exception's <code>getMessage</code> will have all the problems concatenated
    * into one huge string, as well.
    *
@@ -371,7 +371,7 @@ trait Config extends ConfigMergeable {
    * false for null values, while {@code containsKey} returns true indicating
    * that the object contains a null value for the key.
    *
-   * <p> If a path exists according to {@link #hasPath}, then {@link #getValue}
+   * <p> If a path exists according to [[#hasPath}, then {@link #getValue]]
    * will never throw an exception. However, the typed getters, such as
    * [[#getInt]], will still throw if the value is not convertible to the
    * requested type.
@@ -392,8 +392,8 @@ trait Config extends ConfigMergeable {
   /**
    * Checks whether a value is present at the given path, even if the value is
    * null. Most of the getters on <code>Config</code> will throw if you try to
-   * get a null value, so if you plan to call {@link #getValue}, [[#getInt]], or
-   * another getter you may want to use plain {@link #hasPath} rather than this
+   * get a null value, so if you plan to call [[#getValue]], [[#getInt]], or
+   * another getter you may want to use plain [[#hasPath]] rather than this
    * method.
    *
    * <p> To handle all three cases (unset, null, and a non-null value) the code
@@ -439,16 +439,16 @@ trait Config extends ConfigMergeable {
 
   /**
    * Returns the set of path-value pairs, excluding any null values, found by
-   * recursing {@link #root the root object}. Note that this is very different
+   * recursing [[#root the root object]]. Note that this is very different
    * from <code>root.entrySet</code> which returns the set of immediate-child
    * keys in the root object and includes null values. <p> Entries contain
    * <em>path expressions</em> meaning there may be quoting and escaping
-   * involved. Parse path expressions with {@link ConfigUtil#splitPath}. <p>
+   * involved. Parse path expressions with [[ConfigUtil#splitPath]]. <p>
    * Because a <code>Config</code> is conceptually a single-level map from paths
-   * to values, there will not be any {@link ConfigObject} values in the entries
-   * (that is, all entries represent leaf nodes). Use {@link ConfigObject}
+   * to values, there will not be any [[ConfigObject]] values in the entries
+   * (that is, all entries represent leaf nodes). Use [[ConfigObject]]
    * rather than <code>Config</code> if you want a tree. (OK, this is a slight
-   * lie: <code>Config</code> entries may contain {@link ConfigList} and the
+   * lie: <code>Config</code> entries may contain [[ConfigList]] and the
    * lists may contain objects. But no objects are directly included as entry
    * values.)
    *
@@ -461,7 +461,7 @@ trait Config extends ConfigMergeable {
   /**
    * Checks whether a value is set to null at the given path, but throws an
    * exception if the value is entirely unset. This method will not throw if
-   * {@link #hasPathOrNull} returned true for the same path, so to avoid any
+   * [[#hasPathOrNull]] returned true for the same path, so to avoid any
    * possible exception check <code>hasPathOrNull</code> first. However, an
    * exception for unset paths will usually be the right thing (because a
    * <code>reference.conf</code> should exist that has the path set, the path
@@ -622,7 +622,7 @@ trait Config extends ConfigMergeable {
   /**
    * Gets the value at the given path, unless the value is a null value or
    * missing, in which case it throws just like the other getters. Use {@code
-   * get} on the {@link Config#root} object (or other object in the tree) if you
+   * get} on the [[Config#root]] object (or other object in the tree) if you
    * want an unprocessed value.
    *
    * @param path
@@ -758,7 +758,7 @@ trait Config extends ConfigMergeable {
   def getTemporal(path: String): TemporalAmount
 
   /**
-   * Gets a list value (with any element type) as a {@link ConfigList}, which
+   * Gets a list value (with any element type) as a [[ConfigList]], which
    * implements {@code java.util.List<ConfigValue>}. Throws if the path is unset
    * or null.
    *
@@ -951,7 +951,7 @@ trait Config extends ConfigMergeable {
 
   /**
    * Gets a list, converting each value in the list to a memory size, using the
-   * same rules as {@link #getMemorySize}.
+   * same rules as [[#getMemorySize]].
    *
    * @since 1.3.0
    * @param path
@@ -996,7 +996,7 @@ trait Config extends ConfigMergeable {
    * Clone the config with only the given path (and its children) retained; all
    * sibling paths are removed. <p> Note that path expressions have a syntax and
    * sometimes require quoting (see [[ConfigUtil$.joinPath(elements:String*)*]]
-   * and {@link ConfigUtil#splitPath}).
+   * and [[ConfigUtil#splitPath]]).
    *
    * @param path
    *   path to keep

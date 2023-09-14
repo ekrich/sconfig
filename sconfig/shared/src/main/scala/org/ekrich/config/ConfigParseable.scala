@@ -28,7 +28,7 @@ trait ConfigParseable {
   def parse(options: ConfigParseOptions): ConfigObject
 
   /**
-   * Returns a {@link ConfigOrigin} describing the origin of the parseable item.
+   * Returns a [[ConfigOrigin]] describing the origin of the parseable item.
    *
    * @return
    *   the origin of the parseable item

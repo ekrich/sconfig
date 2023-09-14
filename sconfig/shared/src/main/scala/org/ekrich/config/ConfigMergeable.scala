@@ -40,7 +40,7 @@ trait ConfigMergeable {
    *   foo = { a: 42, b: 43 }
    * }}}
    *
-   * Only {@link ConfigObject} and {@link Config} instances do anything in this
+   * Only [[ConfigObject} and {@link Config]] instances do anything in this
    * method (they need to merge the fallback keys into themselves). All other
    * values just return the original value, since they automatically override
    * any fallback. This means that objects do not merge "across" non-objects; if

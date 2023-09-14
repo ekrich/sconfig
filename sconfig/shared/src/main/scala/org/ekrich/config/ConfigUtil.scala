@@ -24,8 +24,8 @@ object ConfigUtil {
   /**
    * Converts a list of keys to a path expression, by quoting the path elements
    * as needed and then joining them separated by a period. A path expression is
-   * usable with a {@link Config}, while individual path elements are usable
-   * with a {@link ConfigObject}. <p> See the overview documentation for
+   * usable with a [[Config]], while individual path elements are usable
+   * with a [[ConfigObject]]. <p> See the overview documentation for
    * [[Config]] for more detail on path expressions vs. keys.
    *
    * @param elements
@@ -41,9 +41,9 @@ object ConfigUtil {
   /**
    * Converts a list of strings to a path expression, by quoting the path
    * elements as needed and then joining them separated by a period. A path
-   * expression is usable with a {@link Config}, while individual path elements
-   * are usable with a {@link ConfigObject}. <p> See the overview documentation
-   * for {@link Config} for more detail on path expressions vs. keys.
+   * expression is usable with a [[Config]], while individual path elements
+   * are usable with a [[ConfigObject]]. <p> See the overview documentation
+   * for [[Config]] for more detail on path expressions vs. keys.
    *
    * @param elements
    *   the keys in the path
@@ -58,8 +58,8 @@ object ConfigUtil {
   /**
    * Converts a path expression into a list of keys, by splitting on period and
    * unquoting the individual path elements. A path expression is usable with a
-   * {@link Config}, while individual path elements are usable with a
-   * [[ConfigObject]]. <p> See the overview documentation for {@link Config} for
+   * [[Config]], while individual path elements are usable with a
+   * [[ConfigObject]]. <p> See the overview documentation for [[Config]] for
    * more detail on path expressions vs. keys.
    *
    * @param path

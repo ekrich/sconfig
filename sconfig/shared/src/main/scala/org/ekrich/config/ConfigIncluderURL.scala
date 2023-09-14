@@ -6,9 +6,9 @@ package org.ekrich.config
 import java.net.URL
 
 /**
- * Implement this <em>in addition to</em> {@link ConfigIncluder} if you want to
+ * Implement this <em>in addition to</em> [[ConfigIncluder]] if you want to
  * support inclusion of files with the {@code include url("http://example.com")}
- * syntax. If you do not implement this but do implement {@link ConfigIncluder},
+ * syntax. If you do not implement this but do implement [[ConfigIncluder]],
  * attempts to load URLs will use the default includer.
  */
 trait ConfigIncluderURL {

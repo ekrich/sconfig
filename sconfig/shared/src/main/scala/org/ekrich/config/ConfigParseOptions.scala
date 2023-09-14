@@ -38,7 +38,7 @@ final class ConfigParseOptions private (
 
   /**
    * Set the file format. If set to null, try to guess from any available
-   * filename extension; if guessing fails, assume {@link ConfigSyntax#CONF}.
+   * filename extension; if guessing fails, assume [[ConfigSyntax#CONF]].
    *
    * @param syntax
    *   a syntax or {@code null} for best guess
@@ -57,7 +57,7 @@ final class ConfigParseOptions private (
       )
 
   /**
-   * Set the file format. If set to null, assume {@link ConfigSyntax#CONF}.
+   * Set the file format. If set to null, assume [[ConfigSyntax#CONF]].
    *
    * @param filename
    *   a configuration file name
@@ -82,10 +82,10 @@ final class ConfigParseOptions private (
    * set up for you to something like the filename, but if you provide just an
    * input stream you might want to improve on it. Set to null to allow the
    * library to come up with something automatically. This description is the
-   * basis for the {@link ConfigOrigin} of the parsed values.
+   * basis for the [[ConfigOrigin]] of the parsed values.
    *
    * @param originDescription
-   *   description to put in the {@link ConfigOrigin}
+   *   description to put in the [[ConfigOrigin]]
    * @return
    *   options with the origin description set
    */
@@ -151,7 +151,7 @@ final class ConfigParseOptions private (
   def getAllowMissing: Boolean = allowMissing
 
   /**
-   * Set a {@link ConfigIncluder} which customizes how includes are handled.
+   * Set a [[ConfigIncluder]] which customizes how includes are handled.
    * null means to use the default includer.
    *
    * @param includer
@@ -172,7 +172,7 @@ final class ConfigParseOptions private (
       )
 
   /**
-   * Prepends a {@link ConfigIncluder} which customizes how includes are
+   * Prepends a [[ConfigIncluder]] which customizes how includes are
    * handled. To prepend your includer, the library calls
    * [[ConfigIncluder#withFallback]] on your includer to append the existing
    * includer to it.
@@ -194,8 +194,8 @@ final class ConfigParseOptions private (
   }
 
   /**
-   * Appends a {@link ConfigIncluder} which customizes how includes are handled.
-   * To append, the library calls {@link ConfigIncluder#withFallback} on the
+   * Appends a [[ConfigIncluder]] which customizes how includes are handled.
+   * To append, the library calls [[ConfigIncluder#withFallback]] on the
    * existing includer.
    *
    * @param includer

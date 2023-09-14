@@ -28,7 +28,7 @@ trait ConfigValue extends ConfigMergeable {
   def origin: ConfigOrigin
 
   /**
-   * The {@link ConfigValueType} of the value; matches the JSON type schema.
+   * The [[ConfigValueType]] of the value; matches the JSON type schema.
    *
    * @return
    *   value's type
@@ -38,8 +38,8 @@ trait ConfigValue extends ConfigMergeable {
   /**
    * Returns the value as a plain Java boxed value, that is, a {@code String},
    * {@code Number}, {@code Boolean}, {@code Map<String,Object>}, {@code
-   * List<Object>}, or {@code null}, matching the {@link #valueType} of this
-   * {@code ConfigValue}. If the value is a {@link ConfigObject} or
+   * List<Object>}, or {@code null}, matching the [[#valueType]] of this
+   * {@code ConfigValue}. If the value is a [[ConfigObject]] or
    * [[ConfigList]], it is recursively unwrapped.
    *
    * @return
@@ -89,7 +89,7 @@ trait ConfigValue extends ConfigMergeable {
   override def withFallback(other: ConfigMergeable): ConfigValue
 
   /**
-   * Places the value inside a {@link Config} at the given path. See also
+   * Places the value inside a [[Config]] at the given path. See also
    * [[ConfigValue#atKey]].
    *
    * @param path
@@ -100,7 +100,7 @@ trait ConfigValue extends ConfigMergeable {
   def atPath(path: String): Config
 
   /**
-   * Places the value inside a {@link Config} at the given key. See also
+   * Places the value inside a [[Config]] at the given key. See also
    * [[ConfigValue#atPath]].
    *
    * @param key
