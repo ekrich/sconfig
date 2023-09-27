@@ -3,13 +3,15 @@
  */
 package org.ekrich.config
 
-import org.ekrich.config.impl.ConfigImpl
-import org.ekrich.config.impl.Parseable
 import java.io.{File, Reader}
 import java.net.URL
 import java.{util => ju}
 import java.util.Properties
 import java.util.concurrent.Callable
+
+import org.ekrich.config.impl.ConfigImpl
+import org.ekrich.config.impl.ConfigFactoryImpl
+import org.ekrich.config.impl.Parseable
 
 /**
  * Contains static methods for creating [[Config]] instances.
@@ -30,6 +32,7 @@ import java.util.concurrent.Callable
  */
 object ConfigFactory {
   private val STRATEGY_PROPERTY_NAME = "config.strategy"
+  private val b = ConfigFactoryImpl.a // avoid warning for now
 
   /**
    * Loads an application's configuration from the given classpath resource or
