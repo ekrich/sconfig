@@ -10,7 +10,6 @@ import java.util.Properties
 import java.util.concurrent.Callable
 
 import org.ekrich.config.impl.ConfigImpl
-import org.ekrich.config.impl.ConfigFactoryImpl
 import org.ekrich.config.impl.Parseable
 
 /**
@@ -32,7 +31,6 @@ import org.ekrich.config.impl.Parseable
  */
 object ConfigFactory {
   private val STRATEGY_PROPERTY_NAME = "config.strategy"
-  private val b = ConfigFactoryImpl.a // avoid warning for now
 
   /**
    * Loads an application's configuration from the given classpath resource or
