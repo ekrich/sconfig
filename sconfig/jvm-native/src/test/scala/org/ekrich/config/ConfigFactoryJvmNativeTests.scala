@@ -1,11 +1,9 @@
-package test
+package org.ekrich.config
 
 import org.junit.Assert._
 import org.junit.Test
 
-import org.ekrich.config.ConfigFactory
-
-class ConfigFactoryTests {
+class ConfigFactoryJvmNativeTests {
   @Test def parseString: Unit = {
     val configStr =
       """
