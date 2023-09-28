@@ -1,4 +1,4 @@
-package org.ekrich.config.impl
+package org.ekrich.config
 
 /**
   * [[ConfigFactory]] methods common to JVM and Native

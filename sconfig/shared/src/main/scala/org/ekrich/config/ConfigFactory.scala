@@ -11,7 +11,6 @@ import java.util.concurrent.Callable
 
 import org.ekrich.config.impl.ConfigImpl
 import org.ekrich.config.impl.Parseable
-import org.ekrich.config.impl.PlatformConfigFactory
 
 /**
  * Contains static methods for creating [[Config]] instances.

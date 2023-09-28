@@ -2,7 +2,9 @@
  * Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
  * Copyright (C) 2018-2023 ekrich.org
  */
-package org.ekrich.config.impl
+package org.ekrich.config
+
+import org.ekrich.config.impl.Parseable
 
 /**
  * [[ConfigFactory]] methods common to all platforms
