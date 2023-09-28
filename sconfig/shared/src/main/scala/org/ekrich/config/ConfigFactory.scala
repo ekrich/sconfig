@@ -11,6 +11,7 @@ import java.util.concurrent.Callable
 
 import org.ekrich.config.impl.ConfigImpl
 import org.ekrich.config.impl.Parseable
+import org.ekrich.config.impl.PlatformConfigFactory
 
 /**
  * Contains static methods for creating [[Config]] instances.
@@ -29,7 +30,7 @@ import org.ekrich.config.impl.Parseable
  * sure to read the <a href="package-summary.html#package_description">package
  * overview</a> which describes the big picture as shown in those examples.
  */
-object ConfigFactory {
+object ConfigFactory extends PlatformConfigFactory {
   private val STRATEGY_PROPERTY_NAME = "config.strategy"
 
   /**
