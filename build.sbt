@@ -156,7 +156,10 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .nativeConfigure(_.enablePlugins(ScalaNativeJUnitPlugin))
   .nativeSettings(
     crossScalaVersions := versions,
-    nativeConfig ~= (_.withLinkStubs(true)),
+    nativeConfig ~= (
+      _.withLinkStubs(true)
+        .withEmbedResources(true)
+    ),
     logLevel := Level.Info, // Info or Debug
     libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
   )
