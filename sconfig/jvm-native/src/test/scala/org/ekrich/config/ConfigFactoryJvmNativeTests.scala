@@ -4,6 +4,7 @@ import org.junit.Assert._
 import org.junit.Test
 
 class ConfigFactoryJvmNativeTests {
+  // These are in common test but this is File test will be.
   @Test def parseString: Unit = {
     val configStr =
       """
