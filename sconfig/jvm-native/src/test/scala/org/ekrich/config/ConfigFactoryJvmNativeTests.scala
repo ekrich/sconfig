@@ -1,45 +1,43 @@
 package org.ekrich.config
 
+import java.io.StringReader
+
 import org.junit.Assert._
 import org.junit.Test
 
 class ConfigFactoryJvmNativeTests {
-  // These are in common test but this is File test will be.
-  @Test def parseString: Unit = {
-    val configStr =
-      """
-        |maxColumn = 100
-        |project.git=true
-        |align = none
-        |danglingParentheses = true
-        |newlines.neverBeforeJsNative = true
-        |newlines.sometimesBeforeColonInMethodReturnType = false
-        |assumeStandardLibraryStripMargin = true
-        """.stripMargin
+  // These tests will be here until JS supports Reader
+  // Then they will be removed and then uncommented in shared
+  val filename = "/test01.properties"
+  val fileStr =
+    """
+      |# test01.properties file
+      |fromProps.abc=abc
+      |fromProps.one=1
+      |fromProps.bool=true
+      |fromProps.specialChars=hello^^
+      """.stripMargin
+  var test01Reader = new StringReader(fileStr)
 
-    val conf = ConfigFactory.parseString(configStr)
-
-    assertEquals(conf.getInt("maxColumn"), 100)
-    assertEquals(conf.getBoolean("project.git"), true)
+  @Test
+  def parse(): Unit = {
+    val filename = "/test01.properties"
+    val config = ConfigFactory.parseReader(
+      test01Reader,
+      ConfigParseOptions.defaults
+        .setSyntaxFromFilename(filename)
+    )
+    assertEquals("hello^^", config.getString("fromProps.specialChars"))
   }
 
-  @Test def resolve: Unit = {
-    val configStr =
-      """
-        |pattern-default-main = default
-        |core = {
-        |  version: "0.1"
-        |  extends: [
-        |    ${pattern-default-main}
-        |  ]
-        |}
-    """.stripMargin
-
-    val conf = ConfigFactory.parseString(configStr)
-    assertEquals(conf.isResolved, false)
-    val rconf = conf.resolve()
-    assertEquals(rconf.isResolved, true)
-    val pattern = rconf.getList("core.extends").get(0).unwrapped
-    assertEquals(pattern, "default")
+  @Test
+  def parseIncorrectFormat(): Unit = {
+    val e = assertThrows(
+      classOf[ConfigException.Parse],
+      () => ConfigFactory.parseReader(test01Reader)
+    )
+    assertTrue(
+      e.getMessage.contains("Expecting end of input or a comma, got '^'")
+    )
   }
 }
