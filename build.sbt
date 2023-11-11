@@ -53,7 +53,7 @@ val scCompat = "2.11.0"
 val versionsBase = Seq(scala212, scala213)
 val versions = versionsBase :+ scala3
 
-ThisBuild / scalaVersion := scala3
+ThisBuild / scalaVersion := scala213
 ThisBuild / crossScalaVersions := versions
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / mimaFailOnNoPrevious := false
