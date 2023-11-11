@@ -1,9 +1,11 @@
-package org.ekrich.config
+package org.ekrich.config.impl
 
 import java.io.StringReader
 
 import org.junit.Assert._
 import org.junit.Test
+
+import org.ekrich.config.{ConfigFactory, ConfigParseOptions, ConfigException}
 
 class ConfigFactoryJvmNativeTests {
   // These tests will be here until JS supports Reader
