@@ -21,7 +21,7 @@ import FileUtils._
 
 import org.ekrich.config._
 
-class ConfigFactoryJvmTests extends TestUtils {
+class ConfigFactoryJvmTest extends TestUtils {
   @Test
   def test01Getting(): Unit = {
     val conf = ConfigFactory.load("test01")

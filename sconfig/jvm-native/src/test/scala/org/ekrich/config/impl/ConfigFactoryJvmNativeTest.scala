@@ -7,7 +7,7 @@ import org.junit.Test
 
 import org.ekrich.config.{ConfigFactory, ConfigParseOptions, ConfigException}
 
-class ConfigFactoryJvmNativeTests {
+class ConfigFactoryJvmNativeTest {
   // These tests will be here until JS supports Reader
   // Then they will be removed and then uncommented in shared
   val filename = "/test01.properties"

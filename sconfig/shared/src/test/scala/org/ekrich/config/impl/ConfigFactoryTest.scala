@@ -7,7 +7,7 @@ import org.junit.Test
 
 import org.ekrich.config.ConfigFactory
 
-class ConfigFactoryTests {
+class ConfigFactoryTest {
 
   // uncomment when Scala.js has Reader
   // val filename = "/test01.properties"
