@@ -117,7 +117,13 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       if (isScala3.value) dotcOpts else scalacOpts
     },
     libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat,
-    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
+    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
+    // env vars for tests
+    Test / envVars ++= Map(
+      "testList.0" -> "0",
+      "testList.1" -> "1",
+      "testClassesPath" -> (Test / classDirectory).value.getPath
+    )
   )
   .jvmSettings(
     crossScalaVersions := versions,
@@ -141,12 +147,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     Test / fork := true,
     run / fork := true,
     Test / run / fork := true,
-    // env vars for tests
-    Test / envVars ++= Map(
-      "testList.0" -> "0",
-      "testList.1" -> "1",
-      "testClassesPath" -> (Test / classDirectory).value.getPath
-    ),
     // uncomment for debugging
     // Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
     // mima settings
@@ -166,7 +166,11 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versions,
-    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
+    libraryDependencies ++= Seq(
+      "org.ekrich" %%% "sjavatime" % javaTime % "provided",
+      ("org.scala-js" %%% "scalajs-weakreferences" % "1.0.0")
+        .cross(CrossVersion.for3Use2_13)
+    )
   )
 
 lazy val `scalafix-rules` = (project in file("scalafix/rules"))
