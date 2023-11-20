@@ -7,7 +7,6 @@ import org.junit.Assert._
 import org.junit._
 import org.ekrich.config.ConfigValue
 import java.util.Collections
-import java.net.URL
 import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigList
@@ -17,9 +16,7 @@ import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValueFactory
 import org.ekrich.config.ConfigFactory
 
-//import FileUtils._
-
-class ConfigOriginJVMTest extends TestNoSerUtils {
+class ConfigValueSharedTest extends TestUtilsShared {
   @Test
   def configOriginEquality(): Unit = {
     val a = SimpleConfigOrigin.newSimple("foo")
@@ -562,39 +559,6 @@ class ConfigOriginJVMTest extends TestNoSerUtils {
   }
 
   @Test
-  def configOriginFileAndLine(): Unit = {
-    val hasFilename = SimpleConfigOrigin.newFile("foo")
-    val noFilename = SimpleConfigOrigin.newSimple("bar")
-    val filenameWithLine = hasFilename.withLineNumber(3)
-    val noFilenameWithLine = noFilename.withLineNumber(4)
-
-    assertEquals("foo", hasFilename.filename)
-    assertEquals("foo", filenameWithLine.filename)
-    assertNull(noFilename.filename)
-    assertNull(noFilenameWithLine.filename)
-
-    assertEquals("foo", hasFilename.description)
-    assertEquals("bar", noFilename.description)
-
-    assertEquals(-1, hasFilename.lineNumber)
-    assertEquals(-1, noFilename.lineNumber)
-
-    assertEquals("foo: 3", filenameWithLine.description)
-    assertEquals("bar: 4", noFilenameWithLine.description)
-
-    assertEquals(3, filenameWithLine.lineNumber)
-    assertEquals(4, noFilenameWithLine.lineNumber)
-
-    // the filename is made absolute when converting to url
-    assertTrue(hasFilename.url.toExternalForm.contains("foo"))
-    assertNull(noFilename.url)
-
-    val urlOrigin = SimpleConfigOrigin.newURL(new URL("file:/foo"))
-    assertEquals("/foo", urlOrigin.filename)
-    assertEquals("file:/foo", urlOrigin.url.toExternalForm)
-  }
-
-  @Test
   def withOnly(): Unit = {
     val obj = parseObject("{ a=1, b=2, c.d.y=3, e.f.g=4, c.d.z=5 }")
     assertEquals("keep only a", parseObject("{ a=1 }"), obj.withOnlyKey("a"))
@@ -829,6 +793,8 @@ class ConfigOriginJVMTest extends TestNoSerUtils {
       .withValue("x.y.z", v4)
     assertEquals(parseConfig("a=1,b.c=2,b.d=3,x.y.z=4"), config)
   }
+
+
 
   @Test
   def renderWithNewlinesInDescription(): Unit = {

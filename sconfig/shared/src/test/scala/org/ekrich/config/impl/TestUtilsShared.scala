@@ -20,7 +20,7 @@ import scala.reflect.classTag
 import scala.jdk.CollectionConverters._
 import language.implicitConversions
 
-abstract trait TestNoSerUtils {
+abstract trait TestUtilsShared {
   protected def intercept[E <: Throwable: ClassTag](block: => Any): E = {
     val expectedClass = classTag[E].runtimeClass
     var thrown: Option[Throwable] = None
