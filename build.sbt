@@ -116,7 +116,10 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     scalacOptions ++= {
       if (isScala3.value) dotcOpts else scalacOpts
     },
-    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat,
+    libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat
+      //"org.json4s" %%% "json4s-native" % "4.0.6" % Test
+    ),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
     // env vars for tests
     Test / envVars ++= Map(
@@ -128,6 +131,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jvmSettings(
     crossScalaVersions := versions,
     libraryDependencies ++= Seq(
+      "org.json4s" %% "json4s-native" % "4.0.6" % Test,
       ("io.crashbox" %% "spray-json" % "1.3.5-7" % Test)
         .cross(CrossVersion.for3Use2_13),
       "com.github.sbt" % "junit-interface" % "0.13.3" % Test
