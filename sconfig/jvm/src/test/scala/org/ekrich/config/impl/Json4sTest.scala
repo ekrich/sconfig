@@ -13,7 +13,7 @@ import java.util.HashMap
 import scala.jdk.CollectionConverters._
 import org.ekrich.config._
 
-class Json4sTest extends TestUtils {
+class Json4sTest extends TestUtilsJson4s {
   def parse(s: String): ConfigValue = {
     val options = ConfigParseOptions.defaults
       .setOriginDescription("test json string")
@@ -36,7 +36,6 @@ class Json4sTest extends TestUtils {
             .asScala
             .map(k => JField(k, toJson(v.get(k))))
             .toList
-            //.toMap
         )
       case v: ConfigList =>
         JArray(v.asScala.toList.map(elem => toJson(elem)))
@@ -63,8 +62,8 @@ class Json4sTest extends TestUtils {
         new SimpleConfigObject(fakeOrigin(), m)
       case JArray(values) =>
         new SimpleConfigList(fakeOrigin(), values.map(fromJson(_)).asJava)
-      case JInt(n) => intValue(n.intValue)
-      case JLong(n) => longValue(n)
+      case JInt(n)    => intValue(n.intValue)
+      case JLong(n)   => longValue(n)
       case JDouble(n) => doubleValue(n)
       case JBool(b) =>
         new ConfigBoolean(fakeOrigin(), b)
@@ -72,8 +71,12 @@ class Json4sTest extends TestUtils {
         new ConfigString.Quoted(fakeOrigin(), s)
       case JNull =>
         new ConfigNull(fakeOrigin())
+      case JNothing =>
+        throw new ConfigException.BugOrBroken(
+          "Returned JNothing, probably an empty document (?)"
+        )
       case _ =>
-        throw new IllegalStateException("Unexpected JsValue: " + jsonValue)
+        throw new IllegalStateException("Unexpected JValue: " + jsonValue)
     }
   }
 
@@ -110,9 +113,10 @@ class Json4sTest extends TestUtils {
         }
       } else {
         addOffendingJsonToException("json", invalid.test) {
-          intercept[ConfigException] {
-            fromJsonWithJsonParser(invalid.test)
-          }
+          assertThrows(
+            classOf[ConfigException],
+            () => fromJsonWithJsonParser(invalid.test)
+          )
           tested += 1
         }
       }
@@ -124,9 +128,10 @@ class Json4sTest extends TestUtils {
     // be sure we also throw
     for (invalid <- whitespaceVariations(invalidJson, false)) {
       addOffendingJsonToException("config", invalid.test) {
-        intercept[ConfigException] {
-          parse(invalid.test)
-        }
+        assertThrows(
+          classOf[ConfigException],
+          () => parse(invalid.test)
+        )
         tested += 1
       }
     }
