@@ -15,7 +15,8 @@ import scala.jdk.CollectionConverters._
  * Should be able to handle env vars for Scala.js with this:
  * https://github.com/typelevel/cats-effect/blob/44545879b453c9a9b91d5d3c472b58b4ab04adb1/std/js/src/main/scala/cats/effect/std/EnvCompanionPlatform.scala#L38
  *
- * Commented out tests compile so should and fail on JS but should be supportable
+ * Commented out tests compile so should and fail on JS but should be
+ * supportable
  */
 class ConfigSubstitutionSharedTest extends TestUtilsShared {
   private def resolveWithoutFallbacks(v: AbstractConfigObject) = {

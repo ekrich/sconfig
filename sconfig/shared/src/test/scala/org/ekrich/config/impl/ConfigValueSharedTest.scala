@@ -794,8 +794,6 @@ class ConfigValueSharedTest extends TestUtilsShared {
     assertEquals(parseConfig("a=1,b.c=2,b.d=3,x.y.z=4"), config)
   }
 
-
-
   @Test
   def renderWithNewlinesInDescription(): Unit = {
     val v = ConfigValueFactory.fromAnyRef(

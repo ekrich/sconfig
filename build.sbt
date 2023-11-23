@@ -117,8 +117,8 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       if (isScala3.value) dotcOpts else scalacOpts
     },
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat
-      //"org.json4s" %%% "json4s-native" % "4.0.6" % Test
+      "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat,
+      "org.json4s" %%% "json4s-native-core" % "4.0.6" % Test
     ),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
     // env vars for tests
@@ -131,7 +131,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jvmSettings(
     crossScalaVersions := versions,
     libraryDependencies ++= Seq(
-      "org.json4s" %% "json4s-native" % "4.0.6" % Test,
       ("io.crashbox" %% "spray-json" % "1.3.5-7" % Test)
         .cross(CrossVersion.for3Use2_13),
       "com.github.sbt" % "junit-interface" % "0.13.3" % Test
@@ -174,7 +173,14 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       "org.ekrich" %%% "sjavatime" % javaTime % "provided",
       ("org.scala-js" %%% "scalajs-weakreferences" % "1.0.0")
         .cross(CrossVersion.for3Use2_13)
-    )
+    ),
+    scalaJSLinkerConfig ~= {
+      _.withSemantics(
+        _.withAsInstanceOfs(
+          org.scalajs.linker.interface.CheckedBehavior.Compliant
+        )
+      )
+    }
   )
 
 lazy val `scalafix-rules` = (project in file("scalafix/rules"))
