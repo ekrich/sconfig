@@ -29,7 +29,7 @@ abstract trait TestUtilsJson4s {
 
   // note: it's important to put {} or [] at the root if you
   // want to test "invalidity reasons" other than "wrong root"
-  // spray-json throws so change to false
+  // if json throws, change to false
   private val invalidJsonInvalidConf = List[ParseTest](
     "{",
     "}",
@@ -147,7 +147,7 @@ abstract trait TestUtilsJson4s {
     ParseTest(true, "[ 10e+3 ]")
   )
 
-  // spray-json throws so change to false
+  // if json throws, change to false
   private val validConfInvalidJson = List[ParseTest](
     "", // empty document
     " ", // empty document single space
