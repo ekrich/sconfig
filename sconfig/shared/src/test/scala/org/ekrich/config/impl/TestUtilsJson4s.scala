@@ -36,18 +36,18 @@ abstract trait TestUtilsJson4s {
     "[",
     "]",
     ",",
-    ParseTest(true, "10"), // value not in array or object
-    ParseTest(true, "\"foo\""), // value not in array or object
+    ParseTest(false, "10"), // value not in array or object
+    ParseTest(false, "\"foo\""), // value not in array or object
     "\"", // single quote by itself
-    ParseTest(false, "[,]"), // array with just a comma in it
-    ParseTest(false, "[,,]"), // array with just two commas in it
-    ParseTest(false, "[1,2,,]"), // array with two trailing commas
-    ParseTest(false, "[,1,2]"), // array with initial comma
-    ParseTest(false, "{ , }"), // object with just a comma in it
-    ParseTest(false, "{ , , }"), // object with just two commas in it
+    ParseTest(true, "[,]"), // array with just a comma in it
+    ParseTest(true, "[,,]"), // array with just two commas in it
+    ParseTest(true, "[1,2,,]"), // array with two trailing commas
+    ParseTest(true, "[,1,2]"), // array with initial comma
+    ParseTest(true, "{ , }"), // object with just a comma in it
+    ParseTest(true, "{ , , }"), // object with just two commas in it
     "{ 1,2 }", // object with single values not key-value pair
-    ParseTest(false, "{ , \"foo\" : 10 }"), // object starts with comma
-    ParseTest(false, "{ \"foo\" : 10 ,, }"), // object has two trailing commas
+    ParseTest(true, "{ , \"foo\" : 10 }"), // object starts with comma
+    ParseTest(true, "{ \"foo\" : 10 ,, }"), // object has two trailing commas
     " \"a\" : 10 ,, ", // two trailing commas for braceless root object
     "{ \"foo\" : }", // no value in object
     "{ : 10 }", // no key in object
@@ -64,18 +64,18 @@ abstract trait TestUtilsJson4s {
     "[:\"foo\", \"bar\"]", // colon in an array
     "[\"foo\" : \"bar\"]", // colon in an array another way
     "[ \"hello ]", // unterminated string
-    ParseTest(false, "{ \"foo\" , true }"), // comma instead of colon
+    ParseTest(true, "{ \"foo\" , true }"), // comma instead of colon
     ParseTest(
-      false,
+      true,
       "{ \"foo\" : true \"bar\" : false }"
     ), // missing comma between fields
     "[ 10, }]", // array with } as an element
     "[ 10, {]", // array with { as an element
     "{}x", // trailing invalid token after the root object
     "[]x", // trailing invalid token after the root array
-    ParseTest(false, "{}{}"), // trailing token after the root object
+    ParseTest(true, "{}{}"), // trailing token after the root object
     ParseTest(false, "{}true"), // trailing token after the root object
-    ParseTest(false, "[]{}"), // trailing valid token after the root array
+    ParseTest(true, "[]{}"), // trailing valid token after the root array
     ParseTest(false, "[]true"), // trailing valid token after the root array
     "[${]", // unclosed substitution
     "[$]", // '$' by itself
@@ -103,7 +103,7 @@ abstract trait TestUtilsJson4s {
     "+= 10",
     "10 +=",
     "[ 10e+3e ]", // "+" not allowed in unquoted strings, and not a valid number
-    ParseTest(false, "[ \"foo\nbar\" ]"), // unescaped newline in quoted string
+    ParseTest(true, "[ \"foo\nbar\" ]"), // unescaped newline in quoted string
     "[ # comment ]",
     "${ #comment }",
     "[ // comment ]",
@@ -171,12 +171,12 @@ abstract trait TestUtilsJson4s {
     "{ foo  bar : bar }", // whitespace in the key
     "{ true : bar }", // key is a non-string token
     ParseTest(true, """{ "foo" : "bar", "foo" : "bar2" }"""), // dup keys
-    ParseTest(false, "[ 1, 2, 3, ]"), // single trailing comma
-    ParseTest(false, "[1,2,3  , ]"), // single trailing comma with whitespace
-    ParseTest(false, "[1,2,3\n\n , \n]"), // single trailing comma with newlines
-    ParseTest(false, "[1,]"), // single trailing comma with one-element array
-    ParseTest(false, "{ \"foo\" : 10, }"), // extra trailing comma
-    ParseTest(false, "{ \"a\" : \"b\", }"), // single trailing comma in object
+    ParseTest(true, "[ 1, 2, 3, ]"), // single trailing comma
+    ParseTest(true, "[1,2,3  , ]"), // single trailing comma with whitespace
+    ParseTest(true, "[1,2,3\n\n , \n]"), // single trailing comma with newlines
+    ParseTest(true, "[1,]"), // single trailing comma with one-element array
+    ParseTest(true, "{ \"foo\" : 10, }"), // extra trailing comma
+    ParseTest(true, "{ \"a\" : \"b\", }"), // single trailing comma in object
     "{ a : b, }", // single trailing comma in object (unquoted strings)
     "{ a : b  \n  , \n }", // single trailing comma in object with newlines
     "a : b, c : d,", // single trailing comma in object with no root braces
