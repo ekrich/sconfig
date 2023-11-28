@@ -9,7 +9,7 @@ import org.junit._
 import org.json4s._
 import org.json4s.native.JsonParser
 
-import java.util.HashMap
+import java.{util => ju}
 import scala.jdk.CollectionConverters._
 import org.ekrich.config._
 
@@ -34,7 +34,7 @@ class Json4sTest extends TestUtilsJson4s {
         JObject(
           v.keySet()
             .asScala
-            .map(k => JField(k, toJson(v.get(k))))
+            .map(k => JsonAST.JField(k, toJson(v.get(k))))
             .toList
         )
       case v: ConfigList =>
@@ -57,7 +57,7 @@ class Json4sTest extends TestUtilsJson4s {
   private[this] def fromJson(jsonValue: JValue): AbstractConfigValue = {
     jsonValue match {
       case JObject(fields) =>
-        val m = new HashMap[String, AbstractConfigValue]()
+        val m = new ju.HashMap[String, AbstractConfigValue]()
         fields.foreach(field => m.put(field._1, fromJson(field._2)))
         new SimpleConfigObject(fakeOrigin(), m)
       case JArray(values) =>

@@ -173,14 +173,14 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       "org.ekrich" %%% "sjavatime" % javaTime % "provided",
       ("org.scala-js" %%% "scalajs-weakreferences" % "1.0.0")
         .cross(CrossVersion.for3Use2_13)
-    ),
-    scalaJSLinkerConfig ~= {
-      _.withSemantics(
-        _.withAsInstanceOfs(
-          org.scalajs.linker.interface.CheckedBehavior.Compliant
-        )
-      )
-    }
+    )
+    // scalaJSLinkerConfig ~= {
+    //   _.withSemantics(
+    //     _.withAsInstanceOfs(
+    //       org.scalajs.linker.interface.CheckedBehavior.Compliant
+    //     )
+    //   )
+    // }
   )
 
 lazy val `scalafix-rules` = (project in file("scalafix/rules"))
