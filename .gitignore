@@ -13,6 +13,9 @@ target/
 # vscode
 /.vscode/
 
+# scala-cli
+/.scala-build/
+
 # scripts generated
 /scripts/.coursier
 /scripts/.scalafmt*
