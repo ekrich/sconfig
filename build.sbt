@@ -118,7 +118,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     },
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat,
-      "org.json4s" %%% "json4s-native-core" % "4.0.6" % Test
+      "org.json4s" %%% "json4s-native-core" % "4.0.7" % Test
     ),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
     // env vars for tests
