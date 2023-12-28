@@ -131,8 +131,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .jvmSettings(
     crossScalaVersions := versions,
     libraryDependencies ++= Seq(
-      ("io.crashbox" %% "spray-json" % "1.3.5-7" % Test)
-        .cross(CrossVersion.for3Use2_13),
       "com.github.sbt" % "junit-interface" % "0.13.3" % Test
       // includes junit 4.13.2
     ),
@@ -174,13 +172,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       ("org.scala-js" %%% "scalajs-weakreferences" % "1.0.0")
         .cross(CrossVersion.for3Use2_13)
     )
-    // scalaJSLinkerConfig ~= {
-    //   _.withSemantics(
-    //     _.withAsInstanceOfs(
-    //       org.scalajs.linker.interface.CheckedBehavior.Compliant
-    //     )
-    //   )
-    // }
   )
 
 lazy val `scalafix-rules` = (project in file("scalafix/rules"))
