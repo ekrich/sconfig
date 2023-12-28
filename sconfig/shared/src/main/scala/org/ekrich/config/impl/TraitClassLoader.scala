@@ -6,6 +6,6 @@ import java.{util => ju}
 /**
  * To workaround missing implementations in Scala.js and Scala Native
  */
-trait ClassLoaderLike {
+trait TraitClassLoader {
   def getResources(name: String): ju.Enumeration[URL]
 }

@@ -45,6 +45,34 @@ val maxCol = conf.getInt("maxColumn")
 val isGit = conf.getBoolean("project.git")
 ```
 
+## Using Reader - StringReader example
+
+Both JS and Native now support `java.io.Reader` which allows using `sconfig`
+to parse all supported formats by passing a filename with extension. See the
+following examples from the shared `ConfigFactoryTest` file.
+
+```scala
+val filename = "/test01.properties"
+val fileStr =
+    """
+      |# test01.properties file
+      |fromProps.abc=abc
+      |fromProps.one=1
+      |fromProps.bool=true
+      |fromProps.specialChars=hello^^
+      """.stripMargin
+
+// create Reader
+var test01Reader = new StringReader(fileStr)
+
+val config = ConfigFactory.parseReader(
+  test01Reader,
+  ConfigParseOptions.defaults
+    .setSyntaxFromFilename(filename)
+)
+val specialChars = config.getString("fromProps.specialChars")
+```
+
 ### How to read a HOCON configuation file into a String for Scala Native
 
 In order to read the configuration file into a `String` you need to know the relative

@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.5.1"
-val nextVersion = "1.5.2"
+val prevVersion = "1.6.0"
+val nextVersion = "1.7.0"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -53,7 +53,7 @@ val scCompat = "2.11.0"
 val versionsBase = Seq(scala212, scala213)
 val versions = versionsBase :+ scala3
 
-ThisBuild / scalaVersion := scala3
+ThisBuild / scalaVersion := scala213
 ThisBuild / crossScalaVersions := versions
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / mimaFailOnNoPrevious := false
@@ -116,14 +116,21 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     scalacOptions ++= {
       if (isScala3.value) dotcOpts else scalacOpts
     },
-    libraryDependencies += "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat,
-    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v")
+    libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat,
+      "org.json4s" %%% "json4s-native-core" % "4.0.7" % Test
+    ),
+    testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
+    // env vars for tests
+    Test / envVars ++= Map(
+      "testList.0" -> "0",
+      "testList.1" -> "1",
+      "testClassesPath" -> (Test / classDirectory).value.getPath
+    )
   )
   .jvmSettings(
     crossScalaVersions := versions,
     libraryDependencies ++= Seq(
-      ("io.crashbox" %% "spray-json" % "1.3.5-7" % Test)
-        .cross(CrossVersion.for3Use2_13),
       "com.github.sbt" % "junit-interface" % "0.13.3" % Test
       // includes junit 4.13.2
     ),
@@ -141,12 +148,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     Test / fork := true,
     run / fork := true,
     Test / run / fork := true,
-    // env vars for tests
-    Test / envVars ++= Map(
-      "testList.0" -> "0",
-      "testList.1" -> "1",
-      "testClassesPath" -> (Test / classDirectory).value.getPath
-    ),
     // uncomment for debugging
     // Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
     // mima settings
@@ -156,14 +157,21 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .nativeConfigure(_.enablePlugins(ScalaNativeJUnitPlugin))
   .nativeSettings(
     crossScalaVersions := versions,
-    nativeConfig ~= (_.withLinkStubs(true)),
+    nativeConfig ~= (
+      _.withLinkStubs(true)
+        .withEmbedResources(true)
+    ),
     logLevel := Level.Info, // Info or Debug
     libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
   )
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versions,
-    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
+    libraryDependencies ++= Seq(
+      "org.ekrich" %%% "sjavatime" % javaTime % "provided",
+      ("org.scala-js" %%% "scalajs-weakreferences" % "1.0.0")
+        .cross(CrossVersion.for3Use2_13)
+    )
   )
 
 lazy val `scalafix-rules` = (project in file("scalafix/rules"))

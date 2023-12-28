@@ -3,17 +3,17 @@
  */
 package org.ekrich.config.impl
 
-import java.util.HashMap
-
 import org.junit.Assert._
 import org.junit._
 
-import spray.json._
+import org.json4s._
+import org.json4s.native.JsonParser
 
+import java.{util => ju}
 import scala.jdk.CollectionConverters._
 import org.ekrich.config._
 
-class JsonTest extends TestUtils {
+class Json4sTest extends TestUtilsJson4s {
   def parse(s: String): ConfigValue = {
     val options = ConfigParseOptions.defaults
       .setOriginDescription("test json string")
@@ -28,52 +28,55 @@ class JsonTest extends TestUtils {
     Parseable.newString(s, options).parseValue()
   }
 
-  private[this] def toJson(value: ConfigValue): JsValue = {
+  private[this] def toJson(value: ConfigValue): JValue = {
     value match {
       case v: ConfigObject =>
-        JsObject(
+        JObject(
           v.keySet()
             .asScala
-            .map(k => (k, toJson(v.get(k))))
-            .toMap
+            .map(k => JsonAST.JField(k, toJson(v.get(k))))
+            .toList
         )
       case v: ConfigList =>
-        JsArray(v.asScala.toVector.map(elem => toJson(elem)))
+        JArray(v.asScala.toList.map(elem => toJson(elem)))
       case v: ConfigBoolean =>
-        JsBoolean(v.unwrapped)
+        JBool(v.unwrapped)
       case v: ConfigInt =>
-        JsNumber(BigInt(v.unwrapped))
+        JInt(BigInt(v.unwrapped))
       case v: ConfigLong =>
-        JsNumber(BigInt(v.unwrapped))
+        JInt(BigInt(v.unwrapped))
       case v: ConfigDouble =>
-        JsNumber(v.unwrapped)
+        JDouble(v.unwrapped)
       case v: ConfigString =>
-        JsString(v.unwrapped)
+        JString(v.unwrapped)
       case v: ConfigNull =>
-        JsNull
+        JNull
     }
   }
 
-  private[this] def fromJson(jsonValue: JsValue): AbstractConfigValue = {
+  private[this] def fromJson(jsonValue: JValue): AbstractConfigValue = {
     jsonValue match {
-      case JsObject(fields) =>
-        val m = new HashMap[String, AbstractConfigValue]()
+      case JObject(fields) =>
+        val m = new ju.HashMap[String, AbstractConfigValue]()
         fields.foreach(field => m.put(field._1, fromJson(field._2)))
         new SimpleConfigObject(fakeOrigin(), m)
-      case JsArray(values) =>
+      case JArray(values) =>
         new SimpleConfigList(fakeOrigin(), values.map(fromJson(_)).asJava)
-      case JsNumber(n) =>
-        if (n.isValidInt) intValue(n.intValue)
-        else if (n.isValidLong) longValue(n.longValue)
-        else doubleValue(n.doubleValue)
-      case JsBoolean(b) =>
+      case JInt(n)    => intValue(n.intValue)
+      case JLong(n)   => longValue(n)
+      case JDouble(n) => doubleValue(n)
+      case JBool(b) =>
         new ConfigBoolean(fakeOrigin(), b)
-      case JsString(s) =>
+      case JString(s) =>
         new ConfigString.Quoted(fakeOrigin(), s)
-      case JsNull =>
+      case JNull =>
         new ConfigNull(fakeOrigin())
+      case JNothing =>
+        throw new ConfigException.BugOrBroken(
+          "Returned JNothing, probably an empty document (?)"
+        )
       case _ =>
-        throw new IllegalStateException("Unexpected JsValue: " + jsonValue)
+        throw new IllegalStateException("Unexpected JValue: " + jsonValue)
     }
   }
 
@@ -81,7 +84,7 @@ class JsonTest extends TestUtils {
     try {
       block
     } catch {
-      case e: JsonParser.ParsingException =>
+      case e: ParserUtil.ParseException =>
         throw new ConfigException.Parse(
           SimpleConfigOrigin.newSimple("json parser"),
           e.getMessage(),
@@ -94,7 +97,7 @@ class JsonTest extends TestUtils {
   // the Json parser for a variety of JSON strings.
 
   private def fromJsonWithJsonParser(json: String): ConfigValue = {
-    withJsonExceptionsConverted(fromJson(JsonParser(ParserInput(json))))
+    withJsonExceptionsConverted(fromJson(JsonParser.parse(json)))
   }
 
   // For string quoting, check behavior of escaping a random character instead of one on the list
@@ -110,9 +113,10 @@ class JsonTest extends TestUtils {
         }
       } else {
         addOffendingJsonToException("json", invalid.test) {
-          intercept[ConfigException] {
-            fromJsonWithJsonParser(invalid.test)
-          }
+          assertThrows(
+            classOf[ConfigException],
+            () => fromJsonWithJsonParser(invalid.test)
+          )
           tested += 1
         }
       }
@@ -124,9 +128,10 @@ class JsonTest extends TestUtils {
     // be sure we also throw
     for (invalid <- whitespaceVariations(invalidJson, false)) {
       addOffendingJsonToException("config", invalid.test) {
-        intercept[ConfigException] {
-          parse(invalid.test)
-        }
+        assertThrows(
+          classOf[ConfigException],
+          () => parse(invalid.test)
+        )
         tested += 1
       }
     }
