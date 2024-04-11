@@ -38,16 +38,17 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 ## Cross Build Versions
 [![Scala.js](https://www.scala-js.org/assets/badges/scalajs-1.0.0.svg)](https://www.scala-js.org)
 
-| Scala Version          | JVM | Scala.js (1.x)        | Native (0.4.x) |
+| Scala Version          | JVM | Scala.js (1.x)        | Native (0.5.x) |
 | ---------------------- | :-: | :-------------------: | :------------: |
 | 2.12.x                 | ✅  |          ✅           |       ✅       |
 | 2.13.x                 | ✅  |          ✅           |       ✅       |
 | 3.x.x                  | ✅  |          ✅           |       ✅       |
 
-Note: Scala 3 support on Scala Native 0.4.3-RC2 or greater. Scala 2.11 support through version 1.4.9.
+* Scala Native 0.5.x support from 0.7.0.
+* Scala 3 support on Scala Native 0.4.3-RC2 or greater.
+* Scala 2.11 support through version 1.4.9.
 
 ## Usage and Help
-[![Scaladoc](https://www.javadoc.io/badge/org.ekrich/sconfig_2.13.svg?label=scaladoc)](https://www.javadoc.io/doc/org.ekrich/sconfig_2.13)
 [![scaladoc](https://javadoc.io/badge/org.ekrich/sconfig_3.svg?label=scaladoc3)](https://javadoc.io/doc/org.ekrich/sconfig_3)
 [![Discord](https://img.shields.io/discord/633356833498595365.svg?label=&logo=discord&logoColor=ffffff&color=404244&labelColor=6A7EC2)](https://discord.gg/XSj6hQs)
 
@@ -104,6 +105,7 @@ At a high level, the process is as follows:
 
 ## Versions
 
+Release [1.7.0](https://github.com/ekrich/sconfig/releases/tag/v1.7.0) - (2023-04-xx)<br/>
 Release [1.6.0](https://github.com/ekrich/sconfig/releases/tag/v1.6.0) - (2023-12-28)<br/>
 Release [1.5.1](https://github.com/ekrich/sconfig/releases/tag/v1.5.1) - (2023-09-15)<br/>
 Release [1.5.0](https://github.com/ekrich/sconfig/releases/tag/v1.5.0) - (2022-09-19)<br/>
