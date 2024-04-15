@@ -48,7 +48,7 @@ val scala213 = "2.13.13"
 val scala3 = "3.3.3"
 
 val javaTime = "1.3.0"
-val scCompat = "2.11.0"
+val scCompat = "2.12.0"
 
 val versionsBase = Seq(scala212, scala213)
 val versions = versionsBase :+ scala3
@@ -158,8 +158,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .nativeSettings(
     crossScalaVersions := versions,
     nativeConfig ~= (
-      _.withLinkStubs(true)
-        .withEmbedResources(true)
+      _.withEmbedResources(true)
     ),
     logLevel := Level.Info, // Info or Debug
     libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
