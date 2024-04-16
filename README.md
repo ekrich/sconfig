@@ -2,19 +2,14 @@
 ![CI](https://github.com/ekrich/sconfig/workflows/CI/badge.svg)
 [![Scala.js](https://www.scala-js.org/assets/badges/scalajs-1.0.0.svg)](https://www.scala-js.org)
 
-Configuration library written in [Scala](https://www.scala-lang.org/) which is a direct translation 
-of the original widely used Java library.
+Configuration library written in [Scala](https://www.scala-lang.org/) which is a direct translation of the original widely used Java library.
 
 [Scala JVM](https://www.scala-lang.org/), [Scala Native](https://scala-native.readthedocs.io/), and [Scala.js](https://www.scala-js.org/)
 are supported. Scala JVM is fully supported whereas the other platforms support a subset of the full API.
 
-For motivation and background about this project see the [PR](https://github.com/lightbend/config/pull/600) 
-to the original project. The TLDR is the library was ported to Scala to support Scala Native so
-[scalafmt](https://scalameta.org/scalafmt/) which uses HOCON configuration could be compiled into
-a native application.
+For motivation and background about this project see the [PR](https://github.com/lightbend/config/pull/600) to the original project. The TLDR is the library was ported to Scala to support Scala Native so [scalafmt](https://scalameta.org/scalafmt/) which uses HOCON configuration could be compiled into a native application.
 
-Care has been taken to keep the API the same but changes were needed when moving from the Java API.
-Using Java is also possible as demonstrated by including the working Java examples.
+Care has been taken to keep the API the same but changes were needed when moving from the Java API. Using Java is also possible as demonstrated by including the working Java examples.
 
 If you are looking for the original Java API, see
 [https://github.com/lightbend/config](https://github.com/lightbend/config).
@@ -53,12 +48,9 @@ All available versions can be seen at the [Maven Repository](https://mvnreposito
 [![Discord](https://img.shields.io/discord/633356833498595365.svg?label=&logo=discord&logoColor=ffffff&color=404244&labelColor=6A7EC2)](https://discord.gg/XSj6hQs)
 
 
-Please refer to the original library documentation [here](https://github.com/lightbend/config).
-This is to reduce the maintenance burden of this library.
+Please refer to the original library documentation [here](https://github.com/lightbend/config). This is to reduce the maintenance burden of this library.
 
-The intent is to keep the library in sync with the original but each PR needs to be be ported
-to maintain feature parity. The documentation could contain features that are not yet implemented
-in this library.
+The intent is to keep the library in sync with the original but each PR needs to be be ported to maintain feature parity. The documentation could contain features that are not yet implemented in this library.
 
 For specific changes, refer to the releases below.
 
@@ -67,45 +59,34 @@ For specific changes, refer to the releases below.
 [![sconfig Scala version support](https://index.scala-lang.org/ekrich/sconfig/sconfig/latest.svg)](https://index.scala-lang.org/ekrich/sconfig/sconfig)
 [![Latest scalafix version](https://index.scala-lang.org/scalacenter/scalafix/scalafix-core/latest.svg)](https://index.scala-lang.org/scalacenter/scalafix/scalafix-core)
 
-This project publishes a [scalafix](https://scalacenter.github.io/scalafix/) rule to migrate 
-existing Scala 2 source code that uses `com.typesafe.config.Config` to this implementation.
-Scalafix rules modify in place existing valid Scala code. Think of it as a fancy find-and-replace
-tool that is aware of the Scala type system and can therefore narrowly tailor the changes 
-being made. (Since scalafix changes the source code on your file system, it's best to commit 
-any changes prior to running the rule, in case something weird happens.)
+This project publishes a [scalafix](https://scalacenter.github.io/scalafix/) rule to migrate existing Scala 2 source code that uses `com.typesafe.config.Config` to this implementation. Scalafix rules modify in place existing valid Scala code. Think of it as a fancy find-and-replace tool that is aware of the Scala type system and can therefore narrowly tailor the changes being made. (Since scalafix changes the source code on your file system, it's best to commit any changes prior to running the rule, in case something weird happens.)
 
-The rule will replace `com.typesafe.config` package references with `org.ekrich.config`,
-and remove trailing parens on some methods (where the API changed from the Java implementation).
+The rule will replace `com.typesafe.config` package references with `org.ekrich.config`, and remove trailing parens on some methods (where the API changed from the Java implementation).
 
-Complete setup documentation and the current `scalafix` version can be found in the
-[scalafix user guide](https://scalacenter.github.io/scalafix/docs/users/installation.html).
-At a high level, the process is as follows:
+Complete setup documentation and the current `scalafix` version can be found in the [scalafix user guide](https://scalacenter.github.io/scalafix/docs/users/installation.html). At a high level, the process is as follows:
 
 1. Add scalafix to the project's `project/plugins.sbt` file using the version found above:
 
    ```scala
    addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "a.b.c")
    ```
-   
+
 2. Add this project to the project's `libraryDependencies`, but don't remove the old one yet!
    
-   (The old dependency needs to stay on the classpath until after the rule runs, because the 
-   code must compile before it will run.)
+   (The old dependency needs to stay on the classpath until after the rule runs, because the code must compile before it will run.)
 
-3. Run the scalafix sbt command shown below to apply the rule using the version of `sconfig`
-   selected. Replace the `x.y.z` below with the version (must be greater than version `1.4.5`
-   when scalafix was added):
+3. Run the scalafix sbt command shown below to apply the rule using the version of `sconfig` selected. Replace the `x.y.z` below with the version (must be greater than version `1.4.5` when scalafix was added):
 
     ```
     scalafixEnable; scalafixAll dependency:ReplaceTypesafeConfig@org.ekrich:sconfig-scalafix:x.y.x
     ```
-   
+
 4. Remove the old config dependency from the project's `libraryDependencies`
 5. Commit the changes
 
 ## Versions
 
-Release [1.7.0](https://github.com/ekrich/sconfig/releases/tag/v1.7.0) - (2023-04-xx)<br/>
+Release [1.7.0](https://github.com/ekrich/sconfig/releases/tag/v1.7.0) - (2023-04-16)<br/>
 Release [1.6.0](https://github.com/ekrich/sconfig/releases/tag/v1.6.0) - (2023-12-28)<br/>
 Release [1.5.1](https://github.com/ekrich/sconfig/releases/tag/v1.5.1) - (2023-09-15)<br/>
 Release [1.5.0](https://github.com/ekrich/sconfig/releases/tag/v1.5.0) - (2022-09-19)<br/>
