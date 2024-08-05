@@ -6,7 +6,8 @@ import java.io.File
 import java.io.Reader
 
 /**
- * Shared Factory methods for creating [[org.ekrich.config.parser.ConfigDocument]] instances.
+ * Shared Factory methods for creating
+ * [[org.ekrich.config.parser.ConfigDocument]] instances.
  */
 abstract class ConfigDocumentFactoryShared {
 
