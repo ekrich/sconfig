@@ -3,7 +3,7 @@ package org.ekrich.config.impl
 import org.junit.Assert._
 import org.junit.Test
 
-class BadMapTest extends TestUtils {
+class BadMapTest extends TestUtilsShared {
   @Test
   def copyingPut(): Unit = {
     val map = new BadMap[String, String]()
