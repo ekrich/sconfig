@@ -8,7 +8,7 @@ import org.junit.Test
 
 import language.implicitConversions
 
-class TokenizerTest extends TestUtils {
+class TokenizerTest extends TestUtilsShared {
   // FIXME most of this file should be using this method
   private def tokenizerTest(expected: List[Token], s: String): Unit = {
     assertEquals(

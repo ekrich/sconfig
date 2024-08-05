@@ -3,7 +3,7 @@ package org.ekrich.config.impl
 import org.junit.Assert._
 import org.junit.Test
 
-class ConfigNodeTest extends TestUtils {
+class ConfigNodeTest extends TestUtilsShared {
   private def singleTokenNodeTest(token: Token): Unit = {
     val node = configNodeSingleToken(token)
     assertEquals(node.render, token.tokenText)

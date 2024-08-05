@@ -11,7 +11,7 @@ import org.junit._
 import org.ekrich.config._
 import org.ekrich.config.ConfigResolveOptions
 
-class ConfigTest extends TestUtils {
+class ConfigTest extends TestUtilsShared {
   private def resolveNoSystem(
       v: AbstractConfigValue,
       root: AbstractConfigObject

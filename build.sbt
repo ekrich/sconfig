@@ -163,7 +163,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .nativeConfigure(_.enablePlugins(ScalaNativeJUnitPlugin))
   .nativeSettings(
     crossScalaVersions := versions,
-    nativeConfig ~= (
+    Test / nativeConfig ~= (
       _.withEmbedResources(true)
     ),
     logLevel := Level.Info, // Info or Debug

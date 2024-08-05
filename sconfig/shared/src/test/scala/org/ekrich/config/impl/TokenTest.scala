@@ -5,7 +5,7 @@ package org.ekrich.config.impl
 
 import org.junit._
 
-class TokenTest extends TestUtils {
+class TokenTest extends TestUtilsShared {
   @Test
   def tokenEquality(): Unit = {
     // syntax tokens
