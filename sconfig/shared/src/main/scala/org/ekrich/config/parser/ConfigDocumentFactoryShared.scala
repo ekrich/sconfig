@@ -1,9 +1,9 @@
 package org.ekrich.config.parser
 
+import java.io.Reader
+
 import org.ekrich.config.ConfigParseOptions
 import org.ekrich.config.impl.Parseable
-import java.io.File
-import java.io.Reader
 
 /**
  * Shared Factory methods for creating
@@ -40,36 +40,6 @@ abstract class ConfigDocumentFactoryShared {
    */
   def parseReader(reader: Reader): ConfigDocument =
     parseReader(reader, ConfigParseOptions.defaults)
-
-  /**
-   * Parses a file into a ConfigDocument instance.
-   *
-   * @param file
-   *   the file to parse
-   * @param options
-   *   parse options to control how the file is interpreted
-   * @return
-   *   the parsed configuration
-   * @throws org.ekrich.config.ConfigException
-   *   on IO or parse errors
-   */
-  def parseFile(file: File, options: ConfigParseOptions): ConfigDocument =
-    Parseable.newFile(file, options).parseConfigDocument()
-
-  /**
-   * Parses a file into a ConfigDocument instance as with
-   * [[#parseFile(file:java\.io\.File,options:org\.ekrich\.config\.ConfigParseOptions)* parseFile(File, ConfigParseOptions)]]
-   * but always uses the default parse options.
-   *
-   * @param file
-   *   the file to parse
-   * @return
-   *   the parsed configuration
-   * @throws org.ekrich.config.ConfigException
-   *   on IO or parse errors
-   */
-  def parseFile(file: File): ConfigDocument =
-    parseFile(file, ConfigParseOptions.defaults)
 
   /**
    * Parses a string which should be valid HOCON or JSON.
