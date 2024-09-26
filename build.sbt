@@ -50,7 +50,13 @@ val scala3 = "3.3.3"
 val javaTime = "1.3.0"
 val scCompat = "2.12.0"
 
-val versionsBase = Seq(scala212, scala213)
+// We use the 2.12 and 2.13 version that the scalafix library uses
+// and when the scalafix version gets updated the system will build
+// using those Scala version. The Scala versions above are versions
+// that get updated via Scala Steward and will match the scalafix
+// versions when scalafix version is updated and in sync with the
+// latest Scala versions.
+val versionsBase = _root_.scalafix.sbt.BuildInfo.supportedScalaVersions
 val versions = versionsBase :+ scala3
 
 ThisBuild / scalaVersion := scala213
