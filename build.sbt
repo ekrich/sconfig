@@ -45,7 +45,7 @@ val isScala3 = Def.setting {
 
 val scala212 = "2.12.19"
 val scala213 = "2.13.14"
-val scala3 = "3.3.3"
+val scala3 = "3.3.4"
 
 val javaTime = "1.3.0"
 val scCompat = "2.12.0"
