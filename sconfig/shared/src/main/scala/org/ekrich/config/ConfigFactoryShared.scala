@@ -4,7 +4,10 @@ import java.io.Reader
 
 import org.ekrich.config.impl.Parseable
 
-abstract class ConfigFactoryCommon {
+/**
+ * [[ConfigFactory]] methods shared by all platforms
+ */
+abstract class ConfigFactoryShared {
 
   /**
    * Parses a string (which should be valid HOCON or JSON by default, or the
