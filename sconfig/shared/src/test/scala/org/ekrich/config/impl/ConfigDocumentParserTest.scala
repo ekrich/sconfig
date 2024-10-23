@@ -4,7 +4,7 @@ import org.ekrich.config.{ConfigException, ConfigSyntax, ConfigParseOptions}
 import org.junit.Assert._
 import org.junit.Test
 
-class ConfigDocumentParserTest extends TestUtils {
+class ConfigDocumentParserTest extends TestUtilsShared {
   private def parseTest(origText: String): Unit = {
     val node = ConfigDocumentParser.parse(
       tokenize(origText),

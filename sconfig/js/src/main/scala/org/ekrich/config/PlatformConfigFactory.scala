@@ -3,4 +3,4 @@ package org.ekrich.config
 /**
  * [[ConfigFactory]] methods for Scala.js platform
  */
-abstract class PlatformConfigFactory extends ConfigFactoryCommon {}
+abstract class PlatformConfigFactory extends ConfigFactoryShared {}

@@ -13,7 +13,7 @@ import org.ekrich.config.ConfigParseOptions
 import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigException
 
-class PropertiesTest extends TestUtils {
+class PropertiesTest extends TestUtilsShared {
   @Test
   def pathSplitting(): Unit = {
     def last(s: String) = PropertiesParser.lastElement(s)
