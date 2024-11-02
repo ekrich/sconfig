@@ -15,7 +15,7 @@ class ConfigDocumentFactoryJvmTest extends TestUtils {
     val configDocument =
       ConfigDocumentFactory.parseFile(resourceFile("/test03.conf"))
     val fileReader = new BufferedReader(
-      new FileReader("src/test/resources/test03.conf")
+      new FileReader(resourceFile("/test03.conf"))
     )
     var line = fileReader.readLine()
     val sb = new StringBuilder()

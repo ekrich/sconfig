@@ -14,7 +14,9 @@ class URL(from: String) {
 
   def toURI(): java.net.URI = ???
 
-  def toExternalForm(): java.lang.String = ???
+  def toExternalForm(): java.lang.String = from
+
+  override def toString(): java.lang.String = toExternalForm()
 
   // added
   def getFile(): String = ???

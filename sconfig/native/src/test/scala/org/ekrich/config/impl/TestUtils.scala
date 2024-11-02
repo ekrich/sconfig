@@ -4,28 +4,24 @@
 package org.ekrich.config.impl
 
 import org.junit.Assert._
-import org.ekrich.config.ConfigOrigin
+
 import java.io.Reader
 import java.io.StringReader
-import org.ekrich.config.ConfigParseOptions
-import org.ekrich.config.ConfigSyntax
-import org.ekrich.config.ConfigFactory
-import java.io.ByteArrayOutputStream
-import java.io.ObjectOutputStream
-import java.io.ByteArrayInputStream
-import java.io.ObjectInputStream
-import java.io.NotSerializableException
-import java.io.OutputStream
-import java.io.InputStream
-import scala.annotation.tailrec
 import java.net.URL
 import java.util.concurrent.Executors
 import java.util.concurrent.Callable
-import org.ekrich.config._
+
+import scala.annotation.tailrec
+import scala.jdk.CollectionConverters._
+import scala.language.implicitConversions
 import scala.reflect.ClassTag
 import scala.reflect.classTag
-import scala.jdk.CollectionConverters._
-import language.implicitConversions
+
+import org.ekrich.config._
+import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigFactory
+import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.ConfigSyntax
 
 abstract trait TestUtils {
   protected def intercept[E <: Throwable: ClassTag](block: => Any): E = {
@@ -151,20 +147,6 @@ abstract trait TestUtils {
     a
   }
 
-  private def copyViaSerialize(o: java.io.Serializable): AnyRef = {
-    val byteStream = new ByteArrayOutputStream()
-    val objectStream = new ObjectOutputStream(byteStream)
-    objectStream.writeObject(o)
-    objectStream.close()
-    val bytes = byteStream.toByteArray()
-    // outputStringLiteral(bytes) // uncomment to print
-    val inStream = new ByteArrayInputStream(bytes)
-    val inObjectStream = new ObjectInputStream(inStream)
-    val copy = inObjectStream.readObject()
-    inObjectStream.close()
-    copy
-  }
-
   def outputStringLiteral(bytes: Array[Byte]): Unit = {
     val hex = encodeLegibleBinary(bytes)
     outputStringLiteral(hex)
@@ -178,142 +160,6 @@ abstract trait TestUtils {
       System.err.println("\"" + head + "\"" + plus)
       outputStringLiteral(tail)
     }
-  }
-
-  protected def checkSerializationCompat[T: ClassTag](
-      expectedHex: String,
-      o: T,
-      changedOK: Boolean = false
-  ): Unit = {
-    // be sure we can still deserialize the old one
-    val inStream = new ByteArrayInputStream(decodeLegibleBinary(expectedHex))
-    var failure: Option[Exception] = None
-    var inObjectStream: ObjectInputStream = null
-    val deserialized =
-      try {
-        inObjectStream = new ObjectInputStream(inStream) // this can throw too
-        inObjectStream.readObject()
-      } catch {
-        case e: Exception =>
-          failure = Some(e)
-          null
-      } finally {
-        if (inObjectStream != null)
-          inObjectStream.close()
-      }
-
-    val why = failure
-      .map({ e => ": " + e.getClass.getSimpleName + ": " + e.getMessage })
-      .getOrElse("")
-
-    val byteStream = new ByteArrayOutputStream()
-    val objectStream = new ObjectOutputStream(byteStream)
-    objectStream.writeObject(o)
-    objectStream.close()
-    val hex = encodeLegibleBinary(byteStream.toByteArray())
-    def showCorrectResult(): Unit = {
-      if (expectedHex != hex) {
-        System.err.println(
-          "Correct result literal for " + o.getClass.getSimpleName + " serialization:"
-        )
-        System.err.println(
-          "\"\" + "
-        ) // line up all the lines by using empty string on first line
-        outputStringLiteral(hex)
-      }
-    }
-
-    try {
-      assertEquals(
-        "Can no longer deserialize the old format of " + o.getClass.getSimpleName + why,
-        o,
-        deserialized
-      )
-      assertFalse(failure.isDefined) // should have thrown if we had a failure
-
-      if (!changedOK)
-        assertEquals(
-          o.getClass.getSimpleName + " serialization has changed (though we still deserialized the old serialization)",
-          expectedHex,
-          hex
-        )
-    } catch {
-      case e: Throwable =>
-        showCorrectResult()
-        throw e
-    }
-  }
-
-  // no ObjectOutputStream / Serialization on Scala.js
-  protected def checkNotSerializable(o: AnyRef): Unit = {
-    val byteStream = new ByteArrayOutputStream()
-    val objectStream = new ObjectOutputStream(byteStream)
-    val e = intercept[NotSerializableException] {
-      objectStream.writeObject(o)
-    }
-    objectStream.close()
-  }
-
-  protected def checkSerializable[T: ClassTag](expectedHex: String, o: T): T = {
-    val t = checkSerializable(o)
-    checkSerializationCompat(expectedHex, o)
-    t
-  }
-
-  protected def checkSerializableOldFormat[T: ClassTag](
-      expectedHex: String,
-      o: T
-  ): T = {
-    val t = checkSerializable(o)
-    checkSerializationCompat(expectedHex, o, changedOK = true)
-    t
-  }
-
-  protected def checkSerializableNoMeaningfulEquals[T: ClassTag](o: T): T = {
-    assertTrue(
-      o.getClass.getSimpleName + " not an instance of Serializable",
-      o.isInstanceOf[java.io.Serializable]
-    )
-
-    val a = o.asInstanceOf[java.io.Serializable]
-
-    val b =
-      try {
-        copyViaSerialize(a)
-      } catch {
-        case nf: ClassNotFoundException =>
-          throw new AssertionError(
-            "failed to make a copy via serialization, " +
-              "possibly caused by http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6446627",
-            nf
-          )
-        case e: Exception =>
-          e.printStackTrace(System.err)
-          throw new AssertionError("failed to make a copy via serialization", e)
-      }
-
-    assertTrue(
-      "deserialized type " + b.getClass.getSimpleName + " doesn't match serialized type " + a.getClass.getSimpleName,
-      classTag[T].runtimeClass.isAssignableFrom(b.getClass)
-    )
-
-    b.asInstanceOf[T]
-  }
-
-  protected def checkSerializable[T: ClassTag](o: T): T = {
-    checkEqualObjects(o, o)
-
-    assertTrue(
-      o.getClass.getSimpleName + " not an instance of Serializable",
-      o.isInstanceOf[java.io.Serializable]
-    )
-
-    val b = checkSerializableNoMeaningfulEquals(o)
-
-    checkEqualObjects(o, b)
-    checkEqualOrigins(o, b)
-
-    b
   }
 
   // origin() is not part of value equality but is serialized, so
@@ -983,34 +829,5 @@ abstract trait TestUtils {
       expecteds.size,
       problems.size
     )
-  }
-
-  protected def checkSerializableWithCustomSerializer[T: ClassTag](o: T): T = {
-    val byteStream = new ByteArrayOutputStream()
-    val objectStream = new CustomObjectOutputStream(byteStream)
-    objectStream.writeObject(o)
-    objectStream.close()
-    val inStream = new ByteArrayInputStream(byteStream.toByteArray)
-    val inObjectStream = new CustomObjectInputStream(inStream)
-    val copy = inObjectStream.readObject()
-    inObjectStream.close()
-    copy.asInstanceOf[T]
-  }
-
-  class CustomObjectOutputStream(out: OutputStream)
-      extends ObjectOutputStream(out) {
-    override def writeUTF(str: String): Unit = {
-      val bytes = str.getBytes
-      writeLong(bytes.length)
-      write(bytes)
-    }
-  }
-
-  class CustomObjectInputStream(in: InputStream) extends ObjectInputStream(in) {
-    override def readUTF(): String = {
-      val bytes = new Array[Byte](readLong().toByte)
-      read(bytes)
-      new String(bytes)
-    }
   }
 }

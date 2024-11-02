@@ -30,6 +30,9 @@ object SimpleConfigOrigin {
   private[impl] def newFile(filename: String): SimpleConfigOrigin = {
     var url: String = null
     try {
+      // TODO: Change to Use URI - string bases URL is the same anyway.
+      // eventually we could change public API to use URI and support
+      // JS and Native to use different fetching libraries
       val uri = new File(filename).toURI()
       url = new PlatformUri(uri).toURL().toExternalForm()
     } catch {

@@ -8,14 +8,14 @@ import org.junit.Test
 
 import FileUtils._
 
-class ConfigDocumentFactoryJvmTest extends TestUtils {
+class ConfigDocumentFactoryNativeTest extends TestUtils {
 
   @Test
   def configDocumentFileParse: Unit = {
     val configDocument =
       ConfigDocumentFactory.parseFile(resourceFile("/test03.conf"))
     val fileReader = new BufferedReader(
-      new FileReader("src/test/resources/test03.conf")
+      new FileReader(resourceFile("/test03.conf"))
     )
     var line = fileReader.readLine()
     val sb = new StringBuilder()
