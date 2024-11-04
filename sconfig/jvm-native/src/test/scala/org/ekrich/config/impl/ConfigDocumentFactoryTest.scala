@@ -8,7 +8,7 @@ import org.junit.Test
 
 import FileUtils._
 
-class ConfigDocumentFactoryJvmTest extends TestUtils {
+class ConfigDocumentFactoryTest extends TestUtils {
 
   @Test
   def configDocumentFileParse: Unit = {
