@@ -6,7 +6,7 @@ import org.ekrich.config.ConfigParseOptions
 import org.ekrich.config.impl.Parseable
 
 /**
- * [[ConfigFactoryDocument]] methods common to JVM and Native
+ * [[ConfigDocumentFactory]] methods common to JVM and Native
  */
 abstract class ConfigDocumentFactoryJvmNative
     extends ConfigDocumentFactoryShared {

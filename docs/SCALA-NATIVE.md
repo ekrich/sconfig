@@ -73,9 +73,12 @@ val config = ConfigFactory.parseReader(
 val specialChars = config.getString("fromProps.specialChars")
 ```
 
-### How to read a HOCON configuation file into a String for Scala Native
+In Scala Native `java.io.FileReader` is available so you can create a
+`FileReader` from a `File`.
 
-In order to read the configuration file into a `String` you need to know the relative
+### How to read a HOCON configuation file using Scala Native
+
+In order to read a configuration file you need to know the relative
 path from where the executable was started or use an absolute path. If the 
 Scala Native executable is `run` from `sbt` it will have the current working directory 
 equal to the directory at the base of your project where `sbt` was started. If curious
@@ -88,16 +91,21 @@ println(s"Working Dir: $dir")
 ```
 
 Continuing the same thought process you can use the following code to read the file
-into a `String` from a simple `sbt` project where the `src` directory is at the top
+from a simple `sbt` project where the `src` directory is at the top
 level of your project and you are using the `run` command. If you package your
 application or run the application executable directly, then making the path relative
 to the binary with the code above could be your best option. Another option is to use
-the `"user.home"` or the `"user.dir"` property to configure the file path.
+the `"user.home"` or the `"user.dir"` property to configure the file path. Note: When the
+executable is added to the path, the current working directory is where you start the
+executable from so keep that in mind
 
 ```scala
-import java.nio.file.{Files, Paths}
-val bytes = Files.readAllBytes(Paths.get("src/main/resources/myapp.conf"))
-val configStr = new String(bytes)
+import java.io.File
+val file = new File("src/main/resources/myapp.conf")
+// ConfigDocument
+val configDocument = ConfigDocumentFactory.parseFile(file)
+// or Config
+val config = ConfigFactory.parseFile(file)
 ```
 
 Using this code with the code above gives you a working solution to use `sconfig`
