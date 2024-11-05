@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.6.0"
-val nextVersion = "1.7.0"
+val prevVersion = "1.8.0"
+val nextVersion = "1.9.0"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -43,7 +43,7 @@ val isScala3 = Def.setting {
   }
 }
 
-val scala212 = "2.12.19"
+val scala212 = "2.12.20"
 val scala213 = "2.13.15"
 val scala3 = "3.3.4"
 
