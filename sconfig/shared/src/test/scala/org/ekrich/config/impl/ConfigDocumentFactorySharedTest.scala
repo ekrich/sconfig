@@ -348,9 +348,6 @@ class ConfigDocumentFactorySharedTest extends TestUtilsShared {
     )
   }
 
-  // private def defaultLineEndingsToUnix(s: String): String =
-  //   s.replaceAll(System.lineSeparator(), "\n")
-
   @Test
   def configDocumentIndentationSingleLineObject: Unit = {
     // Proper insertion for single-line objects
