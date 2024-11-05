@@ -7,7 +7,7 @@ import org.ekrich.config.ConfigSyntax
 import org.junit.Assert._
 import org.junit._
 
-class UtilTest extends TestUtils {
+class UtilTest extends TestUtilsShared {
   private lazy val supplementaryChars = {
     val sb = new java.lang.StringBuilder()
     val codepoints = Seq(0x2070e, 0x20731, 0x20779, 0x20c53, 0x20c78, 0x20c96,

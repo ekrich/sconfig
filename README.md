@@ -87,6 +87,7 @@ Complete setup documentation and the current `scalafix` version can be found in 
 
 ## Versions
 
+Release [1.8.0](https://github.com/ekrich/sconfig/releases/tag/v1.8.0) - (2024-11-05)<br/>
 Release [1.7.0](https://github.com/ekrich/sconfig/releases/tag/v1.7.0) - (2023-04-16)<br/>
 Release [1.6.0](https://github.com/ekrich/sconfig/releases/tag/v1.6.0) - (2023-12-28)<br/>
 Release [1.5.1](https://github.com/ekrich/sconfig/releases/tag/v1.5.1) - (2023-09-15)<br/>

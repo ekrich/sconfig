@@ -27,7 +27,7 @@ object FileUtils {
     else ""
 
   val resourceDir = {
-    val f = new File("src/test/resources")
+    val f = TestPath.file()
     if (!f.exists()) {
       val here = new File(".").getAbsolutePath
       throw new Exception(
@@ -39,6 +39,9 @@ object FileUtils {
     f
   }
 
+  // TODO: can't test if file exists because some tests require the absense
+  // of the file. The problem is that later on in the framework, not test
+  // is done so silent failures can occur
   def resourceFile(filename: String): File =
     new File(resourceDir, filename)
 
