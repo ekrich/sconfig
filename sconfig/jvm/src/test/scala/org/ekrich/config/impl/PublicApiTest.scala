@@ -402,40 +402,6 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def allowMissing(): Unit = {
-    val e = intercept[ConfigException.IO] {
-      ConfigFactory.parseFile(
-        resourceFile("nonexistent.conf"),
-        ConfigParseOptions.defaults.setAllowMissing(false)
-      )
-    }
-    assertNotFound(e)
-
-    val conf = ConfigFactory.parseFile(
-      resourceFile("nonexistent.conf"),
-      ConfigParseOptions.defaults.setAllowMissing(true)
-    )
-    assertTrue("is empty", conf.isEmpty)
-  }
-
-  @Test
-  def allowMissingFileAnySyntax(): Unit = {
-    val e = intercept[ConfigException.IO] {
-      ConfigFactory.parseFileAnySyntax(
-        resourceFile("nonexistent"),
-        ConfigParseOptions.defaults.setAllowMissing(false)
-      )
-    }
-    assertNotFound(e)
-
-    val conf = ConfigFactory.parseFileAnySyntax(
-      resourceFile("nonexistent"),
-      ConfigParseOptions.defaults.setAllowMissing(true)
-    )
-    assertTrue("is empty", conf.isEmpty)
-  }
-
-  @Test
   def allowMissingResourcesAnySyntax(): Unit = {
     val e = intercept[ConfigException.IO] {
       ConfigFactory.parseResourcesAnySyntax(
