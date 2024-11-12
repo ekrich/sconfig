@@ -269,28 +269,29 @@ final class SimpleConfigList(
   override def toArray: Array[Object] = value.toArray
   override def toArray[T](a: Array[T with Object]): Array[T with Object] =
     value.toArray[T](a)
-  override def add(e: ConfigValue) =
+  override def add(e: ConfigValue): Boolean =
     throw SimpleConfigList.weAreImmutable("add")
   override def add(index: Int, element: ConfigValue): Unit = {
     throw SimpleConfigList.weAreImmutable("add")
   }
-  override def addAll(c: ju.Collection[_ <: ConfigValue]) =
+  override def addAll(c: ju.Collection[_ <: ConfigValue]): Boolean =
     throw SimpleConfigList.weAreImmutable("addAll")
-  override def addAll(index: Int, c: ju.Collection[_ <: ConfigValue]) =
+  override def addAll(index: Int, c: ju.Collection[_ <: ConfigValue]): Boolean =
     throw SimpleConfigList.weAreImmutable("addAll")
   override def clear(): Unit = {
     throw SimpleConfigList.weAreImmutable("clear")
   }
-  override def remove(o: Any) = throw SimpleConfigList.weAreImmutable("remove")
-  override def remove(index: Int) =
+  override def remove(o: Any): Boolean =
     throw SimpleConfigList.weAreImmutable("remove")
-  override def removeAll(c: ju.Collection[_]) =
+  override def remove(index: Int): ConfigValue =
+    throw SimpleConfigList.weAreImmutable("remove")
+  override def removeAll(c: ju.Collection[_]): Boolean =
     throw SimpleConfigList.weAreImmutable("removeAll")
-  override def retainAll(c: ju.Collection[_]) =
+  override def retainAll(c: ju.Collection[_]): Boolean =
     throw SimpleConfigList.weAreImmutable("retainAll")
-  override def set(index: Int, element: ConfigValue) =
+  override def set(index: Int, element: ConfigValue): ConfigValue =
     throw SimpleConfigList.weAreImmutable("set")
-  override def newCopy(newOrigin: ConfigOrigin) =
+  override def newCopy(newOrigin: ConfigOrigin): AbstractConfigValue =
     new SimpleConfigList(newOrigin, value)
   final private[impl] def concatenate(other: SimpleConfigList) = {
     val combinedOrigin = SimpleConfigOrigin.mergeOrigins(origin, other.origin)

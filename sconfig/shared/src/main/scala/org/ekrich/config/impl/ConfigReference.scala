@@ -5,6 +5,7 @@ import java.{util => ju}
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
+import org.ekrich.config.ConfigValueType
 
 /**
  * ConfigReference replaces ConfigReference (the older class kept for back
@@ -24,9 +25,9 @@ final class ConfigReference(
     new ConfigException.NotResolved(
       "need to Config#resolve(), see the API docs for Config#resolve(); substitution not resolved: " + this
     )
-  override def valueType = throw notResolved
-  override def unwrapped = throw notResolved
-  override def newCopy(newOrigin: ConfigOrigin) =
+  override def valueType: ConfigValueType = throw notResolved
+  override def unwrapped: AnyRef = throw notResolved
+  override def newCopy(newOrigin: ConfigOrigin): AbstractConfigValue =
     new ConfigReference(newOrigin, expression, prefixLength)
   override def ignoresFallbacks = false
   override def unmergedValues: ju.Collection[ConfigReference] =

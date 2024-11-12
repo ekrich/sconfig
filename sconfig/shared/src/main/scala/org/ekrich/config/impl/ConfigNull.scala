@@ -36,7 +36,8 @@ final class ConfigNull(origin: ConfigOrigin)
     sb.append("null")
   }
 
-  override def newCopy(origin: ConfigOrigin) = new ConfigNull(origin)
+  override def newCopy(origin: ConfigOrigin): AbstractConfigValue =
+    new ConfigNull(origin)
 
   // serialization all goes through SerializedConfigValue
   @throws[ObjectStreamException]

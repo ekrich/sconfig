@@ -8,7 +8,9 @@ import scala.util.control.Breaks._
 final class ConfigNodeObject private[impl] (
     _children: ju.Collection[AbstractConfigNode]
 ) extends ConfigNodeComplexValue(_children) {
-  override def newNode(nodes: ju.Collection[AbstractConfigNode]) =
+  override def newNode(
+      nodes: ju.Collection[AbstractConfigNode]
+  ): ConfigNodeComplexValue =
     new ConfigNodeObject(nodes)
 
   def hasValue(desiredPath: Path): Boolean =

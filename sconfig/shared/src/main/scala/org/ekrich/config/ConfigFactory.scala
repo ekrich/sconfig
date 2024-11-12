@@ -1049,14 +1049,27 @@ object ConfigFactory extends PlatformConfigFactory {
     if (className != null) {
       try {
         classOf[ConfigLoadingStrategy].cast(
-          Class.forName(className).getConstructor().newInstance()
+          Class
+            .forName(className)
+            .asSubclass(classOf[ConfigLoadingStrategy])
+            .getDeclaredConstructor()
+            .newInstance()
         )
       } catch {
+        // possibly InvocationTargetException
         case e: Throwable =>
-          throw new ConfigException.BugOrBroken(
-            "Failed to load strategy: " + className,
-            e
-          )
+          val cause = e.getCause()
+          if (cause == null) {
+            throw new ConfigException.BugOrBroken(
+              "Failed to load strategy: " + className,
+              e
+            )
+          } else {
+            throw new ConfigException.BugOrBroken(
+              "Failed to load strategy: " + className,
+              cause
+            )
+          }
       }
     } else {
       new DefaultConfigLoadingStrategy()

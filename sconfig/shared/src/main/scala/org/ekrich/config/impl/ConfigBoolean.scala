@@ -19,7 +19,8 @@ final class ConfigBoolean(origin: ConfigOrigin, val value: jl.Boolean)
 
   override def transformToString: String = value.toString()
 
-  override def newCopy(origin: ConfigOrigin) = new ConfigBoolean(origin, value)
+  override def newCopy(origin: ConfigOrigin): AbstractConfigValue =
+    new ConfigBoolean(origin, value)
 
   // serialization all goes through SerializedConfigValue (signature is critical)
   @throws[ObjectStreamException]

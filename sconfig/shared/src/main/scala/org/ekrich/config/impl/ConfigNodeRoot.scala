@@ -10,7 +10,9 @@ final class ConfigNodeRoot private[impl] (
     _children: ju.Collection[AbstractConfigNode],
     val origin: ConfigOrigin
 ) extends ConfigNodeComplexValue(_children) {
-  override def newNode(nodes: ju.Collection[AbstractConfigNode]) =
+  override def newNode(
+      nodes: ju.Collection[AbstractConfigNode]
+  ): ConfigNodeComplexValue =
     throw new ConfigException.BugOrBroken("Tried to indent the root object")
 
   private[impl] def value: ConfigNodeComplexValue =

@@ -27,6 +27,7 @@ import org.ekrich.config.ConfigList
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigValue
+import org.ekrich.config.ConfigValueType
 
 /**
  * Deliberately shoving all the serialization code into this class instead of
@@ -398,9 +399,10 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
     in.readFully(bytes)
     new DataInputStream(new ByteArrayInputStream(bytes))
   }
-  override def valueType = throw SerializedConfigValue.shouldNotBeUsed
-  override def unwrapped = throw SerializedConfigValue.shouldNotBeUsed
-  override def newCopy(origin: ConfigOrigin) =
+  override def valueType: ConfigValueType =
+    throw SerializedConfigValue.shouldNotBeUsed
+  override def unwrapped: AnyRef = throw SerializedConfigValue.shouldNotBeUsed
+  override def newCopy(origin: ConfigOrigin): AbstractConfigValue =
     throw SerializedConfigValue.shouldNotBeUsed
   override final def toString: String =
     getClass.getSimpleName + "(value=" + value + ",wasConfig=" + wasConfig + ")"

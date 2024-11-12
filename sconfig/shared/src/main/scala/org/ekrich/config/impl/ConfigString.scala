@@ -16,7 +16,7 @@ object ConfigString {
       origin: ConfigOrigin,
       value: String
   ) extends ConfigString(origin, value) {
-    override def newCopy(origin: ConfigOrigin) =
+    override def newCopy(origin: ConfigOrigin): AbstractConfigValue =
       new ConfigString.Quoted(origin, value)
 
     // serialization all goes through SerializedConfigValue
@@ -36,7 +36,7 @@ object ConfigString {
       origin: ConfigOrigin,
       value: String
   ) extends ConfigString(origin, value) {
-    override def newCopy(origin: ConfigOrigin) =
+    override def newCopy(origin: ConfigOrigin): AbstractConfigValue =
       new ConfigString.Unquoted(origin, value)
 
     @throws[ObjectStreamException]

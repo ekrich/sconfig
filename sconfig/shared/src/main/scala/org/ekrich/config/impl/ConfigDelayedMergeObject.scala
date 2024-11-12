@@ -114,19 +114,22 @@ final class ConfigDelayedMergeObject(
       mergeable: ConfigMergeable
   ): ConfigDelayedMergeObject =
     super.withFallback(mergeable).asInstanceOf[ConfigDelayedMergeObject]
-  override def withOnlyKey(key: String) =
+  override def withOnlyKey(key: String): AbstractConfigObject =
     throw ConfigDelayedMergeObject.notResolved
-  override def withoutKey(key: String) =
+  override def withoutKey(key: String): AbstractConfigObject =
     throw ConfigDelayedMergeObject.notResolved
-  override def withOnlyPathOrNull(path: Path) =
+  override def withOnlyPathOrNull(path: Path): AbstractConfigObject =
     throw ConfigDelayedMergeObject.notResolved
-  override def withOnlyPath(path: Path) =
+  override def withOnlyPath(path: Path): AbstractConfigObject =
     throw ConfigDelayedMergeObject.notResolved
-  override def withoutPath(path: Path) =
+  override def withoutPath(path: Path): AbstractConfigObject =
     throw ConfigDelayedMergeObject.notResolved
-  override def withValue(key: String, value: ConfigValue) =
+  override def withValue(
+      key: String,
+      value: ConfigValue
+  ): AbstractConfigObject =
     throw ConfigDelayedMergeObject.notResolved
-  override def withValue(path: Path, value: ConfigValue) =
+  override def withValue(path: Path, value: ConfigValue): AbstractConfigObject =
     throw ConfigDelayedMergeObject.notResolved
   override def unmergedValues: ju.Collection[AbstractConfigValue] = stack
   override def canEqual(other: Any): Boolean =
@@ -158,18 +161,24 @@ final class ConfigDelayedMergeObject(
   ): Unit = {
     render(sb, indent, atRoot, null, options)
   }
-  override def unwrapped = throw ConfigDelayedMergeObject.notResolved
-  override def get(key: Any) = throw ConfigDelayedMergeObject.notResolved
-  override def remove(key: Any) = throw ConfigDelayedMergeObject.notResolved
-  override def containsKey(key: Any) =
+  override def unwrapped: ju.Map[String, AnyRef] =
     throw ConfigDelayedMergeObject.notResolved
-  override def containsValue(value: Any) =
+  override def get(key: Any): AbstractConfigValue =
     throw ConfigDelayedMergeObject.notResolved
-  override def entrySet = throw ConfigDelayedMergeObject.notResolved
-  override def isEmpty = throw ConfigDelayedMergeObject.notResolved
-  override def keySet = throw ConfigDelayedMergeObject.notResolved
-  override def size = throw ConfigDelayedMergeObject.notResolved
-  override def values = throw ConfigDelayedMergeObject.notResolved
+  override def remove(key: Any): ConfigValue =
+    throw ConfigDelayedMergeObject.notResolved
+  override def containsKey(key: Any): Boolean =
+    throw ConfigDelayedMergeObject.notResolved
+  override def containsValue(value: Any): Boolean =
+    throw ConfigDelayedMergeObject.notResolved
+  override def entrySet: ju.Set[ju.Map.Entry[String, ConfigValue]] =
+    throw ConfigDelayedMergeObject.notResolved
+  override def isEmpty: Boolean = throw ConfigDelayedMergeObject.notResolved
+  override def keySet: ju.Set[String] =
+    throw ConfigDelayedMergeObject.notResolved
+  override def size: Int = throw ConfigDelayedMergeObject.notResolved
+  override def values: ju.Collection[ConfigValue] =
+    throw ConfigDelayedMergeObject.notResolved
 
   // exercised in ValidationTest.validationFailedSerializable
   // and ConfigTest.test01Serializable
