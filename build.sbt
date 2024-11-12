@@ -25,9 +25,9 @@ val scalacOpts = dotcOpts ++ List(
   // 57 inferred return type Scala 2.13 cat=scala3-migration
   "-Wconf:msg=inferred:ws",
   // 2 deprecations Scala 2.12 Stack - fixed for 2.13
-  "-Wconf:msg=poorly-performing:ws"
+  "-Wconf:msg=poorly-performing:ws",
   // uncomment to see messages
-  // "-Wconf:any:warning-verbose"
+  "-Wconf:any:warning-verbose"
 )
 
 Compile / console / scalacOptions --= Seq(

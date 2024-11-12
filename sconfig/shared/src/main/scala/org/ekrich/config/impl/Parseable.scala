@@ -113,7 +113,9 @@ object Parseable {
   ) extends Parseable(options) {
     postConstruct(options)
     @throws[IOException]
-    override protected def reader() = throw new FileNotFoundException(message)
+    override protected def reader(): Reader = throw new FileNotFoundException(
+      message
+    )
     override protected def createOrigin(): ConfigOrigin =
       SimpleConfigOrigin.newSimple(what)
   }
@@ -184,7 +186,7 @@ object Parseable {
       postConstruct(options)
     }
     @throws[IOException]
-    override protected def reader() =
+    override protected def reader(): Reader =
       throw new ConfigException.BugOrBroken(
         "reader() without options should not be called on ParseableURL"
       )
@@ -341,7 +343,7 @@ object Parseable {
       with Relativizer {
     postConstruct(options)
     @throws[IOException]
-    override protected def reader() =
+    override protected def reader(): Reader =
       throw new ConfigException.BugOrBroken(
         "reader() should not be called on resources"
       )
@@ -445,7 +447,7 @@ object Parseable {
   ) extends Parseable(options) {
     postConstruct(options)
     @throws[IOException]
-    override protected def reader() =
+    override protected def reader(): Reader =
       throw new ConfigException.BugOrBroken(
         "reader() should not be called on props"
       )

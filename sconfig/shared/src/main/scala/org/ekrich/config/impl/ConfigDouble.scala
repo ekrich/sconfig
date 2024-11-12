@@ -29,7 +29,7 @@ final class ConfigDouble(
 
   override def doubleValue: Double = value
 
-  override def newCopy(origin: ConfigOrigin) =
+  override def newCopy(origin: ConfigOrigin): AbstractConfigValue =
     new ConfigDouble(origin, value, originalText)
 
   // serialization all goes through SerializedConfigValue

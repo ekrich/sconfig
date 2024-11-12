@@ -26,7 +26,9 @@ class SimpleIncludeContext(parseable: Parseable, options: ConfigParseOptions)
 
   override def parseOptions: ConfigParseOptions = options
 
-  override def setParseOptions(options: ConfigParseOptions) =
+  override def setParseOptions(
+      options: ConfigParseOptions
+  ): ConfigIncludeContext =
     new SimpleIncludeContext(
       parseable,
       options.setSyntax(null).setOriginDescription(null)

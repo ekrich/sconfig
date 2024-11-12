@@ -164,7 +164,7 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
   override def constructDelayedMerge(
       origin: ConfigOrigin,
       stack: ju.List[AbstractConfigValue]
-  ) =
+  ): AbstractConfigObject =
     new ConfigDelayedMergeObject(origin, stack)
 
   override def mergedWithObject(

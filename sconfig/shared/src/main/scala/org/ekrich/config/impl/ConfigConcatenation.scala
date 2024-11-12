@@ -144,11 +144,11 @@ final class ConfigConcatenation(
       "need to Config#resolve(), see the API docs for Config#resolve(); substitution not resolved: " + this
     )
 
-  override def valueType = throw notResolved
+  override def valueType: ConfigValueType = throw notResolved
 
-  override def unwrapped = throw notResolved
+  override def unwrapped: AnyRef = throw notResolved
 
-  override def newCopy(newOrigin: ConfigOrigin) =
+  override def newCopy(newOrigin: ConfigOrigin): AbstractConfigValue =
     new ConfigConcatenation(newOrigin, pieces)
 
   override def ignoresFallbacks: Boolean = {

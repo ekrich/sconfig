@@ -10,6 +10,7 @@ import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.impl.AbstractConfigValue._
+import org.ekrich.config.ConfigValueType
 
 /**
  * The issue here is that we want to first merge our stack of config files, and
@@ -227,12 +228,12 @@ final class ConfigDelayedMerge(
       )
   }
 
-  override def valueType =
+  override def valueType: ConfigValueType =
     throw new ConfigException.NotResolved(
       "called valueType() on value with unresolved substitutions, need to Config#resolve() first, see API docs"
     )
 
-  override def unwrapped =
+  override def unwrapped: AnyRef =
     throw new ConfigException.NotResolved(
       "called unwrapped() on value with unresolved substitutions, need to Config#resolve() first, see API docs"
     )
@@ -274,7 +275,7 @@ final class ConfigDelayedMerge(
   override def ignoresFallbacks: Boolean =
     ConfigDelayedMerge.stackIgnoresFallbacks(stack)
 
-  override def newCopy(newOrigin: ConfigOrigin) =
+  override def newCopy(newOrigin: ConfigOrigin): AbstractConfigValue =
     new ConfigDelayedMerge(newOrigin, stack)
 
   override final def mergedWithTheUnmergeable(

@@ -38,7 +38,7 @@ final class SimpleConfigDocument private[impl] (
     options = options.setOriginComments(false)
     withValueText(path, newValue.render(options).trim)
   }
-  override def withoutPath(path: String) =
+  override def withoutPath(path: String): ConfigDocument =
     new SimpleConfigDocument(
       configNodeTree.setValue(path, null, parseOptions.getSyntax),
       parseOptions

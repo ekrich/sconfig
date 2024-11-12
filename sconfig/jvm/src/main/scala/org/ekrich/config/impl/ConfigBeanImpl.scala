@@ -112,7 +112,7 @@ object ConfigBeanImpl {
       if (!problems.isEmpty)
         throw new ConfigException.ValidationFailed(problems)
       // Fill in the bean instance
-      val bean = clazz.getConstructor().newInstance()
+      val bean = clazz.getDeclaredConstructor().newInstance()
       for (beanProp <- beanProps.asScala) {
         breakable {
           val setter = beanProp.getWriteMethod
@@ -137,9 +137,14 @@ object ConfigBeanImpl {
       }
       bean
     } catch {
-      case e: InstantiationException =>
+      case e: NoSuchMethodException =>
         throw new ConfigException.BadBean(
           clazz.getName + " needs a public no-args constructor to be used as a bean",
+          e
+        )
+      case e: InstantiationException =>
+        throw new ConfigException.BadBean(
+          clazz.getName + " needs to be instantiatable to be used as a bean",
           e
         )
       case e: IllegalAccessException =>

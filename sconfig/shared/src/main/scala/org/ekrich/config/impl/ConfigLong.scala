@@ -28,7 +28,7 @@ final class ConfigLong(
 
   override def doubleValue: Double = value.toDouble
 
-  override def newCopy(origin: ConfigOrigin) =
+  override def newCopy(origin: ConfigOrigin): AbstractConfigValue =
     new ConfigLong(origin, value, originalText)
 
   // serialization all goes through SerializedConfigValue
