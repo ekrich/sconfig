@@ -5,10 +5,10 @@ on:
   pull_request:
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        java: [ '11', '17' ]
+        java: [ '17', '21' ]
     env:
       JAVA_OPTS: -Xms2G -Xmx4G -Xss6M -XX:+UseG1GC -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
     name: Test using Java ${{ matrix.java }}
@@ -20,4 +20,5 @@ jobs:
         distribution: 'adopt'
         java-version: ${{ matrix.java }}
         cache: 'sbt'
+    - uses: sbt/setup-sbt@v1
     - run: sbt +test
