@@ -750,7 +750,7 @@ object ConfigFactory extends PlatformConfigFactory {
    *   `klass.getClassLoader()` will be used to load resources, and non-absolute
    *   resource names will have this class's package added
    * @param resource
-   *   resource to look up, relative to `klass`'s package or absolute starting
+   *   resource to look up, relative to `klass` 's package or absolute starting
    *   with a "/"
    * @param options
    *   parse options
@@ -773,7 +773,7 @@ object ConfigFactory extends PlatformConfigFactory {
    *   `klass.getClassLoader()` will be used to load resources, and non-absolute
    *   resource names will have this class's package added
    * @param resource
-   *   resource to look up, relative to `klass`'s package or absolute starting
+   *   resource to look up, relative to `klass` 's package or absolute starting
    *   with a "/"
    * @return
    *   the parsed configuration
