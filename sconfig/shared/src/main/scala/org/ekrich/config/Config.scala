@@ -62,7 +62,7 @@ import scala.annotation.varargs
  * [[ConfigUtil$.splitPath ConfigUtil.splitPath(String)]] to convert between
  * path expressions and individual path elements (keys).
  *
- * <p> Another difference between `Config} and `ConfigObject` is that
+ * <p> Another difference between `Config` and `ConfigObject` is that
  * conceptually, `ConfigValue`s with a [[ConfigValue#valueType valueType]] of
  * [[ConfigValueType#NULL NULL]] exist in a `ConfigObject`, while a `Config`
  * treats null values as if they were missing. (With the exception of two

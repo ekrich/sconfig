@@ -45,7 +45,7 @@ trait ConfigMergeable {
    * just return the original value, since they automatically override any
    * fallback. This means that objects do not merge "across" non-objects; if you
    * write `object.withFallback(nonObject).withFallback(otherObject)`, then
-   * `otherObject`will simply be ignored. This is an intentional part of how
+   * `otherObject` will simply be ignored. This is an intentional part of how
    * merging works, because non-objects such as strings and integers replace
    * (rather than merging with) any prior value:
    *
