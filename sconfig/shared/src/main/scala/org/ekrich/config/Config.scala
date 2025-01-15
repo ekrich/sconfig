@@ -43,7 +43,7 @@ import scala.annotation.varargs
  * from config <em>keys</em>, rather than paths, to config values. Think of
  * `ConfigObject` as a JSON object and `Config` as a configuration API.
  *
- * <p> The API tries to consistently use the terms "key" and "path." A key is a
+ * <p> The API tries to consistently use the terms "key" and "path". A key is a
  * key in a JSON object; it's just a string that's the key in a map. A "path" is
  * a parseable expression with a syntax and it refers to a series of keys. Path
  * expressions are described in the
