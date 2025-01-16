@@ -43,7 +43,7 @@ import scala.annotation.varargs
  * from config <em>keys</em>, rather than paths, to config values. Think of
  * `ConfigObject` as a JSON object and `Config` as a configuration API.
  *
- * <p> The API tries to consistently use the terms "key" and "path." A key is a
+ * <p> The API tries to consistently use the terms "key" and "path". A key is a
  * key in a JSON object; it's just a string that's the key in a map. A "path" is
  * a parseable expression with a syntax and it refers to a series of keys. Path
  * expressions are described in the
@@ -62,7 +62,7 @@ import scala.annotation.varargs
  * [[ConfigUtil$.splitPath ConfigUtil.splitPath(String)]] to convert between
  * path expressions and individual path elements (keys).
  *
- * <p> Another difference between `Config} and `ConfigObject` is that
+ * <p> Another difference between `Config` and `ConfigObject` is that
  * conceptually, `ConfigValue`s with a [[ConfigValue#valueType valueType]] of
  * [[ConfigValueType#NULL NULL]] exist in a `ConfigObject`, while a `Config`
  * treats null values as if they were missing. (With the exception of two
