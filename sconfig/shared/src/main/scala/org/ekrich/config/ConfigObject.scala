@@ -44,7 +44,7 @@ import java.{util => ju}
  * a [[ConfigValue]] with type `ConfigValueType#NULL` then the key was set to
  * null explicitly in the config file.
  *
- * <p> <em>Do not implement interface `ConfigObject`</em>; it should only be
+ * <p> <em>Do not implement interface `ConfigObject` </em>; it should only be
  * implemented by the config library. Arbitrary implementations will not work
  * because the library internals assume a specific concrete implementation.
  * Also, this interface is likely to grow new methods over time, so third-party

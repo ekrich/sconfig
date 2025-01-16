@@ -21,7 +21,7 @@ import java.{util => ju}
  * <p> The [[ConfigValue#valueType]] method on a list returns
  * [[ConfigValueType#LIST]].
  *
- * <p> <em>Do not implement `ConfigList`</em>; it should only be implemented by
+ * <p> <em>Do not implement `ConfigList` </em>; it should only be implemented by
  * the config library. Arbitrary implementations will not work because the
  * library internals assume a specific concrete implementation. Also, this
  * interface is likely to grow new methods over time, so third-party
