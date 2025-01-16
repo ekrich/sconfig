@@ -63,7 +63,7 @@ import scala.annotation.varargs
  * path expressions and individual path elements (keys).
  *
  * <p> Another difference between `Config` and `ConfigObject` is that
- * conceptually, `ConfigValue`s with a [[ConfigValue#valueType valueType]] of
+ * conceptually, `ConfigValue` s with a [[ConfigValue#valueType valueType]] of
  * [[ConfigValueType#NULL NULL]] exist in a `ConfigObject`, while a `Config`
  * treats null values as if they were missing. (With the exception of two
  * methods: [[Config#hasPathOrNull]] and [[Config#getIsNull]] let you detect
@@ -137,7 +137,7 @@ import scala.annotation.varargs
  *
  * <p> <strong>This is an interface but don't implement it yourself</strong>
  *
- * <p> <em>Do not implement `Config`</em>; it should only be implemented by the
+ * <p> <em>Do not implement `Config` </em>; it should only be implemented by the
  * config library. Arbitrary implementations will not work because the library
  * internals assume a specific concrete implementation. Also, this interface is
  * likely to grow new methods over time, so third-party implementations will
@@ -303,7 +303,7 @@ trait Config extends ConfigMergeable {
    * validate them. Also, if every module validates only its own stuff, there
    * isn't as much redundant work being done.
    *
-   * <p> If no paths are specified in `checkValid`'s parameter list, validation
+   * <p> If no paths are specified in `checkValid` 's parameter list, validation
    * is for the entire config.
    *
    * <p> If you specify paths that are not in the reference config, those paths
@@ -420,7 +420,7 @@ trait Config extends ConfigMergeable {
   def hasPathOrNull(path: String): Boolean
 
   /**
-   * Returns true if the `Config`'s root object contains no key-value pairs.
+   * Returns true if the `Config` 's root object contains no key-value pairs.
    *
    * @return
    *   true if the configuration is empty
