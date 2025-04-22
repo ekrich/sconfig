@@ -1,21 +1,28 @@
 #!/usr/bin/env bash
 
-# uncomment to debug
-# set -x
+# No Windows support - a script could be created using the dedicated launcher scala-cli.bat
+
+set -e
 
 HERE="`dirname $0`"
-VERSION=$(sed -nre "s#\s*version[^0-9]+([0-9.]+)#\1#p" $HERE/../.scalafmt.conf)
-COURSIER="$HERE/.coursier"
-SCALAFMT="$HERE/.scalafmt-$VERSION"
+VERSION=$(sed -nre "s#[[:space:]]*version[^0-9]+([0-9.]+)#\1#p" $HERE/../.scalafmt.conf)
+SCALACLI="$HERE/.scala-cli-$VERSION"
+SCALAFMT="$SCALACLI fmt --scalafmt-version $VERSION"
+CHECK_MODIFIED_ONLY=${CHECK_MODIFIED_ONLY:-false}
 
-if [ ! -f $COURSIER ]; then
-  curl -L -o $COURSIER https://git.io/coursier-cli
-  chmod +x $COURSIER
+# Location of scalafmt binary
+# macOS $HOME/Library/Caches/Coursier/v1
+# Linux $HOME/.cache/coursier/v1
+# Plus the following path: /https/github.com/VirtusLab/scalafmt-native-image
+# A scalafmt version change forces a new scala-cli download which should in turn update scalafmt
+if [ ! -f $SCALACLI ]; then
+  curl https://raw.githubusercontent.com/VirtusLab/scala-cli/refs/heads/main/scala-cli.sh > $SCALACLI
+  chmod +x $SCALACLI
 fi
 
-if [ ! -f $SCALAFMT ]; then
-  $COURSIER bootstrap org.scalameta:scalafmt-cli_2.13:$VERSION -r sonatype:snapshots --main org.scalafmt.cli.Cli -o $SCALAFMT
-  chmod +x $SCALAFMT
+if [[ "$CHECK_MODIFIED_ONLY" == "1" ]]; then
+  $SCALAFMT --check
+else 
+  $SCALAFMT "$@"
 fi
 
-$SCALAFMT "$@"

@@ -17,5 +17,4 @@ target/
 /.scala-build/
 
 # scripts generated
-/scripts/.coursier
-/scripts/.scalafmt*
+/scripts/.scala-cli*

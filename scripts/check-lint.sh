@@ -2,4 +2,4 @@
 
 set -e
 
-scripts/scalafmt --test
+scripts/scalafmt --check
