@@ -571,7 +571,8 @@ final class SimpleConfigObject(
         sb.append("}")
       }
     }
-    if (atRoot && options.getFormatted) sb.append('\n')
+    if (atRoot && options.getFormatted && options.getFormattingOptions.newLineAtEnd)
+      sb.append('\n')
   }
 
   override def get(key: Any): AbstractConfigValue = value.get(key)

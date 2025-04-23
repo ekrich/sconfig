@@ -167,7 +167,7 @@ object ConfigDelayedMerge {
       }
     }
     val reversed = new ju.ArrayList[AbstractConfigValue]
-    reversed.addAll(stack)  // TODO affected?
+    reversed.addAll(stack) // TODO affected?
     ju.Collections.reverse(reversed)
     var i = 0
     for (v <- reversed.asScala) {
