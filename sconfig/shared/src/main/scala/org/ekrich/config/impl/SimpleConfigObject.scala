@@ -3,18 +3,20 @@
  */
 package org.ekrich.config.impl
 
-import java.{lang => jl}
+import java.lang as jl
 import java.io.ObjectStreamException
 import java.io.Serializable
-import java.{util => ju}
-import scala.jdk.CollectionConverters._
-import scala.util.control.Breaks._
+import java.util as ju
+import scala.jdk.CollectionConverters.*
+import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValue
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
+
+import java.util.{Comparator, Objects}
 
 @SerialVersionUID(2L)
 object SimpleConfigObject {
@@ -79,7 +81,7 @@ object SimpleConfigObject {
   }
 
   @SerialVersionUID(1L)
-  final private class RenderComparator
+  private class RenderComparator
       extends ju.Comparator[String]
       with Serializable {
     // This is supposed to sort numbers before strings,
@@ -96,10 +98,29 @@ object SimpleConfigObject {
     }
   }
 
+  @SerialVersionUID(1L)
+  final private class KeepOriginRenderComparator(
+      getOriginFor: String => SimpleConfigOrigin
+  ) extends SimpleConfigObject.RenderComparator {
+    override def compare(a: String, b: String): Int = {
+      val aOrigin = getOriginFor(a)
+      val bOrigin = getOriginFor(b)
+
+      val aFilename = Option(aOrigin.filename).getOrElse("")
+      val bFilename = Option(bOrigin.filename).getOrElse("")
+
+      val compareFiles = aFilename compareTo bFilename
+
+      if (compareFiles != 0) compareFiles
+      else
+        aOrigin.lineNumber compareTo bOrigin.lineNumber
+    }
+  }
+
   private def mapEquals(
       a: ju.Map[String, ConfigValue],
       b: ju.Map[String, ConfigValue]
-  ): Boolean =
+  ) =
     if (a eq b) true
     else if (a.keySet != b.keySet) false
     else !a.keySet.asScala.exists(key => a.get(key) != b.get(key))
@@ -493,11 +514,17 @@ final class SimpleConfigObject(
         if (options.getFormatted) sb.append('\n')
       } else innerIndent = indentVal
       var separatorCount = 0
+
       val keys = new ju.ArrayList[String]
       keys.addAll(keySet)
-      ju.Collections.sort(keys, new SimpleConfigObject.RenderComparator)
-      //            val keys: Array[String] = keySet.toArray(new Array[String](size))
-      //            ju.Arrays.sort(keys, new SimpleConfigObject.RenderComparator)
+      val ordering =
+        if (options.formattingOptions.keepOriginOrder)
+          new SimpleConfigObject.KeepOriginRenderComparator(str =>
+            value.get(str).origin
+          )
+        else new SimpleConfigObject.RenderComparator
+      ju.Collections.sort(keys, ordering)
+
       for (k <- keys.asScala) {
         var v: AbstractConfigValue = null
         v = value.get(k)

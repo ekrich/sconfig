@@ -34,11 +34,18 @@ object ConfigRenderOptions {
   def concise = new ConfigRenderOptions(false, false, false, true)
 }
 
+case class FormattingOptions(
+    keepOriginOrder: Boolean = false,
+    doubleIndent: Boolean = false,
+    doubleColonAssign: Boolean = false
+)
+
 final class ConfigRenderOptions private (
     val originComments: Boolean,
     val comments: Boolean,
     val formatted: Boolean,
-    val json: Boolean
+    val json: Boolean,
+    val formattingOptions: FormattingOptions = FormattingOptions()
 ) {
 
   /**
@@ -115,6 +122,26 @@ final class ConfigRenderOptions private (
   def getFormatted: Boolean = formatted
 
   /**
+   * Returns options with formatting options set. Formatting is dependant on formatted flag.
+   *
+   * @param value
+   *   true to enable formatting
+   * @return
+   *   options with requested setting for formatting
+   */
+  def setFormattingOptions(value: FormattingOptions): ConfigRenderOptions =
+    if (value == formattingOptions) this
+    else new ConfigRenderOptions(originComments, comments, formatted, json, value)
+
+  /**
+   * Returns options used to format the config.
+   *
+   * @return
+   *   FormattingOptions
+   */
+  def getFormattingOptions: FormattingOptions = formattingOptions
+
+  /**
    * Returns options with JSON toggled. JSON means that HOCON extensions
    * (omitting commas, quotes for example) won't be used. However, whether to
    * use comments is controlled by the separate [[#setComments]] and
@@ -143,7 +170,12 @@ final class ConfigRenderOptions private (
     val sb = new StringBuilder("ConfigRenderOptions(")
     if (originComments) sb.append("originComments,")
     if (comments) sb.append("comments,")
-    if (formatted) sb.append("formatted,")
+    if (formatted) {
+      sb.append("formatted,")
+      if (formattingOptions.keepOriginOrder) sb.append("keepOriginOrder,")
+      if (formattingOptions.doubleIndent) sb.append("doubleIndent,")
+      if (formattingOptions.doubleColonAssign) sb.append("equalsAssign,")
+    }
     if (json) sb.append("json,")
     if (sb.charAt(sb.length - 1) == ',') sb.setLength(sb.length - 1)
     sb.append(")")
