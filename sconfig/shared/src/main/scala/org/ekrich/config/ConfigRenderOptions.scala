@@ -36,8 +36,9 @@ object ConfigRenderOptions {
 
 case class FormattingOptions(
     keepOriginOrder: Boolean = false,
-    doubleIndent: Boolean = false,
-    doubleColonAssign: Boolean = false
+    doubleIndent: Boolean = true,
+    doubleColonAssign: Boolean = false,
+    newLineAtEnd: Boolean = true
 )
 
 final class ConfigRenderOptions private (
@@ -122,7 +123,8 @@ final class ConfigRenderOptions private (
   def getFormatted: Boolean = formatted
 
   /**
-   * Returns options with formatting options set. Formatting is dependant on formatted flag.
+   * Returns options with formatting options set. Formatting is dependant on
+   * formatted flag.
    *
    * @param value
    *   true to enable formatting
@@ -131,7 +133,8 @@ final class ConfigRenderOptions private (
    */
   def setFormattingOptions(value: FormattingOptions): ConfigRenderOptions =
     if (value == formattingOptions) this
-    else new ConfigRenderOptions(originComments, comments, formatted, json, value)
+    else
+      new ConfigRenderOptions(originComments, comments, formatted, json, value)
 
   /**
    * Returns options used to format the config.
