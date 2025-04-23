@@ -83,7 +83,7 @@ object AbstractConfigValue {
     if (options.getFormatted) {
       var remaining = indent
       while (remaining > 0) {
-        sb.append("    ")
+        sb.append(if (options.formattingOptions.doubleIndent) "    " else "  ")
         remaining -= 1
       }
     }
@@ -337,7 +337,9 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
         if (this.isInstanceOf[ConfigObject]) {
           if (options.getFormatted) sb.append(' ')
         } else {
-          sb.append("=")
+          sb.append(
+            if (options.formattingOptions.doubleColonAssign) ":" else "="
+          )
         }
       }
     }
