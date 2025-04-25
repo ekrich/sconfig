@@ -82,7 +82,7 @@ class FormattingOptionsTest extends TestUtilsShared {
                      |    }
                      |  }
                      |}
-                     |""".replace("\r", "").stripMargin
+                     |""".stripMargin
     checkEqualObjects(result, expected)
   }
 
