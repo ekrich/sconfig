@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.8.0"
-val nextVersion = "1.9.0"
+val prevVersion = "1.9.0"
+val nextVersion = "1.9.1"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -157,7 +157,9 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     // uncomment for debugging
     // Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
     // mima settings
-    mimaPreviousArtifacts := Set("org.ekrich" %% "sconfig" % prevVersion),
+    mimaPreviousArtifacts := Set(
+      organization.value %% moduleName.value % prevVersion
+    ),
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
   .nativeConfigure(_.enablePlugins(ScalaNativeJUnitPlugin))
