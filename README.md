@@ -31,6 +31,8 @@ For non-JVM projects use `%%%` but please refer to the guide below for **critica
 
 All available versions can be seen at the [Maven Repository](https://mvnrepository.com/artifact/org.ekrich/sconfig).
 
+If migrating from the original `config` library, see the migrating section below.
+
 ## Cross Build Versions
 [![Scala.js](https://www.scala-js.org/assets/badges/scalajs-1.0.0.svg)](https://www.scala-js.org)
 
@@ -85,8 +87,11 @@ Complete setup documentation and the current `scalafix` version can be found in 
 4. Remove the old config dependency from the project's `libraryDependencies`
 5. Commit the changes
 
+If you wish to avoid the `scalafix` solution above especially if your usage of the `config` is not too extensive, first change the dependency. Next, make the changes as outlined above including the `import` change and removing the trailing parenthesis on some non-side-effecting methods. The compiler and development tools will help in the process.
+
 ## Versions
 
+Release [1.9.1](https://github.com/ekrich/sconfig/releases/tag/v1.9.1) - (2025-02-27)<br/>
 Release [1.9.0](https://github.com/ekrich/sconfig/releases/tag/v1.9.0) - (2025-03-17)<br/>
 Release [1.8.1](https://github.com/ekrich/sconfig/releases/tag/v1.8.1) - (2024-11-05)<br/>
 Release [1.8.0](https://github.com/ekrich/sconfig/releases/tag/v1.8.0) - (2024-11-05)<br/>
