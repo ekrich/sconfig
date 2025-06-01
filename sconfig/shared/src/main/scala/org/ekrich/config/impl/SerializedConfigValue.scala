@@ -61,7 +61,7 @@ object SerializedConfigValue {
       case ORIGIN_TYPE            => out.writeByte(v.asInstanceOf[jl.Integer])
       case ORIGIN_URL             => out.writeUTF(v.asInstanceOf[String])
       case ORIGIN_RESOURCE        => out.writeUTF(v.asInstanceOf[String])
-      case ORIGIN_COMMENTS =>
+      case ORIGIN_COMMENTS        =>
         val list = v.asInstanceOf[ju.List[String]]
         out.writeInt(list.size)
         for (s <- list.asScala) {

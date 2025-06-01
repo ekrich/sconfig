@@ -137,7 +137,7 @@ object HttpTest {
       case Some(`propertiesContentType`) =>
         Response(200, propertiesContentType, props)
       case Some(`hoconContentType`) => Response(200, hoconContentType, hocon)
-      case Some(other) =>
+      case Some(other)              =>
         Response(500, "text/plain", s"bad content type '$other'")
     }
   }

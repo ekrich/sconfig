@@ -65,7 +65,7 @@ class Json4sTest extends TestUtilsJson4s {
       case JInt(n)    => intValue(n.intValue)
       case JLong(n)   => longValue(n)
       case JDouble(n) => doubleValue(n)
-      case JBool(b) =>
+      case JBool(b)   =>
         new ConfigBoolean(fakeOrigin(), b)
       case JString(s) =>
         new ConfigString.Quoted(fakeOrigin(), s)
