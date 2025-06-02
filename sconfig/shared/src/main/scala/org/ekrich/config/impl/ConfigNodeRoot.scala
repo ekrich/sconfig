@@ -20,7 +20,7 @@ final class ConfigNodeRoot private[impl] (
       node.isInstanceOf[ConfigNodeComplexValue]
     ) match {
       case Some(node) => node.asInstanceOf[ConfigNodeComplexValue]
-      case None =>
+      case None       =>
         throw new ConfigException.BugOrBroken(
           "ConfigNodeRoot did not contain a value"
         )

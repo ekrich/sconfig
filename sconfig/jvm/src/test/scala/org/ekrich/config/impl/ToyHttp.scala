@@ -50,7 +50,7 @@ final class ToyHttp(handler: ToyHttp.Request => ToyHttp.Response) {
         try handleRequest(socket)
         catch {
           case _: EOFException =>
-          case e: IOException =>
+          case e: IOException  =>
             System.err.println(
               s"""error handling http request: ${e.getClass.getName}: ${e.getMessage}
                  | ${e.getStackTrace.mkString("\n")}""".stripMargin

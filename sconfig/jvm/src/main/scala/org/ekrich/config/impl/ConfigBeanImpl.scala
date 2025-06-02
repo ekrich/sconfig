@@ -339,7 +339,7 @@ object ConfigBeanImpl {
   private def hasAtLeastOneBeanProperty(clazz: Class[_]): Boolean = {
     val beanInfoOpt = Try(Introspector.getBeanInfo(clazz)).toOption
     beanInfoOpt match {
-      case None => false
+      case None           => false
       case Some(beanInfo) =>
         beanInfo
           .getPropertyDescriptors()

@@ -59,7 +59,7 @@ package object fix {
   implicit final class XSymbolOps(val self: Symbol) extends AnyVal {
     def isTypeOf(that: Symbol)(implicit doc: Symtab): Boolean =
       PartialFunction.cond(self) {
-        case `that` => true
+        case `that`                                       => true
         case XSignature(ClassSignature(_, parents, _, _)) =>
           parents.iterator
             .collect { case TypeRef(_, parentSym, _) => parentSym }
