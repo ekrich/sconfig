@@ -47,8 +47,9 @@ val scala212 = "2.12.20"
 val scala213 = "2.13.16"
 val scala3 = "3.3.6"
 
-val javaTime = "1.3.0"
+val javaTime = "1.4.0"
 val scCompat = "2.13.0"
+val json4s = "4.0.7"
 
 // We use the 2.12 and 2.13 version that the scalafix library uses
 // and when the scalafix version gets updated the system will build
@@ -124,7 +125,7 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     },
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat,
-      "org.json4s" %%% "json4s-native-core" % "4.0.7" % Test
+      "org.json4s" %%% "json4s-native-core" % json4s % Test
     ),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
     // env vars for tests
