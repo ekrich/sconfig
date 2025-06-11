@@ -16,8 +16,6 @@ import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValue
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
 
-import java.util.{Comparator, Objects}
-
 @SerialVersionUID(2L)
 object SimpleConfigObject {
   final private[impl] class ResolveModifier private[impl] (
@@ -56,7 +54,7 @@ object SimpleConfigObject {
 
   // this is only Serializable to chill out a findbugs warning
   @SerialVersionUID(1L)
-  private object RenderComparator {
+  private object OrderedRenderComparator {
     private def isAllDigits(s: String): Boolean = {
       val length = s.length
       // empty string doesn't count as a number
@@ -81,16 +79,21 @@ object SimpleConfigObject {
   }
 
   @SerialVersionUID(1L)
-  private class RenderComparator
+  sealed abstract class RenderComparator
       extends ju.Comparator[String]
       with Serializable {
+    def compare(a: String, b: String): Int
+  }
+
+  @SerialVersionUID(1L)
+  final private class OrderedRenderComparator extends RenderComparator {
     // This is supposed to sort numbers before strings,
     // and sort the numbers numerically. The point is
     // to make objects which are really list-like
     // (numeric indices) appear in order.
     override def compare(a: String, b: String): Int = {
-      val aDigits = RenderComparator.isAllDigits(a)
-      val bDigits = RenderComparator.isAllDigits(b)
+      val aDigits = OrderedRenderComparator.isAllDigits(a)
+      val bDigits = OrderedRenderComparator.isAllDigits(b)
       if (aDigits && bDigits) Integer.compare(a.toInt, b.toInt)
       else if (aDigits) -1
       else if (bDigits) 1
@@ -101,7 +104,7 @@ object SimpleConfigObject {
   @SerialVersionUID(1L)
   final private class KeepOriginRenderComparator(
       getOriginFor: String => SimpleConfigOrigin
-  ) extends SimpleConfigObject.RenderComparator {
+  ) extends RenderComparator {
     override def compare(a: String, b: String): Int = {
       val aOrigin = getOriginFor(a)
       val bOrigin = getOriginFor(b)
@@ -522,7 +525,7 @@ final class SimpleConfigObject(
           new SimpleConfigObject.KeepOriginRenderComparator(str =>
             value.get(str).origin
           )
-        else new SimpleConfigObject.RenderComparator
+        else new SimpleConfigObject.OrderedRenderComparator
       ju.Collections.sort(keys, ordering)
 
       for (k <- keys.asScala) {

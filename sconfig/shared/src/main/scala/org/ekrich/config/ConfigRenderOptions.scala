@@ -9,8 +9,7 @@ package org.ekrich.config
  *
  * <p> Here is an example of creating a `ConfigRenderOptions`:
  *
- * <pre> ConfigRenderOptions options =
- * ConfigRenderOptions.defaults().setComments(false) </pre>
+ * <pre> val options = ConfigRenderOptions.defaults.setComments(false) </pre>
  */
 object ConfigRenderOptions {
 
@@ -37,7 +36,7 @@ object ConfigRenderOptions {
 case class FormattingOptions(
     keepOriginOrder: Boolean = false,
     doubleIndent: Boolean = true,
-    doubleColonAssign: Boolean = false,
+    colonAssign: Boolean = false,
     newLineAtEnd: Boolean = true
 )
 
@@ -123,8 +122,8 @@ final class ConfigRenderOptions private (
   def getFormatted: Boolean = formatted
 
   /**
-   * Returns options with formatting options set. Formatting is dependant on
-   * formatted flag.
+   * Returns new render options with formatting options set. Formatting is
+   * dependant on formatted flag.
    *
    * @param value
    *   true to enable formatting
@@ -177,11 +176,14 @@ final class ConfigRenderOptions private (
       sb.append("formatted,")
       if (formattingOptions.keepOriginOrder) sb.append("keepOriginOrder,")
       if (formattingOptions.doubleIndent) sb.append("doubleIndent,")
-      if (formattingOptions.doubleColonAssign) sb.append("equalsAssign,")
+      if (formattingOptions.colonAssign) sb.append("equalsAssign,")
     }
     if (json) sb.append("json,")
-    if (sb.charAt(sb.length - 1) == ',') sb.setLength(sb.length - 1)
-    sb.append(")")
+    val lastIndex = sb.length - 1
+    if (sb.charAt(lastIndex) == ',')
+      sb.setCharAt(lastIndex, ')')
+    else
+      sb.append(')')
     sb.toString
   }
 }

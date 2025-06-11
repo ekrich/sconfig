@@ -1,5 +1,5 @@
 package org.ekrich.config.impl
-import org.junit.Assert.*
+
 import org.junit.*
 import org.ekrich.config.{
   ConfigFactory,
@@ -31,6 +31,17 @@ class FormattingOptionsTest extends TestUtilsShared {
                |}""".stripMargin
     val result = formatHocon(in)
     val expected = "r {}"
+    checkEqualObjects(result, expected)
+  }
+
+  @Test
+  def newLineAtTheEnd(): Unit = {
+    implicit val formattingOptions = FormattingOptions()
+    val in = """r {
+               |}""".stripMargin
+    val result = formatHocon(in)
+    val expected = """r {}
+                     |""".stripMargin
     checkEqualObjects(result, expected)
   }
 
@@ -87,8 +98,32 @@ class FormattingOptionsTest extends TestUtilsShared {
   }
 
   @Test
-  def useDoubleColonAsAssignSign(): Unit = {
-    implicit val formattingOptions = FormattingOptions(doubleColonAssign = true)
+  def useFourSpacesIndentation(): Unit = {
+    implicit val formattingOptions = FormattingOptions()
+
+    val in = """r {
+               |  p {
+               |        d {
+               |        s: ${r.ss}
+               |        }
+               |     }
+               |}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """r {
+                     |    p {
+                     |        d {
+                     |            s=${r.ss}
+                     |        }
+                     |    }
+                     |}
+                     |""".stripMargin
+    checkEqualObjects(result, expected)
+  }
+
+  @Test
+  def useColonAsAssignSign(): Unit = {
+    implicit val formattingOptions = FormattingOptions(colonAssign = true)
 
     val in = """r {
                |    s=t_f
@@ -101,6 +136,26 @@ class FormattingOptionsTest extends TestUtilsShared {
                      |    n:ALA
                      |    "n-m":1
                      |    s:"t_f"
+                     |}
+                     |""".stripMargin
+    checkEqualObjects(result, expected)
+  }
+
+  @Test
+  def useEqualsAsAssignSign(): Unit = {
+    implicit val formattingOptions = FormattingOptions(colonAssign = false)
+
+    val in = """r {
+               |    s=t_f
+               |      n-m=1
+               |    n:"ALA"
+               |}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """r {
+                     |    n=ALA
+                     |    "n-m"=1
+                     |    s="t_f"
                      |}
                      |""".stripMargin
     checkEqualObjects(result, expected)
