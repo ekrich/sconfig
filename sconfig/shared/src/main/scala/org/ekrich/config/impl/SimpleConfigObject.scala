@@ -79,7 +79,7 @@ object SimpleConfigObject {
   }
 
   @SerialVersionUID(1L)
-  sealed abstract class RenderComparator
+  private sealed abstract class RenderComparator
       extends ju.Comparator[String]
       with Serializable {
     def compare(a: String, b: String): Int
