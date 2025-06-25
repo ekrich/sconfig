@@ -9,8 +9,7 @@ package org.ekrich.config
  *
  * <p> Here is an example of creating a `ConfigRenderOptions`:
  *
- * <pre> ConfigRenderOptions options =
- * ConfigRenderOptions.defaults().setComments(false) </pre>
+ * <pre> val options = ConfigRenderOptions.defaults.setComments(false) </pre>
  */
 object ConfigRenderOptions {
 
@@ -34,11 +33,19 @@ object ConfigRenderOptions {
   def concise = new ConfigRenderOptions(false, false, false, true)
 }
 
+case class FormattingOptions(
+    keepOriginOrder: Boolean = false,
+    doubleIndent: Boolean = true,
+    colonAssign: Boolean = false,
+    newLineAtEnd: Boolean = true
+)
+
 final class ConfigRenderOptions private (
     val originComments: Boolean,
     val comments: Boolean,
     val formatted: Boolean,
-    val json: Boolean
+    val json: Boolean,
+    val formattingOptions: FormattingOptions = FormattingOptions()
 ) {
 
   /**
@@ -115,6 +122,28 @@ final class ConfigRenderOptions private (
   def getFormatted: Boolean = formatted
 
   /**
+   * Returns new render options with formatting options set. Formatting is
+   * dependant on formatted flag.
+   *
+   * @param value
+   *   true to enable formatting
+   * @return
+   *   options with requested setting for formatting
+   */
+  def setFormattingOptions(value: FormattingOptions): ConfigRenderOptions =
+    if (value == formattingOptions) this
+    else
+      new ConfigRenderOptions(originComments, comments, formatted, json, value)
+
+  /**
+   * Returns options used to format the config.
+   *
+   * @return
+   *   FormattingOptions
+   */
+  def getFormattingOptions: FormattingOptions = formattingOptions
+
+  /**
    * Returns options with JSON toggled. JSON means that HOCON extensions
    * (omitting commas, quotes for example) won't be used. However, whether to
    * use comments is controlled by the separate [[#setComments]] and
@@ -143,10 +172,18 @@ final class ConfigRenderOptions private (
     val sb = new StringBuilder("ConfigRenderOptions(")
     if (originComments) sb.append("originComments,")
     if (comments) sb.append("comments,")
-    if (formatted) sb.append("formatted,")
+    if (formatted) {
+      sb.append("formatted,")
+      if (formattingOptions.keepOriginOrder) sb.append("keepOriginOrder,")
+      if (formattingOptions.doubleIndent) sb.append("doubleIndent,")
+      if (formattingOptions.colonAssign) sb.append("equalsAssign,")
+    }
     if (json) sb.append("json,")
-    if (sb.charAt(sb.length - 1) == ',') sb.setLength(sb.length - 1)
-    sb.append(")")
+    val lastIndex = sb.length - 1
+    if (sb.charAt(lastIndex) == ',')
+      sb.setCharAt(lastIndex, ')')
+    else
+      sb.append(')')
     sb.toString
   }
 }

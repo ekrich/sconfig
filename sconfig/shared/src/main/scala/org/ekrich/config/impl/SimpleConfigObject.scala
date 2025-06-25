@@ -3,12 +3,12 @@
  */
 package org.ekrich.config.impl
 
-import java.{lang => jl}
+import java.lang as jl
 import java.io.ObjectStreamException
 import java.io.Serializable
-import java.{util => ju}
-import scala.jdk.CollectionConverters._
-import scala.util.control.Breaks._
+import java.util as ju
+import scala.jdk.CollectionConverters.*
+import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
@@ -54,7 +54,7 @@ object SimpleConfigObject {
 
   // this is only Serializable to chill out a findbugs warning
   @SerialVersionUID(1L)
-  private object RenderComparator {
+  private object OrderedRenderComparator {
     private def isAllDigits(s: String): Boolean = {
       val length = s.length
       // empty string doesn't count as a number
@@ -79,16 +79,21 @@ object SimpleConfigObject {
   }
 
   @SerialVersionUID(1L)
-  final private class RenderComparator
+  private sealed abstract class RenderComparator
       extends ju.Comparator[String]
       with Serializable {
+    def compare(a: String, b: String): Int
+  }
+
+  @SerialVersionUID(1L)
+  final private class OrderedRenderComparator extends RenderComparator {
     // This is supposed to sort numbers before strings,
     // and sort the numbers numerically. The point is
     // to make objects which are really list-like
     // (numeric indices) appear in order.
     override def compare(a: String, b: String): Int = {
-      val aDigits = RenderComparator.isAllDigits(a)
-      val bDigits = RenderComparator.isAllDigits(b)
+      val aDigits = OrderedRenderComparator.isAllDigits(a)
+      val bDigits = OrderedRenderComparator.isAllDigits(b)
       if (aDigits && bDigits) Integer.compare(a.toInt, b.toInt)
       else if (aDigits) -1
       else if (bDigits) 1
@@ -96,10 +101,29 @@ object SimpleConfigObject {
     }
   }
 
+  @SerialVersionUID(1L)
+  final private class KeepOriginRenderComparator(
+      getOriginFor: String => SimpleConfigOrigin
+  ) extends RenderComparator {
+    override def compare(a: String, b: String): Int = {
+      val aOrigin = getOriginFor(a)
+      val bOrigin = getOriginFor(b)
+
+      val aFilename = Option(aOrigin.filename).getOrElse("")
+      val bFilename = Option(bOrigin.filename).getOrElse("")
+
+      val compareFiles = aFilename compareTo bFilename
+
+      if (compareFiles != 0) compareFiles
+      else
+        aOrigin.lineNumber compareTo bOrigin.lineNumber
+    }
+  }
+
   private def mapEquals(
       a: ju.Map[String, ConfigValue],
       b: ju.Map[String, ConfigValue]
-  ): Boolean =
+  ) =
     if (a eq b) true
     else if (a.keySet != b.keySet) false
     else !a.keySet.asScala.exists(key => a.get(key) != b.get(key))
@@ -493,11 +517,17 @@ final class SimpleConfigObject(
         if (options.getFormatted) sb.append('\n')
       } else innerIndent = indentVal
       var separatorCount = 0
+
       val keys = new ju.ArrayList[String]
       keys.addAll(keySet)
-      ju.Collections.sort(keys, new SimpleConfigObject.RenderComparator)
-      //            val keys: Array[String] = keySet.toArray(new Array[String](size))
-      //            ju.Arrays.sort(keys, new SimpleConfigObject.RenderComparator)
+      val ordering =
+        if (options.formattingOptions.keepOriginOrder)
+          new SimpleConfigObject.KeepOriginRenderComparator(str =>
+            value.get(str).origin
+          )
+        else new SimpleConfigObject.OrderedRenderComparator
+      ju.Collections.sort(keys, ordering)
+
       for (k <- keys.asScala) {
         var v: AbstractConfigValue = null
         v = value.get(k)
@@ -544,7 +574,8 @@ final class SimpleConfigObject(
         sb.append("}")
       }
     }
-    if (atRoot && options.getFormatted) sb.append('\n')
+    if (atRoot && options.getFormatted && options.getFormattingOptions.newLineAtEnd)
+      sb.append('\n')
   }
 
   override def get(key: Any): AbstractConfigValue = value.get(key)
