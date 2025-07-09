@@ -132,7 +132,10 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     Test / envVars ++= Map(
       "testList.0" -> "0",
       "testList.1" -> "1",
-      "testClassesPath" -> (Test / classDirectory).value.getPath
+      "testClassesPath" -> (Test / classDirectory).value.getPath,
+      "SECRET_A" -> "A", // ConfigTest.renderShowEnvVariableValues
+      "SECRET_B" -> "B", // ConfigTest.renderShowEnvVariableValues
+      "SECRET_C" -> "C" // ConfigTest.renderShowEnvVariableValues
     )
   )
   .jvmSettings(

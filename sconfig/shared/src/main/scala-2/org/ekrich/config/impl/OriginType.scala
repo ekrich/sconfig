@@ -11,6 +11,7 @@ object OriginType {
   final val FILE = new OriginType("FILE", 1)
   final val URL = new OriginType("URL", 2)
   final val RESOURCE = new OriginType("RESOURCE", 3)
+  final val ENV_VARIABLE = new OriginType("ENV_VARIABLE", 4)
 
   private[this] final val _values: Array[OriginType] =
     Array(GENERIC, FILE, URL, RESOURCE)

@@ -1,3 +1,5 @@
+package foo
+
 import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigRenderOptions
 
@@ -6,11 +8,13 @@ object RenderExample extends App {
   val originComments = args.contains("--origin-comments")
   val comments = args.contains("--comments")
   val hocon = args.contains("--hocon")
+  val hideEnvVariableValues = args.contains("--hide-env-variable-values")
   val options = ConfigRenderOptions.defaults
     .setFormatted(formatted)
     .setOriginComments(originComments)
     .setComments(comments)
     .setJson(!hocon)
+    .setShowEnvVariableValues(!hideEnvVariableValues)
 
   def render(what: String): Unit = {
     val conf = ConfigFactory
@@ -54,14 +58,13 @@ object RenderOptions extends App {
 """)
 
   // ah, efficiency
-  def allBooleanLists(length: Int): Seq[Seq[Boolean]] = {
+  def allBooleanLists(length: Int): Seq[Seq[Boolean]] =
     if (length == 0) {
       Seq(Nil)
     } else {
       val tails = allBooleanLists(length - 1)
       (tails map { false +: _ }) ++ (tails map { true +: _ })
     }
-  }
 
   val rendered =
     allBooleanLists(4).foldLeft(0) { (count, values) =>

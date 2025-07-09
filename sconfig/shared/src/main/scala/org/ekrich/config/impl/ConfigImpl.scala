@@ -353,7 +353,7 @@ object ConfigImpl {
 
   private def loadEnvVariables: AbstractConfigObject =
     PropertiesParser.fromStringMap(
-      newSimpleOrigin("env variables"),
+      newEnvVariable("env variables"),
       System.getenv
     )
 
@@ -471,4 +471,6 @@ object ConfigImpl {
   def newFileOrigin(filename: String): ConfigOrigin =
     SimpleConfigOrigin.newFile(filename)
   def newURLOrigin(url: URL): ConfigOrigin = SimpleConfigOrigin.newURL(url)
+  def newEnvVariable(description: String): ConfigOrigin =
+    SimpleConfigOrigin.newEnvVariable(description)
 }

@@ -61,10 +61,13 @@ abstract class ConfigString(origin: ConfigOrigin, val value: String)
       indent: Int,
       atRoot: Boolean,
       options: ConfigRenderOptions
-  ): Unit = {
-    var rendered =
-      if (options.getJson) ConfigImplUtil.renderJsonString(value)
-      else ConfigImplUtil.renderStringUnquotedIfPossible(value)
-    sb.append(rendered)
-  }
+  ): Unit =
+    if (hideEnvVariableValue(options)) {
+      appendHiddenEnvVariableValue(sb)
+    } else {
+      val rendered =
+        if (options.getJson) ConfigImplUtil.renderJsonString(value)
+        else ConfigImplUtil.renderStringUnquotedIfPossible(value)
+      sb.append(rendered)
+    }
 }

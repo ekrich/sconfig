@@ -21,7 +21,8 @@ object ConfigRenderOptions {
    * @return
    *   the default render options
    */
-  def defaults = new ConfigRenderOptions(true, true, true, true)
+  def defaults =
+    new ConfigRenderOptions(true, true, true, true, true, FormattingOptions())
 
   /**
    * Returns concise render options (no whitespace or comments). For a resolved
@@ -30,7 +31,14 @@ object ConfigRenderOptions {
    * @return
    *   the concise render options
    */
-  def concise = new ConfigRenderOptions(false, false, false, true)
+  def concise = new ConfigRenderOptions(
+    false,
+    false,
+    false,
+    true,
+    true,
+    FormattingOptions()
+  )
 }
 
 case class FormattingOptions(
@@ -45,7 +53,8 @@ final class ConfigRenderOptions private (
     val comments: Boolean,
     val formatted: Boolean,
     val json: Boolean,
-    val formattingOptions: FormattingOptions = FormattingOptions()
+    val showEnvVariableValues: Boolean,
+    val formattingOptions: FormattingOptions
 ) {
 
   /**
@@ -60,7 +69,15 @@ final class ConfigRenderOptions private (
    */
   def setComments(value: Boolean): ConfigRenderOptions =
     if (value == comments) this
-    else new ConfigRenderOptions(originComments, value, formatted, json)
+    else
+      new ConfigRenderOptions(
+        originComments,
+        value,
+        formatted,
+        json,
+        showEnvVariableValues,
+        formattingOptions
+      )
 
   /**
    * Returns whether the options enable comments. This method is mostly used by
@@ -88,7 +105,15 @@ final class ConfigRenderOptions private (
    */
   def setOriginComments(value: Boolean): ConfigRenderOptions =
     if (value == originComments) this
-    else new ConfigRenderOptions(value, comments, formatted, json)
+    else
+      new ConfigRenderOptions(
+        value,
+        comments,
+        formatted,
+        json,
+        showEnvVariableValues,
+        formattingOptions
+      )
 
   /**
    * Returns whether the options enable automated origin comments. This method
@@ -110,7 +135,15 @@ final class ConfigRenderOptions private (
    */
   def setFormatted(value: Boolean): ConfigRenderOptions =
     if (value == formatted) this
-    else new ConfigRenderOptions(originComments, comments, value, json)
+    else
+      new ConfigRenderOptions(
+        originComments,
+        comments,
+        value,
+        json,
+        showEnvVariableValues,
+        formattingOptions
+      )
 
   /**
    * Returns whether the options enable formatting. This method is mostly used
@@ -133,7 +166,14 @@ final class ConfigRenderOptions private (
   def setFormattingOptions(value: FormattingOptions): ConfigRenderOptions =
     if (value == formattingOptions) this
     else
-      new ConfigRenderOptions(originComments, comments, formatted, json, value)
+      new ConfigRenderOptions(
+        originComments,
+        comments,
+        formatted,
+        json,
+        showEnvVariableValues,
+        value
+      )
 
   /**
    * Returns options used to format the config.
@@ -157,7 +197,15 @@ final class ConfigRenderOptions private (
    */
   def setJson(value: Boolean): ConfigRenderOptions =
     if (value == json) this
-    else new ConfigRenderOptions(originComments, comments, formatted, value)
+    else
+      new ConfigRenderOptions(
+        originComments,
+        comments,
+        formatted,
+        value,
+        showEnvVariableValues,
+        formattingOptions
+      )
 
   /**
    * Returns whether the options enable JSON. This method is mostly used by the
@@ -167,6 +215,37 @@ final class ConfigRenderOptions private (
    *   true if only JSON should be rendered
    */
   def getJson: Boolean = json
+
+  /**
+   * Returns options with showEnvVariableValues toggled. This controls if values
+   * set from environment variables are included in the rendered string.
+   *
+   * @param value
+   *   true to include environment variable values in the render
+   * @return
+   *   options with requested setting for environment variables
+   */
+  def setShowEnvVariableValues(value: Boolean): ConfigRenderOptions =
+    if (value == showEnvVariableValues) this
+    else
+      new ConfigRenderOptions(
+        originComments,
+        comments,
+        formatted,
+        json,
+        value,
+        formattingOptions
+      )
+
+  /**
+   * Returns whether the options enable rendering of environment variable
+   * values. This method is mostly used by the config lib internally, not by
+   * applications.
+   *
+   * @return
+   *   true if environment variable values should be rendered
+   */
+  def getShowEnvVariableValues(): Boolean = showEnvVariableValues;
 
   override def toString: String = {
     val sb = new StringBuilder("ConfigRenderOptions(")
@@ -179,6 +258,7 @@ final class ConfigRenderOptions private (
       if (formattingOptions.colonAssign) sb.append("equalsAssign,")
     }
     if (json) sb.append("json,")
+    if (showEnvVariableValues) sb.append("showEnvVariableValues,")
     val lastIndex = sb.length - 1
     if (sb.charAt(lastIndex) == ',')
       sb.setCharAt(lastIndex, ')')
