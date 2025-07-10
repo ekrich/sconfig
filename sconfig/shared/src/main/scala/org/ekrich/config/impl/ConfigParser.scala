@@ -95,7 +95,7 @@ object ConfigParser {
         throw new ConfigException.BugOrBroken(
           "Found a concatenation node in JSON"
         )
-      val values = new ju.ArrayList[AbstractConfigValue]
+      val values = new ju.ArrayList[AbstractConfigValue](n.children.size)
       for (node <- n.children.asScala) {
         var v: AbstractConfigValue = null
         if (node.isInstanceOf[AbstractConfigNodeValue]) {

@@ -199,7 +199,7 @@ object SimpleConfigOrigin {
       )
     } else {
       val remaining =
-        new ju.ArrayList[SimpleConfigOrigin]
+        new ju.ArrayList[SimpleConfigOrigin](stack.size)
       for (o <- stack.asScala) {
         remaining.add(o.asInstanceOf[SimpleConfigOrigin])
       }
