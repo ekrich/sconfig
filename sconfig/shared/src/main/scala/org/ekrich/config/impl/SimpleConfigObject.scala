@@ -3,9 +3,10 @@
  */
 package org.ekrich.config.impl
 
-import java.lang as jl
 import java.io.ObjectStreamException
 import java.io.Serializable
+import java.lang as jl
+import java.math.BigInteger
 import java.util as ju
 import scala.jdk.CollectionConverters.*
 import scala.util.control.Breaks.*
@@ -58,17 +59,16 @@ object SimpleConfigObject {
     private def isAllDigits(s: String): Boolean = {
       val length = s.length
       // empty string doesn't count as a number
+      // string longer than "max number of digits in a long" cannot be parsed as a long
       if (length == 0) return false
       var i = 0
       var allDigits = true
       while (i < length) {
         breakable {
           val c = s.charAt(i)
-          if (Character.isDigit(c)) {
-            break() // continue
-          } else {
+          if (!Character.isDigit(c)) {
             allDigits = false
-            break() // continue to end loop
+            break() // continue
           }
         }
         if (allDigits) i += 1
@@ -94,7 +94,7 @@ object SimpleConfigObject {
     override def compare(a: String, b: String): Int = {
       val aDigits = OrderedRenderComparator.isAllDigits(a)
       val bDigits = OrderedRenderComparator.isAllDigits(b)
-      if (aDigits && bDigits) Integer.compare(a.toInt, b.toInt)
+      if (aDigits && bDigits) new BigInteger(a).compareTo(new BigInteger(b))
       else if (aDigits) -1
       else if (bDigits) 1
       else a.compareTo(b)
