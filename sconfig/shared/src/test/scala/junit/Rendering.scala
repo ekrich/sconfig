@@ -58,13 +58,14 @@ object RenderOptions extends App {
 """)
 
   // ah, efficiency
-  def allBooleanLists(length: Int): Seq[Seq[Boolean]] =
+  def allBooleanLists(length: Int): Seq[Seq[Boolean]] = {
     if (length == 0) {
       Seq(Nil)
     } else {
       val tails = allBooleanLists(length - 1)
       (tails map { false +: _ }) ++ (tails map { true +: _ })
     }
+  }
 
   val rendered =
     allBooleanLists(4).foldLeft(0) { (count, values) =>

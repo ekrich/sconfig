@@ -14,7 +14,7 @@ object OriginType {
   final val ENV_VARIABLE = new OriginType("ENV_VARIABLE", 4)
 
   private[this] final val _values: Array[OriginType] =
-    Array(GENERIC, FILE, URL, RESOURCE)
+    Array(GENERIC, FILE, URL, RESOURCE, ENV_VARIABLE)
 
   def values: Array[OriginType] = _values.clone()
 
