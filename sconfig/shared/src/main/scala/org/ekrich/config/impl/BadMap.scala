@@ -30,7 +30,7 @@ object BadMap {
     entries(i) = new Entry(hash, k, v, old)
   }
   private def store(entries: Array[Entry], e: Entry): Unit = {
-    val i = e.hash % entries.length
+    val i = Math.abs(e.hash % entries.length)
     val old = entries(i)
     if (old == null && e.next == null) {
       // share the entry since it has no "next"
@@ -98,16 +98,18 @@ final class BadMap[K, V] private (
     } else newEntries = new Array[BadMap.Entry](entries.length)
     if (newEntries.length == entries.length)
       System.arraycopy(entries, 0, newEntries, 0, entries.length)
-    else BadMap.rehash(entries, newEntries)
+    else
+      BadMap.rehash(entries, newEntries)
     val hash = Math.abs(k.hashCode)
     BadMap.store(newEntries, hash, k, v)
     new BadMap[K, V](newSize, newEntries)
   }
-  @SuppressWarnings(Array("unchecked")) private[impl] def get(k: K): V =
+  @SuppressWarnings(Array("unchecked"))
+  private[impl] def get(k: K): V =
     if (entries.length == 0) null.asInstanceOf[V]
     else {
-      val hash = Math.abs(k.hashCode)
-      val i = hash % entries.length
+      val hash = k.hashCode
+      val i = Math.abs(hash % entries.length)
       val e = entries(i)
       if (e == null) null.asInstanceOf[V]
       else e.find(k).asInstanceOf[V]
