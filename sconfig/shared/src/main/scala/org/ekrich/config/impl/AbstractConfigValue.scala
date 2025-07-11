@@ -350,10 +350,20 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
       indent: Int,
       atRoot: Boolean,
       options: ConfigRenderOptions
-  ): Unit = {
-    val u = unwrapped
-    sb.append(u.toString)
-  }
+  ): Unit =
+    if (hideEnvVariableValue(options)) {
+      sb.append("<env variable>")
+    } else {
+      val u = unwrapped
+      sb.append(u.toString)
+    }
+
+  protected def hideEnvVariableValue(options: ConfigRenderOptions): Boolean =
+    !options.getShowEnvVariableValues && (origin.originType eq OriginType.ENV_VARIABLE)
+
+  protected def appendHiddenEnvVariableValue(sb: jl.StringBuilder): Unit =
+    sb.append("\"<env variable>\"")
+
   override final def render: String = render(ConfigRenderOptions.defaults)
 
   override final def render(options: ConfigRenderOptions): String = {

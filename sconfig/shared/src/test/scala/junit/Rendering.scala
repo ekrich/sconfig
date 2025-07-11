@@ -1,16 +1,32 @@
-import org.ekrich.config.ConfigFactory
-import org.ekrich.config.ConfigRenderOptions
+package foo
+
+import org.ekrich.config.{ConfigFactory, ConfigRenderOptions, FormattingOptions}
 
 object RenderExample extends App {
   val formatted = args.contains("--formatted")
   val originComments = args.contains("--origin-comments")
   val comments = args.contains("--comments")
   val hocon = args.contains("--hocon")
+  val hideEnvVariableValues = args.contains("--hide-env-variable-values")
+
+  val keepOriginOrder = args.contains("--keep-origin-order")
+  val doubleIndent = !args.contains("--single-indent")
+  val colonAssign = args.contains("--colon-assign")
+  val newLineAtEnd = !args.contains("--no-new-line-eof")
+  val formattingOptions = FormattingOptions(
+    keepOriginOrder,
+    doubleIndent,
+    colonAssign,
+    newLineAtEnd
+  )
+
   val options = ConfigRenderOptions.defaults
     .setFormatted(formatted)
     .setOriginComments(originComments)
     .setComments(comments)
     .setJson(!hocon)
+    .setShowEnvVariableValues(!hideEnvVariableValues)
+    .setFormattingOptions(formattingOptions)
 
   def render(what: String): Unit = {
     val conf = ConfigFactory

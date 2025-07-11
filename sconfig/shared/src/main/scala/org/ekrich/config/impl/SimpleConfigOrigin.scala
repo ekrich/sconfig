@@ -63,6 +63,18 @@ object SimpleConfigOrigin {
   }
   private[impl] def newResource(resource: String): SimpleConfigOrigin =
     newResource(resource, null)
+
+  private[impl] def newEnvVariable(description: String): SimpleConfigOrigin =
+    new SimpleConfigOrigin(
+      description,
+      -1,
+      -1,
+      OriginType.ENV_VARIABLE,
+      null,
+      null,
+      null
+    )
+
   private[impl] val MERGE_OF_PREFIX = "merge of "
   private def mergeTwo(
       a: SimpleConfigOrigin,
@@ -291,7 +303,9 @@ object SimpleConfigOrigin {
     if (originTypeOrdinal == null)
       throw new IOException("Missing ORIGIN_TYPE field")
     val originType: OriginType =
-      OriginType.values(originTypeOrdinal.intValue)
+      if (originTypeOrdinal.byteValue() < OriginType.values.length)
+        OriginType.values(originTypeOrdinal.intValue)
+      else OriginType.GENERIC // ENV_VARIABLE was added in a later version
     val urlOrNull =
       m.get(SerializedField.ORIGIN_URL).asInstanceOf[String]
     var resourceOrNull =
