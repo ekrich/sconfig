@@ -8,8 +8,8 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
-val prevVersion = "1.10.0"
-val nextVersion = "1.11.0"
+val prevVersion = "1.11.0"
+val nextVersion = "1.12.0"
 
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
@@ -200,7 +200,7 @@ lazy val `scalafix-input` = (project in file("scalafix/input"))
     crossScalaVersions := versionsBase,
     publish / skip := true,
     libraryDependencies ++= Seq(
-      "com.typesafe" % "config" % "1.3.3"
+      "com.typesafe" % "config" % "1.4.4"
     ),
     scalacOptions ~= { _.filterNot(_ == "-Xfatal-warnings") },
     semanticdbEnabled := true,

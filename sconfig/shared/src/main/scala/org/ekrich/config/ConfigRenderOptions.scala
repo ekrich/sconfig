@@ -245,7 +245,7 @@ final class ConfigRenderOptions private (
    * @return
    *   true if environment variable values should be rendered
    */
-  def getShowEnvVariableValues: Boolean = showEnvVariableValues;
+  def getShowEnvVariableValues: Boolean = showEnvVariableValues
 
   override def toString: String = {
     val sb = new StringBuilder("ConfigRenderOptions(")

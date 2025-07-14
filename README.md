@@ -29,6 +29,8 @@ For non-JVM projects use `%%%` but please refer to the guide below for **critica
 
 [Scala Native and Scala.js](docs/SCALA-NATIVE.md) - A guide to using Scala Native and Scala.js.
 
+[Contributors / Developers](docs/DEVELOPER.md) - Helpful hints for those wishing to contribute to this repository.
+
 All available versions can be seen at the [Maven Repository](https://mvnrepository.com/artifact/org.ekrich/sconfig).
 
 If migrating from the original `config` library, see the migrating section below.
@@ -91,6 +93,7 @@ If you wish to avoid the `scalafix` solution above especially if your usage of t
 
 ## Versions
 
+Release [1.11.0](https://github.com/ekrich/sconfig/releases/tag/v1.11.0) - (2025-07-14)<br/>
 Release [1.10.0](https://github.com/ekrich/sconfig/releases/tag/v1.10.0) - (2025-06-09)<br/>
 Release [1.9.1](https://github.com/ekrich/sconfig/releases/tag/v1.9.1) - (2025-02-27)<br/>
 Release [1.9.0](https://github.com/ekrich/sconfig/releases/tag/v1.9.0) - (2025-03-17)<br/>
