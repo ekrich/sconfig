@@ -93,6 +93,7 @@ If you wish to avoid the `scalafix` solution above especially if your usage of t
 
 ## Versions
 
+Release [1.11.0](https://github.com/ekrich/sconfig/releases/tag/v1.11.0) - (2025-07-14)<br/>
 Release [1.10.0](https://github.com/ekrich/sconfig/releases/tag/v1.10.0) - (2025-06-09)<br/>
 Release [1.9.1](https://github.com/ekrich/sconfig/releases/tag/v1.9.1) - (2025-02-27)<br/>
 Release [1.9.0](https://github.com/ekrich/sconfig/releases/tag/v1.9.0) - (2025-03-17)<br/>
