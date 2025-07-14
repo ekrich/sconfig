@@ -200,7 +200,7 @@ lazy val `scalafix-input` = (project in file("scalafix/input"))
     crossScalaVersions := versionsBase,
     publish / skip := true,
     libraryDependencies ++= Seq(
-      "com.typesafe" % "config" % "1.3.3"
+      "com.typesafe" % "config" % "1.4.4"
     ),
     scalacOptions ~= { _.filterNot(_ == "-Xfatal-warnings") },
     semanticdbEnabled := true,

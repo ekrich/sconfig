@@ -108,7 +108,8 @@ private object ConfigRenderOptionsEmptyParenFunCall
       "getComments",
       "getFormatted",
       "getJson",
-      "getOriginComments"
+      "getOriginComments",
+      "getShowEnvVariableValues"
     )
 
 private object ConfigResolveOptionsEmptyParenFunCall
