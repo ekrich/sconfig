@@ -65,7 +65,7 @@ class FormattingOptionsTest extends TestUtilsShared {
                      |        s = ${r.ss}
                      |    }
                      |    f {
-                     |        s = "t_f"
+                     |        s = t_f
                      |        n = ALA
                      |    }
                      |}
@@ -134,8 +134,8 @@ class FormattingOptionsTest extends TestUtilsShared {
 
     val expected = """r {
                      |    n: ALA
-                     |    "n-m": 1
-                     |    s: "t_f"
+                     |    n-m: 1
+                     |    s: t_f
                      |}
                      |""".stripMargin
     checkEqualObjects(result, expected)
@@ -147,15 +147,15 @@ class FormattingOptionsTest extends TestUtilsShared {
 
     val in = """r {
                |    s=t_f
-               |      n-m=1
+               |      "n-m"=1
                |    n:"ALA"
                |}""".stripMargin
     val result = formatHocon(in)
 
     val expected = """r {
                      |    n = ALA
-                     |    "n-m" = 1
-                     |    s = "t_f"
+                     |    n-m = 1
+                     |    s = t_f
                      |}
                      |""".stripMargin
     checkEqualObjects(result, expected)
