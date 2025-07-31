@@ -144,22 +144,22 @@ final class ConfigDelayedMergeObject(
     else false
   }
   override def hashCode: Int = stack.hashCode
-  override def render(
+  override def renderAtKey(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
       atKey: String,
       options: ConfigRenderOptions
   ): Unit = {
-    ConfigDelayedMerge.render(stack, sb, indent, atRoot, atKey, options)
+    ConfigDelayedMerge.renderAtKey(stack, sb, indent, atRoot, atKey, options)
   }
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
       options: ConfigRenderOptions
   ): Unit = {
-    render(sb, indent, atRoot, null, options)
+    renderAtKey(sb, indent, atRoot, null, options)
   }
   override def unwrapped: ju.Map[String, AnyRef] =
     throw ConfigDelayedMergeObject.notResolved

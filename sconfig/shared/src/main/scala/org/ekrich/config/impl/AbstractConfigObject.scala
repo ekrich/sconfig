@@ -183,7 +183,7 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
 
   override def get(key: Any): AbstractConfigValue
 
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,

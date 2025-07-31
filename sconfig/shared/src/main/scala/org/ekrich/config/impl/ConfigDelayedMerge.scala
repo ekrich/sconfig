@@ -144,7 +144,7 @@ object ConfigDelayedMerge {
     last.ignoresFallbacks
   }
   // static method also used by ConfigDelayedMergeObject.
-  def render(
+  def renderAtKey(
       stack: ju.List[AbstractConfigValue],
       sb: jl.StringBuilder,
       indentVal: Int,
@@ -194,7 +194,7 @@ object ConfigDelayedMerge {
         sb.append(ConfigImplUtil.renderJsonString(atKey))
         if (options.getFormatted) sb.append(" : ") else sb.append(":")
       }
-      v.render(sb, indentVal, atRoot, options)
+      v.renderValue(sb, indentVal, atRoot, options)
       sb.append(",")
       if (options.getFormatted) sb.append('\n')
     }
@@ -310,22 +310,22 @@ final class ConfigDelayedMerge(
 
   override def hashCode: Int = stack.hashCode
 
-  override def render(
+  override def renderAtKey(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
       atKey: String,
       options: ConfigRenderOptions
   ): Unit = {
-    ConfigDelayedMerge.render(stack, sb, indent, atRoot, atKey, options)
+    ConfigDelayedMerge.renderAtKey(stack, sb, indent, atRoot, atKey, options)
   }
 
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
       options: ConfigRenderOptions
   ): Unit = {
-    render(sb, indent, atRoot, null, options)
+    renderAtKey(sb, indent, atRoot, null, options)
   }
 }

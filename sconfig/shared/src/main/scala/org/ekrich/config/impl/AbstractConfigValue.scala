@@ -306,7 +306,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
 
   override def toString: String = {
     val sb = new jl.StringBuilder
-    render(
+    renderAtKey(
       sb,
       0,
       true /* atRoot */,
@@ -316,13 +316,34 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     getClass.getSimpleName + "(" + sb.toString + ")"
   }
 
-  private[impl] def render(
+  private[impl] def renderAtKey(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
       atKey: String,
       options: ConfigRenderOptions
   ): Unit = {
+    renderKey(sb, atKey, options)
+    renderValue(sb, indent, atRoot, options)
+  }
+
+  def renderValue(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = if (hideEnvVariableValue(options)) {
+    sb.append("<env variable>")
+  } else {
+    val u = unwrapped
+    sb.append(u.toString)
+  }
+
+  protected def renderKey(
+      sb: jl.StringBuilder,
+      atKey: String,
+      options: ConfigRenderOptions
+  ): Unit =
     if (atKey != null) {
       val renderedKey =
         if (options.getJson) ConfigImplUtil.renderJsonString(atKey)
@@ -347,20 +368,6 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
         }
       }
     }
-    render(sb, indent, atRoot, options)
-  }
-  def render(
-      sb: jl.StringBuilder,
-      indent: Int,
-      atRoot: Boolean,
-      options: ConfigRenderOptions
-  ): Unit =
-    if (hideEnvVariableValue(options)) {
-      sb.append("<env variable>")
-    } else {
-      val u = unwrapped
-      sb.append(u.toString)
-    }
 
   protected def hideEnvVariableValue(options: ConfigRenderOptions): Boolean =
     !options.getShowEnvVariableValues && (origin.originType eq OriginType.ENV_VARIABLE)
@@ -372,7 +379,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
 
   override final def render(options: ConfigRenderOptions): String = {
     val sb = new jl.StringBuilder
-    render(sb, 0, true, null, options)
+    renderAtKey(sb, 0, true, null, options)
     sb.toString
   }
 
