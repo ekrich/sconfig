@@ -501,7 +501,7 @@ final class SimpleConfigObject(
         v.relativized(prefix)
     })
 
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indentVal: Int,
       atRoot: Boolean,
@@ -551,7 +551,7 @@ final class SimpleConfigObject(
           }
         }
         AbstractConfigValue.indent(sb, innerIndent, options)
-        v.render(sb, innerIndent, false /* atRoot */, k, options)
+        v.renderAtKey(sb, innerIndent, false /* atRoot */, k, options)
         if (options.getFormatted) {
           if (options.getJson) {
             sb.append(",")

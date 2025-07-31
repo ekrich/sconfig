@@ -254,14 +254,14 @@ final class ConfigConcatenation(
 
   override def hashCode: Int = pieces.hashCode
 
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
       options: ConfigRenderOptions
   ): Unit = {
     for (p <- pieces.asScala) {
-      p.render(sb, indent, atRoot, options)
+      p.renderValue(sb, indent, atRoot, options)
     }
   }
 }

@@ -27,7 +27,7 @@ final class ConfigNull(origin: ConfigOrigin)
 
   override def transformToString = "null"
 
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
