@@ -255,7 +255,7 @@ final class ConfigRenderOptions private (
       sb.append("formatted,")
       if (formattingOptions.keepOriginOrder) sb.append("keepOriginOrder,")
       if (formattingOptions.doubleIndent) sb.append("doubleIndent,")
-      if (formattingOptions.colonAssign) sb.append("equalsAssign,")
+      if (formattingOptions.colonAssign) sb.append("colonAssign,")
     }
     if (json) sb.append("json,")
     if (showEnvVariableValues) sb.append("showEnvVariableValues,")
