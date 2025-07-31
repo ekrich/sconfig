@@ -31,7 +31,7 @@ class FormattingOptionsTest extends TestUtilsShared {
                |}""".stripMargin
     val result = formatHocon(in)
     val expected = "r {}"
-    checkEqualObjects(result, expected)
+    checkEqualObjects(expected, result)
   }
 
   @Test
@@ -42,7 +42,7 @@ class FormattingOptionsTest extends TestUtilsShared {
     val result = formatHocon(in)
     val expected = """r {}
                      |""".stripMargin
-    checkEqualObjects(result, expected)
+    checkEqualObjects(expected, result)
   }
 
   @Test
@@ -70,7 +70,7 @@ class FormattingOptionsTest extends TestUtilsShared {
                      |    }
                      |}
                      |""".stripMargin
-    checkEqualObjects(result, expected)
+    checkEqualObjects(expected, result)
   }
 
   @Test
@@ -94,12 +94,12 @@ class FormattingOptionsTest extends TestUtilsShared {
                      |  }
                      |}
                      |""".stripMargin
-    checkEqualObjects(result, expected)
+    checkEqualObjects(expected, result)
   }
 
   @Test
   def useFourSpacesIndentation(): Unit = {
-    implicit val formattingOptions = FormattingOptions()
+    implicit val formattingOptions = FormattingOptions(doubleIndent = true)
 
     val in = """r {
                |  p {
@@ -118,7 +118,7 @@ class FormattingOptionsTest extends TestUtilsShared {
                      |    }
                      |}
                      |""".stripMargin
-    checkEqualObjects(result, expected)
+    checkEqualObjects(expected, result)
   }
 
   @Test
@@ -138,7 +138,7 @@ class FormattingOptionsTest extends TestUtilsShared {
                      |    s: t_f
                      |}
                      |""".stripMargin
-    checkEqualObjects(result, expected)
+    checkEqualObjects(expected, result)
   }
 
   @Test
@@ -158,6 +158,65 @@ class FormattingOptionsTest extends TestUtilsShared {
                      |    s = t_f
                      |}
                      |""".stripMargin
-    checkEqualObjects(result, expected)
+    checkEqualObjects(expected, result)
+  }
+
+  @Test
+  def dontSimplifyOneEntryNestedObjects(): Unit = {
+    implicit val formattingOptions =
+      FormattingOptions(simplifyOneEntryNestedObjects = false)
+
+    val in = """r.p.d= 42"""
+    val result = formatHocon(in)
+
+    val expected =
+      """r {
+        |    p {
+        |        d=42
+        |    }
+        |}
+        |""".stripMargin
+    checkEqualObjects(expected, result)
+  }
+
+  @Test
+  def simplifyOneEntryNestedObjectsOnRoot(): Unit = {
+    implicit val formattingOptions =
+      FormattingOptions(simplifyOneEntryNestedObjects = true)
+
+    val in = """r { p { d= 42 } }"""
+    val result = formatHocon(in)
+
+    val expected =
+      """r.p.d=42
+        |""".stripMargin
+    checkEqualObjects(expected, result)
+  }
+
+  @Test
+  def simplifyOneEntryNestedObjectsNotOnRoot(): Unit = {
+    implicit val formattingOptions =
+      FormattingOptions(simplifyOneEntryNestedObjects = true)
+
+    val in =
+      """r { p { d { s= 42 } }
+        | e {
+        |   f= 1
+        |   g= 2
+        | }}
+        | g.d {s=44}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected =
+      """g.d.s=44
+        |r {
+        |    e {
+        |        f=1
+        |        g=2
+        |    }
+        |    p.d.s=42
+        |}
+        |""".stripMargin
+    checkEqualObjects(expected, result)
   }
 }
