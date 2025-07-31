@@ -776,12 +776,12 @@ class ConfigFactoryJvmTest extends TestUtils {
           ConfigFactory.parseString(resolvedRender, ConfigParseOptions.defaults)
         try {
           assertEquals(
-            "unresolved options=" + renderOptions,
+            s"for i=$i unresolved options=" + renderOptions,
             conf.root,
             unresolvedParsed.root
           )
           assertEquals(
-            "resolved options=" + renderOptions,
+            s"for i=$i resolved options=" + renderOptions,
             resolved.root,
             resolvedParsed.root
           )

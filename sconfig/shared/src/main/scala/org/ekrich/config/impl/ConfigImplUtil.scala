@@ -22,6 +22,15 @@ import org.ekrich.config.ConfigSyntax
  * the [[org.ekrich.config]] package.
  */
 object ConfigImplUtil {
+  // '.' added as forbidden to disable treating it as path expression
+  // paths are represented differently in the inner model
+  private val forbiddenUnquotedChars =
+    Vector('$', '"', '{', '}', '[', ']', ':', '=', ',', '+', '#', '`', '^', '?',
+      '!', '@', '*', '&', '\\', '\u00A0', '\u2007', '\u202F', '\uFEFF', '.')
+
+  def isForbiddenUnquotedChar(c: Char): Boolean =
+    forbiddenUnquotedChars.contains(c) || c.isWhitespace
+
   def equalsHandlingNull(a: AnyRef, b: AnyRef) =
     if (a == null && b != null) false
     else if (a != null && b == null) false
@@ -63,26 +72,23 @@ object ConfigImplUtil {
     sb.append('"')
     sb.toString
   }
-
+  // rules for unquoted: https://github.com/lightbend/config/blob/master/HOCON.md#unquoted-strings
   private[impl] def renderStringUnquotedIfPossible(s: String): String = {
     // this can quote unnecessarily as long as it never fails to quote when necessary
-    if (s.length == 0) return renderJsonString(s)
-    // if it starts with a hyphen or number, we have to quote
-    // to ensure we end up with a string and not a number
-    val first = s.codePointAt(0)
-    if (Character.isDigit(first) || first == '-') return renderJsonString(s)
-    if (s.startsWith("include") || s.startsWith("true") || s.startsWith("false")
-        || s.startsWith("null") || s.contains("//"))
-      return renderJsonString(s)
-    // only unquote if it's pure alphanumeric
-    var i = 0
-    while (i < s.length) {
-      val c = s.charAt(i)
-      if (!Character.isLetter(c) || Character.isDigit(c) || c == '-')
-        return renderJsonString(s)
-      i += 1
+    if (s.length == 0) renderJsonString(s)
+    else {
+      // if it starts with a hyphen or number, we have to quote
+      // to ensure we end up with a string and not a number
+      val first = s.codePointAt(0)
+      if (Character.isDigit(first) || first == '-') renderJsonString(s)
+      else if (s.startsWith("include") || s.startsWith("true") ||
+          s.startsWith("false") || s.startsWith("null") || s.contains("//"))
+        renderJsonString(s)
+      // only unquote if does not contain forbidden char or white spaces
+      else if (s.exists(isForbiddenUnquotedChar))
+        renderJsonString(s)
+      else s
     }
-    s
   }
 
   def isWhitespace(codepoint: Int): Boolean =
