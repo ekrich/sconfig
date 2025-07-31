@@ -45,7 +45,8 @@ case class FormattingOptions(
     keepOriginOrder: Boolean = false,
     doubleIndent: Boolean = true,
     colonAssign: Boolean = false,
-    newLineAtEnd: Boolean = true
+    newLineAtEnd: Boolean = true,
+    spaceAfterAssign: Boolean = false
 )
 
 final class ConfigRenderOptions private (
@@ -255,7 +256,8 @@ final class ConfigRenderOptions private (
       sb.append("formatted,")
       if (formattingOptions.keepOriginOrder) sb.append("keepOriginOrder,")
       if (formattingOptions.doubleIndent) sb.append("doubleIndent,")
-      if (formattingOptions.colonAssign) sb.append("equalsAssign,")
+      if (formattingOptions.colonAssign) sb.append("colonAssign,")
+      if (formattingOptions.spaceAfterAssign) sb.append("spaceAfterAssign,")
     }
     if (json) sb.append("json,")
     if (showEnvVariableValues) sb.append("showEnvVariableValues,")

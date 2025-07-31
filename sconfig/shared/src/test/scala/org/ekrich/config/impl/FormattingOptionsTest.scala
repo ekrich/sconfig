@@ -160,4 +160,36 @@ class FormattingOptionsTest extends TestUtilsShared {
                      |""".stripMargin
     checkEqualObjects(result, expected)
   }
+
+  @Test
+  def noSpaceAfterAssignSign(): Unit = {
+    implicit val formattingOptions = FormattingOptions(spaceAfterAssign = false)
+
+    val in = """r {
+               |    s=tf
+               |}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """r {
+                     |    s=tf
+                     |}
+                     |""".stripMargin
+    checkEqualObjects(result, expected)
+  }
+
+  @Test
+  def addSpaceAfterAssignSign(): Unit = {
+    implicit val formattingOptions = FormattingOptions(spaceAfterAssign = true)
+
+    val in = """r {
+               |    s=tf
+               |}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """r {
+                     |    s= tf
+                     |}
+                     |""".stripMargin
+    checkEqualObjects(result, expected)
+  }
 }
