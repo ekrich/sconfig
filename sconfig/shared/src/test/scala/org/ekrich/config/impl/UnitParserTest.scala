@@ -5,10 +5,11 @@ package org.ekrich.config.impl
 
 import java.time.{LocalDate, Period}
 import java.time.temporal.ChronoUnit
+import org.junit.Assert.*
+import org.junit.*
+import org.ekrich.config.*
 
-import org.junit.Assert._
-import org.junit._
-import org.ekrich.config._
+import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
 class UnitParserTest extends TestUtilsShared {
@@ -143,11 +144,17 @@ class UnitParserTest extends TestUtilsShared {
 
   @Test
   def parseMemorySizeInBytes(): Unit = {
-    def parseMem(s: String): Long =
+    def parseMem(s: String): BigInteger =
       SimpleConfig.parseBytes(s, fakeOrigin(), "test")
 
-    assertEquals(Long.MaxValue, parseMem(s"${Long.MaxValue} bytes"))
-    assertEquals(Long.MinValue, parseMem(s"${Long.MinValue} bytes"))
+    assertEquals(
+      BigInteger.valueOf(Long.MaxValue),
+      parseMem(s"${Long.MaxValue} bytes")
+    )
+    assertEquals(
+      BigInteger.valueOf(Long.MinValue),
+      parseMem(s"${Long.MinValue} bytes")
+    )
 
     val oneMebis = List(
       "1048576",
@@ -182,7 +189,7 @@ class UnitParserTest extends TestUtilsShared {
 
     for (s <- oneMebis) {
       val result = parseMem(s)
-      assertEquals(1024L * 1024L, result)
+      assertEquals(BigInteger.valueOf(1024L * 1024L), result)
     }
 
     val oneMegas = List(
@@ -208,13 +215,13 @@ class UnitParserTest extends TestUtilsShared {
 
     for (s <- oneMegas) {
       val result = parseMem(s)
-      assertEquals(1000L * 1000, result)
+      assertEquals(BigInteger.valueOf(1000L * 1000), result)
     }
 
-    var result = 1024L * 1024 * 1024
-    for (unit <- Seq("tebi", "pebi", "exbi")) {
+    var result = BigInteger.valueOf(1024L * 1024 * 1024)
+    for (unit <- Seq("tebi", "pebi", "exbi", "zebi", "yobi")) {
       val first = unit.substring(0, 1).toUpperCase()
-      result = result * 1024
+      result = result.multiply(BigInteger.valueOf(1024))
       assertEquals(result, parseMem("1" + first))
       assertEquals(result, parseMem("1" + first + "i"))
       assertEquals(result, parseMem("1" + first + "iB"))
@@ -222,10 +229,10 @@ class UnitParserTest extends TestUtilsShared {
       assertEquals(result, parseMem("1" + unit + "bytes"))
     }
 
-    result = 1000L * 1000 * 1000
-    for (unit <- Seq("tera", "peta", "exa")) {
+    result = BigInteger.valueOf(1000L * 1000 * 1000)
+    for (unit <- Seq("tera", "peta", "exa", "zetta", "yotta")) {
       val first = unit.substring(0, 1).toUpperCase()
-      result = result * 1000
+      result = result.multiply(BigInteger.valueOf(1000))
       assertEquals(result, parseMem("1" + first + "B"))
       assertEquals(result, parseMem("1" + unit + "byte"))
       assertEquals(result, parseMem("1" + unit + "bytes"))
@@ -248,7 +255,8 @@ class UnitParserTest extends TestUtilsShared {
   @Test
   def parseHugeMemorySizes(): Unit = {
     def parseMem(s: String): Long =
-      SimpleConfig.parseBytes(s, fakeOrigin(), "test")
+      ConfigFactory.parseString(s"v = $s").getBytes("v")
+
     def assertOutOfRange(s: String) = {
       val fail = intercept[ConfigException.BadValue] {
         parseMem(s)
@@ -256,11 +264,21 @@ class UnitParserTest extends TestUtilsShared {
       assertTrue("number was too big", fail.getMessage.contains("out of range"))
     }
 
+    def assertNegativeNumber(s: String): Unit = {
+      val fail = intercept[ConfigException.BadValue] {
+        parseMem(s)
+      }
+      assertTrue(
+        "number was negative",
+        fail.getMessage.contains("negative number")
+      )
+    }
+
     import java.math.BigInteger
     assertOutOfRange(
       s"${BigInteger.valueOf(Long.MaxValue).add(BigInteger.valueOf(1)).toString} bytes"
     )
-    assertOutOfRange(
+    assertNegativeNumber(
       s"${BigInteger.valueOf(Long.MinValue).subtract(BigInteger.valueOf(1)).toString} bytes"
     )
 
@@ -273,7 +291,7 @@ class UnitParserTest extends TestUtilsShared {
       assertOutOfRange("1" + unit + "byte")
       assertOutOfRange("1" + unit + "bytes")
       assertOutOfRange("1.1" + first)
-      assertOutOfRange("-1" + first)
+      assertNegativeNumber("-1" + first)
     }
 
     result = 1000L * 1000 * 1000
@@ -283,7 +301,7 @@ class UnitParserTest extends TestUtilsShared {
       assertOutOfRange("1" + unit + "byte")
       assertOutOfRange("1" + unit + "bytes")
       assertOutOfRange("1.1" + first + "B")
-      assertOutOfRange("-1" + first + "B")
+      assertNegativeNumber("-1" + first + "B")
     }
 
     assertOutOfRange("1000 exabytes")
