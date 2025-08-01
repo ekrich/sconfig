@@ -172,7 +172,7 @@ class FormattingOptionsTest extends TestUtilsShared {
     val expected =
       """r {
         |    p {
-        |        d=42
+        |        d = 42
         |    }
         |}
         |""".stripMargin
@@ -184,11 +184,11 @@ class FormattingOptionsTest extends TestUtilsShared {
     implicit val formattingOptions =
       FormattingOptions(simplifyOneEntryNestedObjects = true)
 
-    val in = """r { p { d= 42 } }"""
+    val in = """r { "p.at" { d= 42 } }"""
     val result = formatHocon(in)
 
     val expected =
-      """r.p.d=42
+      """r."p.at".d = 42
         |""".stripMargin
     checkEqualObjects(expected, result)
   }
@@ -199,7 +199,7 @@ class FormattingOptionsTest extends TestUtilsShared {
       FormattingOptions(simplifyOneEntryNestedObjects = true)
 
     val in =
-      """r { p { d { s= 42 } }
+      """r { p { "d.ap" { s= 42 } }
         | e {
         |   f= 1
         |   g= 2
@@ -208,13 +208,13 @@ class FormattingOptionsTest extends TestUtilsShared {
     val result = formatHocon(in)
 
     val expected =
-      """g.d.s=44
+      """g.d.s = 44
         |r {
         |    e {
-        |        f=1
-        |        g=2
+        |        f = 1
+        |        g = 2
         |    }
-        |    p.d.s=42
+        |    p."d.ap".s = 42
         |}
         |""".stripMargin
     checkEqualObjects(expected, result)

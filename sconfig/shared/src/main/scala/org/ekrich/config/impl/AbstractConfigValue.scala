@@ -306,7 +306,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
 
   override def toString: String = {
     val sb = new jl.StringBuilder
-    renderAtKey(
+    render(
       sb,
       0,
       true /* atRoot */,
@@ -316,11 +316,11 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     getClass.getSimpleName + "(" + sb.toString + ")"
   }
 
-  private[impl] def renderAtKey(
+  private[impl] def render(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
-      atKey: String,
+      atKey: String, // nullable
       options: ConfigRenderOptions
   ): Unit = {
     Option(atKey)
@@ -328,7 +328,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
         val renderedKey =
           if (options.getJson) ConfigImplUtil.renderJsonString(key)
           else ConfigImplUtil.renderStringUnquotedIfPossible(key)
-        renderWithKey(sb, renderedKey, options)
+        renderWithRenderedKey(sb, renderedKey, options)
       }
     renderValue(sb, indent, atRoot, options)
   }
@@ -345,12 +345,12 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     sb.append(u.toString)
   }
 
-  private[impl] def renderWithKey(
+  private[impl] def renderWithRenderedKey(
       sb: jl.StringBuilder,
-      key: String,
+      renderedKey: String, // not nullable
       options: ConfigRenderOptions
   ): Unit = {
-    sb.append(key)
+    sb.append(renderedKey)
     if (options.getJson) {
       if (options.getFormatted)
         sb.append(" : ")
@@ -362,13 +362,14 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
       } else {
         sb.append(
           if (options.getFormatted) {
-              if (options.formattingOptions.colonAssign) ": " else " = "
-            } else {
-              if (options.formattingOptions.colonAssign) ":" else "="
-        }
-      )
+            if (options.formattingOptions.colonAssign) ": " else " = "
+          } else {
+            if (options.formattingOptions.colonAssign) ":" else "="
+          }
+        )
+      }
     }
-  }}
+  }
 
   protected def hideEnvVariableValue(options: ConfigRenderOptions): Boolean =
     !options.getShowEnvVariableValues && (origin.originType eq OriginType.ENV_VARIABLE)
@@ -380,7 +381,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
 
   override final def render(options: ConfigRenderOptions): String = {
     val sb = new jl.StringBuilder
-    renderAtKey(sb, 0, true, null, options)
+    render(sb, 0, true, null, options)
     sb.toString
   }
 

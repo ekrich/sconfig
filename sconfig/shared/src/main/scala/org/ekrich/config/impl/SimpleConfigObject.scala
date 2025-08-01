@@ -5,7 +5,8 @@ package org.ekrich.config.impl
 
 import java.io.ObjectStreamException
 import java.io.Serializable
-import java.{lang as jl, util as ju}
+import java.util as ju
+import java.lang as jl
 import java.math.BigInteger
 import scala.jdk.CollectionConverters.*
 import scala.util.control.Breaks.*
@@ -535,11 +536,14 @@ final class SimpleConfigObject(
     else {
       trySimplifyTheOnlyNestedObject(options) match {
         case Some((aggKey, leafValue)) =>
-          if (!atRoot) {
-            sb.deleteCharAt(sb.length() - 1)
+          if (!atRoot) { // if not root then it is in some other object
+            if (options.getFormatted)
+              sb.deleteCharAt(
+                sb.length() - 1
+              ) // assumption that ' ' is the removed char
             sb.append('.')
           }
-          leafValue.renderWithKey(sb, aggKey, options)
+          leafValue.renderWithRenderedKey(sb, aggKey, options)
           leafValue.renderValue(sb, indentVal, atRoot, options)
         case _ =>
           renderValueAsMultiLineObject(sb, indentVal, atRoot, options)
@@ -597,7 +601,7 @@ final class SimpleConfigObject(
         }
       }
       AbstractConfigValue.indent(sb, innerIndent, options)
-      v.renderAtKey(sb, innerIndent, false /* atRoot */, k, options)
+      v.render(sb, innerIndent, false /* atRoot */, k, options)
       if (options.getFormatted) {
         if (options.getJson) {
           sb.append(",")
