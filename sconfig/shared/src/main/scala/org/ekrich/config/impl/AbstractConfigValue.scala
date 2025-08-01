@@ -320,7 +320,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
-      atKey: String,
+      atKey: String, // nullable
       options: ConfigRenderOptions
   ): Unit = {
     Option(atKey)
@@ -328,7 +328,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
         val renderedKey =
           if (options.getJson) ConfigImplUtil.renderJsonString(key)
           else ConfigImplUtil.renderStringUnquotedIfPossible(key)
-        renderWithKey(sb, renderedKey, options)
+        renderAtRenderedKey(sb, renderedKey, options)
       }
     renderValue(sb, indent, atRoot, options)
   }
@@ -345,12 +345,12 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
     sb.append(u.toString)
   }
 
-  private[impl] def renderWithKey(
+  private[impl] def renderAtRenderedKey(
       sb: jl.StringBuilder,
-      key: String,
+      renderedKey: String, // not nullable
       options: ConfigRenderOptions
   ): Unit = {
-    sb.append(key)
+    sb.append(renderedKey)
     if (options.getJson) {
       if (options.getFormatted)
         sb.append(" : ")

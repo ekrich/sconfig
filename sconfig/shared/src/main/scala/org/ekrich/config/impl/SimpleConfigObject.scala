@@ -535,11 +535,14 @@ final class SimpleConfigObject(
     else {
       trySimplifyTheOnlyNestedObject(options) match {
         case Some((aggKey, leafValue)) =>
-          if (!atRoot) {
-            sb.deleteCharAt(sb.length() - 1)
+          if (!atRoot) { // if not root then it is in some other object
+            if (options.getFormatted)
+              sb.deleteCharAt(
+                sb.length() - 1
+              ) // assumption that ' ' is the removed char
             sb.append('.')
           }
-          leafValue.renderWithKey(sb, aggKey, options)
+          leafValue.renderAtRenderedKey(sb, aggKey, options)
           leafValue.renderValue(sb, indentVal, atRoot, options)
         case _ =>
           renderValueAsMultiLineObject(sb, indentVal, atRoot, options)
