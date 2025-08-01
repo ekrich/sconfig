@@ -192,7 +192,7 @@ final class SimpleConfigList(
     } else false
   }
   override def hashCode: Int = value.hashCode
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indentVal: Int,
       atRoot: Boolean,
@@ -222,7 +222,7 @@ final class SimpleConfigList(
           }
         }
         indent(sb, indentVal + 1, options)
-        v.render(sb, indentVal + 1, atRoot, options)
+        v.renderValue(sb, indentVal + 1, atRoot, options)
         sb.append(",")
         if (options.getFormatted) sb.append('\n')
       }

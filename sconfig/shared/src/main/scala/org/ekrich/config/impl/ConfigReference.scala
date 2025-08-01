@@ -118,7 +118,7 @@ final class ConfigReference(
     else false
   }
   override def hashCode: Int = expression.hashCode
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
