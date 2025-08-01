@@ -187,7 +187,7 @@ class FormattingOptionsTest extends TestUtilsShared {
     val result = formatHocon(in)
 
     val expected = """r {
-                     |    s= tf
+                     |    s = tf
                      |}
                      |""".stripMargin
     checkEqualObjects(result, expected)

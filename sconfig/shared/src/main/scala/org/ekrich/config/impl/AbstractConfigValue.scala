@@ -337,11 +337,15 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
         if (this.isInstanceOf[ConfigObject]) {
           if (options.getFormatted) sb.append(' ')
         } else {
-          sb.append(
-            if (options.formattingOptions.colonAssign) ":" else "="
-          )
-          if (options.formattingOptions.spaceAfterAssign && options.getFormatted)
+          def addAssignSymbol(): Unit =
+            sb.append(
+              if (options.formattingOptions.colonAssign) ":" else "="
+            )
+          if (options.formattingOptions.spaceAfterAssign && options.getFormatted) {
             sb.append(' ')
+            addAssignSymbol()
+            sb.append(' ')
+          } else addAssignSymbol()
         }
       }
     }
