@@ -1,5 +1,6 @@
 package org.ekrich.config.impl
 
+import java.math.BigInteger
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.{
@@ -417,6 +418,22 @@ class ConfigFactoryJvmTest extends TestUtils {
       conf.getMemorySizeList("memsizes.megsList").asScala.map(_.toBytes)
     )
     assertEquals(512 * 1024L, conf.getMemorySize("memsizes.halfMeg").toBytes)
+
+    assertEquals(
+      new BigInteger("1000000000000000000000000"),
+      conf.getMemorySize("memsizes.yottabyte").toBytesBigInteger
+    )
+
+    assertEquals(
+      Seq(
+        new BigInteger("1000000000000000000000000"),
+        new BigInteger("500000000000000000000000")
+      ),
+      conf
+        .getMemorySizeList("memsizes.yottabyteList")
+        .asScala
+        .map(_.toBytesBigInteger)
+    )
   }
 
   @Test

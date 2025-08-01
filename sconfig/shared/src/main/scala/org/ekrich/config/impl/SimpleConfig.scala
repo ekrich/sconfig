@@ -30,6 +30,8 @@ import org.ekrich.config.ConfigValueType
 
 import org.ekrich.config.impl.ScalaOps.*
 
+import scala.util.{Try, Success, Failure}
+
 /**
  * One thing to keep in mind in the future: as Collection-like APIs are added
  * here, including iterators or size() or anything, they should be consistent
@@ -333,12 +335,12 @@ object SimpleConfig {
       input: String,
       originForException: ConfigOrigin,
       pathForException: String
-  ): Long = {
+  ): BigInteger = {
     val s = ConfigImplUtil.unicodeTrim(input)
     val unitString = getUnits(s)
     val numberString =
       ConfigImplUtil.unicodeTrim(s.substring(0, s.length - unitString.length))
-    if (numberString.length == 0)
+    if (numberString.isEmpty)
       throw new ConfigException.BadValue(
         originForException,
         pathForException,
@@ -352,22 +354,14 @@ object SimpleConfig {
         "Could not parse size-in-bytes unit '" + unitString + "' (try k, K, kB, KiB, kilobytes, kibibytes)"
       )
     try {
-      var result: BigInteger = null
       // possible precision loss; otherwise as a double.
       if (nonNegIntPattern.matcher(numberString).matches())
-        result = units.bytes.multiply(new BigInteger(numberString))
+        units.bytes.multiply(new BigInteger(numberString))
       else {
         val resultDecimal =
           new BigDecimal(units.bytes).multiply(new BigDecimal(numberString))
-        result = resultDecimal.toBigInteger
+        resultDecimal.toBigInteger
       }
-      if (result.bitLength < 64) result.longValue
-      else
-        throw new ConfigException.BadValue(
-          originForException,
-          pathForException,
-          "size-in-bytes value is out of range for a 64-bit long: '" + input + "'"
-        )
     } catch {
       case e: NumberFormatException =>
         throw new ConfigException.BadValue(
@@ -741,6 +735,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   override def getLong(path: String): Long = getNumber(path).longValue
 
   override def getDouble(path: String): Double = getNumber(path).doubleValue
+
   override def getString(path: String): String = {
     val v = find(path, ConfigValueType.STRING)
     v.unwrapped.asInstanceOf[String]
@@ -770,23 +765,50 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   }
 
   override def getBytes(path: String): jl.Long = {
-    var size: jl.Long = null
-    try size = getLong(path)
-    catch {
-      case e: ConfigException.WrongType =>
-        val v = find(path, ConfigValueType.STRING)
-        size = SimpleConfig.parseBytes(
-          v.unwrapped.asInstanceOf[String],
-          v.origin,
-          path
-        )
-    }
-    size
+    val bytes = getBytesBigInteger(path)
+    val v = find(path, ConfigValueType.STRING)
+    toLong(bytes, v.origin, path)
   }
 
-  override def getMemorySize(path: String): ConfigMemorySize =
-    ConfigMemorySize.ofBytes(getBytes(path))
+  private def toLong(
+      value: BigInteger,
+      originForException: ConfigOrigin,
+      pathForException: String
+  ): jl.Long =
+    if (value.bitLength < 64) value.longValue
+    else
+      throw new ConfigException.BadValue(
+        originForException,
+        pathForException,
+        "size-in-bytes value is out of range for a 64-bit long: '" + value + "'"
+      )
 
+  private def getBytesBigInteger(path: String): BigInteger = {
+    val v: ConfigValue = find(path, ConfigValueType.STRING)
+    Try(BigInteger.valueOf(getLong(path)))
+      .recover {
+        case _: ConfigException.WrongType =>
+          SimpleConfig.parseBytes(
+            v.unwrapped.asInstanceOf[String],
+            v.origin,
+            path
+          )
+      }
+      .flatMap(bytes =>
+        if (bytes.signum() < 0)
+          Failure(
+            new ConfigException.BadValue(
+              v.origin,
+              path,
+              "Attempt to construct memory size with negative number: " + bytes
+            )
+          )
+        else Success(bytes)
+      )
+      .get
+  }
+  override def getMemorySize(path: String): ConfigMemorySize =
+    ConfigMemorySize.ofBytes(getBytesBigInteger(path))
   override def getDuration(path: String, unit: TimeUnit): Long = {
     val v = find(path, ConfigValueType.STRING)
     val result = unit.convert(
@@ -818,6 +840,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
       case e: ConfigException.BadValue =>
         getPeriod(path)
     }
+
   @SuppressWarnings(Array("unchecked"))
   private def getHomogeneousUnwrappedList[T](
       path: String,
@@ -958,37 +981,55 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     l
   }
 
-  override def getBytesList(path: String): ju.List[jl.Long] = {
+  private def getBytesListBigInteger(path: String): ju.List[BigInteger] = {
+    val l = new ju.ArrayList[BigInteger]
     val list = getList(path)
-    val l = new ju.ArrayList[jl.Long](list.size())
-    list.scalaOps.foreach { v =>
-      if (v.valueType eq ConfigValueType.NUMBER) {
-        l.add(v.unwrapped.asInstanceOf[Number].longValue)
-      } else if (v.valueType eq ConfigValueType.STRING) {
-        val s = v.unwrapped.asInstanceOf[String]
-        val n = SimpleConfig.parseBytes(s, v.origin, path)
-        l.add(n)
-      } else {
-        throw new ConfigException.WrongType(
-          v.origin,
-          path,
-          "memory size string or number of bytes",
-          v.valueType.name
-        )
-      }
-    }
+
+    list
+      .iterator()
+      .scalaOps
+      .foreach(v => {
+        val bytes: BigInteger =
+          if (v.valueType eq ConfigValueType.NUMBER)
+            BigInteger.valueOf(v.unwrapped.asInstanceOf[Number].longValue)
+          else if (v.valueType eq ConfigValueType.STRING) {
+            val s = v.unwrapped.asInstanceOf[String]
+            SimpleConfig.parseBytes(s, v.origin, path)
+          } else
+            throw new ConfigException.WrongType(
+              v.origin,
+              path,
+              "memory size string or number of bytes",
+              v.valueType.name
+            )
+        if (bytes.signum < 0)
+          throw new ConfigException.BadValue(
+            v.origin,
+            path,
+            "Attempt to construct ConfigMemorySize with negative number: " + bytes
+          )
+        l.add(bytes)
+      })
+    l
+  }
+  override def getBytesList(path: String): ju.List[jl.Long] = {
+    val v = find(path, ConfigValueType.LIST)
+    val l = new ju.ArrayList[jl.Long]
+    getBytesListBigInteger(path)
+      .iterator()
+      .scalaOps
+      .foreach(bytes => l.add(toLong(bytes, v.origin, path)))
     l
   }
 
   override def getMemorySizeList(path: String): ju.List[ConfigMemorySize] = {
-    val list = getBytesList(path)
-    val builder = new ju.ArrayList[ConfigMemorySize](list.size())
-    list.scalaOps.foreach { v =>
+    val list = getBytesListBigInteger(path)
+    val builder = new ju.ArrayList[ConfigMemorySize]
+    list.forEach { v =>
       builder.add(ConfigMemorySize.ofBytes(v))
     }
     builder
   }
-
   override def getDurationList(
       path: String,
       unit: TimeUnit
