@@ -62,11 +62,11 @@ class FormattingOptionsTest extends TestUtilsShared {
 
     val expected = """r {
                      |    p {
-                     |        s=${r.ss}
+                     |        s = ${r.ss}
                      |    }
                      |    f {
-                     |        s="t_f"
-                     |        n=ALA
+                     |        s = "t_f"
+                     |        n = ALA
                      |    }
                      |}
                      |""".stripMargin
@@ -89,7 +89,7 @@ class FormattingOptionsTest extends TestUtilsShared {
     val expected = """r {
                      |  p {
                      |    d {
-                     |      s=${r.ss}
+                     |      s = ${r.ss}
                      |    }
                      |  }
                      |}
@@ -113,7 +113,7 @@ class FormattingOptionsTest extends TestUtilsShared {
     val expected = """r {
                      |    p {
                      |        d {
-                     |            s=${r.ss}
+                     |            s = ${r.ss}
                      |        }
                      |    }
                      |}
@@ -133,9 +133,9 @@ class FormattingOptionsTest extends TestUtilsShared {
     val result = formatHocon(in)
 
     val expected = """r {
-                     |    n:ALA
-                     |    "n-m":1
-                     |    s:"t_f"
+                     |    n: ALA
+                     |    "n-m": 1
+                     |    s: "t_f"
                      |}
                      |""".stripMargin
     checkEqualObjects(result, expected)
@@ -153,9 +153,9 @@ class FormattingOptionsTest extends TestUtilsShared {
     val result = formatHocon(in)
 
     val expected = """r {
-                     |    n=ALA
-                     |    "n-m"=1
-                     |    s="t_f"
+                     |    n = ALA
+                     |    "n-m" = 1
+                     |    s = "t_f"
                      |}
                      |""".stripMargin
     checkEqualObjects(result, expected)

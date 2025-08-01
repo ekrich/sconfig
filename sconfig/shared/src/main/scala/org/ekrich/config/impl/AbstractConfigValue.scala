@@ -338,7 +338,11 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
           if (options.getFormatted) sb.append(' ')
         } else {
           sb.append(
-            if (options.formattingOptions.colonAssign) ":" else "="
+            if (options.getFormatted) {
+              if (options.formattingOptions.colonAssign) ": " else " = "
+            } else {
+              if (options.formattingOptions.colonAssign) ":" else "="
+            }
           )
         }
       }
