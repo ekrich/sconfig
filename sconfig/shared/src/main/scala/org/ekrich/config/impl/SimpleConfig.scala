@@ -5,7 +5,7 @@ package org.ekrich.config.impl
 
 import java.io.ObjectStreamException
 import java.io.Serializable
-import java.{lang => jl}
+import java.{lang as jl, math as jm, util as ju}
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.DateTimeException
@@ -13,11 +13,9 @@ import java.time.Duration
 import java.time.Period
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAmount
-import java.{util => ju}
 import java.util.concurrent.TimeUnit
-
-import scala.jdk.CollectionConverters._
-import scala.util.control.Breaks._
+import scala.jdk.CollectionConverters.*
+import scala.util.control.Breaks.*
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigList
@@ -28,6 +26,8 @@ import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigResolveOptions
 import org.ekrich.config.ConfigValue
 import org.ekrich.config.ConfigValueType
+
+import scala.util.{Try, Success, Failure}
 
 /**
  * One thing to keep in mind in the future: as Collection-like APIs are added
@@ -325,12 +325,12 @@ object SimpleConfig {
       input: String,
       originForException: ConfigOrigin,
       pathForException: String
-  ): Long = {
+  ): jm.BigInteger = {
     val s = ConfigImplUtil.unicodeTrim(input)
     val unitString = getUnits(s)
     val numberString =
       ConfigImplUtil.unicodeTrim(s.substring(0, s.length - unitString.length))
-    if (numberString.length == 0)
+    if (numberString.isEmpty)
       throw new ConfigException.BadValue(
         originForException,
         pathForException,
@@ -344,22 +344,14 @@ object SimpleConfig {
         "Could not parse size-in-bytes unit '" + unitString + "' (try k, K, kB, KiB, kilobytes, kibibytes)"
       )
     try {
-      var result: BigInteger = null
       // possible precision loss; otherwise as a double.
       if (numberString.matches("[0-9]+"))
-        result = units.bytes.multiply(new BigInteger(numberString))
+        units.bytes.multiply(new BigInteger(numberString))
       else {
         val resultDecimal =
           new BigDecimal(units.bytes).multiply(new BigDecimal(numberString))
-        result = resultDecimal.toBigInteger
+        resultDecimal.toBigInteger
       }
-      if (result.bitLength < 64) result.longValue
-      else
-        throw new ConfigException.BadValue(
-          originForException,
-          pathForException,
-          "size-in-bytes value is out of range for a 64-bit long: '" + input + "'"
-        )
     } catch {
       case e: NumberFormatException =>
         throw new ConfigException.BadValue(
@@ -605,12 +597,17 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     with MergeableValue
     with Serializable {
   override def root: AbstractConfigObject = confObj
+
   override def origin: ConfigOrigin = confObj.origin
+
   override def resolve(): SimpleConfig = resolve(ConfigResolveOptions.defaults)
+
   override def resolve(options: ConfigResolveOptions): SimpleConfig =
     resolveWith(this, options)
+
   override def resolveWith(source: Config): SimpleConfig =
     resolveWith(source, ConfigResolveOptions.defaults)
+
   override def resolveWith(
       source: Config,
       options: ConfigResolveOptions
@@ -623,6 +620,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     if (resolved eq confObj) this
     else new SimpleConfig(resolved.asInstanceOf[AbstractConfigObject])
   }
+
   private def hasPathPeek(pathExpression: String) = {
     val path = Path.newPath(pathExpression)
     var peeked: AbstractConfigValue = null
@@ -633,20 +631,25 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     }
     peeked
   }
+
   override def hasPath(pathExpression: String): Boolean = {
     val peeked = hasPathPeek(pathExpression)
     peeked != null && (peeked.valueType ne ConfigValueType.NULL)
   }
+
   override def hasPathOrNull(path: String): Boolean = {
     val peeked = hasPathPeek(path)
     peeked != null
   }
+
   override def isEmpty: Boolean = confObj.isEmpty
+
   override def entrySet: ju.Set[ju.Map.Entry[String, ConfigValue]] = {
     val entries = new ju.HashSet[ju.Map.Entry[String, ConfigValue]]
     SimpleConfig.findPaths(entries, null, confObj)
     entries
   }
+
   private[impl] def find(
       pathExpression: Path,
       expected: ConfigValueType,
@@ -657,6 +660,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
       expected,
       originalPath
     )
+
   private[impl] def find(
       pathExpression: String,
       expected: ConfigValueType
@@ -664,12 +668,14 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     val path = Path.newPath(pathExpression)
     find(path, expected, path)
   }
+
   private def findOrNull(
       pathExpression: Path,
       expected: ConfigValueType,
       originalPath: Path
   ): AbstractConfigValue =
     SimpleConfig.findOrNull(confObj, pathExpression, expected, originalPath)
+
   private def findOrNull(
       pathExpression: String,
       expected: ConfigValueType
@@ -677,65 +683,131 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     val path = Path.newPath(pathExpression)
     findOrNull(path, expected, path)
   }
+
   override def getValue(path: String): AbstractConfigValue = find(path, null)
+
   override def getIsNull(path: String): Boolean = {
     val v = findOrNull(path, null)
     v.valueType eq ConfigValueType.NULL
   }
+
   override def getBoolean(path: String): Boolean = {
     val v = find(path, ConfigValueType.BOOLEAN)
     v.unwrapped.asInstanceOf[Boolean]
   }
+
   private def getConfigNumber(path: String): ConfigNumber = {
     val v = find(path, ConfigValueType.NUMBER)
     v.asInstanceOf[ConfigNumber]
   }
+
   override def getNumber(path: String): Number =
     getConfigNumber(path).unwrapped
+
   override def getInt(path: String): Int = {
     val n = getConfigNumber(path)
     n.intValueRangeChecked(path)
   }
+
   override def getLong(path: String): Long = getNumber(path).longValue
+
   override def getDouble(path: String): Double = getNumber(path).doubleValue
+
   override def getString(path: String): String = {
     val v = find(path, ConfigValueType.STRING)
     v.unwrapped.asInstanceOf[String]
   }
+
   def getEnum[T <: jl.Enum[T]](enumClass: Class[T], path: String): T = {
     val v = find(path, ConfigValueType.STRING)
     getEnumValue(path, enumClass, v)
   }
+
   override def getList(path: String): ConfigList = {
     val v = find(path, ConfigValueType.LIST)
     v.asInstanceOf[ConfigList]
   }
+
   override def getObject(path: String): AbstractConfigObject = {
     val obj =
       find(path, ConfigValueType.OBJECT).asInstanceOf[AbstractConfigObject]
     obj
   }
+
   override def getConfig(path: String): SimpleConfig = getObject(path).toConfig
+
   override def getAnyRef(path: String): AnyRef = {
     val v = find(path, null)
     v.unwrapped
   }
+
   override def getBytes(path: String): jl.Long = {
-    var size: jl.Long = null
-    try size = getLong(path)
-    catch {
-      case e: ConfigException.WrongType =>
-        val v = find(path, ConfigValueType.STRING)
-        size = SimpleConfig.parseBytes(
-          v.unwrapped.asInstanceOf[String],
-          v.origin,
-          path
-        )
-    }
-    size
+    val bytes = getBytesBigInteger(path)
+    val v = find(path, ConfigValueType.STRING)
+    toLong(bytes, v.origin, path)
   }
+
+  private def getBytesBigInteger(path: String): jm.BigInteger = {
+    val v: ConfigValue = find(path, ConfigValueType.STRING)
+    Try(BigInteger.valueOf(getLong(path)))
+      .recover {
+        case _: ConfigException.WrongType =>
+          SimpleConfig.parseBytes(
+            v.unwrapped.asInstanceOf[String],
+            v.origin,
+            path
+          )
+      }
+      .flatMap(bytes =>
+        if (bytes.signum() < 0)
+          Failure(
+            new ConfigException.BadValue(
+              v.origin,
+              path,
+              "Attempt to construct memory size with negative number: " + bytes
+            )
+          )
+        else Success(bytes)
+      )
+      .get
+  }
+
+  private def getBytesListBigInteger(path: String): List[BigInteger] = {
+    val listIter = { // manual so no need to mix converter libs 2.12/2.13
+      val list = getList(path).iterator()
+      new Iterator[ConfigValue] {
+        def hasNext: Boolean = list.hasNext
+
+        def next(): ConfigValue = list.next()
+      }
+    }
+    (for (v: ConfigValue <- listIter) yield {
+      val bytes: BigInteger =
+        if (v.valueType eq ConfigValueType.NUMBER)
+          BigInteger.valueOf(v.unwrapped.asInstanceOf[Number].longValue)
+        else if (v.valueType eq ConfigValueType.STRING) {
+          val s = v.unwrapped.asInstanceOf[String]
+          SimpleConfig.parseBytes(s, v.origin, path)
+        } else
+          throw new ConfigException.WrongType(
+            v.origin,
+            path,
+            "memory size string or number of bytes",
+            v.valueType.name
+          )
+      if (bytes.signum < 0)
+        throw new ConfigException.BadValue(
+          v.origin,
+          path,
+          "Attempt to construct ConfigMemorySize with negative number: " + bytes
+        )
+      bytes
+    }).toList
+  }
+
   override def getMemorySize(path: String): ConfigMemorySize =
-    ConfigMemorySize.ofBytes(getBytes(path))
+    ConfigMemorySize.ofBytes(getBytesBigInteger(path))
+
   override def getDuration(path: String, unit: TimeUnit): Long = {
     val v = find(path, ConfigValueType.STRING)
     val result = unit.convert(
@@ -745,6 +817,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     )
     result
   }
+
   override def getDuration(path: String): Duration = {
     val v = find(path, ConfigValueType.STRING)
     val nanos = SimpleConfig.parseDuration(
@@ -754,16 +827,19 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     )
     Duration.ofNanos(nanos)
   }
+
   override def getPeriod(path: String): Period = {
     val v = find(path, ConfigValueType.STRING)
     SimpleConfig.parsePeriod(v.unwrapped.asInstanceOf[String], v.origin, path)
   }
+
   override def getTemporal(path: String): TemporalAmount =
     try getDuration(path)
     catch {
       case e: ConfigException.BadValue =>
         getPeriod(path)
     }
+
   @SuppressWarnings(Array("unchecked"))
   private def getHomogeneousUnwrappedList[T](
       path: String,
@@ -787,10 +863,13 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     }
     l
   }
+
   override def getBooleanList(path: String): ju.List[jl.Boolean] =
     getHomogeneousUnwrappedList(path, ConfigValueType.BOOLEAN)
+
   override def getNumberList(path: String): ju.List[jl.Number] =
     getHomogeneousUnwrappedList(path, ConfigValueType.NUMBER)
+
   override def getIntList(path: String): ju.List[jl.Integer] = {
     val l = new ju.ArrayList[Integer]
     val numbers = getHomogeneousWrappedList(path, ConfigValueType.NUMBER)
@@ -800,6 +879,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     }
     l
   }
+
   override def getLongList(path: String): ju.List[jl.Long] = {
     val l = new ju.ArrayList[jl.Long]
     val numbers = getNumberList(path)
@@ -808,6 +888,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     }
     l
   }
+
   override def getDoubleList(path: String): ju.List[jl.Double] = {
     val l = new ju.ArrayList[jl.Double]
     val numbers = getNumberList(path)
@@ -816,6 +897,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     }
     l
   }
+
   override def getStringList(path: String): ju.List[String] =
     getHomogeneousUnwrappedList(path, ConfigValueType.STRING)
 
@@ -881,8 +963,10 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     }
     l
   }
+
   override def getObjectList(path: String): ju.List[ConfigObject] =
     getHomogeneousWrappedList(path, ConfigValueType.OBJECT)
+
   override def getConfigList(path: String): ju.List[_ <: Config] = {
     val objects = getObjectList(path)
     val l = new ju.ArrayList[Config]
@@ -891,6 +975,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     }
     l
   }
+
   override def getAnyRefList(path: String): ju.List[_ <: AnyRef] = {
     val l = new ju.ArrayList[AnyRef]
     val list = getList(path)
@@ -899,35 +984,32 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     }
     l
   }
+
   override def getBytesList(path: String): ju.List[jl.Long] = {
-    val l = new ju.ArrayList[jl.Long]
-    val list = getList(path)
-    for (v <- list.asScala) {
-      if (v.valueType eq ConfigValueType.NUMBER) {
-        l.add(v.unwrapped.asInstanceOf[Number].longValue)
-      } else if (v.valueType eq ConfigValueType.STRING) {
-        val s = v.unwrapped.asInstanceOf[String]
-        val n = SimpleConfig.parseBytes(s, v.origin, path)
-        l.add(n)
-      } else {
-        throw new ConfigException.WrongType(
-          v.origin,
-          path,
-          "memory size string or number of bytes",
-          v.valueType.name
-        )
-      }
-    }
-    l
+    val v = find(path, ConfigValueType.LIST)
+    getBytesListBigInteger(path)
+      .map(bytes => toLong(bytes, v.origin, path))
+      .asJava
   }
-  override def getMemorySizeList(path: String): ju.List[ConfigMemorySize] = {
-    val list = getBytesList(path)
-    val builder = new ju.ArrayList[ConfigMemorySize]
-    for (v <- list.asScala) {
-      builder.add(ConfigMemorySize.ofBytes(v))
-    }
-    builder
-  }
+
+  private def toLong(
+      value: jm.BigInteger,
+      originForException: ConfigOrigin,
+      pathForException: String
+  ): jl.Long =
+    if (value.bitLength < 64) value.longValue
+    else
+      throw new ConfigException.BadValue(
+        originForException,
+        pathForException,
+        "size-in-bytes value is out of range for a 64-bit long: '" + value + "'"
+      )
+
+  override def getMemorySizeList(path: String): ju.List[ConfigMemorySize] =
+    getBytesListBigInteger(path)
+      .map(ConfigMemorySize.ofBytes)
+      .asJava
+
   override def getDurationList(
       path: String,
       unit: TimeUnit
