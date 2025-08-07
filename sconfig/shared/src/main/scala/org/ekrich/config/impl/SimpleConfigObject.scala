@@ -5,9 +5,9 @@ package org.ekrich.config.impl
 
 import java.io.ObjectStreamException
 import java.io.Serializable
+import java.util as ju
 import java.lang as jl
 import java.math.BigInteger
-import java.util as ju
 import scala.jdk.CollectionConverters.*
 import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
