@@ -3,7 +3,7 @@
  */
 package org.ekrich.config.impl
 
-import beanconfig.EnumsConfig.{Solution, Problem}
+import beanconfig.EnumsConfig.{Problem, Solution}
 import org.ekrich.config._
 
 import java.io.{InputStream, InputStreamReader}
