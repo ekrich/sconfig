@@ -194,7 +194,7 @@ object ConfigDelayedMerge {
         sb.append(ConfigImplUtil.renderJsonString(atKey))
         if (options.getFormatted) sb.append(" : ") else sb.append(":")
       }
-      v.render(sb, indentVal, atRoot, options)
+      v.renderValue(sb, indentVal, atRoot, options)
       sb.append(",")
       if (options.getFormatted) sb.append('\n')
     }
@@ -320,7 +320,7 @@ final class ConfigDelayedMerge(
     ConfigDelayedMerge.render(stack, sb, indent, atRoot, atKey, options)
   }
 
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,

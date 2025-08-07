@@ -153,7 +153,7 @@ final class ConfigDelayedMergeObject(
   ): Unit = {
     ConfigDelayedMerge.render(stack, sb, indent, atRoot, atKey, options)
   }
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,

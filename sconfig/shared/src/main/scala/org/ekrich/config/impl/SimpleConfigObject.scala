@@ -5,9 +5,9 @@ package org.ekrich.config.impl
 
 import java.io.ObjectStreamException
 import java.io.Serializable
+import java.util as ju
 import java.lang as jl
 import java.math.BigInteger
-import java.util as ju
 import scala.jdk.CollectionConverters.*
 import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
@@ -501,7 +501,32 @@ final class SimpleConfigObject(
         v.relativized(prefix)
     })
 
-  override def render(
+  private def trySimplifyTheOnlyNestedObjectRec(
+      keysAggregate: String
+  ): Option[(String, AbstractConfigValue)] =
+    if (value.size() == 1) {
+      val newKeyElement = ConfigImplUtil.renderStringUnquotedIfPossible(
+        keySet.iterator().next()
+      )
+      val newAggregate = (if (keysAggregate.isEmpty) ""
+                          else s"$keysAggregate.") + newKeyElement
+      values.iterator().next() match {
+        case innerSCO: SimpleConfigObject =>
+          innerSCO.trySimplifyTheOnlyNestedObjectRec(newAggregate)
+        case other: AbstractConfigValue =>
+          Some(newAggregate -> other)
+        case _ => None
+      }
+    } else None
+
+  private def trySimplifyTheOnlyNestedObject(
+      options: ConfigRenderOptions
+  ): Option[(String, AbstractConfigValue)] =
+    if (!options.formattingOptions.simplifyOneEntryNestedObjects || options.getJson) {
+      None
+    } else trySimplifyTheOnlyNestedObjectRec("")
+
+  override def renderValue(
       sb: jl.StringBuilder,
       indentVal: Int,
       atRoot: Boolean,
@@ -509,73 +534,96 @@ final class SimpleConfigObject(
   ): Unit = {
     if (isEmpty) sb.append("{}")
     else {
-      val outerBraces = options.getJson || !atRoot
-      var innerIndent = 0
-      if (outerBraces) {
-        innerIndent = indentVal + 1
-        sb.append("{")
-        if (options.getFormatted) sb.append('\n')
-      } else innerIndent = indentVal
-      var separatorCount = 0
-
-      val keys = new ju.ArrayList[String]
-      keys.addAll(keySet)
-      val ordering =
-        if (options.formattingOptions.keepOriginOrder)
-          new SimpleConfigObject.KeepOriginRenderComparator(str =>
-            value.get(str).origin
-          )
-        else new SimpleConfigObject.OrderedRenderComparator
-      ju.Collections.sort(keys, ordering)
-
-      for (k <- keys.asScala) {
-        var v: AbstractConfigValue = null
-        v = value.get(k)
-        if (options.getOriginComments) {
-          val lines = v.origin.description.split("\n")
-          for (l <- lines) {
-            AbstractConfigValue.indent(sb, indentVal + 1, options)
-            sb.append('#')
-            if (!l.isEmpty) sb.append(' ')
-            sb.append(l)
-            sb.append("\n")
+      trySimplifyTheOnlyNestedObject(options) match {
+        case Some((aggKey, leafValue)) =>
+          if (!atRoot) { // if not root then it is in some other object
+            if (options.getFormatted)
+              sb.deleteCharAt(
+                sb.length() - 1
+              ) // assumption that ' ' is the removed char
+            sb.append('.')
           }
-        }
-        if (options.getComments) {
-          for (comment <- v.origin.comments.asScala) {
-            AbstractConfigValue.indent(sb, innerIndent, options)
-            sb.append("#")
-            if (!comment.startsWith(" ")) sb.append(' ')
-            sb.append(comment)
-            sb.append("\n")
-          }
-        }
-        AbstractConfigValue.indent(sb, innerIndent, options)
-        v.render(sb, innerIndent, false /* atRoot */, k, options)
-        if (options.getFormatted) {
-          if (options.getJson) {
-            sb.append(",")
-            separatorCount = 2
-          } else separatorCount = 1
-          sb.append('\n')
-        } else {
-          sb.append(",")
-          separatorCount = 1
-        }
-      }
-      // chop last commas/newlines
-      sb.setLength(sb.length - separatorCount)
-      if (outerBraces) {
-        if (options.getFormatted) {
-          sb.append('\n') // put a newline back
-
-          if (outerBraces) AbstractConfigValue.indent(sb, indentVal, options)
-        }
-        sb.append("}")
+          leafValue.renderWithRenderedKey(sb, aggKey, options)
+          leafValue.renderValue(sb, indentVal, atRoot, options)
+        case _ =>
+          renderValueAsMultiLineObject(sb, indentVal, atRoot, options)
       }
     }
     if (atRoot && options.getFormatted && options.getFormattingOptions.newLineAtEnd)
       sb.append('\n')
+  }
+
+  private def renderValueAsMultiLineObject(
+      sb: jl.StringBuilder,
+      indentVal: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit = {
+    val outerBraces = options.getJson || !atRoot
+    var innerIndent = 0
+    if (outerBraces) {
+      innerIndent = indentVal + 1
+      sb.append("{")
+      if (options.getFormatted) sb.append('\n')
+    } else innerIndent = indentVal
+    var separatorCount = 0
+
+    val keys = new ju.ArrayList[String]
+    keys.addAll(keySet)
+    val ordering =
+      if (options.formattingOptions.keepOriginOrder)
+        new SimpleConfigObject.KeepOriginRenderComparator(str =>
+          value.get(str).origin
+        )
+      else new SimpleConfigObject.OrderedRenderComparator
+    ju.Collections.sort(keys, ordering)
+
+    for (k <- keys.asScala) {
+      var v: AbstractConfigValue = null
+      v = value.get(k)
+      if (options.getOriginComments) {
+        val lines = v.origin.description.split("\n")
+        for (l <- lines) {
+          AbstractConfigValue.indent(sb, indentVal + 1, options)
+          sb.append('#')
+          if (!l.isEmpty) sb.append(' ')
+          sb.append(l)
+          sb.append("\n")
+        }
+      }
+      if (options.getComments) {
+        for (comment <- v.origin.comments.asScala) {
+          AbstractConfigValue.indent(sb, innerIndent, options)
+          sb.append("#")
+          if (!comment.startsWith(" ")) sb.append(' ')
+          sb.append(comment)
+          sb.append("\n")
+        }
+      }
+      AbstractConfigValue.indent(sb, innerIndent, options)
+      v.render(sb, innerIndent, false /* atRoot */, k, options)
+      if (options.getFormatted) {
+        if (options.getJson) {
+          sb.append(",")
+          separatorCount = 2
+        } else separatorCount = 1
+        sb.append('\n')
+      } else {
+        sb.append(",")
+        separatorCount = 1
+      }
+    }
+    // chop last commas/newlines
+    sb.setLength(sb.length - separatorCount)
+    if (outerBraces) {
+      if (options.getFormatted) {
+        sb.append('\n') // put a newline back
+
+        if (outerBraces)
+          AbstractConfigValue.indent(sb, indentVal, options)
+      }
+      sb.append("}")
+    }
   }
 
   override def get(key: Any): AbstractConfigValue = value.get(key)
