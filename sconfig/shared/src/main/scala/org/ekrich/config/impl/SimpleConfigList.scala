@@ -216,7 +216,8 @@ final class SimpleConfigList(
         if (options.getComments) {
           for (comment <- v.origin.comments.asScala) {
             indent(sb, indentVal + 1, options)
-            sb.append("# ")
+            sb.append("#")
+            if (!comment.startsWith(" ")) sb.append(' ')
             sb.append(comment)
             sb.append("\n")
           }
