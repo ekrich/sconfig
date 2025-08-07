@@ -1,6 +1,6 @@
 package org.ekrich.config.impl
 
-import org.ekrich.config.{ConfigException, ConfigSyntax, ConfigParseOptions}
+import org.ekrich.config.{ConfigException, ConfigParseOptions, ConfigSyntax}
 import org.junit.Assert._
 import org.junit.Test
 
