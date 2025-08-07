@@ -30,9 +30,6 @@ import org.ekrich.config.ConfigResolveOptions
 import org.ekrich.config.ConfigValue
 import org.ekrich.config.ConfigValueType
 
-import scala.jdk.CollectionConverters.*
-import scala.util.{Try, Success, Failure}
-
 /**
  * One thing to keep in mind in the future: as Collection-like APIs are added
  * here, including iterators or size() or anything, they should be consistent
@@ -756,8 +753,9 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
 
   private def getBytesBigInteger(path: String): BigInteger = {
     val v: ConfigValue = find(path, ConfigValueType.STRING)
-    Try(BigInteger.valueOf(getLong(path)))
-      .recover {
+    val bytes =
+      try BigInteger.valueOf(getLong(path))
+      catch {
         case _: ConfigException.WrongType =>
           SimpleConfig.parseBytes(
             v.unwrapped.asInstanceOf[String],
@@ -765,24 +763,21 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
             path
           )
       }
-      .flatMap(bytes =>
-        if (bytes.signum() < 0)
-          Failure(
-            new ConfigException.BadValue(
-              v.origin,
-              path,
-              "Attempt to construct memory size with negative number: " + bytes
-            )
-          )
-        else Success(bytes)
+    if (bytes.signum() < 0)
+      throw new ConfigException.BadValue(
+        v.origin,
+        path,
+        "Attempt to construct memory size with negative number: " + bytes
       )
-      .get
+    else bytes
   }
 
-  private def getBytesListBigInteger(path: String): List[BigInteger] = {
-    val listIter = getList(path).iterator().asScala
-
-    (for (v: ConfigValue <- listIter) yield {
+  private def getBytesListBigInteger(path: String): ju.List[BigInteger] = {
+    val list = getList(path)
+    val result = new ju.ArrayList[BigInteger](list.size)
+    val iter = list.iterator()
+    while (iter.hasNext) {
+      val v: ConfigValue = iter.next()
       val bytes: BigInteger =
         if (v.valueType eq ConfigValueType.NUMBER)
           BigInteger.valueOf(v.unwrapped.asInstanceOf[Number].longValue)
@@ -802,8 +797,9 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
           path,
           "Attempt to construct ConfigMemorySize with negative number: " + bytes
         )
-      bytes
-    }).toList
+      result.add(bytes)
+    }
+    result
   }
 
   override def getMemorySize(path: String): ConfigMemorySize =
@@ -988,9 +984,10 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
 
   override def getBytesList(path: String): ju.List[jl.Long] = {
     val v = find(path, ConfigValueType.LIST)
-    getBytesListBigInteger(path)
-      .map(bytes => toLong(bytes, v.origin, path))
-      .asJava
+    val list = new ju.ArrayList[jl.Long]()
+    for (bytes <- getBytesListBigInteger(path).asScala)
+      list.add(toLong(bytes, v.origin, path))
+    list
   }
 
   private def toLong(
@@ -1006,10 +1003,12 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
         "size-in-bytes value is out of range for a 64-bit long: '" + value + "'"
       )
 
-  override def getMemorySizeList(path: String): ju.List[ConfigMemorySize] =
-    getBytesListBigInteger(path)
-      .map(ConfigMemorySize.ofBytes)
-      .asJava
+  override def getMemorySizeList(path: String): ju.List[ConfigMemorySize] = {
+    val list = new ju.ArrayList[ConfigMemorySize]()
+    for (cms <- getBytesListBigInteger(path).asScala)
+      list.add(ConfigMemorySize.ofBytes(cms))
+    list
+  }
 
   override def getDurationList(
       path: String,
