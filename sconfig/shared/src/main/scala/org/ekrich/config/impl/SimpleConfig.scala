@@ -5,7 +5,7 @@ package org.ekrich.config.impl
 
 import java.io.ObjectStreamException
 import java.io.Serializable
-import java.{lang => jl}
+import java.lang as jl
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.DateTimeException
@@ -13,11 +13,13 @@ import java.time.Duration
 import java.time.Period
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAmount
-import java.{util => ju}
+import java.util as ju
 import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 
-import scala.jdk.CollectionConverters._
-import scala.util.control.Breaks._
+import scala.jdk.CollectionConverters.*
+import scala.util.control.Breaks.*
+
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigList
@@ -37,6 +39,9 @@ import org.ekrich.config.ConfigValueType
  */
 @SerialVersionUID(1L)
 object SimpleConfig {
+  private val nonNegIntPattern = Pattern.compile("[0-9]+")
+  private val signedIntPattern = Pattern.compile("[+-]?[0-9]+")
+
   private def findPaths(
       entries: ju.Set[ju.Map.Entry[String, ConfigValue]],
       parent: Path,
@@ -130,13 +135,13 @@ object SimpleConfig {
     }
   private def getUnits(s: String): String = {
     var i = s.length - 1
-    breakable {
-      while (i >= 0) {
-        val c = s.charAt(i)
-        if (!Character.isLetter(c)) break() // break
-        i -= 1
-      }
+    var break = false
+    while (i >= 0 && !break) {
+      val c = s.charAt(i)
+      if (!Character.isLetter(c)) break = true
+      else i -= 1
     }
+
     return s.substring(i + 1)
   }
 
@@ -288,7 +293,7 @@ object SimpleConfig {
       // if the string is purely digits, parse as an integer to avoid
       // possible precision loss;
       // otherwise as a double.
-      if (numberString.matches("[+-]?[0-9]+")) {
+      if (signedIntPattern.matcher(numberString).matches()) {
         units.toNanos(jl.Long.parseLong(numberString))
       } else {
         val nanosInUnit = units.toNanos(1)
@@ -346,7 +351,7 @@ object SimpleConfig {
     try {
       var result: BigInteger = null
       // possible precision loss; otherwise as a double.
-      if (numberString.matches("[0-9]+"))
+      if (nonNegIntPattern.matcher(numberString).matches())
         result = units.bytes.multiply(new BigInteger(numberString))
       else {
         val resultDecimal =
