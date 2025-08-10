@@ -3,9 +3,11 @@
  */
 package org.ekrich.config.impl
 
-import org.junit.Assert._
-import org.junit._
+import org.junit.Assert.*
+import org.junit.*
 import org.ekrich.config.ConfigMemorySize
+
+import java.math.BigInteger
 
 class ConfigMemorySizeTest extends TestUtilsShared {
   @Test
@@ -24,5 +26,15 @@ class ConfigMemorySizeTest extends TestUtilsShared {
   def testToUnits(): Unit = {
     val kilobyte = ConfigMemorySize.ofBytes(1024)
     assertEquals(1024L, kilobyte.toBytes)
+  }
+
+  @Test
+  def testGetBytes(): Unit = {
+    val yottabyte =
+      ConfigMemorySize.ofBytes(new BigInteger("1000000000000000000000000"))
+    assertEquals(
+      new BigInteger("1000000000000000000000000"),
+      yottabyte.toBytesBigInteger
+    )
   }
 }
