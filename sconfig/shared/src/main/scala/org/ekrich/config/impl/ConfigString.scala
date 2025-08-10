@@ -56,7 +56,7 @@ abstract class ConfigString(origin: ConfigOrigin, val value: String)
 
   override def transformToString: String = value
 
-  override def render(
+  override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,

@@ -320,47 +320,56 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
-      atKey: String,
+      atKey: String, // nullable
       options: ConfigRenderOptions
   ): Unit = {
-    if (atKey != null) {
-      val renderedKey =
-        if (options.getJson) ConfigImplUtil.renderJsonString(atKey)
-        else ConfigImplUtil.renderStringUnquotedIfPossible(atKey)
-      sb.append(renderedKey)
-      if (options.getJson) {
-        if (options.getFormatted)
-          sb.append(" : ")
-        else
-          sb.append(":")
-      } else { // in non-JSON we can omit the colon or equals before an object
-        if (this.isInstanceOf[ConfigObject]) {
-          if (options.getFormatted) sb.append(' ')
-        } else {
-          sb.append(
-            if (options.getFormatted) {
-              if (options.formattingOptions.colonAssign) ": " else " = "
-            } else {
-              if (options.formattingOptions.colonAssign) ":" else "="
-            }
-          )
-        }
+    Option(atKey)
+      .foreach { key =>
+        val renderedKey =
+          if (options.getJson) ConfigImplUtil.renderJsonString(key)
+          else ConfigImplUtil.renderStringUnquotedIfPossible(key)
+        renderWithRenderedKey(sb, renderedKey, options)
       }
-    }
-    render(sb, indent, atRoot, options)
+    renderValue(sb, indent, atRoot, options)
   }
-  def render(
+
+  def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
       atRoot: Boolean,
       options: ConfigRenderOptions
-  ): Unit =
-    if (hideEnvVariableValue(options)) {
-      sb.append("<env variable>")
-    } else {
-      val u = unwrapped
-      sb.append(u.toString)
+  ): Unit = if (hideEnvVariableValue(options)) {
+    sb.append("<env variable>")
+  } else {
+    val u = unwrapped
+    sb.append(u.toString)
+  }
+
+  private[impl] def renderWithRenderedKey(
+      sb: jl.StringBuilder,
+      renderedKey: String, // not nullable
+      options: ConfigRenderOptions
+  ): Unit = {
+    sb.append(renderedKey)
+    if (options.getJson) {
+      if (options.getFormatted)
+        sb.append(" : ")
+      else
+        sb.append(":")
+    } else { // in non-JSON we can omit the colon or equals before an object
+      if (this.isInstanceOf[ConfigObject]) {
+        if (options.getFormatted) sb.append(' ')
+      } else {
+        sb.append(
+          if (options.getFormatted) {
+            if (options.formattingOptions.colonAssign) ": " else " = "
+          } else {
+            if (options.formattingOptions.colonAssign) ":" else "="
+          }
+        )
+      }
     }
+  }
 
   protected def hideEnvVariableValue(options: ConfigRenderOptions): Boolean =
     !options.getShowEnvVariableValues && (origin.originType eq OriginType.ENV_VARIABLE)
