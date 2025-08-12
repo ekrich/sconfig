@@ -13,7 +13,7 @@ jobs:
       JAVA_OPTS: -Xms2G -Xmx4G -Xss6M -XX:+UseG1GC -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
     name: Test using Java ${{ matrix.java }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
