@@ -37,7 +37,7 @@ object ConfigMemorySize {
 
 }
 
-final class ConfigMemorySize private (val bytes: jm.BigInteger) {
+final class ConfigMemorySize private (private val bytes: jm.BigInteger) {
   if (bytes.signum() < 0)
     throw new IllegalArgumentException(
       "Attempt to construct ConfigMemorySize with negative number: " + bytes
