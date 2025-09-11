@@ -3,7 +3,7 @@
  */
 package org.ekrich.config
 
-import java.{math as jm}
+import java.math as jm
 
 /**
  * An immutable class representing an amount of memory. Use static factory

@@ -30,8 +30,6 @@ import org.ekrich.config.ConfigValueType
 
 import org.ekrich.config.impl.ScalaOps.*
 
-import scala.util.{Try, Success, Failure}
-
 /**
  * One thing to keep in mind in the future: as Collection-like APIs are added
  * here, including iterators or size() or anything, they should be consistent
@@ -48,7 +46,7 @@ object SimpleConfig {
       parent: Path,
       obj: AbstractConfigObject
   ): Unit = {
-    obj.entrySet.scalaOps.foreach { entry =>
+    obj.entrySet.forEach { entry =>
       val elem = entry.getKey
       val v = entry.getValue
       var path = Path.newKey(elem)
@@ -785,8 +783,10 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
 
   private def getBytesBigInteger(path: String): BigInteger = {
     val v: ConfigValue = find(path, ConfigValueType.STRING)
-    Try(BigInteger.valueOf(getLong(path)))
-      .recover {
+    val bytes =
+      try {
+        BigInteger.valueOf(getLong(path))
+      } catch {
         case _: ConfigException.WrongType =>
           SimpleConfig.parseBytes(
             v.unwrapped.asInstanceOf[String],
@@ -794,18 +794,13 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
             path
           )
       }
-      .flatMap(bytes =>
-        if (bytes.signum() < 0)
-          Failure(
-            new ConfigException.BadValue(
-              v.origin,
-              path,
-              "Attempt to construct memory size with negative number: " + bytes
-            )
-          )
-        else Success(bytes)
+    if (bytes.signum() < 0)
+      throw new ConfigException.BadValue(
+        v.origin,
+        path,
+        "Attempt to construct memory size with negative number: " + bytes
       )
-      .get
+    bytes
   }
   override def getMemorySize(path: String): ConfigMemorySize =
     ConfigMemorySize.ofBytes(getBytesBigInteger(path))
@@ -848,7 +843,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   ): ju.List[T] = {
     val list = getList(path)
     val l = new ju.ArrayList[T](list.size())
-    list.scalaOps.foreach { cv =>
+    list.forEach { cv =>
       // variance would be nice, but stupid cast will do
       var v = cv.asInstanceOf[AbstractConfigValue]
       if (expected != null)
@@ -875,7 +870,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     val numbers = getHomogeneousWrappedList(path, ConfigValueType.NUMBER)
       .asInstanceOf[ju.List[ConfigNumber]]
     val l = new ju.ArrayList[Integer](numbers.size())
-    numbers.scalaOps.foreach(v =>
+    numbers.forEach(v =>
       l.add(v.asInstanceOf[ConfigNumber].intValueRangeChecked(path))
     )
     l
@@ -884,14 +879,14 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   override def getLongList(path: String): ju.List[jl.Long] = {
     val numbers = getNumberList(path)
     val l = new ju.ArrayList[jl.Long](numbers.size())
-    numbers.scalaOps.foreach(n => l.add(n.longValue))
+    numbers.forEach(n => l.add(n.longValue))
     l
   }
 
   override def getDoubleList(path: String): ju.List[jl.Double] = {
     val numbers = getNumberList(path)
     val l = new ju.ArrayList[jl.Double](numbers.size())
-    numbers.scalaOps.foreach(n => l.add(n.doubleValue))
+    numbers.forEach(n => l.add(n.doubleValue))
     l
   }
 
@@ -945,7 +940,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   ): ju.List[T] = {
     val list = getList(path)
     val l = new ju.ArrayList[T](list.size())
-    list.scalaOps.foreach { cv =>
+    list.forEach { cv =>
       var v = cv.asInstanceOf[AbstractConfigValue]
       if (expected != null) v = DefaultTransformer.transform(v, expected)
       if (v.valueType ne expected)
@@ -966,7 +961,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   override def getConfigList(path: String): ju.List[_ <: Config] = {
     val objects = getObjectList(path)
     val l = new ju.ArrayList[Config](objects.size())
-    objects.scalaOps.foreach { o =>
+    objects.forEach { o =>
       l.add(o.toConfig)
     }
     l
@@ -975,56 +970,51 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   override def getAnyRefList(path: String): ju.List[_ <: AnyRef] = {
     val list = getList(path)
     val l = new ju.ArrayList[AnyRef](list.size())
-    list.scalaOps.foreach { v =>
+    list.forEach { v =>
       l.add(v.unwrapped)
     }
     l
   }
 
   private def getBytesListBigInteger(path: String): ju.List[BigInteger] = {
-    val l = new ju.ArrayList[BigInteger]
     val list = getList(path)
+    val l = new ju.ArrayList[BigInteger](list.size())
 
-    list
-      .iterator()
-      .scalaOps
-      .foreach(v => {
-        val bytes: BigInteger =
-          if (v.valueType eq ConfigValueType.NUMBER)
-            BigInteger.valueOf(v.unwrapped.asInstanceOf[Number].longValue)
-          else if (v.valueType eq ConfigValueType.STRING) {
-            val s = v.unwrapped.asInstanceOf[String]
-            SimpleConfig.parseBytes(s, v.origin, path)
-          } else
-            throw new ConfigException.WrongType(
-              v.origin,
-              path,
-              "memory size string or number of bytes",
-              v.valueType.name
-            )
-        if (bytes.signum < 0)
-          throw new ConfigException.BadValue(
+    list.forEach(v => {
+      val bytes: BigInteger =
+        if (v.valueType eq ConfigValueType.NUMBER)
+          BigInteger.valueOf(v.unwrapped.asInstanceOf[Number].longValue)
+        else if (v.valueType eq ConfigValueType.STRING) {
+          val s = v.unwrapped.asInstanceOf[String]
+          SimpleConfig.parseBytes(s, v.origin, path)
+        } else
+          throw new ConfigException.WrongType(
             v.origin,
             path,
-            "Attempt to construct ConfigMemorySize with negative number: " + bytes
+            "memory size string or number of bytes",
+            v.valueType.name
           )
-        l.add(bytes)
-      })
+      if (bytes.signum < 0)
+        throw new ConfigException.BadValue(
+          v.origin,
+          path,
+          "Attempt to construct ConfigMemorySize with negative number: " + bytes
+        )
+      l.add(bytes)
+    })
     l
   }
   override def getBytesList(path: String): ju.List[jl.Long] = {
     val v = find(path, ConfigValueType.LIST)
-    val l = new ju.ArrayList[jl.Long]
-    getBytesListBigInteger(path)
-      .iterator()
-      .scalaOps
-      .foreach(bytes => l.add(toLong(bytes, v.origin, path)))
+    val list = getBytesListBigInteger(path)
+    val l = new ju.ArrayList[jl.Long](list.size())
+    list.forEach(bytes => l.add(toLong(bytes, v.origin, path)))
     l
   }
 
   override def getMemorySizeList(path: String): ju.List[ConfigMemorySize] = {
     val list = getBytesListBigInteger(path)
-    val builder = new ju.ArrayList[ConfigMemorySize]
+    val builder = new ju.ArrayList[ConfigMemorySize](list.size())
     list.forEach { v =>
       builder.add(ConfigMemorySize.ofBytes(v))
     }
@@ -1036,7 +1026,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   ): ju.List[jl.Long] = {
     val list = getList(path)
     val l = new ju.ArrayList[jl.Long](list.size())
-    list.scalaOps.foreach { v =>
+    list.forEach { v =>
       if (v.valueType eq ConfigValueType.NUMBER) {
         val n = unit.convert(
           v.unwrapped.asInstanceOf[Number].longValue,
@@ -1065,9 +1055,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   override def getDurationList(path: String): ju.List[Duration] = {
     val l = getDurationList(path, TimeUnit.NANOSECONDS)
     val builder = new ju.ArrayList[Duration](l.size)
-    l.scalaOps.foreach { value =>
-      builder.add(Duration.ofNanos(value))
-    }
+    l.forEach(value => builder.add(Duration.ofNanos(value)))
     builder
   }
 
