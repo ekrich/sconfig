@@ -201,7 +201,7 @@ class ConfigValueSharedTest extends TestUtilsShared {
 
   @Test
   def configDelayedMergeObjectEquality(): Unit = {
-    val empty = SimpleConfigObject.empty()
+    val empty = SimpleConfigObject.empty
     val s1 = subst("foo")
     val s2 = subst("bar")
     val a = new ConfigDelayedMergeObject(
@@ -232,7 +232,7 @@ class ConfigValueSharedTest extends TestUtilsShared {
     stringValue("hi").toString()
     nullValue().toString()
     boolValue(true).toString()
-    val emptyObj = SimpleConfigObject.empty()
+    val emptyObj = SimpleConfigObject.empty
     emptyObj.toString()
     (new SimpleConfigList(
       fakeOrigin(),
@@ -413,7 +413,7 @@ class ConfigValueSharedTest extends TestUtilsShared {
     unresolved { dm.unwrapped }
 
     // ConfigDelayedMergeObject
-    val emptyObj = SimpleConfigObject.empty()
+    val emptyObj = SimpleConfigObject.empty
     val dmo = new ConfigDelayedMergeObject(
       fakeOrigin(),
       List[AbstractConfigValue](emptyObj, subst("a"), subst("b")).asJava
@@ -728,7 +728,7 @@ class ConfigValueSharedTest extends TestUtilsShared {
   @Test
   def withValueDepth1FromEmpty(): Unit = {
     val v = ConfigValueFactory.fromAnyRef(42: Integer)
-    val config = ConfigFactory.empty().withValue("a", v)
+    val config = ConfigFactory.empty.withValue("a", v)
     assertEquals(parseConfig("a=42"), config)
     assertTrue(config.getValue("a") eq v)
   }
@@ -736,7 +736,7 @@ class ConfigValueSharedTest extends TestUtilsShared {
   @Test
   def withValueDepth2FromEmpty(): Unit = {
     val v = ConfigValueFactory.fromAnyRef(42: Integer)
-    val config = ConfigFactory.empty().withValue("a.b", v)
+    val config = ConfigFactory.empty.withValue("a.b", v)
     assertEquals(parseConfig("a.b=42"), config)
     assertTrue(config.getValue("a.b") eq v)
   }
@@ -744,7 +744,7 @@ class ConfigValueSharedTest extends TestUtilsShared {
   @Test
   def withValueDepth3FromEmpty(): Unit = {
     val v = ConfigValueFactory.fromAnyRef(42: Integer)
-    val config = ConfigFactory.empty().withValue("a.b.c", v)
+    val config = ConfigFactory.empty.withValue("a.b.c", v)
     assertEquals(parseConfig("a.b.c=42"), config)
     assertTrue(config.getValue("a.b.c") eq v)
   }
@@ -785,8 +785,7 @@ class ConfigValueSharedTest extends TestUtilsShared {
     val v2 = ConfigValueFactory.fromAnyRef(2: Integer)
     val v3 = ConfigValueFactory.fromAnyRef(3: Integer)
     val v4 = ConfigValueFactory.fromAnyRef(4: Integer)
-    val config = ConfigFactory
-      .empty()
+    val config = ConfigFactory.empty
       .withValue("a", v1)
       .withValue("b.c", v2)
       .withValue("b.d", v3)
@@ -804,7 +803,7 @@ class ConfigValueSharedTest extends TestUtilsShared {
       SimpleConfigOrigin.newSimple("\n5\n6\n7\n"),
       java.util.Collections.singletonList(v.asInstanceOf[AbstractConfigValue])
     )
-    val conf = ConfigFactory.empty().withValue("bar", list)
+    val conf = ConfigFactory.empty.withValue("bar", list)
     val rendered = conf.root.render
     def assertHas(s: String): Unit =
       assertTrue(s"has ${s.replace("\n", "\\n")} in it", rendered.contains(s))

@@ -28,7 +28,7 @@ class ConfigTest extends TestUtilsShared {
 
   def mergeUnresolved(toMerge: AbstractConfigObject*) = {
     if (toMerge.isEmpty) {
-      SimpleConfigObject.empty()
+      SimpleConfigObject.empty
     } else {
       toMerge.reduce((first, second) => first.withFallback(second))
     }

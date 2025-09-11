@@ -180,7 +180,7 @@ final class ResolveSource(
   private def rootMustBeObj(value: Container) =
     if (value.isInstanceOf[AbstractConfigObject])
       value.asInstanceOf[AbstractConfigObject]
-    else SimpleConfigObject.empty()
+    else SimpleConfigObject.empty
   @throws[NotPossibleToResolve]
   private[impl] def lookupSubst(
       context: ResolveContext,
@@ -298,7 +298,7 @@ final class ResolveSource(
           newPath.last.asInstanceOf[AbstractConfigObject],
           newPath
         )
-      else new ResolveSource(SimpleConfigObject.empty())
+      else new ResolveSource(SimpleConfigObject.empty)
     } else if (old eq root) new ResolveSource(rootMustBeObj(replacement))
     else {
       throw new ConfigException.BugOrBroken(

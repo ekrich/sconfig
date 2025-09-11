@@ -146,7 +146,7 @@ class Json4sTest extends TestUtilsJson4s {
     // be sure we do the same thing as json parser when we build our JSON "DOM"
     for (valid <- whitespaceVariations(validJson, true)) {
       val jsonAST = if (valid.jsonBehaviorUnexpected) {
-        SimpleConfigObject.empty()
+        SimpleConfigObject.empty
       } else {
         addOffendingJsonToException("json", valid.test) {
           fromJsonWithJsonParser(valid.test)

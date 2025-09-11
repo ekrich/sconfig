@@ -396,7 +396,7 @@ class ConfigBeanFactoryTest extends TestUtils {
   def testDifferentFieldNameFromAccessors(): Unit = {
     val e = intercept[ConfigException.ValidationFailed] {
       ConfigBeanFactory.create(
-        ConfigFactory.empty(),
+        ConfigFactory.empty,
         classOf[DifferentFieldNameFromAccessorsConfig]
       )
     }
