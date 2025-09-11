@@ -251,7 +251,7 @@ class ConfigValueTest extends TestUtils {
 
   @Test
   def configDelayedMergeObjectNotSerializable(): Unit = {
-    val empty = SimpleConfigObject.empty()
+    val empty = SimpleConfigObject.empty
     val s1 = subst("foo")
     val s2 = subst("bar")
     val a = new ConfigDelayedMergeObject(

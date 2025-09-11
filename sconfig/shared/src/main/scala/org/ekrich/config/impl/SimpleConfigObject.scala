@@ -145,10 +145,10 @@ object SimpleConfigObject {
 
   private val emptyInstance = empty(SimpleConfigOrigin.newSimple(EMPTY_NAME))
 
-  private[impl] def empty(): SimpleConfigObject = emptyInstance
+  private[impl] def empty: SimpleConfigObject = emptyInstance
 
   private[impl] def empty(origin: ConfigOrigin): SimpleConfigObject =
-    if (origin == null) empty()
+    if (origin == null) empty
     else
       new SimpleConfigObject(
         origin,

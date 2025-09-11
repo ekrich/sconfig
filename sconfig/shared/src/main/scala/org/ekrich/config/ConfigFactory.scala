@@ -519,7 +519,7 @@ object ConfigFactory extends PlatformConfigFactory {
    * @return
    *   an empty configuration
    */
-  def empty(): Config = empty(null)
+  def empty: Config = empty(null)
 
   /**
    * Gets an empty configuration with a description to be used to create a

@@ -103,8 +103,8 @@ class PublicApiTest extends TestUtils {
 
   @Test
   def emptyConfigs(): Unit = {
-    assertTrue(ConfigFactory.empty().isEmpty)
-    assertEquals("empty config", ConfigFactory.empty().origin.description)
+    assertTrue(ConfigFactory.empty.isEmpty)
+    assertEquals("empty config", ConfigFactory.empty.origin.description)
     assertTrue(ConfigFactory.empty("foo").isEmpty)
     assertEquals("foo", ConfigFactory.empty("foo").origin.description)
   }
