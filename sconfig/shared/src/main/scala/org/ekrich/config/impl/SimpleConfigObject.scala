@@ -522,7 +522,7 @@ final class SimpleConfigObject(
   private def trySimplifyTheOnlyNestedObject(
       options: ConfigRenderOptions
   ): Option[(String, AbstractConfigValue)] =
-    if (!options.formattingOptions.simplifyOneEntryNestedObjects || options.getJson) {
+    if (!options.getConfigFormatOptions.getSimplifyOneEntryNestedObjects || options.getJson) {
       None
     } else trySimplifyTheOnlyNestedObjectRec("")
 
@@ -549,7 +549,7 @@ final class SimpleConfigObject(
           renderValueAsMultiLineObject(sb, indentVal, atRoot, options)
       }
     }
-    if (atRoot && options.getFormatted && options.getFormattingOptions.newLineAtEnd)
+    if (atRoot && options.getFormatted && options.getConfigFormatOptions.getNewLineAtEnd)
       sb.append('\n')
   }
 
@@ -571,7 +571,7 @@ final class SimpleConfigObject(
     val keys = new ju.ArrayList[String]
     keys.addAll(keySet)
     val ordering =
-      if (options.formattingOptions.keepOriginOrder)
+      if (options.getConfigFormatOptions.getKeepOriginOrder)
         new SimpleConfigObject.KeepOriginRenderComparator(str =>
           value.get(str).origin
         )

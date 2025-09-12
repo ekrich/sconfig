@@ -29,11 +29,11 @@ object ConfigParseOptions {
 }
 
 final class ConfigParseOptions private (
-    val syntax: ConfigSyntax,
-    val originDescription: String,
-    val allowMissing: Boolean,
-    val includer: ConfigIncluder,
-    val classLoader: ClassLoader
+    syntax: ConfigSyntax,
+    originDescription: String,
+    allowMissing: Boolean,
+    includer: ConfigIncluder,
+    classLoader: ClassLoader
 ) {
 
   /**
