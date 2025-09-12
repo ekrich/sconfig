@@ -67,10 +67,18 @@ For other MIMA commands type the above up through `mima` and hit tab to see othe
 
 This project uses `scalafmt` with a similar configuration similar to Scala Native. All code should be formatted prior to merging as CI checks. Everyone may not like the format so sometimes you can wrap lines to make things look better and `scalafmt` will leave it as such. Either way you just run `scalafmt` and forget about it. One less thing to worry about.
 
-From the root of the project in your shell you can format all the code as follows:
+To install scalafmt please read the [official documentation](https://scalameta.org/scalafmt/docs/installation.html).
+
+Alternately there is a script that can be run from the root of the project in your shell:
 
 ```sh
 scripts/scalafmt
+```
+
+You can also use scalafmt within the sbt shell by running
+
+```sbt
+scalafmtAll
 ```
 
 If you use VSCode you can format individual files for macOS via `shift-option F` or on Windows via `shift-alt F`
