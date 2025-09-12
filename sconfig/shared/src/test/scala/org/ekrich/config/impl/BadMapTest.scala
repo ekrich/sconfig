@@ -100,6 +100,7 @@ class BadMapTest extends TestUtilsShared {
     map = map
       .copyingPut(negativeHashKey, "value")
       .copyingPut(new Key(2), "other value")
+      .copyingPut(new Key(Integer.MIN_VALUE), "negative again")
       .copyingPut(new Key(3), "yet another value")
     assertEquals(map.get(negativeHashKey), "value")
   }
