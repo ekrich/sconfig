@@ -13,7 +13,7 @@ import java.util.concurrent.Callable
 
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
-import scala.language.implicitConversions
+import scala.language.implicitConversions // string2jsontest
 import scala.reflect.ClassTag
 import scala.reflect.classTag
 

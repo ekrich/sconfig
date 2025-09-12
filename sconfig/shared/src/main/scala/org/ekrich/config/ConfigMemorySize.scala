@@ -3,7 +3,7 @@
  */
 package org.ekrich.config
 
-import java.{math as jm}
+import java.math as jm
 
 /**
  * An immutable class representing an amount of memory. Use static factory
@@ -37,7 +37,7 @@ object ConfigMemorySize {
 
 }
 
-final class ConfigMemorySize private (val bytes: jm.BigInteger) {
+final class ConfigMemorySize private (private val bytes: jm.BigInteger) {
   if (bytes.signum() < 0)
     throw new IllegalArgumentException(
       "Attempt to construct ConfigMemorySize with negative number: " + bytes
