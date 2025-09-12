@@ -25,7 +25,7 @@ object BadMap {
       k: K,
       v: V
   ): Unit = {
-    val i = hash % entries.length
+    val i = Math.abs(hash % entries.length)
     val old = entries(i) // old may be null
     entries(i) = new Entry(hash, k, v, old)
   }
