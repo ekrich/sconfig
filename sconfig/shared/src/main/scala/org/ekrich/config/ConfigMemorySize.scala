@@ -37,11 +37,17 @@ object ConfigMemorySize {
 
 }
 
-final class ConfigMemorySize private (private val bytes: jm.BigInteger) {
-  if (bytes.signum() < 0)
+final class ConfigMemorySize private (private val _bytes: jm.BigInteger) {
+  if (_bytes.signum() < 0)
     throw new IllegalArgumentException(
-      "Attempt to construct ConfigMemorySize with negative number: " + bytes
+      "Attempt to construct ConfigMemorySize with negative number: " + _bytes
     )
+
+  @deprecated(
+    "Use toBytes",
+    "Since 1.10.0, will remove in 1.12.0"
+  )
+  def bytes: Long = toBytes
 
   /**
    * Gets the size in bytes.
@@ -54,10 +60,10 @@ final class ConfigMemorySize private (private val bytes: jm.BigInteger) {
    *   value. Consider using {@link #toBytesBigInteger} in this case.
    */
   def toBytes: Long =
-    if (bytes.bitLength() < 64) bytes.longValue()
+    if (_bytes.bitLength() < 64) _bytes.longValue()
     else
       throw new IllegalArgumentException(
-        "size-in-bytes value is out of range for a 64-bit long: '" + bytes + "'"
+        "size-in-bytes value is out of range for a 64-bit long: '" + _bytes + "'"
       )
 
   /**
@@ -69,18 +75,18 @@ final class ConfigMemorySize private (private val bytes: jm.BigInteger) {
    * @return
    *   how many bytes
    */
-  def toBytesBigInteger: jm.BigInteger = bytes
+  def toBytesBigInteger: jm.BigInteger = _bytes
 
-  override def toString: String = "ConfigMemorySize(" + bytes + ")"
+  override def toString: String = "ConfigMemorySize(" + _bytes + ")"
 
   override def equals(other: Any): Boolean =
     other match {
-      case size: ConfigMemorySize => size.bytes.equals(this.bytes)
+      case size: ConfigMemorySize => size._bytes.equals(this._bytes)
       case _                      => false
     }
 
   override def hashCode: Int =
-    // in Java 8 this can become Long.hashCode(bytes)
-    // Long.valueOf(bytes).hashCode
-    bytes.hashCode()
+    // in Java 8 this can become Long.hashCode(_bytes)
+    // Long.valueOf(_bytes).hashCode
+    _bytes.hashCode()
 }

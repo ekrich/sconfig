@@ -105,7 +105,8 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
 
   @Test
   def useFourSpacesIndentation(): Unit = {
-    implicit val configFormatOptions = defaultFormatOptions.setDoubleIndent(true)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setDoubleIndent(true)
 
     val in = """r {
                |  p {
@@ -149,7 +150,8 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
 
   @Test
   def useEqualsAsAssignSign(): Unit = {
-    implicit val configFormatOptions = defaultFormatOptions.setColonAssign(false)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setColonAssign(false)
 
     val in = """r {
                |    s=t_f
