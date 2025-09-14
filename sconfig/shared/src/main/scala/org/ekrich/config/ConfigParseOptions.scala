@@ -9,12 +9,15 @@ import org.ekrich.config.impl.PlatformThread
 /**
  * A set of options related to parsing.
  *
- * <p> This object is immutable, so the "setters" return a new object.
+ * This object is immutable, so the "setters" return a new object.
  *
- * <p> Here is an example of creating a custom `ConfigParseOptions`:
+ * Here is an example of creating a custom `ConfigParseOptions`:
  *
- * <pre> ConfigParseOptions options = ConfigParseOptions.defaults()
- * .setSyntax(ConfigSyntax.JSON) .setAllowMissing(false) </pre>
+ * {{{
+ * val options = ConfigParseOptions.defaults()
+ *   .setSyntax(ConfigSyntax.JSON)
+ *   .setAllowMissing(false)
+ * }}}
  */
 object ConfigParseOptions {
 
@@ -29,40 +32,40 @@ object ConfigParseOptions {
 }
 
 final class ConfigParseOptions private (
-    _syntax: ConfigSyntax,
-    _originDescription: String,
-    _allowMissing: Boolean,
-    _includer: ConfigIncluder,
-    _classLoader: ClassLoader
+    private val _syntax: ConfigSyntax,
+    private val _originDescription: String,
+    private val _allowMissing: Boolean,
+    private val _includer: ConfigIncluder,
+    private val _classLoader: ClassLoader
 ) {
 
   @deprecated(
     "Use getSyntax",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def syntax = _syntax
 
   @deprecated(
     "Use getOriginDescription",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def originDescription = _originDescription
 
   @deprecated(
     "Use getAllowMissing",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def allowMissing = _allowMissing
 
   @deprecated(
     "Use getIncluder",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def includer = _includer
 
   @deprecated(
     "Use getClassLoader",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def classLoader = _classLoader
 

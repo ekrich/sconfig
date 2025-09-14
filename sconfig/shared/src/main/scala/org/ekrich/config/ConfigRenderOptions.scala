@@ -4,12 +4,14 @@
 package org.ekrich.config
 
 /**
- * <p> A set of options related to rendering a [[ConfigValue]]. Passed to
+ * A set of options related to rendering a [[ConfigValue]]. Passed to
  * [[ConfigValue!.render(options:org\.ekrich\.config\.ConfigRenderOptions)* ConfigValue.render(ConfigRenderOptions)]].
  *
- * <p> Here is an example of creating a `ConfigRenderOptions`:
+ * Here is an example of creating a `ConfigRenderOptions`:
  *
- * <pre> val options = ConfigRenderOptions.defaults.setComments(false) </pre>
+ * {{{
+ * val options = ConfigRenderOptions.defaults.setComments(false)
+ * }}}
  */
 object ConfigRenderOptions {
 
@@ -20,6 +22,13 @@ object ConfigRenderOptions {
    *
    * @return
    *   the default render options
+   *
+   *   - originComments = true
+   *   - comments = true
+   *   - formatted = true
+   *   - json = true
+   *   - showEnvVariableValues = true
+   *   - configFormatOptions = [[ConfigFormatOptions#default]]
    */
   def defaults = new ConfigRenderOptions(
     true,
@@ -36,6 +45,13 @@ object ConfigRenderOptions {
    *
    * @return
    *   the concise render options
+   *
+   *   - originComments = false
+   *   - comments = false
+   *   - formatted = false
+   *   - json = true
+   *   - showEnvVariableValues = true
+   *   - configFormatOptions = [[ConfigFormatOptions#default]]
    */
   def concise = new ConfigRenderOptions(
     false,
@@ -47,7 +63,7 @@ object ConfigRenderOptions {
   )
 }
 
-@deprecated("Use getConfigFormatOptions", "Since 1.10.0, will remove in 1.12.0")
+@deprecated("Use getConfigFormatOptions", "Since 1.12.0, will remove in 1.14.0")
 case class FormattingOptions(
     keepOriginOrder: Boolean = false,
     doubleIndent: Boolean = true,
@@ -56,12 +72,12 @@ case class FormattingOptions(
 )
 
 final class ConfigRenderOptions private (
-    _originComments: Boolean,
-    _comments: Boolean,
-    _formatted: Boolean,
-    _json: Boolean,
-    _showEnvVariableValues: Boolean,
-    _configFormatOptions: ConfigFormatOptions
+    private val _originComments: Boolean,
+    private val _comments: Boolean,
+    private val _formatted: Boolean,
+    private val _json: Boolean,
+    private val _showEnvVariableValues: Boolean,
+    private val _configFormatOptions: ConfigFormatOptions
 ) {
 
   /**
@@ -80,7 +96,7 @@ final class ConfigRenderOptions private (
       new ConfigRenderOptions(
         _originComments,
         value,
-        formatted,
+        _formatted,
         _json,
         _showEnvVariableValues,
         _configFormatOptions
@@ -168,6 +184,7 @@ final class ConfigRenderOptions private (
    *   the new ConfigFormatOptions object
    * @return
    *   the new ConfigRenderOptions object with the new formatting setting
+   * @since 1.12.0
    */
   def setConfigFormatOptions(value: ConfigFormatOptions): ConfigRenderOptions =
     if (value == _configFormatOptions) this
@@ -186,36 +203,37 @@ final class ConfigRenderOptions private (
    *
    * @return
    *   the config format option
+   * @since 1.12.0
    */
   def getConfigFormatOptions: ConfigFormatOptions = _configFormatOptions
 
   @deprecated(
     "Use getOriginComments",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def originComments = _originComments
 
   @deprecated(
     "Use getComments",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
-  def comments = _originComments
+  def comments = _comments
 
   @deprecated(
     "Use getFormatted",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def formatted = _formatted
 
   @deprecated(
     "Use getJson",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def json = _json
 
   @deprecated(
     "Use getShowEnvVariableValues",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def showEnvVariableValues = _showEnvVariableValues
 
@@ -230,7 +248,7 @@ final class ConfigRenderOptions private (
    */
   @deprecated(
     "Use setConfigFormatOptions",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def setFormattingOptions(value: FormattingOptions): ConfigRenderOptions =
     if (value == convert(_configFormatOptions)) this
@@ -261,13 +279,13 @@ final class ConfigRenderOptions private (
 
   @deprecated(
     "Use getConfigFormatOptions",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def formattingOptions: FormattingOptions = convert(_configFormatOptions)
 
   @deprecated(
     "Use getConfigFormatOptions",
-    "Since 1.10.0, will remove in 1.12.0"
+    "Since 1.12.0, will remove in 1.14.0"
   )
   def getFormattingOptions: FormattingOptions = convert(_configFormatOptions)
 

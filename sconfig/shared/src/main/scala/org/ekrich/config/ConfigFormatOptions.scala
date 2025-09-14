@@ -1,15 +1,44 @@
 package org.ekrich.config
 
+/**
+ * A set of options related to formatting.
+ *
+ * This object is immutable, so the "setters" return a new object.
+ *
+ * Here is an example of creating a custom `ConfigFormatOptions` and change two
+ * defaults:
+ *
+ * {{{
+ * val options = ConfigFormatOptions.defaults()
+ *   .setKeepOriginOrder(true)
+ *   .setDoubleIndent(false)
+ * }}}
+ *
+ * @since 1.12.0
+ */
 object ConfigFormatOptions {
+
+  /**
+   * Create a `ConfigFormatOptions` object with the default values.
+   *
+   * @return
+   *   the default options
+   *
+   *   - keepOriginOrder = false
+   *   - doubleIndent = true
+   *   - colonAssign = false
+   *   - newLineAtEnd = true
+   *   - simplifyOneEntryNestedObjects = false
+   */
   def defaults = new ConfigFormatOptions(false, true, false, true, false)
 }
 
 final class ConfigFormatOptions private (
-    keepOriginOrder: Boolean,
-    doubleIndent: Boolean,
-    colonAssign: Boolean,
-    newLineAtEnd: Boolean,
-    simplifyOneEntryNestedObjects: Boolean
+    private val keepOriginOrder: Boolean,
+    private val doubleIndent: Boolean,
+    private val colonAssign: Boolean,
+    private val newLineAtEnd: Boolean,
+    private val simplifyOneEntryNestedObjects: Boolean
 ) {
   def setKeepOriginOrder(value: Boolean): ConfigFormatOptions =
     if (value == keepOriginOrder) this
