@@ -7,7 +7,8 @@ import java.math as jm
 
 /**
  * An immutable class representing an amount of memory. Use static factory
- * methods such as [[ConfigMemorySize#ofBytes(bytes:Long)*]] to create instances.
+ * methods such as [[ConfigMemorySize#ofBytes(bytes:Long)*]] to create
+ * instances.
  *
  * @since 1.3.0
  */
