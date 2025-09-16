@@ -7,7 +7,7 @@ import java.math as jm
 
 /**
  * An immutable class representing an amount of memory. Use static factory
- * methods such as [[ConfigMemorySize#ofBytes(bytes:Long)*]] to create
+ * methods such as [[ConfigMemorySize$.ofBytes(bytes:Long)*]] to create
  * instances.
  *
  * @since 1.3.0
@@ -56,9 +56,9 @@ final class ConfigMemorySize private (private val _bytes: jm.BigInteger) {
    * @since 1.3.0
    * @return
    *   how many bytes
-   * @exception
-   *   IllegalArgumentException when memory value in bytes doesn't fit in a long
-   *   value. Consider using {@link #toBytesBigInteger} in this case.
+   * @throws java.lang.IllegalArgumentException
+   *   when memory value in bytes doesn't fit in a long value. Consider using
+   *   [[ConfigMemorySize!.toBytesBigInteger]] in this case.
    */
   def toBytes: Long =
     if (_bytes.bitLength() < 64) _bytes.longValue()
@@ -69,9 +69,9 @@ final class ConfigMemorySize private (private val _bytes: jm.BigInteger) {
 
   /**
    * Gets the size in bytes. The behavior of this method is the same as that of
-   * the {@link # toBytes ( )} method, except that the number of bytes returned
-   * as a BigInteger value. Use it when memory value in bytes doesn't fit in a
-   * long value.
+   * the [[ConfigMemorySize!.toBytes]] method, except that the number of bytes
+   * returned as a BigInteger value and it won't throw an exception. Use it when
+   * memory value in bytes doesn't fit in a long value.
    *
    * @return
    *   how many bytes

@@ -17,8 +17,8 @@ object ConfigRenderOptions {
 
   /**
    * Returns the default render options which are verbose (commented and
-   * formatted). See [[ConfigRenderOptions#concise]] for stripped-down options.
-   * This rendering will not be valid JSON since it has comments.
+   * formatted). See [[ConfigRenderOptions$.concise*]] for stripped-down
+   * options. This rendering will not be valid JSON since it has comments.
    *
    * @return
    *   the default render options
@@ -28,7 +28,7 @@ object ConfigRenderOptions {
    *   - formatted = true
    *   - json = true
    *   - showEnvVariableValues = true
-   *   - configFormatOptions = [[ConfigFormatOptions#default]]
+   *   - configFormatOptions = [[ConfigFormatOptions$.default*]]
    */
   def defaults = new ConfigRenderOptions(
     true,
@@ -51,7 +51,7 @@ object ConfigRenderOptions {
    *   - formatted = false
    *   - json = true
    *   - showEnvVariableValues = true
-   *   - configFormatOptions = [[ConfigFormatOptions#default]]
+   *   - configFormatOptions = [[ConfigFormatOptions$.default*]]
    */
   def concise = new ConfigRenderOptions(
     false,
