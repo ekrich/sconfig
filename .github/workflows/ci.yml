@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-22.04, macos-13]
-        java: [ '17', '21', '25' ]
+        java: [ '17', '21', '25-ea' ]
     runs-on: ${{ matrix.os }}
     env:
       JAVA_OPTS: -Xms2G -Xmx4G -Xss6M -XX:+UseG1GC -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
@@ -20,7 +20,7 @@ jobs:
     - name: Setup Java
       uses: actions/setup-java@v5
       with:
-        distribution: 'adopt'
+        distribution: 'temurin'
         java-version: ${{ matrix.java }}
         cache: 'sbt'
     - name: Setup sbt
