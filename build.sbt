@@ -298,3 +298,32 @@ val skipPublish = Seq(
   packageDoc / publishArtifact := false,
   publish / skip := true
 )
+
+ThisBuild / githubWorkflowBuild := Seq(
+  WorkflowStep.Sbt(
+    commands = List("+ test"),
+    env = Map(
+      "JAVA_OPTS" -> "-Xms2G -Xmx4G -Xss6M -XX:+UseG1GC -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8"
+    )
+  )
+)
+
+ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
+ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty // Disable publish for now
+
+ThisBuild / githubWorkflowOSes := Seq(
+  "ubuntu-latest",
+  "macos-latest",
+  "windows-latest"
+)
+
+ThisBuild / githubWorkflowJavaVersions := Seq(
+  JavaSpec.temurin("8"),
+  JavaSpec.temurin("11"),
+  JavaSpec.temurin("17"),
+  JavaSpec.temurin("21")
+)
+
+ThisBuild / githubWorkflowBuildMatrixExclusions += MatrixExclude(
+  Map("java" -> "temurin@8", "os" -> "macos-latest")
+)

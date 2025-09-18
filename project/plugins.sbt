@@ -23,3 +23,6 @@ addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % scalafix)
 
 // Run scalafmt within sbt
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.5")
+
+// Generated github CI actions from sbt build
+addSbtPlugin("com.github.sbt" % "sbt-github-actions" % "0.27.0")
