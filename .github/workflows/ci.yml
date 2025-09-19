@@ -5,20 +5,25 @@ on:
   pull_request:
 jobs:
   build:
-    runs-on: ubuntu-22.04
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-22.04, macos-13]
         java: [ '17', '21' ]
+    runs-on: ${{ matrix.os }}
     env:
       JAVA_OPTS: -Xms2G -Xmx4G -Xss6M -XX:+UseG1GC -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
-    name: Test using Java ${{ matrix.java }}
+    name: Test using ${{matrix.os}} and Java ${{ matrix.java }}
     steps:
-    - uses: actions/checkout@v5
+    - name: Checkout current branch (full)
+      uses: actions/checkout@v5
     - name: Setup Java
       uses: actions/setup-java@v5
       with:
-        distribution: 'adopt'
+        distribution: 'temurin'
         java-version: ${{ matrix.java }}
         cache: 'sbt'
-    - uses: sbt/setup-sbt@v1
-    - run: sbt +test
+    - name: Setup sbt
+      uses: sbt/setup-sbt@v1
+    - name: Run tests
+      run: sbt +test
