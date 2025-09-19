@@ -1,6 +1,10 @@
 package foo
 
-import org.ekrich.config.{ConfigFactory, ConfigRenderOptions, FormattingOptions}
+import org.ekrich.config.{
+  ConfigFactory,
+  ConfigRenderOptions,
+  ConfigFormatOptions
+}
 
 object RenderExample extends App {
   val formatted = args.contains("--formatted")
@@ -13,12 +17,15 @@ object RenderExample extends App {
   val doubleIndent = !args.contains("--single-indent")
   val colonAssign = args.contains("--colon-assign")
   val newLineAtEnd = !args.contains("--no-new-line-eof")
-  val formattingOptions = FormattingOptions(
-    keepOriginOrder,
-    doubleIndent,
-    colonAssign,
-    newLineAtEnd
-  )
+  val simplifyOneEntryNestedObjects =
+    !args.contains("--simplify-one-entry-nested-objects")
+
+  val configFormatOptions = ConfigFormatOptions.defaults
+    .setKeepOriginOrder(keepOriginOrder)
+    .setDoubleIndent(doubleIndent)
+    .setColonAssign(colonAssign)
+    .setNewLineAtEnd(newLineAtEnd)
+    .setSimplifyNestedObjects(simplifyOneEntryNestedObjects)
 
   val options = ConfigRenderOptions.defaults
     .setFormatted(formatted)
@@ -26,7 +33,7 @@ object RenderExample extends App {
     .setComments(comments)
     .setJson(!hocon)
     .setShowEnvVariableValues(!hideEnvVariableValues)
-    .setFormattingOptions(formattingOptions)
+    .setConfigFormatOptions(configFormatOptions)
 
   def render(what: String): Unit = {
     val conf = ConfigFactory

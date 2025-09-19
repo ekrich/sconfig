@@ -4,25 +4,40 @@
 package org.ekrich.config
 
 /**
- * <p> A set of options related to rendering a [[ConfigValue]]. Passed to
+ * A set of options related to rendering a [[ConfigValue]]. Passed to
  * [[ConfigValue!.render(options:org\.ekrich\.config\.ConfigRenderOptions)* ConfigValue.render(ConfigRenderOptions)]].
  *
- * <p> Here is an example of creating a `ConfigRenderOptions`:
+ * Here is an example of creating a `ConfigRenderOptions`:
  *
- * <pre> val options = ConfigRenderOptions.defaults.setComments(false) </pre>
+ * {{{
+ * val options = ConfigRenderOptions.defaults.setComments(false)
+ * }}}
  */
 object ConfigRenderOptions {
 
   /**
    * Returns the default render options which are verbose (commented and
-   * formatted). See [[ConfigRenderOptions#concise]] for stripped-down options.
-   * This rendering will not be valid JSON since it has comments.
+   * formatted). See [[ConfigRenderOptions$.concise*]] for stripped-down
+   * options. This rendering will not be valid JSON since it has comments.
    *
    * @return
    *   the default render options
+   *
+   *   - originComments = true
+   *   - comments = true
+   *   - formatted = true
+   *   - json = true
+   *   - showEnvVariableValues = true
+   *   - configFormatOptions = [[ConfigFormatOptions$.default*]]
    */
-  def defaults =
-    new ConfigRenderOptions(true, true, true, true, true, FormattingOptions())
+  def defaults = new ConfigRenderOptions(
+    true,
+    true,
+    true,
+    true,
+    true,
+    ConfigFormatOptions.defaults
+  )
 
   /**
    * Returns concise render options (no whitespace or comments). For a resolved
@@ -30,6 +45,13 @@ object ConfigRenderOptions {
    *
    * @return
    *   the concise render options
+   *
+   *   - originComments = false
+   *   - comments = false
+   *   - formatted = false
+   *   - json = true
+   *   - showEnvVariableValues = true
+   *   - configFormatOptions = [[ConfigFormatOptions$.default*]]
    */
   def concise = new ConfigRenderOptions(
     false,
@@ -37,25 +59,25 @@ object ConfigRenderOptions {
     false,
     true,
     true,
-    FormattingOptions()
+    ConfigFormatOptions.defaults
   )
 }
 
+@deprecated("Use getConfigFormatOptions", "Since 1.12.0, will remove in 1.14.0")
 case class FormattingOptions(
     keepOriginOrder: Boolean = false,
     doubleIndent: Boolean = true,
     colonAssign: Boolean = false,
-    newLineAtEnd: Boolean = true,
-    simplifyOneEntryNestedObjects: Boolean = false
+    newLineAtEnd: Boolean = true
 )
 
 final class ConfigRenderOptions private (
-    val originComments: Boolean,
-    val comments: Boolean,
-    val formatted: Boolean,
-    val json: Boolean,
-    val showEnvVariableValues: Boolean,
-    val formattingOptions: FormattingOptions
+    private val _originComments: Boolean,
+    private val _comments: Boolean,
+    private val _formatted: Boolean,
+    private val _json: Boolean,
+    private val _showEnvVariableValues: Boolean,
+    private val _configFormatOptions: ConfigFormatOptions
 ) {
 
   /**
@@ -69,15 +91,15 @@ final class ConfigRenderOptions private (
    *   options with requested setting for comments
    */
   def setComments(value: Boolean): ConfigRenderOptions =
-    if (value == comments) this
+    if (value == _comments) this
     else
       new ConfigRenderOptions(
-        originComments,
+        _originComments,
         value,
-        formatted,
-        json,
-        showEnvVariableValues,
-        formattingOptions
+        _formatted,
+        _json,
+        _showEnvVariableValues,
+        _configFormatOptions
       )
 
   /**
@@ -87,7 +109,7 @@ final class ConfigRenderOptions private (
    * @return
    *   true if comments should be rendered
    */
-  def getComments: Boolean = comments
+  def getComments: Boolean = _comments
 
   /**
    * Returns options with origin comments toggled. If this is enabled, the
@@ -105,15 +127,15 @@ final class ConfigRenderOptions private (
    *   options with origin comments toggled
    */
   def setOriginComments(value: Boolean): ConfigRenderOptions =
-    if (value == originComments) this
+    if (value == _originComments) this
     else
       new ConfigRenderOptions(
         value,
-        comments,
-        formatted,
-        json,
-        showEnvVariableValues,
-        formattingOptions
+        _comments,
+        _formatted,
+        _json,
+        _showEnvVariableValues,
+        _configFormatOptions
       )
 
   /**
@@ -123,7 +145,7 @@ final class ConfigRenderOptions private (
    * @return
    *   true if origin comments should be rendered
    */
-  def getOriginComments: Boolean = originComments
+  def getOriginComments: Boolean = _originComments
 
   /**
    * Returns options with formatting toggled. Formatting means indentation and
@@ -135,15 +157,15 @@ final class ConfigRenderOptions private (
    *   options with requested setting for formatting
    */
   def setFormatted(value: Boolean): ConfigRenderOptions =
-    if (value == formatted) this
+    if (value == _formatted) this
     else
       new ConfigRenderOptions(
-        originComments,
-        comments,
+        _originComments,
+        _comments,
         value,
-        json,
-        showEnvVariableValues,
-        formattingOptions
+        _json,
+        _showEnvVariableValues,
+        _configFormatOptions
       )
 
   /**
@@ -153,7 +175,67 @@ final class ConfigRenderOptions private (
    * @return
    *   true if the options enable formatting
    */
-  def getFormatted: Boolean = formatted
+  def getFormatted: Boolean = _formatted
+
+  /**
+   * Set the config format options. Formatting is dependant on formatted flag.
+   *
+   * @param value
+   *   the new ConfigFormatOptions object
+   * @return
+   *   the new ConfigRenderOptions object with the new formatting setting
+   * @since 1.12.0
+   */
+  def setConfigFormatOptions(value: ConfigFormatOptions): ConfigRenderOptions =
+    if (value == _configFormatOptions) this
+    else
+      new ConfigRenderOptions(
+        _originComments,
+        _comments,
+        _formatted,
+        _json,
+        _showEnvVariableValues,
+        value
+      )
+
+  /**
+   * Returns options used to format the config.
+   *
+   * @return
+   *   the config format option
+   * @since 1.12.0
+   */
+  def getConfigFormatOptions: ConfigFormatOptions = _configFormatOptions
+
+  @deprecated(
+    "Use getOriginComments",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def originComments = _originComments
+
+  @deprecated(
+    "Use getComments",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def comments = _comments
+
+  @deprecated(
+    "Use getFormatted",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def formatted = _formatted
+
+  @deprecated(
+    "Use getJson",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def json = _json
+
+  @deprecated(
+    "Use getShowEnvVariableValues",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def showEnvVariableValues = _showEnvVariableValues
 
   /**
    * Returns new render options with formatting options set. Formatting is
@@ -164,25 +246,48 @@ final class ConfigRenderOptions private (
    * @return
    *   options with requested setting for formatting
    */
+  @deprecated(
+    "Use setConfigFormatOptions",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
   def setFormattingOptions(value: FormattingOptions): ConfigRenderOptions =
-    if (value == formattingOptions) this
+    if (value == convert(_configFormatOptions)) this
     else
       new ConfigRenderOptions(
-        originComments,
-        comments,
-        formatted,
-        json,
-        showEnvVariableValues,
-        value
+        _originComments,
+        _comments,
+        _formatted,
+        _json,
+        _showEnvVariableValues,
+        convert(value)
       )
 
-  /**
-   * Returns options used to format the config.
-   *
-   * @return
-   *   FormattingOptions
-   */
-  def getFormattingOptions: FormattingOptions = formattingOptions
+  private def convert(value: FormattingOptions): ConfigFormatOptions =
+    ConfigFormatOptions.defaults
+      .setKeepOriginOrder(value.keepOriginOrder)
+      .setDoubleIndent(value.doubleIndent)
+      .setColonAssign(value.colonAssign)
+      .setNewLineAtEnd(value.newLineAtEnd)
+
+  private def convert(value: ConfigFormatOptions): FormattingOptions =
+    FormattingOptions(
+      value.getKeepOriginOrder,
+      value.getDoubleIndent,
+      value.getColonAssign,
+      value.getNewLineAtEnd
+    )
+
+  @deprecated(
+    "Use getConfigFormatOptions",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def formattingOptions: FormattingOptions = convert(_configFormatOptions)
+
+  @deprecated(
+    "Use getConfigFormatOptions",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def getFormattingOptions: FormattingOptions = convert(_configFormatOptions)
 
   /**
    * Returns options with JSON toggled. JSON means that HOCON extensions
@@ -197,15 +302,15 @@ final class ConfigRenderOptions private (
    *   options with requested setting for JSON
    */
   def setJson(value: Boolean): ConfigRenderOptions =
-    if (value == json) this
+    if (value == _json) this
     else
       new ConfigRenderOptions(
-        originComments,
-        comments,
-        formatted,
+        _originComments,
+        _comments,
+        _formatted,
         value,
-        showEnvVariableValues,
-        formattingOptions
+        _showEnvVariableValues,
+        _configFormatOptions
       )
 
   /**
@@ -215,7 +320,7 @@ final class ConfigRenderOptions private (
    * @return
    *   true if only JSON should be rendered
    */
-  def getJson: Boolean = json
+  def getJson: Boolean = _json
 
   /**
    * Returns options with showEnvVariableValues toggled. This controls if values
@@ -227,15 +332,15 @@ final class ConfigRenderOptions private (
    *   options with requested setting for environment variables
    */
   def setShowEnvVariableValues(value: Boolean): ConfigRenderOptions =
-    if (value == showEnvVariableValues) this
+    if (value == _showEnvVariableValues) this
     else
       new ConfigRenderOptions(
-        originComments,
-        comments,
-        formatted,
-        json,
+        _originComments,
+        _comments,
+        _formatted,
+        _json,
         value,
-        formattingOptions
+        _configFormatOptions
       )
 
   /**
@@ -246,22 +351,23 @@ final class ConfigRenderOptions private (
    * @return
    *   true if environment variable values should be rendered
    */
-  def getShowEnvVariableValues: Boolean = showEnvVariableValues
+  def getShowEnvVariableValues: Boolean = _showEnvVariableValues
 
   override def toString: String = {
     val sb = new StringBuilder("ConfigRenderOptions(")
-    if (originComments) sb.append("originComments,")
-    if (comments) sb.append("comments,")
-    if (formatted) {
+    if (_originComments) sb.append("originComments,")
+    if (_comments) sb.append("comments,")
+    if (_formatted) {
       sb.append("formatted,")
-      if (formattingOptions.keepOriginOrder) sb.append("keepOriginOrder,")
-      if (formattingOptions.doubleIndent) sb.append("doubleIndent,")
-      if (formattingOptions.colonAssign) sb.append("colonAssign,")
-      if (formattingOptions.simplifyOneEntryNestedObjects)
+      if (_configFormatOptions.getKeepOriginOrder) sb.append("keepOriginOrder,")
+      if (_configFormatOptions.getDoubleIndent) sb.append("doubleIndent,")
+      if (_configFormatOptions.getColonAssign) sb.append("colonAssign,")
+      if (_configFormatOptions.getNewLineAtEnd) sb.append("newLineAtEnd,")
+      if (_configFormatOptions.getSimplifyNestedObjects)
         sb.append("simplifyOneEntryNestedObjects,")
     }
-    if (json) sb.append("json,")
-    if (showEnvVariableValues) sb.append("showEnvVariableValues,")
+    if (_json) sb.append("json,")
+    if (_showEnvVariableValues) sb.append("showEnvVariableValues,")
     val lastIndex = sb.length - 1
     if (sb.charAt(lastIndex) == ',')
       sb.setCharAt(lastIndex, ')')

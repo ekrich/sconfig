@@ -18,7 +18,11 @@ def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
   else nextVersion + "-SNAPSHOT"
 }
 
-val dotcOpts = List("-unchecked", "-deprecation", "-feature")
+val dotcOpts = List(
+  "-unchecked",
+  "-deprecation",
+  "-feature"
+)
 val scalacOpts = dotcOpts ++ List(
   "-Ywarn-unused:imports",
   "-Xsource:3",
@@ -34,6 +38,10 @@ Compile / console / scalacOptions --= Seq(
   // "-Xlint:nonlocal-return", // for 2.12 console
   "-Ywarn-unused:imports",
   "-Xfatal-warnings"
+)
+
+Compile / doc / scalacOptions ++= Seq(
+  "-external-mappings:java\\..*::javadoc::https://docs.oracle.com/en/java/javase/17/docs/api/"
 )
 
 val isScala3 = Def.setting {
