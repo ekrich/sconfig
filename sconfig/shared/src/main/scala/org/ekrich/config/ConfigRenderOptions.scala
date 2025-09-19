@@ -363,7 +363,7 @@ final class ConfigRenderOptions private (
       if (_configFormatOptions.getDoubleIndent) sb.append("doubleIndent,")
       if (_configFormatOptions.getColonAssign) sb.append("colonAssign,")
       if (_configFormatOptions.getNewLineAtEnd) sb.append("newLineAtEnd,")
-      if (_configFormatOptions.getSimplifyOneEntryNestedObjects)
+      if (_configFormatOptions.getSimplifyNestedObjects)
         sb.append("simplifyOneEntryNestedObjects,")
     }
     if (_json) sb.append("json,")

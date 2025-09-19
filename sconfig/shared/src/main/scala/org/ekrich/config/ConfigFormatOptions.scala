@@ -38,8 +38,17 @@ final class ConfigFormatOptions private (
     private val doubleIndent: Boolean,
     private val colonAssign: Boolean,
     private val newLineAtEnd: Boolean,
-    private val simplifyOneEntryNestedObjects: Boolean
+    private val simplifyNestedObjects: Boolean
 ) {
+
+  /**
+   * Set to keep the origin order
+   *
+   * @param value
+   *   true to enable the property, false otherwise
+   * @return
+   *   the new [[ConfigFormatOptions]] object
+   */
   def setKeepOriginOrder(value: Boolean): ConfigFormatOptions =
     if (value == keepOriginOrder) this
     else
@@ -48,11 +57,25 @@ final class ConfigFormatOptions private (
         doubleIndent,
         colonAssign,
         newLineAtEnd,
-        simplifyOneEntryNestedObjects
+        simplifyNestedObjects
       )
 
+  /**
+   * Get the current formatting option value
+   *
+   * @return
+   *   true if set, false otherwise
+   */
   def getKeepOriginOrder: Boolean = keepOriginOrder
 
+  /**
+   * Set to enable double the indent (4 spaces vs 2)
+   *
+   * @param value
+   *   true to enable the property, false otherwise
+   * @return
+   *   the new [[ConfigFormatOptions]] object
+   */
   def setDoubleIndent(value: Boolean): ConfigFormatOptions =
     if (value == doubleIndent) this
     else
@@ -61,11 +84,25 @@ final class ConfigFormatOptions private (
         value,
         colonAssign,
         newLineAtEnd,
-        simplifyOneEntryNestedObjects
+        simplifyNestedObjects
       )
 
+  /**
+   * Get the current formatting option value
+   *
+   * @return
+   *   true if set, false otherwise
+   */
   def getDoubleIndent: Boolean = doubleIndent
 
+  /**
+   * Set to have properties use colons between the name and the value
+   *
+   * @param value
+   *   true to enable the property, false otherwise
+   * @return
+   *   the new [[ConfigFormatOptions]] object
+   */
   def setColonAssign(value: Boolean): ConfigFormatOptions =
     if (value == colonAssign) this
     else
@@ -74,11 +111,25 @@ final class ConfigFormatOptions private (
         doubleIndent,
         value,
         newLineAtEnd,
-        simplifyOneEntryNestedObjects
+        simplifyNestedObjects
       )
 
+  /**
+   * Get the current formatting option value
+   *
+   * @return
+   *   true if set, false otherwise
+   */
   def getColonAssign: Boolean = colonAssign
 
+  /**
+   * Set to have a new line at the end of the file
+   *
+   * @param value
+   *   true to enable the property, false otherwise
+   * @return
+   *   the new [[ConfigFormatOptions]] object
+   */
   def setNewLineAtEnd(value: Boolean): ConfigFormatOptions =
     if (value == newLineAtEnd) this
     else
@@ -87,13 +138,27 @@ final class ConfigFormatOptions private (
         doubleIndent,
         colonAssign,
         value,
-        simplifyOneEntryNestedObjects
+        simplifyNestedObjects
       )
 
+  /**
+   * Get the current formatting option value
+   *
+   * @return
+   *   true if set, false otherwise
+   */
   def getNewLineAtEnd: Boolean = newLineAtEnd
 
-  def setSimplifyOneEntryNestedObjects(value: Boolean): ConfigFormatOptions =
-    if (value == simplifyOneEntryNestedObjects) this
+  /**
+   * Set to simplify nested objects
+   *
+   * @param value
+   *   true to enable the property, false otherwise
+   * @return
+   *   the new [[ConfigFormatOptions]] object
+   */
+  def setSimplifyNestedObjects(value: Boolean): ConfigFormatOptions =
+    if (value == simplifyNestedObjects) this
     else
       new ConfigFormatOptions(
         keepOriginOrder,
@@ -103,6 +168,12 @@ final class ConfigFormatOptions private (
         value
       )
 
-  def getSimplifyOneEntryNestedObjects: Boolean = simplifyOneEntryNestedObjects
+  /**
+   * Get the current formatting option value
+   *
+   * @return
+   *   true if set, false otherwise
+   */
+  def getSimplifyNestedObjects: Boolean = simplifyNestedObjects
 
 }

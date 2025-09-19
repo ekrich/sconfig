@@ -522,7 +522,7 @@ final class SimpleConfigObject(
   private def trySimplifyTheOnlyNestedObject(
       options: ConfigRenderOptions
   ): Option[(String, AbstractConfigValue)] =
-    if (!options.getConfigFormatOptions.getSimplifyOneEntryNestedObjects || options.getJson) {
+    if (!options.getConfigFormatOptions.getSimplifyNestedObjects || options.getJson) {
       None
     } else trySimplifyTheOnlyNestedObjectRec("")
 

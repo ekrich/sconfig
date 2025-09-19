@@ -25,7 +25,7 @@ object RenderExample extends App {
     .setDoubleIndent(doubleIndent)
     .setColonAssign(colonAssign)
     .setNewLineAtEnd(newLineAtEnd)
-    .setSimplifyOneEntryNestedObjects(simplifyOneEntryNestedObjects)
+    .setSimplifyNestedObjects(simplifyOneEntryNestedObjects)
 
   val options = ConfigRenderOptions.defaults
     .setFormatted(formatted)

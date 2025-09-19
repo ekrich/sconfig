@@ -172,7 +172,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def dontSimplifyOneEntryNestedObjects(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setSimplifyOneEntryNestedObjects(false)
+      defaultFormatOptions.setSimplifyNestedObjects(false)
 
     val in = """r.p.d= 42"""
     val result = formatHocon(in)
@@ -190,7 +190,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def simplifyOneEntryNestedObjectsOnRoot(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setSimplifyOneEntryNestedObjects(true)
+      defaultFormatOptions.setSimplifyNestedObjects(true)
 
     val in = """r { "p.at" { d= 42 } }"""
     val result = formatHocon(in)
@@ -204,7 +204,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def simplifyOneEntryNestedObjectsNotOnRoot(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setSimplifyOneEntryNestedObjects(true)
+      defaultFormatOptions.setSimplifyNestedObjects(true)
 
     val in =
       """r { p { "d.ap" { s= 42 } }
