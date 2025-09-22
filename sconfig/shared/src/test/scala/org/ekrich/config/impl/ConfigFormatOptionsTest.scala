@@ -5,28 +5,32 @@ import org.ekrich.config.{
   ConfigFactory,
   ConfigParseOptions,
   ConfigRenderOptions,
-  FormattingOptions
+  ConfigFormatOptions
 }
 
-class FormattingOptionsTest extends TestUtilsShared {
+class ConfigFormatOptionsTest extends TestUtilsShared {
   val parseOptions = ConfigParseOptions.defaults.setAllowMissing(true)
   val myDefaultRenderOptions = ConfigRenderOptions.defaults
     .setJson(false)
     .setOriginComments(false)
     .setComments(true)
     .setFormatted(true)
+  val defaultFormatOptions = ConfigFormatOptions.defaults
 
   def formatHocon(
       str: String
-  )(implicit formattingOptions: FormattingOptions): String =
+  )(implicit configFormatOptions: ConfigFormatOptions): String =
     ConfigFactory
       .parseString(str, parseOptions)
       .root
-      .render(myDefaultRenderOptions.setFormattingOptions(formattingOptions))
+      .render(
+        myDefaultRenderOptions.setConfigFormatOptions(configFormatOptions)
+      )
 
   @Test
   def noNewLineAtTheEnd(): Unit = {
-    implicit val formattingOptions = FormattingOptions(newLineAtEnd = false)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setNewLineAtEnd(false)
     val in = """r {
                |}""".stripMargin
     val result = formatHocon(in)
@@ -36,7 +40,7 @@ class FormattingOptionsTest extends TestUtilsShared {
 
   @Test
   def newLineAtTheEnd(): Unit = {
-    implicit val formattingOptions = FormattingOptions()
+    implicit val configFormatOptions = defaultFormatOptions
     val in = """r {
                |}""".stripMargin
     val result = formatHocon(in)
@@ -47,7 +51,8 @@ class FormattingOptionsTest extends TestUtilsShared {
 
   @Test
   def keepOriginOrderOfEntries(): Unit = {
-    implicit val formattingOptions = FormattingOptions(keepOriginOrder = true)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setKeepOriginOrder(true)
 
     val in = """r {
                |  p {
@@ -75,7 +80,8 @@ class FormattingOptionsTest extends TestUtilsShared {
 
   @Test
   def useTwoSpacesIndentation(): Unit = {
-    implicit val formattingOptions = FormattingOptions(doubleIndent = false)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setDoubleIndent(false)
 
     val in = """r {
                |  p {
@@ -99,7 +105,8 @@ class FormattingOptionsTest extends TestUtilsShared {
 
   @Test
   def useFourSpacesIndentation(): Unit = {
-    implicit val formattingOptions = FormattingOptions(doubleIndent = true)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setDoubleIndent(true)
 
     val in = """r {
                |  p {
@@ -123,7 +130,7 @@ class FormattingOptionsTest extends TestUtilsShared {
 
   @Test
   def useColonAsAssignSign(): Unit = {
-    implicit val formattingOptions = FormattingOptions(colonAssign = true)
+    implicit val configFormatOptions = defaultFormatOptions.setColonAssign(true)
 
     val in = """r {
                |    s=t_f
@@ -143,7 +150,8 @@ class FormattingOptionsTest extends TestUtilsShared {
 
   @Test
   def useEqualsAsAssignSign(): Unit = {
-    implicit val formattingOptions = FormattingOptions(colonAssign = false)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setColonAssign(false)
 
     val in = """r {
                |    s=t_f
@@ -163,8 +171,8 @@ class FormattingOptionsTest extends TestUtilsShared {
 
   @Test
   def dontSimplifyOneEntryNestedObjects(): Unit = {
-    implicit val formattingOptions =
-      FormattingOptions(simplifyOneEntryNestedObjects = false)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setSimplifyNestedObjects(false)
 
     val in = """r.p.d= 42"""
     val result = formatHocon(in)
@@ -181,8 +189,8 @@ class FormattingOptionsTest extends TestUtilsShared {
 
   @Test
   def simplifyOneEntryNestedObjectsOnRoot(): Unit = {
-    implicit val formattingOptions =
-      FormattingOptions(simplifyOneEntryNestedObjects = true)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setSimplifyNestedObjects(true)
 
     val in = """r { "p.at" { d= 42 } }"""
     val result = formatHocon(in)
@@ -195,8 +203,8 @@ class FormattingOptionsTest extends TestUtilsShared {
 
   @Test
   def simplifyOneEntryNestedObjectsNotOnRoot(): Unit = {
-    implicit val formattingOptions =
-      FormattingOptions(simplifyOneEntryNestedObjects = true)
+    implicit val configFormatOptions =
+      defaultFormatOptions.setSimplifyNestedObjects(true)
 
     val in =
       """r { p { "d.ap" { s= 42 } }

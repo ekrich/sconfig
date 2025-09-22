@@ -9,12 +9,15 @@ import org.ekrich.config.impl.PlatformThread
 /**
  * A set of options related to parsing.
  *
- * <p> This object is immutable, so the "setters" return a new object.
+ * This object is immutable, so the "setters" return a new object.
  *
- * <p> Here is an example of creating a custom `ConfigParseOptions`:
+ * Here is an example of creating a custom `ConfigParseOptions`:
  *
- * <pre> ConfigParseOptions options = ConfigParseOptions.defaults()
- * .setSyntax(ConfigSyntax.JSON) .setAllowMissing(false) </pre>
+ * {{{
+ * val options = ConfigParseOptions.defaults()
+ *   .setSyntax(ConfigSyntax.JSON)
+ *   .setAllowMissing(false)
+ * }}}
  */
 object ConfigParseOptions {
 
@@ -29,12 +32,42 @@ object ConfigParseOptions {
 }
 
 final class ConfigParseOptions private (
-    val syntax: ConfigSyntax,
-    val originDescription: String,
-    val allowMissing: Boolean,
-    val includer: ConfigIncluder,
-    val classLoader: ClassLoader
+    private val _syntax: ConfigSyntax,
+    private val _originDescription: String,
+    private val _allowMissing: Boolean,
+    private val _includer: ConfigIncluder,
+    private val _classLoader: ClassLoader
 ) {
+
+  @deprecated(
+    "Use getSyntax",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def syntax = _syntax
+
+  @deprecated(
+    "Use getOriginDescription",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def originDescription = _originDescription
+
+  @deprecated(
+    "Use getAllowMissing",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def allowMissing = _allowMissing
+
+  @deprecated(
+    "Use getIncluder",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def includer = _includer
+
+  @deprecated(
+    "Use getClassLoader",
+    "Since 1.12.0, will remove in 1.14.0"
+  )
+  def classLoader = _classLoader
 
   /**
    * Set the file format. If set to null, try to guess from any available
@@ -46,14 +79,14 @@ final class ConfigParseOptions private (
    *   options with the syntax set
    */
   def setSyntax(syntax: ConfigSyntax): ConfigParseOptions =
-    if (this.syntax == syntax) this
+    if (_syntax == syntax) this
     else
       new ConfigParseOptions(
         syntax,
-        this.originDescription,
-        this.allowMissing,
-        this.includer,
-        this.classLoader
+        _originDescription,
+        _allowMissing,
+        _includer,
+        _classLoader
       )
 
   /**
@@ -75,7 +108,7 @@ final class ConfigParseOptions private (
    * @return
    *   the current syntax or null
    */
-  def getSyntax: ConfigSyntax = syntax
+  def getSyntax: ConfigSyntax = _syntax
 
   /**
    * Set a description for the thing being parsed. In most cases this will be
@@ -90,17 +123,17 @@ final class ConfigParseOptions private (
    *   options with the origin description set
    */
   def setOriginDescription(originDescription: String): ConfigParseOptions = { // findbugs complains about == here but is wrong, do not "fix"
-    if (this.originDescription == originDescription)
+    if (_originDescription == originDescription)
       this
-    else if (this.originDescription != null && originDescription != null && this.originDescription == originDescription)
+    else if (_originDescription != null && originDescription != null && _originDescription == originDescription)
       this
     else
       new ConfigParseOptions(
-        this.syntax,
+        _syntax,
         originDescription,
-        this.allowMissing,
-        this.includer,
-        this.classLoader
+        _allowMissing,
+        _includer,
+        _classLoader
       )
   }
 
@@ -110,11 +143,11 @@ final class ConfigParseOptions private (
    * @return
    *   the current origin description or null
    */
-  def getOriginDescription: String = originDescription
+  def getOriginDescription: String = _originDescription
 
   /** this is package-private, not public API */
   private[config] def withFallbackOriginDescription(originDescription: String) =
-    if (this.originDescription == null)
+    if (_originDescription == null)
       setOriginDescription(originDescription)
     else
       this
@@ -131,15 +164,15 @@ final class ConfigParseOptions private (
    *   options with the "allow missing" flag set
    */
   def setAllowMissing(allowMissing: Boolean): ConfigParseOptions =
-    if (this.allowMissing == allowMissing)
+    if (_allowMissing == allowMissing)
       this
     else
       new ConfigParseOptions(
-        this.syntax,
-        this.originDescription,
+        _syntax,
+        _originDescription,
         allowMissing,
-        this.includer,
-        this.classLoader
+        _includer,
+        _classLoader
       )
 
   /**
@@ -148,7 +181,7 @@ final class ConfigParseOptions private (
    * @return
    *   whether we allow missing files
    */
-  def getAllowMissing: Boolean = allowMissing
+  def getAllowMissing: Boolean = _allowMissing
 
   /**
    * Set a [[ConfigIncluder]] which customizes how includes are handled. null
@@ -160,15 +193,15 @@ final class ConfigParseOptions private (
    *   new version of the parse options with different includer
    */
   def setIncluder(includer: ConfigIncluder): ConfigParseOptions =
-    if (this.includer == includer)
+    if (_includer == includer)
       this
     else
       new ConfigParseOptions(
-        this.syntax,
-        this.originDescription,
-        this.allowMissing,
+        _syntax,
+        _originDescription,
+        _allowMissing,
         includer,
-        this.classLoader
+        _classLoader
       )
 
   /**
@@ -184,10 +217,10 @@ final class ConfigParseOptions private (
   def prependIncluder(includer: ConfigIncluder): ConfigParseOptions = {
     if (includer == null)
       throw new NullPointerException("null includer passed to prependIncluder")
-    if (this.includer eq includer)
+    if (_includer eq includer)
       this
-    else if (this.includer != null)
-      setIncluder(includer.withFallback(this.includer))
+    else if (_includer != null)
+      setIncluder(includer.withFallback(_includer))
     else
       setIncluder(includer)
   }
@@ -205,10 +238,10 @@ final class ConfigParseOptions private (
   def appendIncluder(includer: ConfigIncluder): ConfigParseOptions = {
     if (includer == null)
       throw new NullPointerException("null includer passed to appendIncluder")
-    if (this.includer == includer)
+    if (_includer == includer)
       this
-    else if (this.includer != null)
-      setIncluder(this.includer.withFallback(includer))
+    else if (_includer != null)
+      setIncluder(_includer.withFallback(includer))
     else
       setIncluder(includer)
   }
@@ -219,7 +252,7 @@ final class ConfigParseOptions private (
    * @return
    *   current includer or null
    */
-  def getIncluder: ConfigIncluder = includer
+  def getIncluder: ConfigIncluder = _includer
 
   /**
    * Set the class loader. If set to null,
@@ -231,14 +264,14 @@ final class ConfigParseOptions private (
    *   options with the class loader set
    */
   def setClassLoader(loader: ClassLoader): ConfigParseOptions =
-    if (this.classLoader == loader)
+    if (_classLoader == loader)
       this
     else
       new ConfigParseOptions(
-        this.syntax,
-        this.originDescription,
-        this.allowMissing,
-        this.includer,
+        _syntax,
+        _originDescription,
+        _allowMissing,
+        _includer,
         loader
       )
 
@@ -250,10 +283,10 @@ final class ConfigParseOptions private (
    *   class loader to use
    */
   def getClassLoader: ClassLoader =
-    if (this.classLoader == null) {
+    if (_classLoader == null) {
       val thread = Thread.currentThread
       new PlatformThread(thread).getContextClassLoader()
     } else {
-      this.classLoader
+      _classLoader
     }
 }

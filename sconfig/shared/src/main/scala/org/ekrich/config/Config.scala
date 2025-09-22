@@ -119,7 +119,7 @@ import scala.annotation.varargs
  * <p> Convert a `Config` to a JSON or HOCON string by calling [[#root root]] to
  * get the [[ConfigObject]] and then call [[ConfigValue!.render:String render]]
  * on the root object, `myConfig.root.render`. There's also a variant
- * [[ConfigValue!.render(options:org\.ekrich\.config\.ConfigRenderOptions)* render(ConfigRenderOptions)]]
+ * [[ConfigValue!.render(options:org\.ekrich\.config\.ConfigRenderOptions) render(ConfigRenderOptions)]]
  * inherited from [[ConfigValue]] which allows you to control the format of the
  * rendered string. (See [[ConfigRenderOptions]].) Note that `Config` does not
  * remember the formatting of the original file, so if you load, modify, and
