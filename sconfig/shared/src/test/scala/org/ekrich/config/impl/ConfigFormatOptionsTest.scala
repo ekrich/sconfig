@@ -208,9 +208,9 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
 
     val in =
       """r { p { "d.ap" { s= 42 } }
-        | e {
+        | e.h {
         |   f= 1
-        |   g= 2
+        |   foo.bar= 2
         | }}
         | g.d {s=44}""".stripMargin
     val result = formatHocon(in)
@@ -218,13 +218,40 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
     val expected =
       """g.d.s = 44
         |r {
-        |    e {
+        |    e.h {
         |        f = 1
-        |        g = 2
+        |        foo.bar = 2
         |    }
         |    p."d.ap".s = 42
         |}
         |""".stripMargin
     checkEqualObjects(expected, result)
   }
+
+  @Test
+  def simplifyOneEntryNestedObjectsArray(): Unit = {
+    implicit val configFormatOptions =
+      defaultFormatOptions.setSimplifyNestedObjects(true)
+
+    val in =
+      """r { ma: [ { si.foo: so } ]
+        | kio: 1
+        | }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected =
+      """r {
+        |    kio = 1
+        |    ma = [
+        |        { si.foo = so }
+        |    ]
+        |}
+        |""".stripMargin
+
+    println(result)
+    println(expected)
+
+    checkEqualObjects(expected, result)
+  }
+
 }
