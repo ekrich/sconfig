@@ -511,8 +511,6 @@ final class SimpleConfigObject(
       val newAggregate = (if (keysAggregate.isEmpty) ""
                           else s"$keysAggregate.") + newKeyElement
       values.iterator().next() match {
-        case innerSCO: SimpleConfigObject =>
-          innerSCO.trySimplifyTheOnlyNestedObjectRec(newAggregate)
         case other: AbstractConfigValue =>
           Some(newAggregate -> other)
         case _ => None
@@ -522,7 +520,7 @@ final class SimpleConfigObject(
   private def trySimplifyTheOnlyNestedObject(
       options: ConfigRenderOptions
   ): Option[(String, AbstractConfigValue)] =
-    if (!options.getConfigFormatOptions.getSimplifyNestedObjects || options.getJson) {
+    if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) || options.getJson) {
       None
     } else trySimplifyTheOnlyNestedObjectRec("")
 
@@ -536,15 +534,27 @@ final class SimpleConfigObject(
     else {
       trySimplifyTheOnlyNestedObject(options) match {
         case Some((aggKey, leafValue)) =>
-          if (!atRoot) { // if not root then it is in some other object
-            if (options.getFormatted)
-              sb.deleteCharAt(
+          if (!atRoot) { // nasty glue
+            // remove space after renderAtKey
+            val lastCharIdx = sb.length() - 1
+            if (options.getFormatted && lastCharIdx > 0 && sb.charAt(
+                  lastCharIdx
+                ) == ' ')
+              sb.deleteCharAt(lastCharIdx)
+            // extend multipath
+            if (sb.length() > 0) {
+              val newLastChar = sb.charAt(
                 sb.length() - 1
-              ) // assumption that ' ' is the removed char
-            sb.append('.')
+              )
+              if (newLastChar == '"' || !ConfigImplUtil.isForbiddenUnquotedChar(
+                    newLastChar // should extend path only on identifier
+                  )) sb.append('.')
+            }
           }
-          leafValue.renderWithRenderedKey(sb, aggKey, options)
-          leafValue.renderValue(sb, indentVal, atRoot, options)
+
+          leafValue.renderWithRenderedKey(sb, s"$aggKey", options)
+          leafValue.renderValue(sb, indentVal, false, options)
+
         case _ =>
           renderValueAsMultiLineObject(sb, indentVal, atRoot, options)
       }
