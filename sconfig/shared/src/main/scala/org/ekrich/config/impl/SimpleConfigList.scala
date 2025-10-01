@@ -8,7 +8,6 @@ import java.io.Serializable
 import java.{lang => jl}
 import java.{util => ju}
 
-import scala.jdk.CollectionConverters._
 import org.ekrich.config._
 import org.ekrich.config.impl.AbstractConfigValue._
 
@@ -75,7 +74,7 @@ final class SimpleConfigList(
 
   override def unwrapped: ju.List[AnyRef] = {
     val list = new ju.ArrayList[AnyRef]
-    for (v <- value.asScala) {
+    value.forEach { v =>
       list.add(v.unwrapped.asInstanceOf[AnyRef])
     }
     list
@@ -115,7 +114,7 @@ final class SimpleConfigList(
     // lazy-create for optimization
     var changed: ju.List[AbstractConfigValue] = null
     var i = 0
-    for (v <- value.asScala) {
+    value.forEach { v =>
       val modified = modifier.modifyChildMayThrow(null /* key */, v)
       // lazy-create the new list if required
       if (changed == null && (modified ne v)) {
@@ -202,10 +201,10 @@ final class SimpleConfigList(
     else {
       sb.append("[")
       if (options.getFormatted) sb.append('\n')
-      for (v <- value.asScala) {
+      value.forEach { v =>
         if (options.getOriginComments) {
           val lines = v.origin.description.split("\n")
-          for (l <- lines) {
+          lines.foreach { l =>
             indent(sb, indentVal + 1, options)
             sb.append('#')
             if (!l.isEmpty) sb.append(' ')
@@ -214,7 +213,7 @@ final class SimpleConfigList(
           }
         }
         if (options.getComments) {
-          for (comment <- v.origin.comments.asScala) {
+          v.origin.comments.forEach { comment =>
             indent(sb, indentVal + 1, options)
             sb.append("#")
             if (!comment.startsWith(" ")) sb.append(' ')
@@ -275,7 +274,7 @@ final class SimpleConfigList(
   override def subList(fromIndex: Int, toIndex: Int): ju.List[ConfigValue] = {
     val list = new ju.ArrayList[ConfigValue]
     // yay bloat caused by lack of type variance
-    for (v <- value.subList(fromIndex, toIndex).asScala) {
+    value.subList(fromIndex, toIndex).forEach { v =>
       list.add(v)
     }
     list
