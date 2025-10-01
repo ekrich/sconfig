@@ -18,7 +18,6 @@ import java.io.ObjectStreamException
 import java.{lang => jl}
 import java.{util => ju}
 
-import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 
 import org.ekrich.config.Config
@@ -64,7 +63,7 @@ object SerializedConfigValue {
       case ORIGIN_COMMENTS        =>
         val list = v.asInstanceOf[ju.List[String]]
         out.writeInt(list.size)
-        for (s <- list.asScala) {
+        list.forEach { s =>
           out.writeUTF(s)
         }
       case ORIGIN_NULL_URL      => () // FALL THRU
@@ -88,7 +87,7 @@ object SerializedConfigValue {
       m = origin.toFieldsDelta(baseOrigin)
     else
       m = ju.Collections.emptyMap[SerializedField, AnyRef]
-    for (e <- m.entrySet.asScala) {
+    m.entrySet.forEach { e =>
       val field = new FieldOut(e.getKey)
       val v = e.getValue
       writeOriginField(field.data, field.code, v)
@@ -180,13 +179,13 @@ object SerializedConfigValue {
       case LIST =>
         val list = value.asInstanceOf[ConfigList]
         out.writeInt(list.size)
-        for (v <- list.asScala) {
+        list.forEach { v =>
           writeValue(out, v, list.origin.asInstanceOf[SimpleConfigOrigin])
         }
       case OBJECT =>
         val obj = value.asInstanceOf[ConfigObject]
         out.writeInt(obj.size)
-        for (e <- obj.entrySet.asScala) {
+        obj.entrySet.forEach { e =>
           out.writeUTF(e.getKey)
           writeValue(
             out,
