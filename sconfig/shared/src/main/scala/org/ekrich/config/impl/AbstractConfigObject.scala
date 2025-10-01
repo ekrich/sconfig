@@ -44,7 +44,7 @@ object AbstractConfigObject {
     val origins = new ju.ArrayList[ConfigOrigin]
     var firstOrigin: ConfigOrigin = null
     var numMerged = 0
-    for (v <- stack.asScala) {
+    stack.forEach { v =>
       if (firstOrigin == null) firstOrigin = v.origin
       if (v.isInstanceOf[AbstractConfigObject] && (v
             .asInstanceOf[AbstractConfigObject]
