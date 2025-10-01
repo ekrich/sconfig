@@ -10,7 +10,7 @@ final class ConfigNodeInclude(
 ) extends AbstractConfigNode {
   override def tokens: ju.Collection[Token] = {
     val tokens = new ju.ArrayList[Token]
-    for (child <- children.asScala) {
+    children.forEach { child =>
       tokens.addAll(child.tokens)
     }
     tokens
