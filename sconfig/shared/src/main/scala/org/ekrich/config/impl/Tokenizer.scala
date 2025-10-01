@@ -346,7 +346,7 @@ object Tokenizer {
       catch {
         case e: NumberFormatException =>
           // not a number after all, see if it's an unquoted string.
-          for (u <- s.toCharArray) {
+          s.toCharArray.foreach { u =>
             if (TokenIterator.notInUnquotedText.indexOf(u.toInt) >= 0)
               throw problem(
                 asString(u.toInt),
