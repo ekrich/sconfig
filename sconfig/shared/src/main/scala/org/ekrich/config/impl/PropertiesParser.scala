@@ -9,7 +9,6 @@ import java.{util => ju}
 import java.util.Collections
 import java.util.Comparator
 import java.util.Properties
-import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 
@@ -67,7 +66,7 @@ object PropertiesParser {
       map: ju.Map[_ <: AnyRef, _ <: AnyRef]
   ): ju.Map[Path, AnyRef] = {
     val pathMap = new ju.HashMap[Path, AnyRef]
-    for (entry <- map.entrySet().asScala) {
+    map.entrySet.forEach { entry =>
       val key = entry.getKey
       if (key.isInstanceOf[String]) {
         val path = pathFromPropertyKey(key.asInstanceOf[String])
@@ -82,7 +81,7 @@ object PropertiesParser {
       pathExpressionMap: ju.Map[_, _]
   ): AbstractConfigObject = {
     val pathMap = new ju.HashMap[Path, AnyRef]
-    for (entry <- pathExpressionMap.entrySet.asScala) {
+    pathExpressionMap.entrySet.forEach { entry =>
       val keyObj = entry.getKey
       if (!keyObj.isInstanceOf[String])
         throw new ConfigException.BugOrBroken(
@@ -105,7 +104,7 @@ object PropertiesParser {
      */
     val scopePaths = new ju.HashSet[Path]
     val valuePaths = new ju.HashSet[Path]
-    for (path <- pathMap.keySet.asScala) { // add value's path
+    pathMap.keySet.forEach { path => // add value's path
       valuePaths.add(path)
       // all parent paths are objects
       var next = path.parent
@@ -122,7 +121,7 @@ object PropertiesParser {
       valuePaths.removeAll(scopePaths)
     } else {
       /* If we didn't start out as properties, then this is an error. */
-      for (path <- valuePaths.asScala) {
+      valuePaths.forEach { path =>
         if (scopePaths.contains(path))
           throw new ConfigException.BugOrBroken(
             "In the map, path '" + path.render + "' occurs as both the parent object of a value and as a value. " +
@@ -135,12 +134,12 @@ object PropertiesParser {
      */
     val root = new ju.HashMap[String, AbstractConfigValue]
     val scopes = new ju.HashMap[Path, ju.Map[String, AbstractConfigValue]]
-    for (path <- scopePaths.asScala) {
+    scopePaths.forEach { path =>
       val scope = new ju.HashMap[String, AbstractConfigValue]
       scopes.put(path, scope)
     }
     /* Store string values in the associated scope maps */
-    for (path <- valuePaths.asScala) {
+    valuePaths.forEach { path =>
       val parentPath = path.parent
       val parent =
         if (parentPath != null) scopes.get(parentPath) else root
@@ -188,7 +187,7 @@ object PropertiesParser {
      * parents to avoid modifying any already-created ConfigObject. This is
      * where we need the sorted list.
      */
-    for (scopePath <- sortedScopePaths.asScala) {
+    sortedScopePaths.forEach { scopePath =>
       val scope = scopes.get(scopePath)
       val parentPath = scopePath.parent
       val parent =
