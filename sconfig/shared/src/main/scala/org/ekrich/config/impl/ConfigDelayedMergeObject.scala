@@ -37,7 +37,7 @@ final class ConfigDelayedMergeObject(
     throw new ConfigException.BugOrBroken(
       "created a delayed merge object not guaranteed to be an object"
     )
-  stack.asScala.foreach { v =>
+  stack.forEach { v =>
     v match {
       case _: ConfigDelayedMerge | _: ConfigDelayedMergeObject =>
         throw new ConfigException.BugOrBroken(
@@ -85,7 +85,7 @@ final class ConfigDelayedMergeObject(
     AbstractConfigValue.hasDescendantInList(stack, descendant)
   override def relativized(prefix: Path): ConfigDelayedMergeObject = {
     val newStack = new ju.ArrayList[AbstractConfigValue]
-    for (o <- stack.asScala) {
+    stack.forEach { o =>
       newStack.add(o.relativized(prefix))
     }
     new ConfigDelayedMergeObject(origin, newStack)
