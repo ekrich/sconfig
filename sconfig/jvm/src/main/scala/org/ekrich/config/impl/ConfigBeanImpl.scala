@@ -12,7 +12,6 @@ import java.lang.reflect.Type
 import java.{util => ju}
 import java.{lang => jl}
 import java.time.Duration
-import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 import scala.util.Try
 import org.ekrich.config.Config
@@ -54,7 +53,7 @@ object ConfigBeanImpl {
     val configProps =
       new ju.HashMap[String, AbstractConfigValue]
     val originalNames = new ju.HashMap[String, String]
-    for (configProp <- config.root.entrySet.asScala) {
+    config.root.entrySet.forEach { configProp =>
       val originalName = configProp.getKey
       val camelName = ConfigImplUtil.toCamelCase(originalName)
       // if a setting is in there both as some hyphen name and the camel name,
@@ -83,7 +82,7 @@ object ConfigBeanImpl {
     try {
       val beanProps =
         new ju.ArrayList[PropertyDescriptor]
-      for (beanProp <- beanInfo.getPropertyDescriptors) {
+      beanInfo.getPropertyDescriptors.foreach { beanProp =>
         breakable {
           if (beanProp.getReadMethod == null || beanProp.getWriteMethod == null)
             break() // continue
@@ -93,7 +92,7 @@ object ConfigBeanImpl {
       // Try to throw all validation issues at once (this does not comprehensively
       // find every issue, but it should find common ones).
       val problems = new ju.ArrayList[ConfigException.ValidationProblem]
-      for (beanProp <- beanProps.asScala) {
+      beanProps.forEach { beanProp =>
         val setter: Method = beanProp.getWriteMethod
         val parameterClass: Class[_] = setter.getParameterTypes()(0)
         val expectedType = getValueTypeOrNull(parameterClass)
@@ -113,7 +112,7 @@ object ConfigBeanImpl {
         throw new ConfigException.ValidationFailed(problems)
       // Fill in the bean instance
       val bean = clazz.getDeclaredConstructor().newInstance()
-      for (beanProp <- beanProps.asScala) {
+      beanProps.forEach { beanProp =>
         breakable {
           val setter = beanProp.getWriteMethod
           val parameterType = setter.getGenericParameterTypes()(0)
@@ -302,7 +301,7 @@ object ConfigBeanImpl {
       val beanList = new ju.ArrayList[AnyRef]
       val configList: ju.List[_ <: Config] =
         config.getConfigList(configPropName)
-      for (listMember <- configList.asScala) {
+      configList.forEach { listMember =>
         beanList.add(createInternal(listMember, getTypeAsClass(elementType)))
       }
       beanList
