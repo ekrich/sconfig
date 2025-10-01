@@ -3,10 +3,9 @@
  */
 package org.ekrich.config.impl
 
-import java.{lang => jl}
-import java.{util => ju}
+import java.lang as jl
+import java.util as ju
 import scala.util.control.Breaks._
-//import scala.collection.mutable
 import org.ekrich.config._
 
 object ConfigDocumentParser {

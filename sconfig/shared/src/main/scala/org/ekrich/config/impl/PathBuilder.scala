@@ -4,9 +4,7 @@
 package org.ekrich.config.impl
 
 import java.util as ju
-
 import scala.util.control.Breaks._
-
 import org.ekrich.config.ConfigException
 
 final class PathBuilder private[impl] () {
