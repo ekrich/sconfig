@@ -128,14 +128,14 @@ object SimpleConfigObject {
     else if (a.keySet != b.keySet) false
     else !a.keySet.asScala.exists(key => a.get(key) != b.get(key))
 
-  private def mapHash(m: ju.Map[String, ConfigValue]) = {
+  private def mapHash(m: ju.Map[String, ConfigValue]): Int = {
     // the keys have to be sorted, otherwise we could be equal
     // to another map but have a different hashcode.
     val keys = new ju.ArrayList[String]
     keys.addAll(m.keySet)
     ju.Collections.sort(keys)
     var valuesHash = 0
-    for (k <- keys.asScala) {
+    keys.forEach { k =>
       valuesHash += m.get(k).hashCode
     }
     41 * (41 + keys.hashCode) + valuesHash
