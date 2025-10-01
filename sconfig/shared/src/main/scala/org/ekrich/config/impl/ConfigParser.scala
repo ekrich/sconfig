@@ -7,10 +7,7 @@ import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 import java.{util => ju}
-
-import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
-
 import org.ekrich.config._
 
 object ConfigParser {
@@ -96,7 +93,7 @@ object ConfigParser {
           "Found a concatenation node in JSON"
         )
       val values = new ju.ArrayList[AbstractConfigValue](n.children.size)
-      for (node <- n.children.asScala) {
+      n.children.forEach { node =>
         var v: AbstractConfigValue = null
         if (node.isInstanceOf[AbstractConfigNodeValue]) {
           v = parseValue(node.asInstanceOf[AbstractConfigNodeValue], null)
@@ -200,7 +197,7 @@ object ConfigParser {
         val prefix = fullCurrentPath
         obj = obj.relativized(prefix)
       }
-      for (key <- obj.keySet.asScala) {
+      obj.keySet.forEach { key =>
         val v = obj.get(key)
         val existing = values.get(key)
         if (existing != null) values.put(key, v.withFallback(existing))
@@ -353,7 +350,7 @@ object ConfigParser {
       var lastWasNewLine = false
       val comments = new ju.ArrayList[String]
       var v: AbstractConfigValue = null
-      for (node <- n.children.asScala) {
+      n.children.forEach { node =>
         if (node.isInstanceOf[ConfigNodeComment]) {
           comments.add(node.asInstanceOf[ConfigNodeComment].commentText)
           lastWasNewLine = false
@@ -399,7 +396,7 @@ object ConfigParser {
       val comments = new ju.ArrayList[String]
       var lastWasNewLine = false
       breakable {
-        for (node <- document.children.asScala) {
+        document.children.forEach { node =>
           if (node.isInstanceOf[ConfigNodeComment]) {
             comments.add(node.asInstanceOf[ConfigNodeComment].commentText)
             lastWasNewLine = false
