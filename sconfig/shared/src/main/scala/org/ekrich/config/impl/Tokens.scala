@@ -162,8 +162,7 @@ object Tokens {
       ) + "}"
     override def toString(): String = {
       val sb = new StringBuilder
-      import scala.jdk.CollectionConverters._
-      for (t <- value.asScala) {
+      value.forEach { t =>
         sb.append(t.toString)
       }
       "'${" + sb.toString + "}'"
