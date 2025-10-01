@@ -199,7 +199,7 @@ object ConfigImplUtil {
   private[impl] def toCamelCase(originalName: String): String = {
     val words = originalName.split("-+")
     val nameBuilder = new StringBuilder(originalName.length)
-    for (word <- words) {
+    words.foreach { word =>
       if (nameBuilder.length == 0) nameBuilder.append(word)
       else {
         nameBuilder.append(word.substring(0, 1).toUpperCase)
