@@ -193,8 +193,7 @@ object ConfigDocumentParser {
       // all succeeding tokens
       if (valueCount < 2) {
         var value: AbstractConfigNodeValue = null
-        import scala.jdk.CollectionConverters._
-        for (node <- values.asScala) {
+        values.forEach { node =>
           if (node.isInstanceOf[AbstractConfigNodeValue])
             value = node.asInstanceOf[AbstractConfigNodeValue]
           else if (value == null) nodes.add(node)
