@@ -2,7 +2,6 @@ package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
-import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
