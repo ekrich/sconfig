@@ -5,6 +5,7 @@ package org.ekrich.config.impl
 
 import org.ekrich.config.ConfigException
 import java.{util => ju}
+
 import scala.jdk.CollectionConverters._
 
 final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
@@ -13,7 +14,7 @@ final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
 
   override def tokens: ju.Collection[Token] = {
     val tokens = new ju.ArrayList[Token]
-    for (child <- children.asScala) {
+    children.forEach { child =>
       tokens.addAll(child.tokens)
     }
     tokens
@@ -64,7 +65,7 @@ final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
 
   private[impl] def comments: ju.List[String] = {
     val comments = new ju.ArrayList[String]
-    for (child <- children.asScala) {
+    children.forEach { child =>
       if (child.isInstanceOf[ConfigNodeComment])
         comments.add(child.asInstanceOf[ConfigNodeComment].commentText)
     }
