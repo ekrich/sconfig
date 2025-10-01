@@ -9,7 +9,7 @@ import java.{lang => jl}
 import java.net.MalformedURLException
 import java.net.URL
 import java.{util => ju}
-import scala.jdk.CollectionConverters._
+
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 
@@ -191,7 +191,7 @@ object SimpleConfigOrigin {
       stack: ju.List[_ <: AbstractConfigValue]
   ): ConfigOrigin = {
     val origins = new ju.ArrayList[ConfigOrigin](stack.size)
-    for (v <- stack.asScala) {
+    stack.forEach { v =>
       origins.add(v.origin)
     }
     mergeOrigins(origins)
@@ -212,7 +212,7 @@ object SimpleConfigOrigin {
     } else {
       val remaining =
         new ju.ArrayList[SimpleConfigOrigin](stack.size)
-      for (o <- stack.asScala) {
+      stack.forEach { o =>
         remaining.add(o.asInstanceOf[SimpleConfigOrigin])
       }
       while (remaining.size > 2) {
@@ -238,7 +238,7 @@ object SimpleConfigOrigin {
       child: ju.Map[SerializedField, AnyRef]
   ): ju.Map[SerializedField, AnyRef] = {
     val m = new ju.TreeMap[SerializedField, AnyRef](child) // was EnumMap
-    for (baseEntry <- base.entrySet.asScala) {
+    base.entrySet.forEach { baseEntry =>
       val f = baseEntry.getKey
       if (m.containsKey(f) && ConfigImplUtil.equalsHandlingNull(
             baseEntry.getValue,
@@ -331,7 +331,7 @@ object SimpleConfigOrigin {
       delta: ju.Map[SerializedField, AnyRef]
   ): ju.Map[SerializedField, AnyRef] = {
     val m = new ju.TreeMap[SerializedField, AnyRef](delta) // was EnumMap
-    for (baseEntry <- base.entrySet.asScala) {
+    base.entrySet.forEach { baseEntry =>
       val f = baseEntry.getKey
       if (delta.containsKey(f)) {
         // delta overrides when keys are in both
