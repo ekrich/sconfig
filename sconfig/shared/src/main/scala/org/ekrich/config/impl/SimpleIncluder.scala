@@ -7,7 +7,6 @@ import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 import java.{util => ju}
-import scala.jdk.CollectionConverters._
 
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigFactory
@@ -176,7 +175,7 @@ object SimpleIncluder {
           )
         } else {
           val sb = new StringBuilder
-          for (t <- fails.asScala) {
+          fails.forEach { t =>
             sb.append(t.getMessage)
             sb.append(", ")
           }
