@@ -159,8 +159,7 @@ object PathParser {
       }
     }
     val pb = new PathBuilder
-    import scala.jdk.CollectionConverters._
-    for (e <- buf.asScala) {
+    buf.forEach { e =>
       if (e.sb.length == 0 && !e.canBeEmpty)
         throw new ConfigException.BadPath(
           origin,
@@ -180,7 +179,7 @@ object PathParser {
     if (tokenText == ".") return ju.Collections.singletonList(t)
     val splitToken = tokenText.split("\\.")
     val splitTokens = new ju.ArrayList[Token]
-    for (s <- splitToken) {
+    splitToken.foreach { s =>
       if (flavor eq ConfigSyntax.CONF)
         splitTokens.add(Tokens.newUnquotedText(t.origin, s))
       else splitTokens.add(Tokens.newString(t.origin, s, "\"" + s + "\""))
