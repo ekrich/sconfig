@@ -5,7 +5,6 @@ package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
-import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
@@ -35,7 +34,7 @@ object ConfigDelayedMerge {
         "delayed merge stack has " + stack.size + " items:"
       )
       var count = 0
-      for (v <- stack.asScala) {
+      stack.forEach { v =>
         ConfigImpl.trace(context.depth + 1, s"$count: $v")
         count += 1
       }
@@ -48,7 +47,8 @@ object ConfigDelayedMerge {
     var newContext = context
     var count = 0
     var merged: AbstractConfigValue = null
-    for (end <- stack.asScala) { // the end value may or may not be resolved already
+    // the end value may or may not be resolved already
+    stack.forEach { end =>
       var sourceForEnd: ResolveSource = null
       if (end.isInstanceOf[ReplaceableMergeStack])
         throw new ConfigException.BugOrBroken(
@@ -132,7 +132,7 @@ object ConfigDelayedMerge {
       null
     } else { // generate a new merge stack from only the remaining items
       var merged: AbstractConfigValue = null
-      for (v <- subStack.asScala) {
+      subStack.forEach { v =>
         if (merged == null) merged = v else merged = merged.withFallback(v)
       }
       merged
@@ -170,7 +170,7 @@ object ConfigDelayedMerge {
     reversed.addAll(stack)
     ju.Collections.reverse(reversed)
     var i = 0
-    for (v <- reversed.asScala) {
+    reversed.forEach { v =>
       if (commentMerge) {
         indent(sb, indentVal, options)
         if (atKey != null)
@@ -182,7 +182,7 @@ object ConfigDelayedMerge {
         i += 1
         sb.append(v.origin.description)
         sb.append("\n")
-        for (comment <- v.origin.comments.asScala) {
+        v.origin.comments.forEach { comment =>
           indent(sb, indentVal, options)
           sb.append("# ")
           sb.append(comment)
@@ -220,7 +220,7 @@ final class ConfigDelayedMerge(
   if (stack.isEmpty)
     throw new ConfigException.BugOrBroken("creating empty delayed merge value")
 
-  for (v <- stack.asScala) {
+  stack.forEach { v =>
     if (v.isInstanceOf[ConfigDelayedMerge] ||
         v.isInstanceOf[ConfigDelayedMergeObject])
       throw new ConfigException.BugOrBroken(
@@ -266,7 +266,7 @@ final class ConfigDelayedMerge(
 
   override def relativized(prefix: Path): ConfigDelayedMerge = {
     val newStack = new ju.ArrayList[AbstractConfigValue]
-    for (o <- stack.asScala) {
+    stack.forEach { o =>
       newStack.add(o.relativized(prefix))
     }
     new ConfigDelayedMerge(origin, newStack)
