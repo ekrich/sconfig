@@ -57,13 +57,15 @@ object FileUtils {
     writer.close()
   }
 
+  // TODO: should make this tail recursive
   def deleteRecursive(f: File): Unit = {
     if (f.exists) {
       if (f.isDirectory) {
         val children = f.listFiles()
         if (children ne null) {
-          for (c <- children)
+          children.foreach { c =>
             deleteRecursive(c)
+          }
         }
       }
       f.delete()
