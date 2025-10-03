@@ -1,10 +1,10 @@
 package org.ekrich.config.impl
 
-import java.{util => ju}
-import scala.jdk.CollectionConverters._
+import java.util as ju
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
+import ScalaOps._
 
 final class ConfigNodeRoot private[impl] (
     _children: ju.Collection[AbstractConfigNode],
@@ -15,16 +15,18 @@ final class ConfigNodeRoot private[impl] (
   ): ConfigNodeComplexValue =
     throw new ConfigException.BugOrBroken("Tried to indent the root object")
 
-  private[impl] def value: ConfigNodeComplexValue =
-    children.asScala.find(node =>
-      node.isInstanceOf[ConfigNodeComplexValue]
-    ) match {
-      case Some(node) => node.asInstanceOf[ConfigNodeComplexValue]
-      case None       =>
-        throw new ConfigException.BugOrBroken(
-          "ConfigNodeRoot did not contain a value"
-        )
-    }
+  private[impl] def value: ConfigNodeComplexValue = {
+    val complexNode =
+      children.scalaOps.findFold(_.isInstanceOf[ConfigNodeComplexValue])(() =>
+        null: ConfigNodeComplexValue
+      )(node => node.asInstanceOf[ConfigNodeComplexValue])
+
+    if (complexNode != null) complexNode
+    else
+      throw new ConfigException.BugOrBroken(
+        "ConfigNodeRoot did not contain a value"
+      )
+  }
 
   private[impl] def setValue(
       desiredPath: String,
