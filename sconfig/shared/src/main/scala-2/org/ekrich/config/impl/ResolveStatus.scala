@@ -2,6 +2,7 @@ package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
+import ScalaOps.*
 
 /**
  * Status of substitution resolution.
@@ -25,13 +26,10 @@ object ResolveStatus {
 
   def fromValues(
       values: ju.Collection[_ <: AbstractConfigValue]
-  ): ResolveStatus = {
-    import scala.jdk.CollectionConverters._
-    values.asScala.find(_.resolveStatus == ResolveStatus.UNRESOLVED) match {
-      case Some(_) => ResolveStatus.UNRESOLVED
-      case None    => ResolveStatus.RESOLVED
-    }
-  }
+  ): ResolveStatus =
+    values.scalaOps.findFold(_.resolveStatus == ResolveStatus.UNRESOLVED)(() =>
+      ResolveStatus.RESOLVED /* default not found */
+    )(_ => ResolveStatus.UNRESOLVED)
 
   def fromBoolean(resolved: Boolean): ResolveStatus =
     if (resolved) ResolveStatus.RESOLVED else ResolveStatus.UNRESOLVED
