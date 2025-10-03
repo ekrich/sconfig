@@ -16,11 +16,6 @@ object Path {
 
   def newPath(path: String): Path = PathParser.parsePath(path)
 
-  private def convert(i: ju.Iterator[Path]): Seq[String] = {
-    import scala.jdk.CollectionConverters._
-    i.asScala.toSeq.map(_.first)
-  }
-
   /**
    * @return
    *   path minus the first element or null if no more elements
