@@ -248,9 +248,6 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
         |}
         |""".stripMargin
 
-    println(result)
-    println(expected)
-
     checkEqualObjects(expected, result)
   }
 
