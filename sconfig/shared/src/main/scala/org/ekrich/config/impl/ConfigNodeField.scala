@@ -3,10 +3,9 @@
  */
 package org.ekrich.config.impl
 
-import org.ekrich.config.ConfigException
 import java.{util => ju}
-
-import scala.jdk.CollectionConverters._
+import org.ekrich.config.ConfigException
+import ScalaOps._
 
 final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
     extends AbstractConfigNode {
@@ -55,13 +54,14 @@ final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
   }
 
   private[impl] def separator: Token =
-    children.asScala.iterator
-      .filter(_.isInstanceOf[ConfigNodeSingleToken])
-      .map(_.asInstanceOf[ConfigNodeSingleToken].token)
-      .find { t =>
-        (t eq Tokens.PLUS_EQUALS) || (t eq Tokens.COLON) || (t eq Tokens.EQUALS)
+    children.scalaOps.findFold(child =>
+      child.isInstanceOf[ConfigNodeSingleToken] && {
+        val t = child.asInstanceOf[ConfigNodeSingleToken].token
+        (t == Tokens.PLUS_EQUALS || t == Tokens.COLON || t == Tokens.EQUALS)
       }
-      .getOrElse(null)
+    )(() => null: Token)(child =>
+      child.asInstanceOf[ConfigNodeSingleToken].token
+    )
 
   private[impl] def comments: ju.List[String] = {
     val comments = new ju.ArrayList[String]

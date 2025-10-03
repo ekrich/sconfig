@@ -5,7 +5,8 @@ package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
-
+import scala.annotation.varargs
+import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigMergeable
 import org.ekrich.config.ConfigObject
@@ -14,8 +15,6 @@ import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValue
 import org.ekrich.config.ConfigValueType
 
-import scala.annotation.varargs
-import scala.jdk.CollectionConverters._
 
 object AbstractConfigObject {
   private def peekPath(
