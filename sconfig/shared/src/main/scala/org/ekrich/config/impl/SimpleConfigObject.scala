@@ -9,7 +9,6 @@ import java.util as ju
 import java.lang as jl
 import java.math.BigInteger
 
-import scala.jdk.CollectionConverters.*
 import scala.util.control.Breaks.*
 
 import org.ekrich.config.ConfigException
@@ -340,21 +339,25 @@ final class SimpleConfigObject(
       replacement: AbstractConfigValue
   ): SimpleConfigObject = {
     val newChildren = new ju.HashMap[String, AbstractConfigValue](value)
-    newChildren.entrySet.asScala.find(_.getValue() eq child) match {
-      case Some(old) =>
+    val entry =
+      newChildren.entrySet.scalaOps.findFold(_.getValue() eq child)(() =>
+        null: ju.Map.Entry[String, AbstractConfigValue]
+      )(old => {
         if (replacement != null) old.setValue(replacement)
         else newChildren.remove(old.getKey)
-        new SimpleConfigObject(
-          origin,
-          newChildren,
-          ResolveStatus.fromValues(newChildren.values),
-          ignoresFallbacks
-        )
-      case None =>
-        throw new ConfigException.BugOrBroken(
-          "SimpleConfigObject.replaceChild did not find " + child + " in " + this
-        )
-    }
+        old
+      })
+    if (entry != null)
+      new SimpleConfigObject(
+        origin,
+        newChildren,
+        ResolveStatus.fromValues(newChildren.values),
+        ignoresFallbacks
+      )
+    else
+      throw new ConfigException.BugOrBroken(
+        "SimpleConfigObject.replaceChild did not find " + child + " in " + this
+      )
   }
 
   // related to AbstractConfigValue.hasDescendantInList
