@@ -10,12 +10,12 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.URISyntaxException
 import java.net.URL
-import java.{util => ju}
-import scala.jdk.CollectionConverters._
-import scala.util.control.Breaks._
+import java.util as ju
+import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
+import scala.annotation.varargs
 
 /**
  * Internal implementation detail, not ABI stable, do not touch. For use only by
@@ -172,9 +172,10 @@ object ConfigImplUtil {
     }
   }
   // add Scala vararg version - this is the one finally called now
-  def joinPath(elements: String*): String = new Path(elements: _*).render
+  @varargs def joinPath(elements: String*): String =
+    new Path(elements: _*).render
   def joinPath(elements: ju.List[String]): String =
-    joinPath(elements.asScala.toSeq: _*)
+    joinPath(elements.toArray(new Array[String](0)).toIndexedSeq: _*)
   def splitPath(path: String): ju.List[String] = {
     var p = Path.newPath(path)
     val elements = new ju.ArrayList[String]
