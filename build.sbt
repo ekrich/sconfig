@@ -56,7 +56,7 @@ val scala213 = "2.13.16"
 val scala3 = "3.3.6"
 
 val javaTime = "1.4.0"
-val scCompat = "2.13.0"
+val scCompat = "2.14.0"
 val json4s = "4.0.7"
 
 // We use the 2.12 and 2.13 version that the scalafix library uses
