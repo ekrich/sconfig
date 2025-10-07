@@ -6,7 +6,6 @@ package org.ekrich.config.impl
 import java.{lang => jl}
 import java.{util => ju}
 import scala.annotation.varargs
-import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigMergeable
 import org.ekrich.config.ConfigObject
@@ -14,7 +13,6 @@ import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValue
 import org.ekrich.config.ConfigValueType
-
 
 object AbstractConfigObject {
   private def peekPath(
@@ -36,7 +34,7 @@ object AbstractConfigObject {
     }
 
   private[impl] def mergeOrigins(
-      stack: ju.Collection[_ <: AbstractConfigValue]
+      stack: ju.Collection[? <: AbstractConfigValue]
   ): ConfigOrigin = {
     if (stack.isEmpty)
       throw new ConfigException.BugOrBroken("can't merge origins on empty list")
@@ -66,11 +64,7 @@ object AbstractConfigObject {
 
   @varargs private[impl] def mergeOrigins(
       stack: AbstractConfigObject*
-  ): ConfigOrigin = {
-    val javaColl = stack.asJavaCollection
-    mergeOrigins(javaColl)
-    // throws NotPossibleToResolve
-  }
+  ): ConfigOrigin = mergeOrigins(ju.Arrays.asList(stack.toArray: _*))
 
   private def weAreImmutable(method: String) =
     new UnsupportedOperationException(
