@@ -15,11 +15,9 @@ import java.io.NotSerializableException
 import java.io.ObjectInput
 import java.io.ObjectOutput
 import java.io.ObjectStreamException
-import java.{lang => jl}
-import java.{util => ju}
-
-import scala.util.control.Breaks._
-
+import java.lang as jl
+import java.util as ju
+import scala.util.control.Breaks.*
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigList

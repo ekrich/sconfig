@@ -5,11 +5,10 @@ package org.ekrich.config.impl
 
 import java.io.ObjectStreamException
 import java.io.Serializable
-import java.{lang => jl}
-import java.{util => ju}
-
-import org.ekrich.config._
-import org.ekrich.config.impl.AbstractConfigValue._
+import java.lang as jl
+import java.util as ju
+import org.ekrich.config.*
+import org.ekrich.config.impl.AbstractConfigValue.*
 
 @SerialVersionUID(2L)
 object SimpleConfigList {

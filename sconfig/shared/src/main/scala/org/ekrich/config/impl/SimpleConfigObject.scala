@@ -8,16 +8,14 @@ import java.io.Serializable
 import java.util as ju
 import java.lang as jl
 import java.math.BigInteger
-
 import scala.util.control.Breaks.*
-
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValue
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
-import org.ekrich.config.impl.ScalaOps.*
+import ScalaOps.*
 
 @SerialVersionUID(2L)
 object SimpleConfigObject {

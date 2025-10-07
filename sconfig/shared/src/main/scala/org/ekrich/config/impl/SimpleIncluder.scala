@@ -6,8 +6,7 @@ package org.ekrich.config.impl
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
-import java.{util => ju}
-
+import java.util as ju
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigIncludeContext

@@ -11,11 +11,11 @@ import java.io.ObjectOutputStream
 import java.net.URISyntaxException
 import java.net.URL
 import java.util as ju
+import scala.annotation.varargs
 import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
-import scala.annotation.varargs
 
 /**
  * Internal implementation detail, not ABI stable, do not touch. For use only by
