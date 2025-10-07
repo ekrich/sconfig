@@ -3,10 +3,9 @@
  */
 package org.ekrich.config.impl
 
-import java.{lang => jl}
-import java.{util => ju}
+import java.lang as jl
+import java.util as ju
 import scala.util.control.Breaks._
-import scala.collection.mutable
 import org.ekrich.config._
 
 object ConfigDocumentParser {
@@ -53,7 +52,7 @@ object ConfigDocumentParser {
       val tokens: ju.Iterator[Token]
   ) {
     private var lineNumber = 1
-    final private var buffer = new mutable.Stack[Token]
+    final private val buffer = new ju.ArrayDeque[Token]
     // this is the number of "equals" we are inside,
     // used to modify the error message to reflect that
     // someone may think this is .properties format.
@@ -193,8 +192,7 @@ object ConfigDocumentParser {
       // all succeeding tokens
       if (valueCount < 2) {
         var value: AbstractConfigNodeValue = null
-        import scala.jdk.CollectionConverters._
-        for (node <- values.asScala) {
+        values.forEach { node =>
           if (node.isInstanceOf[AbstractConfigNodeValue])
             value = node.asInstanceOf[AbstractConfigNodeValue]
           else if (value == null) nodes.add(node)

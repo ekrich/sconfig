@@ -6,9 +6,6 @@ package org.ekrich.config.impl
 import java.{lang => jl}
 import java.{util => ju}
 import ju.Collections
-
-import scala.jdk.CollectionConverters._
-
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigMergeable
 import org.ekrich.config.ConfigObject
@@ -16,6 +13,7 @@ import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValue
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
+import ScalaOps._
 
 /**
  * Trying very hard to avoid a parent reference in config values; when you have
@@ -66,9 +64,9 @@ object AbstractConfigValue {
       list: ju.List[AbstractConfigValue],
       descendant: AbstractConfigValue
   ): Boolean =
-    list.asScala.exists(_ == descendant) ||
+    list.scalaOps.exists(_ == descendant) ||
       // now the expensive traversal
-      list.asScala.exists(
+      list.scalaOps.exists(
         _ match {
           case v: Container => v.hasDescendant(descendant)
           case _            => false

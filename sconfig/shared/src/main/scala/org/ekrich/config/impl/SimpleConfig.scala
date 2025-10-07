@@ -918,9 +918,10 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
       case e: IllegalArgumentException =>
         val enumNames = new ju.ArrayList[String]
         val enumConstants = enumClass.getEnumConstants
-        if (enumConstants != null) for (enumConstant <- enumConstants) {
-          enumNames.add(enumConstant.name)
-        }
+        if (enumConstants != null)
+          enumConstants.foreach { enumConstant =>
+            enumNames.add(enumConstant.name)
+          }
         throw new ConfigException.BadValue(
           enumConfigValue.origin,
           path,
@@ -1103,7 +1104,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     if (restrictToPaths.length == 0)
       SimpleConfig.checkValidObject(null, ref.root, root, problems)
     else
-      for (p <- restrictToPaths) {
+      restrictToPaths.foreach { p =>
         val path = Path.newPath(p)
         val refValue = ref.peekPath(path)
         if (refValue != null) {

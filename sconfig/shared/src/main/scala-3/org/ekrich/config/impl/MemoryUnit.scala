@@ -33,7 +33,7 @@ private object MemoryUnit {
 
   private lazy val unitsMap: ju.Map[String, MemoryUnit] = {
     val map = new ju.HashMap[String, MemoryUnit]
-    for (unit <- MemoryUnit.values) {
+    MemoryUnit.values.foreach { unit =>
       map.put(unit.prefix + "byte", unit)
       map.put(unit.prefix + "bytes", unit)
       if (unit.prefix.length == 0) {

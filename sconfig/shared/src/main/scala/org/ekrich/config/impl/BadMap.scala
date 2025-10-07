@@ -1,4 +1,5 @@
 package org.ekrich.config.impl
+
 import scala.annotation.tailrec
 
 /**
@@ -40,13 +41,7 @@ object BadMap {
     }
   }
   private def rehash(src: Array[Entry], dest: Array[BadMap.Entry]): Unit = {
-    //        for (entry <- src) {
     // have to store each "next" element individually; they may belong in different indices
-    //            while ({ entry != null }) {
-    //                store(dest, entry)
-    //                entry = entry.next
-    //            }
-    //        }
     @tailrec
     def processEntry(entry: Entry): Unit = {
       if (entry != null) {
@@ -55,7 +50,7 @@ object BadMap {
       }
     }
 
-    for (entry <- src) {
+    src.foreach { entry =>
       processEntry(entry)
     }
   }

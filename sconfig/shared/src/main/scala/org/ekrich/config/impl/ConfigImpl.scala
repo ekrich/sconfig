@@ -10,7 +10,6 @@ import java.net.URL
 import java.time.Duration
 import java.{util => ju}
 import java.util.concurrent.Callable
-import scala.jdk.CollectionConverters._
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigIncluder
@@ -258,7 +257,7 @@ object ConfigImpl {
         return emptyObject(origin)
       if (mapMode == FromMapMode.KEYS_ARE_KEYS) {
         val values = new ju.HashMap[String, AbstractConfigValue]
-        for (entry <- obj.asInstanceOf[ju.Map[_, _]].entrySet.asScala) {
+        obj.asInstanceOf[ju.Map[_, _]].entrySet.forEach { entry =>
           val key = entry.getKey
           if (!key.isInstanceOf[String])
             throw new ConfigException.BugOrBroken(
@@ -306,7 +305,7 @@ object ConfigImpl {
     val systemProperties = System.getProperties
     val systemPropertiesCopy = new ju.Properties
     systemProperties.synchronized {
-      for (entry <- systemProperties.entrySet().asScala) {
+      systemProperties.entrySet().forEach { entry =>
         // Java 11 introduces 'java.version.date', but we don't want that to
         // overwrite 'java.version'
         if (!entry.getKey().toString().startsWith("java.version.")) {
@@ -408,7 +407,7 @@ object ConfigImpl {
       if (s == null) result
       else {
         val keys = s.split(",")
-        for (k <- keys) {
+        keys.foreach { k =>
           if (k == LOADS)
             result.put(LOADS, true)
           else if (k == SUBSTITUTIONS)

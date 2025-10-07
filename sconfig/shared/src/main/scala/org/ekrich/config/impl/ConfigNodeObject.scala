@@ -1,9 +1,9 @@
 package org.ekrich.config.impl
 
 import org.ekrich.config.ConfigSyntax
-import java.{util => ju}
-import scala.jdk.CollectionConverters._
+import java.util as ju
 import scala.util.control.Breaks._
+import ScalaOps.*
 
 final class ConfigNodeObject private[impl] (
     _children: ju.Collection[AbstractConfigNode]
@@ -14,11 +14,11 @@ final class ConfigNodeObject private[impl] (
     new ConfigNodeObject(nodes)
 
   def hasValue(desiredPath: Path): Boolean =
-    children.asScala.exists {
+    children.scalaOps.exists {
       case field: ConfigNodeField => {
         val path = field.path.value
         if (path == desiredPath || path.startsWith(desiredPath)) true
-        else if (desiredPath.startsWith(path)) {
+        else if (desiredPath.startsWith(path))
           field.value match {
             case obj: ConfigNodeObject =>
               val remainingPath = desiredPath.subPath(path.length)
@@ -26,7 +26,7 @@ final class ConfigNodeObject private[impl] (
               else false
             case _ => false
           }
-        } else false
+        else false
       }
       case _ => false
     }
@@ -229,7 +229,11 @@ final class ConfigNodeObject private[impl] (
     // If the path is of length greater than one, see if the value needs to be added further down
     if (path.length > 1) {
       val lastIndex = children.size - 1
-      val index = children.asScala.reverse.indexWhere { v =>
+      // children array is mutable
+      val childrenReverseCopy = new ju.ArrayList[AbstractConfigNode](children)
+      // reverse so we find the last index that matches
+      ju.Collections.reverse(childrenReverseCopy)
+      val index = childrenReverseCopy.scalaOps.indexWhere { v =>
         v match {
           case node: ConfigNodeField =>
             val key: Path = node.path.value

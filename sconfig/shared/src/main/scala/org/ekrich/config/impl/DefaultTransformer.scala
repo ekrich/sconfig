@@ -7,7 +7,6 @@ import java.{lang => jl}
 import java.{util => ju}
 import java.util.Collections
 import java.util.Comparator
-import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 import org.ekrich.config.ConfigValueType
 import org.ekrich.config.ConfigValueType._
@@ -78,7 +77,7 @@ object DefaultTransformer {
       // empty objects here though :-/
       val o = value.asInstanceOf[AbstractConfigObject]
       val values = new ju.HashMap[Integer, AbstractConfigValue]
-      for (key <- o.keySet.asScala) {
+      o.keySet.forEach { key =>
         breakable {
           var i = 0
           try {
@@ -113,7 +112,7 @@ object DefaultTransformer {
         // drop the indices (we allow gaps in the indices, for better or
         // worse)
         val list = new ju.ArrayList[AbstractConfigValue]
-        for (entry <- entryList.asScala) {
+        entryList.forEach { entry =>
           list.add(entry.getValue)
         }
         retVal = new SimpleConfigList(value.origin, list)

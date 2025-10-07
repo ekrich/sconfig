@@ -2,7 +2,6 @@ package org.ekrich.config.impl
 
 import java.{lang => jl}
 import java.{util => ju}
-import scala.jdk.CollectionConverters._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
@@ -91,14 +90,14 @@ object ConfigConcatenation {
     else {
       val flattened =
         new ju.ArrayList[AbstractConfigValue](pieces.size)
-      for (v <- pieces.asScala) {
+      pieces.forEach { v =>
         if (v.isInstanceOf[ConfigConcatenation])
           flattened.addAll(v.asInstanceOf[ConfigConcatenation].pieces)
         else flattened.add(v)
       }
       val consolidated =
         new ju.ArrayList[AbstractConfigValue](flattened.size)
-      for (v <- flattened.asScala) {
+      flattened.forEach { v =>
         if (consolidated.isEmpty) consolidated.add(v)
         else join(consolidated, v)
       }
@@ -127,7 +126,7 @@ final class ConfigConcatenation(
       "Created concatenation with less than 2 items: " + this
     )
   var hadUnmergeable = false
-  for (p <- pieces.asScala) {
+  pieces.forEach { p =>
     if (p.isInstanceOf[ConfigConcatenation])
       throw new ConfigException.BugOrBroken(
         "ConfigConcatenation should never be nested: " + this
@@ -173,7 +172,7 @@ final class ConfigConcatenation(
         "concatenation has " + pieces.size + " pieces:"
       )
       var count = 0
-      for (v <- pieces.asScala) {
+      pieces.forEach { v =>
         ConfigImpl.trace(indent, s"$count: $v")
         count += 1
       }
@@ -185,7 +184,8 @@ final class ConfigConcatenation(
     var newContext = context
     val resolved =
       new ju.ArrayList[AbstractConfigValue](pieces.size)
-    for (p <- pieces.asScala) { // to concat into a string we have to do a full resolve,
+    pieces.forEach { p =>
+      // to concat into a string we have to do a full resolve,
       // so unrestrict the context, then put restriction back afterward
       val restriction = newContext.restrictToChild
       val result =
@@ -235,7 +235,7 @@ final class ConfigConcatenation(
   override def relativized(prefix: Path): ConfigConcatenation = {
     val newPieces =
       new ju.ArrayList[AbstractConfigValue]
-    for (p <- pieces.asScala) {
+    pieces.forEach { p =>
       newPieces.add(p.relativized(prefix))
     }
     new ConfigConcatenation(origin, newPieces)
@@ -260,7 +260,7 @@ final class ConfigConcatenation(
       atRoot: Boolean,
       options: ConfigRenderOptions
   ): Unit = {
-    for (p <- pieces.asScala) {
+    pieces.forEach { p =>
       p.renderValue(sb, indent, atRoot, options)
     }
   }

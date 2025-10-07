@@ -3,13 +3,12 @@
  */
 package org.ekrich.config.impl
 
-import util.control.Breaks._
+import java.util as ju
+import scala.util.control.Breaks._
 import org.ekrich.config.ConfigException
 
-import scala.collection.mutable
-
 final class PathBuilder private[impl] () {
-  final private val keys = new mutable.Stack[String]
+  final private val keys = new ju.ArrayDeque[String]
   // the keys are kept "backward" (top of stack is end of path)
   private var resultPath: Path = null
 

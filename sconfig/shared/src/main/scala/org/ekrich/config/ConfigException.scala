@@ -351,8 +351,7 @@ object ConfigException {
         problems: jl.Iterable[ConfigException.ValidationProblem]
     ): String = {
       val sb = new StringBuilder
-      import scala.jdk.CollectionConverters._
-      for (p <- problems.asScala) {
+      problems.forEach { p =>
         sb.append(p.origin.description)
         sb.append(": ")
         sb.append(p.path)

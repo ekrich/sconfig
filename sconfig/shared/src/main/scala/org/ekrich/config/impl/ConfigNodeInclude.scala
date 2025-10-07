@@ -1,7 +1,7 @@
 package org.ekrich.config.impl
 
 import java.{util => ju}
-import scala.jdk.CollectionConverters._
+import ScalaOps._
 
 final class ConfigNodeInclude(
     final val children: ju.Collection[AbstractConfigNode],
@@ -10,20 +10,19 @@ final class ConfigNodeInclude(
 ) extends AbstractConfigNode {
   override def tokens: ju.Collection[Token] = {
     val tokens = new ju.ArrayList[Token]
-    for (child <- children.asScala) {
+    children.forEach { child =>
       tokens.addAll(child.tokens)
     }
     tokens
   }
 
-  private[impl] def name: String = {
-    children.asScala.find(_.isInstanceOf[ConfigNodeSimpleValue]) match {
-      case Some(node) =>
-        Tokens
-          .getValue(node.asInstanceOf[ConfigNodeSimpleValue].token)
-          .unwrapped
-          .asInstanceOf[String]
-      case None => null
-    }
-  }
+  private[impl] def name: String =
+    children.scalaOps.findFold(_.isInstanceOf[ConfigNodeSimpleValue])(() =>
+      null: String
+    )(node =>
+      Tokens
+        .getValue(node.asInstanceOf[ConfigNodeSimpleValue].token)
+        .unwrapped
+        .asInstanceOf[String]
+    )
 }

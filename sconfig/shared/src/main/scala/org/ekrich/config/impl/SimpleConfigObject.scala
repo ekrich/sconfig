@@ -8,7 +8,6 @@ import java.io.Serializable
 import java.util as ju
 import java.lang as jl
 import java.math.BigInteger
-import scala.jdk.CollectionConverters.*
 import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigObject
@@ -16,6 +15,7 @@ import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValue
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
+import ScalaOps.*
 
 @SerialVersionUID(2L)
 object SimpleConfigObject {
@@ -126,16 +126,16 @@ object SimpleConfigObject {
   ) =
     if (a eq b) true
     else if (a.keySet != b.keySet) false
-    else !a.keySet.asScala.exists(key => a.get(key) != b.get(key))
+    else !a.keySet.scalaOps.exists(key => a.get(key) != b.get(key))
 
-  private def mapHash(m: ju.Map[String, ConfigValue]) = {
+  private def mapHash(m: ju.Map[String, ConfigValue]): Int = {
     // the keys have to be sorted, otherwise we could be equal
     // to another map but have a different hashcode.
     val keys = new ju.ArrayList[String]
     keys.addAll(m.keySet)
     ju.Collections.sort(keys)
     var valuesHash = 0
-    for (k <- keys.asScala) {
+    keys.forEach { k =>
       valuesHash += m.get(k).hashCode
     }
     41 * (41 + keys.hashCode) + valuesHash
@@ -252,7 +252,7 @@ final class SimpleConfigObject(
       this
     } else {
       val smaller = new ju.HashMap[String, AbstractConfigValue](value.size - 1)
-      for (old <- value.entrySet.asScala) {
+      value.entrySet.forEach { old =>
         if (!(old.getKey == key)) smaller.put(old.getKey, old.getValue)
       }
       new SimpleConfigObject(
@@ -337,28 +337,32 @@ final class SimpleConfigObject(
       replacement: AbstractConfigValue
   ): SimpleConfigObject = {
     val newChildren = new ju.HashMap[String, AbstractConfigValue](value)
-    newChildren.entrySet.asScala.find(_.getValue() eq child) match {
-      case Some(old) =>
+    val entry =
+      newChildren.entrySet.scalaOps.findFold(_.getValue() eq child)(() =>
+        null: ju.Map.Entry[String, AbstractConfigValue]
+      )(old => {
         if (replacement != null) old.setValue(replacement)
         else newChildren.remove(old.getKey)
-        new SimpleConfigObject(
-          origin,
-          newChildren,
-          ResolveStatus.fromValues(newChildren.values),
-          ignoresFallbacks
-        )
-      case None =>
-        throw new ConfigException.BugOrBroken(
-          "SimpleConfigObject.replaceChild did not find " + child + " in " + this
-        )
-    }
+        old
+      })
+    if (entry != null)
+      new SimpleConfigObject(
+        origin,
+        newChildren,
+        ResolveStatus.fromValues(newChildren.values),
+        ignoresFallbacks
+      )
+    else
+      throw new ConfigException.BugOrBroken(
+        "SimpleConfigObject.replaceChild did not find " + child + " in " + this
+      )
   }
 
   // related to AbstractConfigValue.hasDescendantInList
   override def hasDescendant(descendant: AbstractConfigValue): Boolean =
-    value.values.asScala.exists(_ eq descendant) ||
+    value.values.scalaOps.exists(_ eq descendant) ||
       // now the expensive traversal
-      value.values.asScala.exists(
+      value.values.scalaOps.exists(
         _ match {
           case v: Container => v.hasDescendant(descendant)
           case _            => false
@@ -368,7 +372,7 @@ final class SimpleConfigObject(
   override def unwrapped: ju.Map[String, AnyRef] = {
     val m = new ju.HashMap[String, AnyRef]
 
-    for (e <- value.entrySet.asScala) {
+    value.entrySet.forEach { e =>
       m.put(e.getKey, e.getValue.unwrapped)
     }
     m
@@ -390,7 +394,7 @@ final class SimpleConfigObject(
     allKeys.addAll(this.keySet)
     allKeys.addAll(fallback.keySet)
 
-    for (key <- allKeys.asScala) {
+    allKeys.forEach { key =>
       val first = this.value.get(key)
       val second = fallback.value.get(key)
       var kept: AbstractConfigValue = null
@@ -427,7 +431,7 @@ final class SimpleConfigObject(
   @throws[Exception]
   private def modifyMayThrow(modifier: AbstractConfigValue.Modifier) = {
     var changes: ju.Map[String, AbstractConfigValue] = null
-    for (k <- keySet.asScala) {
+    keySet.forEach { k =>
       val v = value.get(k)
       // "modified" may be null, which means remove the child;
       // to do that we put null in the "changes" map.
@@ -442,7 +446,7 @@ final class SimpleConfigObject(
     else {
       val modified = new ju.HashMap[String, AbstractConfigValue]
       var sawUnresolved = false
-      for (k <- keySet.asScala) {
+      keySet.forEach { k =>
         if (changes.containsKey(k)) {
           val newValue = changes.get(k)
           if (newValue != null) {
@@ -588,12 +592,12 @@ final class SimpleConfigObject(
       else new SimpleConfigObject.OrderedRenderComparator
     ju.Collections.sort(keys, ordering)
 
-    for (k <- keys.asScala) {
+    keys.forEach { k =>
       var v: AbstractConfigValue = null
       v = value.get(k)
       if (options.getOriginComments) {
         val lines = v.origin.description.split("\n")
-        for (l <- lines) {
+        lines.foreach { l =>
           AbstractConfigValue.indent(sb, indentVal + 1, options)
           sb.append('#')
           if (!l.isEmpty) sb.append(' ')
@@ -602,7 +606,7 @@ final class SimpleConfigObject(
         }
       }
       if (options.getComments) {
-        for (comment <- v.origin.comments.asScala) {
+        v.origin.comments.forEach { comment =>
           AbstractConfigValue.indent(sb, innerIndent, options)
           sb.append("#")
           if (!comment.startsWith(" ")) sb.append(' ')
@@ -667,7 +671,7 @@ final class SimpleConfigObject(
   override def entrySet: ju.Set[ju.Map.Entry[String, ConfigValue]] = {
     // total bloat just to work around lack of type variance
     val entries = new ju.HashSet[ju.Map.Entry[String, ConfigValue]]
-    for (e <- value.entrySet.asScala) {
+    value.entrySet.forEach { e =>
       entries.add(
         new ju.AbstractMap.SimpleImmutableEntry[String, ConfigValue](
           e.getKey,
