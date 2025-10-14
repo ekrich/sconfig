@@ -8,6 +8,30 @@ addCommandAlias(
   ).mkString(";", ";", "")
 )
 
+// these four functions from Scala Native
+def patchVersion(prefix: String, scalaVersion: String): Int =
+  scalaVersion.stripPrefix(prefix).takeWhile(_.isDigit).toInt
+
+def canUseRelease(scalaVersion: String) = CrossVersion
+  .partialVersion(scalaVersion)
+  .fold(false) {
+    case (2, 12) => patchVersion("2.12.", scalaVersion) > 16
+    case (2, 13) => patchVersion("2.13.", scalaVersion) > 8
+    case (3, _)  => true // since 3.1.2
+  }
+
+def targetJDKVersion(scalaVersion: String) =
+  CrossVersion.partialVersion(scalaVersion) match {
+    case Some((3, minor)) if minor >= 8 => 17
+    case _                              => 8
+  }
+// Target version as a string, for javac -target and -source flags - jdk 8 compatible
+def targetJDKVersionString(jdkVersion: Int) =
+  jdkVersion match {
+    case 8       => "1.8"
+    case version => version.toString
+  }
+
 val prevVersion = "1.12.0"
 val nextVersion = "1.13.0"
 
@@ -28,8 +52,6 @@ val scalacOpts = dotcOpts ++ List(
   "-Xsource:3",
   // 57 inferred return type Scala 2.13 cat=scala3-migration
   "-Wconf:msg=inferred:ws",
-  // 2 deprecations Scala 2.12 Stack - fixed for 2.13
-  "-Wconf:msg=poorly-performing:ws",
   // uncomment to see messages
   "-Wconf:any:warning-verbose"
 )
@@ -129,6 +151,10 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .crossType(CrossType.Full)
   .settings(
     scalacOptions ++= {
+      val jdkVersion = targetJDKVersion(scalaVersion.value)
+      if (canUseRelease(scalaVersion.value)) s"-release:$jdkVersion"
+      else s"-target:jvm-${targetJDKVersionString(jdkVersion)}"
+      +:
       if (isScala3.value) dotcOpts else scalacOpts
     },
     libraryDependencies ++= Seq(
@@ -152,14 +178,15 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       "com.github.sbt" % "junit-interface" % "0.13.3" % Test
       // includes junit 4.13.2
     ),
-    Compile / compile / javacOptions ++= Seq(
-      "-source",
-      "1.8",
-      "-target",
-      "1.8",
-      "-g",
-      "-Xlint:unchecked"
-    ),
+    Compile / compile / javacOptions ++= {
+      val otherOpts = List("-g", "-Xlint:all")
+      val jdkVersion = targetJDKVersion(scalaVersion.value)
+      if (canUseRelease(scalaVersion.value)) otherOpts
+      else {
+        val version = targetJDKVersionString(jdkVersion)
+        List("-source", version, "-target", version) ++ otherOpts
+      }
+    },
     // because we test some global state such as singleton caches,
     // we have to run tests in serial.
     Test / parallelExecution := false,
