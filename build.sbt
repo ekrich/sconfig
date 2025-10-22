@@ -55,7 +55,7 @@ val scala212 = "2.12.20"
 val scala213 = "2.13.17"
 val scala3 = "3.3.6"
 
-val javaTime = "1.4.0"
+val javaTime = "1.5.0"
 val scCompat = "2.13.0"
 val json4s = "4.0.7"
 
