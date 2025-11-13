@@ -5,8 +5,7 @@ package org.ekrich.config.impl
 
 import java.io.ObjectStreamException
 import java.io.Serializable
-import java.util as ju
-import java.lang as jl
+import java.{lang as jl, util as ju}
 import java.math.BigInteger
 import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
@@ -505,28 +504,50 @@ final class SimpleConfigObject(
         v.relativized(prefix)
     })
 
-  private def trySimplifyTheOnlyNestedObjectRec(
-      keysAggregate: String
-  ): Option[(String, AbstractConfigValue)] =
+  private def tryCompressToMultipathRec(
+      keysAggregate: String,
+      commentsAggregate: ju.List[String]
+  ): Option[MultiPathEntry] = {
+    def returnAsIs = if (keysAggregate.isEmpty)
+      None
+    else Some(MultiPathEntry(keysAggregate, commentsAggregate, this))
+
     if (value.size() == 1) {
       val newKeyElement = ConfigImplUtil.renderStringUnquotedIfPossible(
         keySet.iterator().next()
       )
       val newAggregate = (if (keysAggregate.isEmpty) ""
                           else s"$keysAggregate.") + newKeyElement
-      values.iterator().next() match {
-        case other: AbstractConfigValue =>
-          Some(newAggregate -> other)
-        case _ => None
-      }
-    } else None
 
-  private def trySimplifyTheOnlyNestedObject(
+      origin.comments.forEach(commentStr => commentsAggregate.add(commentStr))
+
+      values.iterator().next() match {
+        case nested: SimpleConfigObject =>
+          nested.tryCompressToMultipathRec(
+            newAggregate,
+            commentsAggregate
+          )
+        case other: AbstractConfigValue =>
+          other.origin.comments.forEach(commentStr =>
+            commentsAggregate.add(commentStr)
+          )
+          Some(MultiPathEntry(newAggregate, commentsAggregate, other))
+        case _ => returnAsIs
+      }
+    } else returnAsIs
+  }
+
+  private def tryCompressToMultipath(
       options: ConfigRenderOptions
-  ): Option[(String, AbstractConfigValue)] =
-    if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) || options.getJson) {
+  ): Option[MultiPathEntry] =
+    if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) ||
+        options.getJson || options.getOriginComments) {
       None
-    } else trySimplifyTheOnlyNestedObjectRec("")
+    } else
+      tryCompressToMultipathRec(
+        "",
+        new ju.ArrayList(this.origin.comments)
+      )
 
   override def renderValue(
       sb: jl.StringBuilder,
@@ -536,25 +557,25 @@ final class SimpleConfigObject(
   ): Unit = {
     if (isEmpty) sb.append("{}")
     else {
-      trySimplifyTheOnlyNestedObject(options) match {
-        case Some((aggKey, leafValue)) =>
-          if (!atRoot) { // nasty glue
-            // remove space after renderAtKey
-            val lastCharIdx = sb.length() - 1
-            if (options.getFormatted && lastCharIdx > 0 && sb.charAt(
-                  lastCharIdx
-                ) == ' ')
-              sb.deleteCharAt(lastCharIdx)
-            // extend multipath
-            if (sb.length() > 0) {
-              val newLastChar = sb.charAt(
-                sb.length() - 1
-              )
-              if (newLastChar == '"' || !ConfigImplUtil.isForbiddenUnquotedChar(
-                    newLastChar // should extend path only on identifier
-                  )) sb.append('.')
-            }
+      tryCompressToMultipath(options) match {
+        case Some(MultiPathEntry(aggKey, aggComments, leafValue)) =>
+          // remove space after renderAtKey
+          // NASTY, better design welcomed
+          val lastCharIdx = sb.length() - 1
+          if (options.getFormatted && lastCharIdx > 0 && sb.charAt(
+                lastCharIdx
+              ) == ' ')
+            sb.deleteCharAt(lastCharIdx)
+          // extend multipath
+          if (sb.length() > 0) {
+            val newLastChar = sb.charAt(
+              sb.length() - 1
+            )
+            if (newLastChar == '"' || !ConfigImplUtil.isForbiddenUnquotedChar(
+                  newLastChar // should extend path only on identifier
+                )) sb.append('.')
           }
+          printCommentsToBuffer(sb, options, indentVal, aggComments)
 
           leafValue.renderWithRenderedKey(sb, s"$aggKey", options)
           leafValue.renderValue(sb, indentVal, false, options)
@@ -605,15 +626,8 @@ final class SimpleConfigObject(
           sb.append("\n")
         }
       }
-      if (options.getComments) {
-        v.origin.comments.forEach { comment =>
-          AbstractConfigValue.indent(sb, innerIndent, options)
-          sb.append("#")
-          if (!comment.startsWith(" ")) sb.append(' ')
-          sb.append(comment)
-          sb.append("\n")
-        }
-      }
+      printCommentsToBuffer(sb, options, innerIndent, v.origin.comments)
+
       AbstractConfigValue.indent(sb, innerIndent, options)
       v.render(sb, innerIndent, false /* atRoot */, k, options)
       if (options.getFormatted) {
@@ -637,6 +651,23 @@ final class SimpleConfigObject(
           AbstractConfigValue.indent(sb, indentVal, options)
       }
       sb.append("}")
+    }
+  }
+
+  private def printCommentsToBuffer(
+      sb: jl.StringBuilder,
+      options: ConfigRenderOptions,
+      innerIndent: Int,
+      comments: ju.List[String]
+  ): Unit = {
+    if (options.getComments) {
+      comments.forEach { comment =>
+        AbstractConfigValue.indent(sb, innerIndent, options)
+        sb.append("#")
+        if (!comment.startsWith(" ")) sb.append(' ')
+        sb.append(comment)
+        sb.append("\n")
+      }
     }
   }
 
@@ -693,3 +724,9 @@ final class SimpleConfigObject(
   @throws[ObjectStreamException]
   private def writeReplace(): Object = new SerializedConfigValue(this)
 }
+
+case class MultiPathEntry(
+    compactedKeys: String,
+    comments: ju.List[String],
+    leafNode: AbstractConfigValue
+)
