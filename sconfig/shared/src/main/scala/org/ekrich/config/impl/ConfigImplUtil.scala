@@ -81,8 +81,11 @@ object ConfigImplUtil {
       // to ensure we end up with a string and not a number
       val first = s.codePointAt(0)
       if (Character.isDigit(first) || first == '-') renderJsonString(s)
-      else if (s.startsWith("include") || s.startsWith("true") ||
-          s.startsWith("false") || s.startsWith("null") || s.contains("//"))
+      else if (s.startsWith("include") || s.startsWith("null") ||
+          s.startsWith("false") || s.startsWith("true") ||
+          s.contains(
+            "//"
+          )) // alternative '#' for comments is already in forbidden chat list
         renderJsonString(s)
       // only unquote if does not contain forbidden char or white spaces
       else if (s.exists(isForbiddenUnquotedChar))

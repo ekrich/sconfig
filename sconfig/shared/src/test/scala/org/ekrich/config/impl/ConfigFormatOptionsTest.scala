@@ -188,6 +188,28 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   }
 
   @Test
+  def simplifyOneEntryNestedObjectsKeepComments(): Unit = {
+    implicit val configFormatOptions =
+      defaultFormatOptions.setSimplifyNestedObjects(true)
+
+    val in =
+      """r {
+        | // before
+        | b {
+        | d= 42 // middle
+        | }
+        | }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected =
+      """# before
+        |# middle
+        |r.b.d = 42
+        |""".stripMargin
+    checkEqualObjects(expected, result)
+  }
+
+  @Test
   def simplifyOneEntryNestedObjectsOnRoot(): Unit = {
     implicit val configFormatOptions =
       defaultFormatOptions.setSimplifyNestedObjects(true)
