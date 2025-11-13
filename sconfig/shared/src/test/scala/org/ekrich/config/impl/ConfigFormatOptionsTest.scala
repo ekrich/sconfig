@@ -251,4 +251,34 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
     checkEqualObjects(expected, result)
   }
 
+  @Test
+  def simplifyOneEntryNestedObjectsPlusEquals(): Unit = {
+    implicit val configFormatOptions =
+      defaultFormatOptions.setSimplifyNestedObjects(true)
+
+    val in = """pa { th+="/bin" }"""
+    val result = formatHocon(in)
+
+    val expected =
+      """pa.th = ${?pa.th}[
+        |    /bin
+        |]
+        |""".stripMargin
+    checkEqualObjects(expected, result)
+  }
+
+  @Test
+  def simplifyOneEntryNestedObjectsComplexString(): Unit = {
+    implicit val configFormatOptions =
+      defaultFormatOptions.setSimplifyNestedObjects(true)
+
+    val in = """pa { th="/bin/"${bla}"/foo" }"""
+    val result = formatHocon(in)
+
+    val expected =
+      """pa.th = /bin/${bla}/foo
+        |""".stripMargin
+    checkEqualObjects(expected, result)
+  }
+
 }
