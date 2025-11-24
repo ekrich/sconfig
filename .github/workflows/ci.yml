@@ -16,7 +16,7 @@ jobs:
     name: Test using ${{matrix.os}} and Java ${{ matrix.java }}
     steps:
     - name: Checkout current branch (full)
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup Java
       uses: actions/setup-java@v5
       with:
