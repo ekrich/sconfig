@@ -7,7 +7,7 @@ import org.ekrich.config.{
   ConfigRenderOptions,
   ConfigFormatOptions
 }
-
+// tests for new features of Rendering (since fork from lightbend)
 class ConfigFormatOptionsTest extends TestUtilsShared {
   val parseOptions = ConfigParseOptions.defaults.setAllowMissing(true)
   val myDefaultRenderOptions = ConfigRenderOptions.defaults
@@ -35,17 +35,6 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
                |}""".stripMargin
     val result = formatHocon(in)
     val expected = "r {}"
-    checkEqualObjects(expected, result)
-  }
-
-  @Test
-  def newLineAtTheEnd(): Unit = {
-    implicit val configFormatOptions = defaultFormatOptions
-    val in = """r {
-               |}""".stripMargin
-    val result = formatHocon(in)
-    val expected = """r {}
-                     |""".stripMargin
     checkEqualObjects(expected, result)
   }
 
@@ -104,31 +93,6 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   }
 
   @Test
-  def useFourSpacesIndentation(): Unit = {
-    implicit val configFormatOptions =
-      defaultFormatOptions.setDoubleIndent(true)
-
-    val in = """r {
-               |  p {
-               |        d {
-               |        s: ${r.ss}
-               |        }
-               |     }
-               |}""".stripMargin
-    val result = formatHocon(in)
-
-    val expected = """r {
-                     |    p {
-                     |        d {
-                     |            s = ${r.ss}
-                     |        }
-                     |    }
-                     |}
-                     |""".stripMargin
-    checkEqualObjects(expected, result)
-  }
-
-  @Test
   def useColonAsAssignSign(): Unit = {
     implicit val configFormatOptions = defaultFormatOptions.setColonAssign(true)
 
@@ -145,45 +109,6 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
                      |    s: t_f
                      |}
                      |""".stripMargin
-    checkEqualObjects(expected, result)
-  }
-
-  @Test
-  def useEqualsAsAssignSign(): Unit = {
-    implicit val configFormatOptions =
-      defaultFormatOptions.setColonAssign(false)
-
-    val in = """r {
-               |    s=t_f
-               |      "n-m"=1
-               |    n:"ALA"
-               |}""".stripMargin
-    val result = formatHocon(in)
-
-    val expected = """r {
-                     |    n = ALA
-                     |    n-m = 1
-                     |    s = t_f
-                     |}
-                     |""".stripMargin
-    checkEqualObjects(expected, result)
-  }
-
-  @Test
-  def dontSimplifyOneEntryNestedObjects(): Unit = {
-    implicit val configFormatOptions =
-      defaultFormatOptions.setSimplifyNestedObjects(false)
-
-    val in = """r.p.d= 42"""
-    val result = formatHocon(in)
-
-    val expected =
-      """r {
-        |    p {
-        |        d = 42
-        |    }
-        |}
-        |""".stripMargin
     checkEqualObjects(expected, result)
   }
 

@@ -22,6 +22,22 @@ object ConfigString {
     // serialization all goes through SerializedConfigValue
     @throws[ObjectStreamException]
     private def writeReplace(): jl.Object = new SerializedConfigValue(this)
+
+    override def renderValue(
+        sb: jl.StringBuilder,
+        indent: Int,
+        atRoot: Boolean,
+        options: ConfigRenderOptions
+    ): Unit =
+      if (hideEnvVariableValue(options)) {
+        appendHiddenEnvVariableValue(sb)
+      } else {
+        val rendered =
+          if (options.getJson) ConfigImplUtil.renderJsonString(value)
+          else
+            ConfigImplUtil.renderStringUnquotedIfPossible(value)
+        sb.append(rendered)
+      }
   }
   // this is sort of a hack; we want to preserve whether whitespace
   // was quoted until we process substitutions, so we can ignore
@@ -41,6 +57,23 @@ object ConfigString {
 
     @throws[ObjectStreamException]
     private def writeReplace(): jl.Object = new SerializedConfigValue(this)
+
+    override def renderValue(
+        sb: jl.StringBuilder,
+        indent: Int,
+        atRoot: Boolean,
+        options: ConfigRenderOptions
+    ): Unit =
+      if (hideEnvVariableValue(options)) {
+        appendHiddenEnvVariableValue(sb)
+      } else {
+        val rendered =
+          if (options.getJson) ConfigImplUtil.renderJsonString(value)
+          else if (value == " ") // might need more cases to disable quotes wrapping
+            value
+          else ConfigImplUtil.renderStringUnquotedIfPossible(value)
+        sb.append(rendered)
+      }
   }
 }
 
@@ -55,19 +88,4 @@ abstract class ConfigString(origin: ConfigOrigin, val value: String)
   override def unwrapped: String = value
 
   override def transformToString: String = value
-
-  override def renderValue(
-      sb: jl.StringBuilder,
-      indent: Int,
-      atRoot: Boolean,
-      options: ConfigRenderOptions
-  ): Unit =
-    if (hideEnvVariableValue(options)) {
-      appendHiddenEnvVariableValue(sb)
-    } else {
-      val rendered =
-        if (options.getJson) ConfigImplUtil.renderJsonString(value)
-        else ConfigImplUtil.renderStringUnquotedIfPossible(value)
-      sb.append(rendered)
-    }
 }
