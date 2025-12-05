@@ -7,7 +7,7 @@ import org.ekrich.config.{
   ConfigRenderOptions,
   ConfigFormatOptions
 }
-// tests for new (since fork from lightbend) features of Rendering
+// tests for new features of Rendering (since fork from lightbend)
 class ConfigFormatOptionsTest extends TestUtilsShared {
   val parseOptions = ConfigParseOptions.defaults.setAllowMissing(true)
   val myDefaultRenderOptions = ConfigRenderOptions.defaults
