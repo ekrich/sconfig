@@ -512,7 +512,8 @@ final class SimpleConfigObject(
       None
     else Some(MultiPathEntry(keysAggregate, commentsAggregate, this))
 
-    if (value.size() == 1) {
+    def nextValue = values.iterator().next()
+    if (value.size() == 1 && nextValue.origin.comments.isEmpty) {
       val newKeyElement = ConfigImplUtil.renderStringUnquotedIfPossible(
         keySet.iterator().next()
       )
@@ -521,7 +522,7 @@ final class SimpleConfigObject(
 
       origin.comments.forEach(commentStr => commentsAggregate.add(commentStr))
 
-      values.iterator().next() match {
+      nextValue match {
         case nested: SimpleConfigObject =>
           nested.tryCompressToMultipathRec(
             newAggregate,
@@ -538,7 +539,8 @@ final class SimpleConfigObject(
   }
 
   private def tryCompressToMultipath(
-      options: ConfigRenderOptions
+      options: ConfigRenderOptions,
+      atRoot: Boolean
   ): Option[MultiPathEntry] =
     if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) ||
         options.getJson || options.getOriginComments) {
@@ -547,7 +549,14 @@ final class SimpleConfigObject(
       tryCompressToMultipathRec(
         "",
         new ju.ArrayList(this.origin.comments)
-      )
+      ).map(triple => {
+        if (atRoot)
+          triple
+        else
+          triple.copy(comments =
+            new ju.ArrayList()
+          ) // because they were already printed in outer scope
+      })
 
   override def renderValue(
       sb: jl.StringBuilder,
@@ -557,7 +566,7 @@ final class SimpleConfigObject(
   ): Unit = {
     if (isEmpty) sb.append("{}")
     else {
-      tryCompressToMultipath(options) match {
+      tryCompressToMultipath(options, atRoot) match {
         case Some(MultiPathEntry(aggKey, aggComments, leafValue)) =>
           // remove space after renderAtKey
           // NASTY, better design welcomed
