@@ -539,8 +539,7 @@ final class SimpleConfigObject(
   }
 
   private def tryCompressToMultipath(
-      options: ConfigRenderOptions,
-      atRoot: Boolean
+      options: ConfigRenderOptions
   ): Option[MultiPathEntry] =
     if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) ||
         options.getJson || options.getOriginComments) {
@@ -549,14 +548,7 @@ final class SimpleConfigObject(
       tryCompressToMultipathRec(
         "",
         new ju.ArrayList(this.origin.comments)
-      ).map(triple => {
-        if (atRoot)
-          triple
-        else
-          triple.copy(comments =
-            new ju.ArrayList()
-          ) // because they were already printed in outer scope
-      })
+      )
 
   override def renderValue(
       sb: jl.StringBuilder,
@@ -566,7 +558,7 @@ final class SimpleConfigObject(
   ): Unit = {
     if (isEmpty) sb.append("{}")
     else {
-      tryCompressToMultipath(options, atRoot) match {
+      tryCompressToMultipath(options) match {
         case Some(MultiPathEntry(aggKey, aggComments, leafValue)) =>
           // remove space after renderAtKey
           // NASTY, better design welcomed
@@ -584,7 +576,8 @@ final class SimpleConfigObject(
                   newLastChar // should extend path only on identifier
                 )) sb.append('.')
           }
-          printCommentsToBuffer(sb, options, indentVal, aggComments)
+          if (atRoot) printCommentsToBuffer(sb, options, indentVal, aggComments)
+          // else skip as comment were already printed in the outer scope
 
           leafValue.renderWithRenderedKey(sb, s"$aggKey", options)
           leafValue.renderValue(sb, indentVal, false, options)
