@@ -2,6 +2,8 @@
 
 [Back to README](../README.md)
 
+Release [1.12.3](https://github.com/ekrich/sconfig/releases/tag/v1.12.3) - (2025-12-10)<br/>
+Release [1.12.2](https://github.com/ekrich/sconfig/releases/tag/v1.12.2) - (2025-12-09)<br/>
 Release [1.12.1](https://github.com/ekrich/sconfig/releases/tag/v1.12.1) - (2025-12-07)<br/>
 Release [1.12.0](https://github.com/ekrich/sconfig/releases/tag/v1.12.0) - (2025-09-30)<br/>
 Release [1.11.0](https://github.com/ekrich/sconfig/releases/tag/v1.11.0) - (2025-07-14)<br/>
