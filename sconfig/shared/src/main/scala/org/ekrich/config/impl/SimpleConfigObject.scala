@@ -512,7 +512,6 @@ final class SimpleConfigObject(
       None
     else Some(MultiPathEntry(keysAggregate, commentsAggregate, this))
 
-
     if (value.size() == 1) {
       val newKeyElement = ConfigImplUtil.renderStringUnquotedIfPossible(
         keySet.iterator().next()

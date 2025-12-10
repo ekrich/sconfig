@@ -10,7 +10,8 @@ import org.junit.*
 
 // Regression tests for rendering old behaviour compatibility
 class ConfigDefaultRenderingTest extends RenderingTestSuite {
-  private implicit val defaultFormatOptions: ConfigFormatOptions = ConfigFormatOptions.defaults
+  private implicit val defaultFormatOptions: ConfigFormatOptions =
+    ConfigFormatOptions.defaults
 
   @Test
   def newLineAtTheEnd(): Unit = {
