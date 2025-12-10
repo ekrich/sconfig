@@ -17,7 +17,7 @@ If you are looking for the original Java API, see
 
 
 ## Getting Started
-[![Maven Central](https://img.shields.io/maven-central/v/org.ekrich/sconfig_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig_2.13)
+[![Sonatype Central](https://maven-badges.sml.io/sonatype-central/org.ekrich/sconfig_3/badge.svg)](https://maven-badges.sml.io/sonatype-central/org.ekrich/sconfig_3/)
 
 ```scala
 libraryDependencies += "org.ekrich" %% "sconfig" % "x.y.z"
@@ -93,6 +93,6 @@ If you wish to avoid the `scalafix` solution above especially if your usage of t
 
 ## Releases
 
-Latest Release:  [![Maven Central](https://img.shields.io/maven-central/v/org.ekrich/sconfig_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/org.ekrich/sconfig_2.13)
+Latest Release:  [![Sonatype Central](https://maven-badges.sml.io/sonatype-central/org.ekrich/sconfig_3/badge.svg)](https://maven-badges.sml.io/sonatype-central/org.ekrich/sconfig_3/)
 
 See [RELEASES](docs/RELEASES.md) for details or older releases.

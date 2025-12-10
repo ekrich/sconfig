@@ -36,7 +36,7 @@ object Tokenizer {
     new Tokenizer.TokenIterator(origin, input, flavor ne ConfigSyntax.JSON)
 
   private[impl] def render(tokens: ju.Iterator[Token]) = {
-    val renderedText = new StringBuilder
+    val renderedText = new jl.StringBuilder
     while (tokens.hasNext) renderedText.append(tokens.next.tokenText)
     renderedText.toString
   }
@@ -453,7 +453,7 @@ object Tokenizer {
       val sb = new jl.StringBuilder
       // We need a second string builder to keep track of escape characters.
       // We want to return them exactly as they appeared in the original text,
-      // which means we will need a new StringBuilder to escape escape characters
+      // which means we will need a new jl.StringBuilder to escape escape characters
       // so we can also keep the actual value of the string. This is gross.
       val sbOrig = new jl.StringBuilder
       sbOrig.appendCodePoint('"')

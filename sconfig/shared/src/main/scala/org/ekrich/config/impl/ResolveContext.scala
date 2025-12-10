@@ -1,6 +1,7 @@
 package org.ekrich.config.impl
 
-import java.{util => ju}
+import java.lang as jl
+import java.util as ju
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigResolveOptions
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
@@ -112,7 +113,7 @@ private[impl] final class ResolveContext(
   private[impl] def unrestricted: ResolveContext = restrict(null)
   private[impl] def traceString: String = {
     val separator = ", "
-    val sb = new StringBuilder
+    val sb = new jl.StringBuilder
     resolveStack.forEach { value =>
       if (value.isInstanceOf[ConfigReference]) {
         sb.append(value.asInstanceOf[ConfigReference].expression.toString)

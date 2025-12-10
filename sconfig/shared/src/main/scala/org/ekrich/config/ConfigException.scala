@@ -9,7 +9,7 @@ import java.io.{
   ObjectOutputStream,
   Serializable
 }
-import java.{lang => jl}
+import java.lang as jl
 import jl.reflect.Field
 
 import org.ekrich.config.impl.ConfigImplUtil
@@ -350,7 +350,7 @@ object ConfigException {
     private def makeMessage(
         problems: jl.Iterable[ConfigException.ValidationProblem]
     ): String = {
-      val sb = new StringBuilder
+      val sb = new jl.StringBuilder
       problems.forEach { p =>
         sb.append(p.origin.description)
         sb.append(": ")

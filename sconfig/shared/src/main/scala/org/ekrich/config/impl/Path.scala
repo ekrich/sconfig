@@ -3,7 +3,8 @@
  */
 package org.ekrich.config.impl
 
-import java.{util => ju}
+import java.lang as jl
+import java.util as ju
 import org.ekrich.config.ConfigException
 
 object Path {
@@ -163,7 +164,7 @@ final class Path @throws(classOf[ConfigException]) (
     41 * (41 + first.hashCode) + (if (remainder == null) 0
                                   else remainder.hashCode)
 
-  private def appendToStringBuilder(sb: StringBuilder): Unit = {
+  private def appendToStringBuilder(sb: jl.StringBuilder): Unit = {
     if (Path.hasFunkyChars(first) || first.isEmpty)
       sb.append(ConfigImplUtil.renderJsonString(first))
     else sb.append(first)
@@ -173,7 +174,7 @@ final class Path @throws(classOf[ConfigException]) (
     }
   }
   override def toString: String = {
-    val sb = new StringBuilder
+    val sb = new jl.StringBuilder
     sb.append("Path(")
     appendToStringBuilder(sb)
     sb.append(")")
@@ -185,7 +186,7 @@ final class Path @throws(classOf[ConfigException]) (
    * error-message-oriented human-readable one.
    */
   private[impl] def render = {
-    val sb = new StringBuilder
+    val sb = new jl.StringBuilder
     appendToStringBuilder(sb)
     sb.toString
   }
