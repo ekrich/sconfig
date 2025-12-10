@@ -8,29 +8,13 @@ import org.ekrich.config.{
   ConfigFormatOptions
 }
 // tests for new features of Rendering (since fork from lightbend)
-class ConfigFormatOptionsTest extends TestUtilsShared {
-  val parseOptions = ConfigParseOptions.defaults.setAllowMissing(true)
-  val myDefaultRenderOptions = ConfigRenderOptions.defaults
-    .setJson(false)
-    .setOriginComments(false)
-    .setComments(true)
-    .setFormatted(true)
-  val defaultFormatOptions = ConfigFormatOptions.defaults
-
-  def formatHocon(
-      str: String
-  )(implicit configFormatOptions: ConfigFormatOptions): String =
-    ConfigFactory
-      .parseString(str, parseOptions)
-      .root
-      .render(
-        myDefaultRenderOptions.setConfigFormatOptions(configFormatOptions)
-      )
+class ConfigFormatOptionsTest extends RenderingTestSuite {
+  val initialFormatOptions = ConfigFormatOptions.defaults
 
   @Test
   def noNewLineAtTheEnd(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setNewLineAtEnd(false)
+      initialFormatOptions.setNewLineAtEnd(false)
     val in = """r {
                |}""".stripMargin
     val result = formatHocon(in)
@@ -41,7 +25,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def keepOriginOrderOfEntries(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setKeepOriginOrder(true)
+      initialFormatOptions.setKeepOriginOrder(true)
 
     val in = """r {
                |  p {
@@ -70,7 +54,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def useTwoSpacesIndentation(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setDoubleIndent(false)
+      initialFormatOptions.setDoubleIndent(false)
 
     val in = """r {
                |  p {
@@ -94,7 +78,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
 
   @Test
   def useColonAsAssignSign(): Unit = {
-    implicit val configFormatOptions = defaultFormatOptions.setColonAssign(true)
+    implicit val configFormatOptions = initialFormatOptions.setColonAssign(true)
 
     val in = """r {
                |    s=t_f
@@ -115,7 +99,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def simplifyOneEntryNestedObjectsKeepCommentsOnRoot(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setSimplifyNestedObjects(true)
+      initialFormatOptions.setSimplifyNestedObjects(true)
 
     val in =
       """// before
@@ -140,7 +124,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def simplifyOneEntryNestedObjectsKeepCommentsNotOnRoot(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setSimplifyNestedObjects(true)
+      initialFormatOptions.setSimplifyNestedObjects(true)
 
     val in =
       """h: holder
@@ -167,7 +151,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def simplifyOneEntryNestedObjectsOnRoot(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setSimplifyNestedObjects(true)
+      initialFormatOptions.setSimplifyNestedObjects(true)
 
     val in = """r { "p.at" { d= 42 } }"""
     val result = formatHocon(in)
@@ -181,7 +165,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def simplifyOneEntryNestedObjectsNotOnRoot(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setSimplifyNestedObjects(true)
+      initialFormatOptions.setSimplifyNestedObjects(true)
 
     val in =
       """r { p { "d.ap" { s= 42 } }
@@ -208,7 +192,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
   @Test
   def simplifyOneEntryNestedObjectsArray(): Unit = {
     implicit val configFormatOptions =
-      defaultFormatOptions.setSimplifyNestedObjects(true)
+      initialFormatOptions.setSimplifyNestedObjects(true)
 
     val in =
       """r { ma: [ { si.foo: so } ]
@@ -226,11 +210,5 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
         |""".stripMargin
 
     checkEqualsAndStable(expected, result)
-  }
-  def checkEqualsAndStable(expected: String, result: String)(implicit
-      configFormatOptions: ConfigFormatOptions
-  ) = {
-    checkEqualObjects(expected, result)
-    checkEqualObjects(result, formatHocon(result))
   }
 }

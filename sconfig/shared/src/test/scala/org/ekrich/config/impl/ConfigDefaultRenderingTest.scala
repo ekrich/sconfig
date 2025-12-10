@@ -9,25 +9,8 @@ import org.ekrich.config.{
 import org.junit.*
 
 // Regression tests for rendering old behaviour compatibility
-class ConfigDefaultRenderingTest extends TestUtilsShared {
-  val parseOptions = ConfigParseOptions.defaults.setAllowMissing(true)
-  val myDefaultRenderOptions = ConfigRenderOptions.defaults
-    .setJson(false)
-    .setOriginComments(false)
-    .setComments(true)
-    .setFormatted(true)
-  implicit val defaultFormatOptions: ConfigFormatOptions =
-    ConfigFormatOptions.defaults
-
-  def formatHocon(
-      str: String
-  )(implicit configFormatOptions: ConfigFormatOptions): String =
-    ConfigFactory
-      .parseString(str, parseOptions)
-      .root
-      .render(
-        myDefaultRenderOptions.setConfigFormatOptions(configFormatOptions)
-      )
+class ConfigDefaultRenderingTest extends RenderingTestSuite {
+  private implicit val defaultFormatOptions: ConfigFormatOptions = ConfigFormatOptions.defaults
 
   @Test
   def newLineAtTheEnd(): Unit = {
@@ -107,10 +90,5 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
         |myEmpty = " "
         |""".stripMargin
     checkEqualsAndStable(expected, result)
-  }
-
-  def checkEqualsAndStable(expected: String, result: String) = {
-    checkEqualObjects(expected, result)
-    checkEqualObjects(result, formatHocon(result))
   }
 }
