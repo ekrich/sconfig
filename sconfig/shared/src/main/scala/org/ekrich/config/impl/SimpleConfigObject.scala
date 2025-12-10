@@ -512,8 +512,7 @@ final class SimpleConfigObject(
       None
     else Some(MultiPathEntry(keysAggregate, commentsAggregate, this))
 
-    def nextValue = values.iterator().next()
-    if (value.size() == 1 && nextValue.origin.comments.isEmpty) {
+    if (value.size() == 1) {
       val newKeyElement = ConfigImplUtil.renderStringUnquotedIfPossible(
         keySet.iterator().next()
       )
@@ -522,25 +521,28 @@ final class SimpleConfigObject(
 
       origin.comments.forEach(commentStr => commentsAggregate.add(commentStr))
 
-      nextValue match {
-        case nested: SimpleConfigObject =>
-          nested.tryCompressToMultipathRec(
-            newAggregate,
-            commentsAggregate
-          )
-        case other: AbstractConfigValue =>
-          other.origin.comments.forEach(commentStr =>
-            commentsAggregate.add(commentStr)
-          )
-          Some(MultiPathEntry(newAggregate, commentsAggregate, other))
-        case _ => returnAsIs
-      }
+      val nextValue = values.iterator().next()
+
+      if (!nextValue.origin.comments.isEmpty && origin._lineNumber != nextValue.origin.lineNumber)
+        returnAsIs
+      else
+        nextValue match {
+          case nested: SimpleConfigObject =>
+            nested.tryCompressToMultipathRec(
+              newAggregate,
+              commentsAggregate
+            )
+          case other: AbstractConfigValue =>
+            other.origin.comments
+              .forEach(commentStr => commentsAggregate.add(commentStr))
+            Some(MultiPathEntry(newAggregate, commentsAggregate, other))
+          case _ => returnAsIs
+        }
     } else returnAsIs
   }
 
   private def tryCompressToMultipath(
-      options: ConfigRenderOptions,
-      atRoot: Boolean
+      options: ConfigRenderOptions
   ): Option[MultiPathEntry] =
     if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) ||
         options.getJson || options.getOriginComments) {
@@ -549,14 +551,7 @@ final class SimpleConfigObject(
       tryCompressToMultipathRec(
         "",
         new ju.ArrayList(this.origin.comments)
-      ).map(triple => {
-        if (atRoot)
-          triple
-        else
-          triple.copy(comments =
-            new ju.ArrayList()
-          ) // because they were already printed in outer scope
-      })
+      )
 
   override def renderValue(
       sb: jl.StringBuilder,
@@ -566,7 +561,7 @@ final class SimpleConfigObject(
   ): Unit = {
     if (isEmpty) sb.append("{}")
     else {
-      tryCompressToMultipath(options, atRoot) match {
+      tryCompressToMultipath(options) match {
         case Some(MultiPathEntry(aggKey, aggComments, leafValue)) =>
           // remove space after renderAtKey
           // NASTY, better design welcomed
@@ -584,7 +579,27 @@ final class SimpleConfigObject(
                   newLastChar // should extend path only on identifier
                 )) sb.append('.')
           }
-          printCommentsToBuffer(sb, options, indentVal, aggComments)
+          if (atRoot)
+            printCommentsToBuffer(sb, options, indentVal, aggComments)
+          else if (origin._lineNumber == leafValue.origin.lineNumber) {
+            // another NASTY change of sb history
+            def appendAfterLastNewLine(at: jl.StringBuilder) = {
+              // if at first line(no \n) then returns -1, -1 + 1 = 0 which is a valid idx
+              val lastNew: Int = at.lastIndexOf("\n")
+              val indent =
+                at.substring(lastNew + 1).takeWhile(_.isWhitespace).length
+              val renderedCommentsBuffer = new jl.StringBuilder()
+              printCommentsToBuffer(
+                renderedCommentsBuffer,
+                options,
+                indent,
+                aggComments
+              )
+              sb.insert(lastNew + 1, renderedCommentsBuffer)
+            }
+            // first part of multi path key is already in sb, need to add comments before it
+            appendAfterLastNewLine(sb)
+          }
 
           leafValue.renderWithRenderedKey(sb, s"$aggKey", options)
           leafValue.renderValue(sb, indentVal, false, options)

@@ -9,25 +9,9 @@ import org.ekrich.config.{
 import org.junit.*
 
 // Regression tests for rendering old behaviour compatibility
-class ConfigDefaultRenderingTest extends TestUtilsShared {
-  val parseOptions = ConfigParseOptions.defaults.setAllowMissing(true)
-  val myDefaultRenderOptions = ConfigRenderOptions.defaults
-    .setJson(false)
-    .setOriginComments(false)
-    .setComments(true)
-    .setFormatted(true)
-  implicit val defaultFormatOptions: ConfigFormatOptions =
+class ConfigDefaultRenderingTest extends RenderingTestSuite {
+  private implicit val defaultFormatOptions: ConfigFormatOptions =
     ConfigFormatOptions.defaults
-
-  def formatHocon(
-      str: String
-  )(implicit configFormatOptions: ConfigFormatOptions): String =
-    ConfigFactory
-      .parseString(str, parseOptions)
-      .root
-      .render(
-        myDefaultRenderOptions.setConfigFormatOptions(configFormatOptions)
-      )
 
   @Test
   def newLineAtTheEnd(): Unit = {
@@ -36,7 +20,7 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
     val result = formatHocon(in)
     val expected = """r {}
                      |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -58,7 +42,7 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
                      |    }
                      |}
                      |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -76,7 +60,7 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
                      |    s = t_f
                      |}
                      |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -91,7 +75,7 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
         |    }
         |}
         |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -106,7 +90,6 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
       """except = ${ex1} ${ex2}
         |myEmpty = " "
         |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkEqualsAndStable(expected, result)
   }
-
 }
