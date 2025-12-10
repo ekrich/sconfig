@@ -3,7 +3,8 @@
  */
 package org.ekrich.config.impl
 
-import java.{util => ju}
+import java.lang as jl
+import java.util as ju
 
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
@@ -80,7 +81,7 @@ object Tokens {
       val cause: Throwable
   ) extends Token(TokenType.PROBLEM, origin) {
     override def toString(): String = {
-      val sb = new StringBuilder
+      val sb = new jl.StringBuilder
       sb.append('\'')
       sb.append(what)
       sb.append('\'')
@@ -132,7 +133,7 @@ object Tokens {
       val text: String
   ) extends Token(TokenType.COMMENT, origin) {
     override def toString(): String = {
-      val sb = new StringBuilder
+      val sb = new jl.StringBuilder
       sb.append("'#")
       sb.append(text)
       sb.append("' (COMMENT)")
@@ -161,7 +162,7 @@ object Tokens {
         this.value.iterator
       ) + "}"
     override def toString(): String = {
-      val sb = new StringBuilder
+      val sb = new jl.StringBuilder
       value.forEach { t =>
         sb.append(t.toString)
       }

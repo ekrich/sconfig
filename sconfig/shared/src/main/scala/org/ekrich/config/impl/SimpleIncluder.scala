@@ -4,6 +4,7 @@
 package org.ekrich.config.impl
 
 import java.io.File
+import java.lang as jl
 import java.net.MalformedURLException
 import java.net.URL
 import java.util as ju
@@ -173,7 +174,7 @@ object SimpleIncluder {
             "should not be reached: nothing found but no exceptions thrown"
           )
         } else {
-          val sb = new StringBuilder
+          val sb = new jl.StringBuilder
           fails.forEach { t =>
             sb.append(t.getMessage)
             sb.append(", ")

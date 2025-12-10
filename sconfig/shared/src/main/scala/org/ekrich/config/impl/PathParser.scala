@@ -8,7 +8,8 @@ import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
 import org.ekrich.config.ConfigValueType
 import java.io.StringReader
-import java.{util => ju}
+import java.lang as jl
+import java.util as ju
 import scala.util.control.Breaks._
 
 object PathParser {
@@ -17,7 +18,7 @@ object PathParser {
       // an element can be empty if it has a quoted empty string "" in it
       var canBeEmpty: Boolean
   ) {
-    private[impl] val sb = new StringBuilder(initial)
+    private[impl] val sb = new jl.StringBuilder(initial)
     override def toString: String =
       "Element(" + sb.toString + "," + canBeEmpty + ")"
   }

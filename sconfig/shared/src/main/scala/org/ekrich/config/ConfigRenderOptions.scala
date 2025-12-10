@@ -3,6 +3,8 @@
  */
 package org.ekrich.config
 
+import java.lang as jl
+
 /**
  * A set of options related to rendering a [[ConfigValue]]. Passed to
  * [[ConfigValue!.render(options:org\.ekrich\.config\.ConfigRenderOptions)* ConfigValue.render(ConfigRenderOptions)]].
@@ -354,7 +356,7 @@ final class ConfigRenderOptions private (
   def getShowEnvVariableValues: Boolean = _showEnvVariableValues
 
   override def toString: String = {
-    val sb = new StringBuilder("ConfigRenderOptions(")
+    val sb = new jl.StringBuilder("ConfigRenderOptions(")
     if (_originComments) sb.append("originComments,")
     if (_comments) sb.append("comments,")
     if (_formatted) {

@@ -8,6 +8,7 @@ import java.io.File
 import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.lang as jl
 import java.net.URISyntaxException
 import java.net.URL
 import java.util as ju
@@ -43,7 +44,7 @@ object ConfigImplUtil {
     codepoint >= 0x0000 && codepoint <= 0x001f
 
   def renderJsonString(s: String): String = {
-    val sb = new StringBuilder
+    val sb = new jl.StringBuilder
     sb.append('"')
     var i = 0
     while (i < s.length) {
@@ -202,7 +203,7 @@ object ConfigImplUtil {
 
   private[impl] def toCamelCase(originalName: String): String = {
     val words = originalName.split("-+")
-    val nameBuilder = new StringBuilder(originalName.length)
+    val nameBuilder = new jl.StringBuilder(originalName.length)
     words.foreach { word =>
       if (nameBuilder.length == 0) nameBuilder.append(word)
       else {

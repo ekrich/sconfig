@@ -1,5 +1,7 @@
 package org.ekrich.config.impl
 
+import java.lang as jl
+
 import org.ekrich.config.ConfigException
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
 
@@ -137,7 +139,7 @@ object ResolveSource {
         reversed
       }
     override def toString: String = {
-      val sb = new StringBuffer
+      val sb = new jl.StringBuilder
       sb.append("[")
       var toAppendValue = this.reverse
       while ({ toAppendValue != null }) {

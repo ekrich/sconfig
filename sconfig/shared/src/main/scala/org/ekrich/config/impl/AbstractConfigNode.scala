@@ -4,13 +4,14 @@
 package org.ekrich.config.impl
 
 import org.ekrich.config.parser.ConfigNode
-import java.{util => ju}
+import java.lang as jl
+import java.util as ju
 
 abstract class AbstractConfigNode extends ConfigNode {
   protected[impl] def tokens: ju.Collection[Token]
 
   override final def render: String = {
-    val origText = new StringBuilder
+    val origText = new jl.StringBuilder
     tokens.forEach { t =>
       origText.append(t.tokenText)
     }
