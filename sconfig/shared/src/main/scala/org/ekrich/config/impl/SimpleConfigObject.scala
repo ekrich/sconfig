@@ -589,10 +589,11 @@ final class SimpleConfigObject(
               val lastNew: Int = at.lastIndexOf("\n")
               val indent =
                 at.substring(lastNew + 1).takeWhile(_.isWhitespace).length
-              val tmp = new jl.StringBuilder()
-              printCommentsToBuffer(tmp, options, indent, aggComments)
-              sb.insert(lastNew + 1, tmp)
+              val renderedCommentsBuffer = new jl.StringBuilder()
+              printCommentsToBuffer(renderedCommentsBuffer, options, indent, aggComments)
+              sb.insert(lastNew + 1, renderedCommentsBuffer)
             }
+            // first part of multi path key is already in sb, need to add comments before it
             appendAfterLastNewLine(sb)
           }
 
