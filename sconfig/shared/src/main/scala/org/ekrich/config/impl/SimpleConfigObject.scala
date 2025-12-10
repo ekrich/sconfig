@@ -523,22 +523,21 @@ final class SimpleConfigObject(
 
       val nextValue = values.iterator().next()
 
-      nextValue match {
-        case _
-            if (!nextValue.origin.comments.isEmpty && origin._lineNumber != nextValue.origin.lineNumber) =>
-          returnAsIs
-        case nested: SimpleConfigObject =>
-          nested.tryCompressToMultipathRec(
-            newAggregate,
-            commentsAggregate
-          )
-        case other: AbstractConfigValue =>
-          other.origin.comments.forEach(commentStr =>
-            commentsAggregate.add(commentStr)
-          )
-          Some(MultiPathEntry(newAggregate, commentsAggregate, other))
-        case _ => returnAsIs
-      }
+      if (!nextValue.origin.comments.isEmpty && origin._lineNumber != nextValue.origin.lineNumber)
+        returnAsIs
+      else
+        nextValue match {
+          case nested: SimpleConfigObject =>
+            nested.tryCompressToMultipathRec(
+              newAggregate,
+              commentsAggregate
+            )
+          case other: AbstractConfigValue =>
+            other.origin.comments
+              .forEach(commentStr => commentsAggregate.add(commentStr))
+            Some(MultiPathEntry(newAggregate, commentsAggregate, other))
+          case _ => returnAsIs
+        }
     } else returnAsIs
   }
 
@@ -582,15 +581,20 @@ final class SimpleConfigObject(
           }
           if (atRoot)
             printCommentsToBuffer(sb, options, indentVal, aggComments)
-          else if (!atRoot && origin._lineNumber == leafValue.origin.lineNumber) {
-            // another NASTY change sb history
+          else if (origin._lineNumber == leafValue.origin.lineNumber) {
+            // another NASTY change of sb history
             def appendAfterLastNewLine(at: jl.StringBuilder) = {
               // if at first line(no \n) then returns -1, -1 + 1 = 0 which is a valid idx
               val lastNew: Int = at.lastIndexOf("\n")
               val indent =
                 at.substring(lastNew + 1).takeWhile(_.isWhitespace).length
               val renderedCommentsBuffer = new jl.StringBuilder()
-              printCommentsToBuffer(renderedCommentsBuffer, options, indent, aggComments)
+              printCommentsToBuffer(
+                renderedCommentsBuffer,
+                options,
+                indent,
+                aggComments
+              )
               sb.insert(lastNew + 1, renderedCommentsBuffer)
             }
             // first part of multi path key is already in sb, need to add comments before it
