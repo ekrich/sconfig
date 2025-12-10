@@ -512,8 +512,8 @@ final class SimpleConfigObject(
       None
     else Some(MultiPathEntry(keysAggregate, commentsAggregate, this))
 
-    def nextValue = values.iterator().next()
-    if (value.size() == 1 && nextValue.origin.comments.isEmpty) {
+    lazy val nextValue = values.iterator().next()
+    if (value.size() == 1) {
       val newKeyElement = ConfigImplUtil.renderStringUnquotedIfPossible(
         keySet.iterator().next()
       )
@@ -523,6 +523,9 @@ final class SimpleConfigObject(
       origin.comments.forEach(commentStr => commentsAggregate.add(commentStr))
 
       nextValue match {
+        case _
+            if (!nextValue.origin.comments.isEmpty && origin._lineNumber != nextValue.origin.lineNumber) =>
+          returnAsIs
         case nested: SimpleConfigObject =>
           nested.tryCompressToMultipathRec(
             newAggregate,
@@ -576,8 +579,21 @@ final class SimpleConfigObject(
                   newLastChar // should extend path only on identifier
                 )) sb.append('.')
           }
-          if (atRoot) printCommentsToBuffer(sb, options, indentVal, aggComments)
-          // else skip as comment were already printed in the outer scope
+          if (atRoot)
+            printCommentsToBuffer(sb, options, indentVal, aggComments)
+          else if (!atRoot && origin._lineNumber == leafValue.origin.lineNumber) {
+            // another NASTY change sb history
+            def appendAfterLastNewLine(at: jl.StringBuilder) = {
+              // still works with first line despite no newLineChar
+              val lastNew: Int = at.lastIndexOf("\n")
+              val indent =
+                at.substring(lastNew + 1).takeWhile(_.isWhitespace).length
+              val tmp = new jl.StringBuilder()
+              printCommentsToBuffer(tmp, options, indent, aggComments)
+              sb.insert(lastNew + 1, tmp)
+            }
+            appendAfterLastNewLine(sb)
+          }
 
           leafValue.renderWithRenderedKey(sb, s"$aggKey", options)
           leafValue.renderValue(sb, indentVal, false, options)

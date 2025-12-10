@@ -36,7 +36,7 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
     val result = formatHocon(in)
     val expected = """r {}
                      |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkSameAndStable(expected, result)
   }
 
   @Test
@@ -58,7 +58,7 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
                      |    }
                      |}
                      |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkSameAndStable(expected, result)
   }
 
   @Test
@@ -76,7 +76,7 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
                      |    s = t_f
                      |}
                      |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkSameAndStable(expected, result)
   }
 
   @Test
@@ -91,7 +91,7 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
         |    }
         |}
         |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkSameAndStable(expected, result)
   }
 
   @Test
@@ -106,7 +106,11 @@ class ConfigDefaultRenderingTest extends TestUtilsShared {
       """except = ${ex1} ${ex2}
         |myEmpty = " "
         |""".stripMargin
-    checkEqualObjects(expected, result)
+    checkSameAndStable(expected, result)
   }
 
+  def checkSameAndStable(expected: String, result: String) = {
+    checkEqualObjects(expected, result)
+    checkEqualObjects(result, formatHocon(result))
+  }
 }
