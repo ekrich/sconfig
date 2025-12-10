@@ -1,12 +1,8 @@
 package org.ekrich.config.impl
 
 import org.junit.*
-import org.ekrich.config.{
-  ConfigFactory,
-  ConfigParseOptions,
-  ConfigRenderOptions,
-  ConfigFormatOptions
-}
+import org.ekrich.config.ConfigFormatOptions
+
 // tests for new features of Rendering (since fork from lightbend)
 class ConfigFormatOptionsTest extends RenderingTestSuite {
   val initialFormatOptions = ConfigFormatOptions.defaults

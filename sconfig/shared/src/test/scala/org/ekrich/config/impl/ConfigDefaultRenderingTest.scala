@@ -1,12 +1,7 @@
 package org.ekrich.config.impl
 
-import org.ekrich.config.{
-  ConfigFactory,
-  ConfigFormatOptions,
-  ConfigParseOptions,
-  ConfigRenderOptions
-}
 import org.junit.*
+import org.ekrich.config.ConfigFormatOptions
 
 // Regression tests for rendering old behaviour compatibility
 class ConfigDefaultRenderingTest extends RenderingTestSuite {
