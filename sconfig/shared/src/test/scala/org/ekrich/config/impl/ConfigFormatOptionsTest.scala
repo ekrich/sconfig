@@ -35,7 +35,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
                |}""".stripMargin
     val result = formatHocon(in)
     val expected = "r {}"
-    checkSameAndStable(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -64,7 +64,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
                      |    }
                      |}
                      |""".stripMargin
-    checkSameAndStable(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -89,7 +89,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
                      |  }
                      |}
                      |""".stripMargin
-    checkSameAndStable(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -109,7 +109,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
                      |    s: t_f
                      |}
                      |""".stripMargin
-    checkSameAndStable(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -134,7 +134,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
         |    d = 42
         |}
         |""".stripMargin
-    checkSameAndStable(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -161,7 +161,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
         |    d = 42
         |}
         |""".stripMargin
-    checkSameAndStable(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -175,7 +175,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
     val expected =
       """r."p.at".d = 42
         |""".stripMargin
-    checkSameAndStable(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -202,7 +202,7 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
         |    p."d.ap".s = 42
         |}
         |""".stripMargin
-    checkSameAndStable(expected, result)
+    checkEqualsAndStable(expected, result)
   }
 
   @Test
@@ -225,9 +225,9 @@ class ConfigFormatOptionsTest extends TestUtilsShared {
         |}
         |""".stripMargin
 
-    checkSameAndStable(expected, result)
+    checkEqualsAndStable(expected, result)
   }
-  def checkSameAndStable(expected: String, result: String)(implicit
+  def checkEqualsAndStable(expected: String, result: String)(implicit
       configFormatOptions: ConfigFormatOptions
   ) = {
     checkEqualObjects(expected, result)

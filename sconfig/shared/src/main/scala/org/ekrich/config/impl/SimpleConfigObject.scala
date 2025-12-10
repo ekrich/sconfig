@@ -512,7 +512,7 @@ final class SimpleConfigObject(
       None
     else Some(MultiPathEntry(keysAggregate, commentsAggregate, this))
 
-    lazy val nextValue = values.iterator().next()
+
     if (value.size() == 1) {
       val newKeyElement = ConfigImplUtil.renderStringUnquotedIfPossible(
         keySet.iterator().next()
@@ -521,6 +521,8 @@ final class SimpleConfigObject(
                           else s"$keysAggregate.") + newKeyElement
 
       origin.comments.forEach(commentStr => commentsAggregate.add(commentStr))
+
+      val nextValue = values.iterator().next()
 
       nextValue match {
         case _
@@ -584,7 +586,7 @@ final class SimpleConfigObject(
           else if (!atRoot && origin._lineNumber == leafValue.origin.lineNumber) {
             // another NASTY change sb history
             def appendAfterLastNewLine(at: jl.StringBuilder) = {
-              // still works with first line despite no newLineChar
+              // if at first line(no \n) then returns -1, -1 + 1 = 0 which is a valid idx
               val lastNew: Int = at.lastIndexOf("\n")
               val indent =
                 at.substring(lastNew + 1).takeWhile(_.isWhitespace).length
