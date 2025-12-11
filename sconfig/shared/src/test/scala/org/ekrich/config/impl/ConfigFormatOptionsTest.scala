@@ -1,8 +1,7 @@
 package org.ekrich.config.impl
 
-import org.junit.*
 import org.ekrich.config.ConfigFormatOptions
-
+import org.junit.*
 // tests for new features of Rendering (since fork from lightbend)
 class ConfigFormatOptionsTest extends RenderingTestSuite {
   val initialFormatOptions = ConfigFormatOptions.defaults
@@ -109,9 +108,11 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
     val expected =
       """# before
         |# after
-        |r.b {
-        |    # middle
-        |    d = 42
+        |r {
+        |    b {
+        |        # middle
+        |        d = 42
+        |    }
         |}
         |""".stripMargin
     checkEqualsAndStable(expected, result)
@@ -136,9 +137,11 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
       """h = holder
         |# before
         |# after
-        |r.b {
-        |    # middle
-        |    d = 42
+        |r {
+        |    b {
+        |        # middle
+        |        d = 42
+        |    }
         |}
         |""".stripMargin
     checkEqualsAndStable(expected, result)
