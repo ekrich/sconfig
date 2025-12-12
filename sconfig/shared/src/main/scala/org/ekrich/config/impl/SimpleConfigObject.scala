@@ -505,39 +505,32 @@ final class SimpleConfigObject(
     })
 
   private def tryCompressToMultipathRec(
-      keysAggregate: String,
-      commentsAggregate: ju.List[String]
+      keysAggregate: String
   ): Option[MultiPathEntry] = {
     def returnAsIs = if (keysAggregate.isEmpty)
       None
-    else Some(MultiPathEntry(keysAggregate, commentsAggregate, this))
+    else Some(MultiPathEntry(keysAggregate, this))
 
-    if (value.size() == 1) {
+    lazy val nextValue = values.iterator().next()
+
+    if (value.size() == 1 &&
+        origin.comments.isEmpty &&
+        nextValue.origin.comments.isEmpty) {
       val newKeyElement = ConfigImplUtil.renderStringUnquotedIfPossible(
         keySet.iterator().next()
       )
       val newAggregate = (if (keysAggregate.isEmpty) ""
                           else s"$keysAggregate.") + newKeyElement
 
-      origin.comments.forEach(commentStr => commentsAggregate.add(commentStr))
-
-      val nextValue = values.iterator().next()
-
-      if (!nextValue.origin.comments.isEmpty && origin._lineNumber != nextValue.origin.lineNumber)
-        returnAsIs
-      else
-        nextValue match {
-          case nested: SimpleConfigObject =>
-            nested.tryCompressToMultipathRec(
-              newAggregate,
-              commentsAggregate
-            )
-          case other: AbstractConfigValue =>
-            other.origin.comments
-              .forEach(commentStr => commentsAggregate.add(commentStr))
-            Some(MultiPathEntry(newAggregate, commentsAggregate, other))
-          case _ => returnAsIs
-        }
+      nextValue match {
+        case nested: SimpleConfigObject =>
+          nested.tryCompressToMultipathRec(
+            newAggregate
+          )
+        case other: AbstractConfigValue =>
+          Some(MultiPathEntry(newAggregate, other))
+        case _ => returnAsIs
+      }
     } else returnAsIs
   }
 
@@ -549,8 +542,7 @@ final class SimpleConfigObject(
       None
     } else
       tryCompressToMultipathRec(
-        "",
-        new ju.ArrayList(this.origin.comments)
+        ""
       )
 
   override def renderValue(
@@ -562,7 +554,7 @@ final class SimpleConfigObject(
     if (isEmpty) sb.append("{}")
     else {
       tryCompressToMultipath(options) match {
-        case Some(MultiPathEntry(aggKey, aggComments, leafValue)) =>
+        case Some(MultiPathEntry(aggKey, leafValue)) =>
           // remove space after renderAtKey
           // NASTY, better design welcomed
           val lastCharIdx = sb.length() - 1
@@ -578,27 +570,6 @@ final class SimpleConfigObject(
             if (newLastChar == '"' || !ConfigImplUtil.isForbiddenUnquotedChar(
                   newLastChar // should extend path only on identifier
                 )) sb.append('.')
-          }
-          if (atRoot)
-            printCommentsToBuffer(sb, options, indentVal, aggComments)
-          else if (origin._lineNumber == leafValue.origin.lineNumber) {
-            // another NASTY change of sb history
-            def appendAfterLastNewLine(at: jl.StringBuilder) = {
-              // if at first line(no \n) then returns -1, -1 + 1 = 0 which is a valid idx
-              val lastNew: Int = at.lastIndexOf("\n")
-              val indent =
-                at.substring(lastNew + 1).takeWhile(_.isWhitespace).length
-              val renderedCommentsBuffer = new jl.StringBuilder()
-              printCommentsToBuffer(
-                renderedCommentsBuffer,
-                options,
-                indent,
-                aggComments
-              )
-              sb.insert(lastNew + 1, renderedCommentsBuffer)
-            }
-            // first part of multi path key is already in sb, need to add comments before it
-            appendAfterLastNewLine(sb)
           }
 
           leafValue.renderWithRenderedKey(sb, s"$aggKey", options)
@@ -751,6 +722,5 @@ final class SimpleConfigObject(
 
 case class MultiPathEntry(
     compactedKeys: String,
-    comments: ju.List[String],
     leafNode: AbstractConfigValue
 )
