@@ -4,7 +4,7 @@ resolvers += Resolver.sonatypeCentralSnapshots
 // versions
 val crossVer = "1.3.2"
 val scalaJSVersion = "1.20.2"
-val scalaNativeVersion = "0.5.9"
+val scalaNativeVersion = "0.5.10"
 val scalafix = "0.14.5"
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
