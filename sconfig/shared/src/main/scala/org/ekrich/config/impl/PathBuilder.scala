@@ -4,7 +4,6 @@
 package org.ekrich.config.impl
 
 import java.util as ju
-import scala.util.control.Breaks._
 import org.ekrich.config.ConfigException
 
 final class PathBuilder private[impl] () {
@@ -28,14 +27,13 @@ final class PathBuilder private[impl] () {
     checkCanAppend()
     var first = path.first
     var remainder = path.remainder
-    breakable {
-      while (true) {
-        keys.push(first)
-        if (remainder != null) {
-          first = remainder.first
-          remainder = remainder.remainder
-        } else break() // break
-      }
+    var continue = true
+    while (true && continue) {
+      keys.push(first)
+      if (remainder != null) {
+        first = remainder.first
+        remainder = remainder.remainder
+      } else continue = false // break
     }
   }
 
