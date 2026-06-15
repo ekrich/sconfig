@@ -12,7 +12,6 @@ import java.lang.reflect.Type
 import java.{util => ju}
 import java.{lang => jl}
 import java.time.Duration
-import scala.util.control.Breaks._
 import scala.util.Try
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigObject
@@ -82,12 +81,15 @@ object ConfigBeanImpl {
     try {
       val beanProps =
         new ju.ArrayList[PropertyDescriptor]
-      beanInfo.getPropertyDescriptors.foreach { beanProp =>
-        breakable {
-          if (beanProp.getReadMethod == null || beanProp.getWriteMethod == null)
-            break() // continue
+      val descs = beanInfo.getPropertyDescriptors
+      var i = 0
+      val len = descs.length
+      while (i < len) {
+        val beanProp = descs(i)
+        if (beanProp.getReadMethod != null && beanProp.getWriteMethod != null) {
           beanProps.add(beanProp)
         }
+        i += 1
       }
       // Try to throw all validation issues at once (this does not comprehensively
       // find every issue, but it should find common ones).
@@ -112,18 +114,26 @@ object ConfigBeanImpl {
         throw new ConfigException.ValidationFailed(problems)
       // Fill in the bean instance
       val bean = clazz.getDeclaredConstructor().newInstance()
-      beanProps.forEach { beanProp =>
-        breakable {
-          val setter = beanProp.getWriteMethod
-          val parameterType = setter.getGenericParameterTypes()(0)
-          val parameterClass = setter.getParameterTypes()(0)
-          val configPropName = originalNames.get(beanProp.getName)
-          // Is the property key missing in the config?
-          if (configPropName == null) { // If so, continue if the field is marked as @{link Optional}
-            if (isOptionalProperty(clazz, beanProp))
-              break() // continue, Otherwise, raise a [[Missing]] exception right here
+      i = 0 // reuse
+      val size = beanProps.size()
+      while (i < size) {
+        val beanProp = beanProps.get(i)
+        val setter = beanProp.getWriteMethod
+        val configPropName = originalNames.get(beanProp.getName)
+        var invoke = true
+        // Is the property key missing in the config?
+        if (configPropName == null) {
+          // If so, continue if the field is marked as @{link Optional}
+          if (isOptionalProperty(clazz, beanProp)) {
+            invoke = false // continue
+          } else {
+            // Otherwise, raise a [[Missing]] exception
             throw new ConfigException.Missing(beanProp.getName)
           }
+        }
+        if (invoke) {
+          val parameterType = setter.getGenericParameterTypes()(0)
+          val parameterClass = setter.getParameterTypes()(0)
           val unwrapped = getValue(
             clazz,
             parameterType,
@@ -133,6 +143,7 @@ object ConfigBeanImpl {
           )
           setter.invoke(bean, unwrapped.asInstanceOf[AnyRef])
         }
+        i += 1
       }
       bean
     } catch {
