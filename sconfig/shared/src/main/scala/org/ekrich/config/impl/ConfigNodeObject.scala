@@ -2,7 +2,6 @@ package org.ekrich.config.impl
 
 import org.ekrich.config.ConfigSyntax
 import java.util as ju
-import scala.util.control.Breaks._
 import ScalaOps.*
 
 final class ConfigNodeObject private[impl] (
@@ -42,19 +41,17 @@ final class ConfigNodeObject private[impl] (
     // Copy the value so we can change it to null but not modify the original parameter
     var valueCopy = value
     var i = childrenCopy.size - 1
-    while (i >= 0) {
-      breakable {
-        if (childrenCopy.get(i).isInstanceOf[ConfigNodeSingleToken]) {
-          val t =
-            childrenCopy.get(i).asInstanceOf[ConfigNodeSingleToken].token
-          // Ensure that, when we are removing settings in JSON, we don't end up with a trailing comma
-          if ((flavor == ConfigSyntax.JSON) && !seenNonMatching && (t == Tokens.COMMA)) {
-            childrenCopy.remove(i)
-          }
-          break() // continue
-        } else if (!childrenCopy.get(i).isInstanceOf[ConfigNodeField]) {
-          break() // continue
+    while (i >= 0) { // Iterate in reverse so that we find the last index that matches
+      if (childrenCopy.get(i).isInstanceOf[ConfigNodeSingleToken]) {
+        val t =
+          childrenCopy.get(i).asInstanceOf[ConfigNodeSingleToken].token
+        // Ensure that, when we are removing settings in JSON, we don't end up with a trailing comma
+        if ((flavor == ConfigSyntax.JSON) && !seenNonMatching && (t == Tokens.COMMA)) {
+          childrenCopy.remove(i)
         }
+      } else if (!childrenCopy.get(i).isInstanceOf[ConfigNodeField]) {
+        // continue
+      } else {
         val node =
           childrenCopy.get(i).asInstanceOf[ConfigNodeField]
         val key = node.path.value
@@ -65,19 +62,18 @@ final class ConfigNodeObject private[impl] (
           childrenCopy.remove(i)
           // Remove any whitespace or commas after the deleted setting
           var j = i
-          breakable {
-            while (j < childrenCopy.size) {
-              if (childrenCopy.get(j).isInstanceOf[ConfigNodeSingleToken]) {
-                val t =
-                  childrenCopy.get(j).asInstanceOf[ConfigNodeSingleToken].token
-                if (Tokens.isIgnoredWhitespace(t) || (t == Tokens.COMMA)) {
-                  childrenCopy.remove(j)
-                  j -= 1
-                } else break() // break
-              } else break() // break
-
-              j += 1
-            }
+          var continue = true
+          while (j < childrenCopy.size && continue) {
+            if (childrenCopy.get(j).isInstanceOf[ConfigNodeSingleToken]) {
+              val t =
+                childrenCopy.get(j).asInstanceOf[ConfigNodeSingleToken].token
+              if (Tokens.isIgnoredWhitespace(t) || (t == Tokens.COMMA)) {
+                childrenCopy.remove(j)
+                j -= 1
+              } else continue = false // break
+            } else continue = false // break
+            if (continue)
+              j += 1 // avoid if breaking
           }
         } else if (key == desiredPath) {
           seenNonMatching = true
@@ -110,7 +106,7 @@ final class ConfigNodeObject private[impl] (
               valueCopy = null
           }
         } else seenNonMatching = true
-      } // end break for continue in Java - increment needed as it was a for loop
+      }
       i -= 1
     }
     new ConfigNodeObject(childrenCopy)
@@ -291,59 +287,58 @@ final class ConfigNodeObject private[impl] (
     // Combine these two cases so that we only have to iterate once
     if ((flavor == ConfigSyntax.JSON) || startsWithBrace || sameLine) {
       var i = childrenCopy.size - 1
-      breakable {
-        while (i >= 0) { // If we are in JSON or are adding a setting on the same line, we need to add a comma to the
-          // last setting
-          if (((flavor == ConfigSyntax.JSON) || sameLine) && childrenCopy
-                .get(i)
-                .isInstanceOf[ConfigNodeField]) {
-            if (i + 1 >= childrenCopy.size ||
-                !(childrenCopy
+      var continue = true
+      while (i >= 0 && continue) { // If we are in JSON or are adding a setting on the same line, we need to add a comma to the
+        // last setting
+        if (((flavor == ConfigSyntax.JSON) || sameLine) && childrenCopy
+              .get(i)
+              .isInstanceOf[ConfigNodeField]) {
+          if (i + 1 >= childrenCopy.size ||
+              !(childrenCopy
+                .get(i + 1)
+                .isInstanceOf[ConfigNodeSingleToken] &&
+                childrenCopy
                   .get(i + 1)
-                  .isInstanceOf[ConfigNodeSingleToken] &&
-                  childrenCopy
-                    .get(i + 1)
-                    .asInstanceOf[ConfigNodeSingleToken]
-                    .token == Tokens.COMMA))
-              childrenCopy.add(i + 1, new ConfigNodeSingleToken(Tokens.COMMA))
-            break() // break
-          }
-          // Add the value into the copy of the children map, keeping any whitespace/newlines
-          // before the close curly brace
-          if (startsWithBrace &&
-              childrenCopy.get(i).isInstanceOf[ConfigNodeSingleToken] &&
-              childrenCopy
-                .get(i)
-                .asInstanceOf[ConfigNodeSingleToken]
-                .token == Tokens.CLOSE_CURLY) {
-            val previous = childrenCopy.get(i - 1)
-            if (previous.isInstanceOf[ConfigNodeSingleToken] &&
-                Tokens.isNewline(
-                  previous.asInstanceOf[ConfigNodeSingleToken].token
-                )) {
+                  .asInstanceOf[ConfigNodeSingleToken]
+                  .token == Tokens.COMMA))
+            childrenCopy.add(i + 1, new ConfigNodeSingleToken(Tokens.COMMA))
+          continue = false // break
+        }
+        // Add the value into the copy of the children map, keeping any whitespace/newlines
+        // before the close curly brace
+        if (startsWithBrace &&
+            childrenCopy.get(i).isInstanceOf[ConfigNodeSingleToken] &&
+            childrenCopy
+              .get(i)
+              .asInstanceOf[ConfigNodeSingleToken]
+              .token == Tokens.CLOSE_CURLY) {
+          val previous = childrenCopy.get(i - 1)
+          if (previous.isInstanceOf[ConfigNodeSingleToken] &&
+              Tokens.isNewline(
+                previous.asInstanceOf[ConfigNodeSingleToken].token
+              )) {
+            childrenCopy.add(i - 1, new ConfigNodeField(newNodes))
+            i -= 1
+          } else if (previous.isInstanceOf[ConfigNodeSingleToken] &&
+              Tokens.isIgnoredWhitespace(
+                previous.asInstanceOf[ConfigNodeSingleToken].token
+              )) {
+            val beforePrevious = childrenCopy.get(i - 2)
+            if (sameLine) {
               childrenCopy.add(i - 1, new ConfigNodeField(newNodes))
               i -= 1
-            } else if (previous.isInstanceOf[ConfigNodeSingleToken] &&
-                Tokens.isIgnoredWhitespace(
-                  previous.asInstanceOf[ConfigNodeSingleToken].token
+            } else if (beforePrevious.isInstanceOf[ConfigNodeSingleToken] &&
+                Tokens.isNewline(
+                  beforePrevious
+                    .asInstanceOf[ConfigNodeSingleToken]
+                    .token
                 )) {
-              val beforePrevious = childrenCopy.get(i - 2)
-              if (sameLine) {
-                childrenCopy.add(i - 1, new ConfigNodeField(newNodes))
-                i -= 1
-              } else if (beforePrevious.isInstanceOf[ConfigNodeSingleToken] &&
-                  Tokens.isNewline(
-                    beforePrevious
-                      .asInstanceOf[ConfigNodeSingleToken]
-                      .token
-                  )) {
-                childrenCopy.add(i - 2, new ConfigNodeField(newNodes))
-                i -= 2
-              } else childrenCopy.add(i, new ConfigNodeField(newNodes))
+              childrenCopy.add(i - 2, new ConfigNodeField(newNodes))
+              i -= 2
             } else childrenCopy.add(i, new ConfigNodeField(newNodes))
-          }
-          i -= 1
+          } else childrenCopy.add(i, new ConfigNodeField(newNodes))
         }
+        i -= 1
       }
     }
     if (!startsWithBrace)
