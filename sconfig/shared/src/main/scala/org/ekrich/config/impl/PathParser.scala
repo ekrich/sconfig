@@ -3,14 +3,14 @@
  */
 package org.ekrich.config.impl
 
+import java.io.StringReader
+import java.lang as jl
+import java.util as ju
+
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
 import org.ekrich.config.ConfigValueType
-import java.io.StringReader
-import java.lang as jl
-import java.util as ju
-import scala.util.control.Breaks._
 
 object PathParser {
   private[impl] class Element private[impl] (
@@ -104,12 +104,13 @@ object PathParser {
     }
 
     while (expression.hasNext) {
-      breakable {
-        val t = expression.next
-        if (pathTokens != null) pathTokens.add(t)
-        // Ignore all IgnoredWhitespace tokens
-        if (Tokens.isIgnoredWhitespace(t))
-          break() // continue
+      var continue = true
+      val t = expression.next
+      if (pathTokens != null) pathTokens.add(t)
+      // Ignore all IgnoredWhitespace tokens
+      if (Tokens.isIgnoredWhitespace(t))
+        continue = false // continue
+      if (continue) {
         if (Tokens.isValueWithType(t, ConfigValueType.STRING)) {
           val v = Tokens.getValue(t)
           // this is a quoted string; so any periods
@@ -219,48 +220,36 @@ object PathParser {
     var lastWasDot = true
     // start of path is also a "dot"
     val len = s.length
-    if (s.isEmpty) return true
-    if (s.charAt(0) == '.') return true
-    if (s.charAt(len - 1) == '.') return true
+
+    var unsafe = false
+    if (s.isEmpty) unsafe = true
+    else if (s.charAt(0) == '.') unsafe = true
+    else if (s.charAt(len - 1) == '.') unsafe = true
 
     var i = 0
-    var returnNow = false
 
-    while (i < len) {
-      breakable {
-        val c = s.charAt(i)
-        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') {
-          lastWasDot = false
-          break() // continue
-        } else if (c == '.') {
-          if (lastWasDot) {
-            // ".." means we need to throw an error
-            returnNow = true
-            break() // continue for return
-          } else {
-            lastWasDot = true
-          }
-        } else if (c == '-') {
-          if (lastWasDot) {
-            returnNow = true
-            break() // continue for return
-          } else {
-            break() // continue
-          }
+    while (i < len && !unsafe) {
+      val c = s.charAt(i)
+      if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') {
+        lastWasDot = false
+      } else if (c == '.') {
+        if (lastWasDot) {
+          // ".." means we need to throw an error
+          unsafe = true
         } else {
-          returnNow = true
-          break() // continue for return
+          lastWasDot = true
         }
-      }
-      if (returnNow) {
-        return true
+      } else if (c == '-') {
+        if (lastWasDot) {
+          unsafe = true
+        }
       } else {
-        i += 1
+        unsafe = true
       }
-      // normally increment here but we have short circuit returns
-      // modeled by "returnNow
+      if (!unsafe) i += 1
     }
-    if (lastWasDot) true
+
+    if (unsafe || lastWasDot) true
     else false
   }
 
