@@ -8,7 +8,6 @@ import java.io.Reader
 import java.{lang => jl}
 import java.{util => ju}
 
-import scala.util.control.Breaks._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
@@ -252,20 +251,19 @@ object Tokenizer {
       }
       val sb = new jl.StringBuilder
       var token: Token = null
-      breakable {
-        while (true) {
-          val c = nextCharRaw
-          if (c == -1 || c == '\n') {
-            putBack(c)
-            if (doubleSlash) {
-              token = Tokens.newCommentDoubleSlash(lineOrigin, sb.toString)
-              break()
-            } else {
-              token = Tokens.newCommentHash(lineOrigin, sb.toString)
-              break()
-            }
-          } else sb.appendCodePoint(c)
-        }
+      var continue = true
+      while (continue) {
+        val c = nextCharRaw
+        if (c == -1 || c == '\n') {
+          putBack(c)
+          if (doubleSlash) {
+            token = Tokens.newCommentDoubleSlash(lineOrigin, sb.toString)
+            continue = false // break
+          } else {
+            token = Tokens.newCommentHash(lineOrigin, sb.toString)
+            continue = false // break
+          }
+        } else sb.appendCodePoint(c)
       }
       token
     }
@@ -280,39 +278,41 @@ object Tokenizer {
       var t: Token = null
       var c = nextCharRaw
       var retToken = false
-      breakable {
-        while (true) {
-          if (c == -1) break() // break
-          else if (TokenIterator.notInUnquotedText.indexOf(c) >= 0)
-            break() // break
-          else if (TokenIterator.isWhitespace(c))
-            break() // break
-          else if (startOfComment(c)) break() // break
-          else sb.appendCodePoint(c)
-          // we parse true/false/null tokens as such no matter
-          // what is after them, as long as they are at the
-          // start of the unquoted token.
+      var continue = true
+      while (continue) {
+        if (c == -1) continue = false // break
+        else if (TokenIterator.notInUnquotedText.indexOf(c) >= 0)
+          continue = false // break
+        else if (TokenIterator.isWhitespace(c))
+          continue = false // break
+        else if (startOfComment(c)) continue = false // break
+        else sb.appendCodePoint(c)
+        // we parse true/false/null tokens as such no matter
+        // what is after them, as long as they are at the
+        // start of the unquoted token.
+        if (continue) {
           if (sb.length == 4) {
             val s = sb.toString
             if (s == "true") {
               retToken = true
               t = Tokens.newBoolean(origin, true)
-              break() // return
+              continue = false // break
             } else if (s == "null") {
               retToken = true
               t = Tokens.newNull(origin)
-              break() // return
+              continue = false // break
             }
           } else if (sb.length == 5) {
             val s = sb.toString
             if (s == "false") {
               retToken = true
               t = Tokens.newBoolean(origin, false)
-              break() // return
+              continue = false // break
             }
           }
-          c = nextCharRaw
         }
+        if (continue)
+          c = nextCharRaw
       }
       if (retToken == false) {
         // put back the char that ended the unquoted text
@@ -422,26 +422,27 @@ object Tokenizer {
     ): Unit = {
       // we are after the opening triple quote and need to consume the close triple
       var consecutiveQuotes = 0
-      breakable {
-        while (true) {
-          val c = nextCharRaw
-          if (c == '"') consecutiveQuotes += 1
-          else if (consecutiveQuotes >= 3) {
-            // the last three quotes end the string and the others are kept.
-            sb.setLength(sb.length - 3)
-            putBack(c)
-            break() // break
-          } else {
-            consecutiveQuotes = 0
-            if (c == -1)
-              throw problem(
-                "End of input but triple-quoted string was still open"
-              )
-            else if (c == '\n') { // keep the line number accurate
-              lineNumber += 1
-              lineOrigin = origin.withLineNumber(lineNumber)
-            }
+      var continue = true
+      while (continue) {
+        val c = nextCharRaw
+        if (c == '"') consecutiveQuotes += 1
+        else if (consecutiveQuotes >= 3) {
+          // the last three quotes end the string and the others are kept.
+          sb.setLength(sb.length - 3)
+          putBack(c)
+          continue = false // break
+        } else {
+          consecutiveQuotes = 0
+          if (c == -1)
+            throw problem(
+              "End of input but triple-quoted string was still open"
+            )
+          else if (c == '\n') { // keep the line number accurate
+            lineNumber += 1
+            lineOrigin = origin.withLineNumber(lineNumber)
           }
+        }
+        if (continue) {
           sb.appendCodePoint(c)
           sbOrig.appendCodePoint(c)
         }
@@ -457,25 +458,24 @@ object Tokenizer {
       // so we can also keep the actual value of the string. This is gross.
       val sbOrig = new jl.StringBuilder
       sbOrig.appendCodePoint('"')
-      breakable {
-        while (true) {
-          val c = nextCharRaw
-          if (c == -1)
-            throw problem("End of input but string quote was still open")
-          if (c == '\\') pullEscapeSequence(sb, sbOrig)
-          else if (c == '"') {
-            sbOrig.appendCodePoint(c)
-            break() // break()
-          } else if (ConfigImplUtil.isC0Control(c))
-            throw problem(
-              asString(c),
-              "JSON does not allow unescaped " +
-                asString(c) + " in quoted strings, use a backslash escape"
-            )
-          else {
-            sb.appendCodePoint(c)
-            sbOrig.appendCodePoint(c)
-          }
+      var continue = true
+      while (continue) {
+        val c = nextCharRaw
+        if (c == -1)
+          throw problem("End of input but string quote was still open")
+        if (c == '\\') pullEscapeSequence(sb, sbOrig)
+        else if (c == '"') {
+          sbOrig.appendCodePoint(c)
+          continue = false // break
+        } else if (ConfigImplUtil.isC0Control(c))
+          throw problem(
+            asString(c),
+            "JSON does not allow unescaped " +
+              asString(c) + " in quoted strings, use a backslash escape"
+          )
+        else {
+          sb.appendCodePoint(c)
+          sbOrig.appendCodePoint(c)
         }
       }
 
@@ -519,27 +519,26 @@ object Tokenizer {
         new TokenIterator.WhitespaceSaver
       val expression = new ju.ArrayList[Token]
       var t: Token = null
-      breakable {
-        while ({
-          t = pullNextToken(saver)
-          // note that we avoid validating the allowed tokens inside
-          // the substitution here; we even allow nested substitutions
-          // in the tokenizer. The parser sorts it out.
-          if (t eq Tokens.CLOSE_CURLY) { // end the loop, done!
-            break() // break
-          } else if (t eq Tokens.END) {
-            throw TokenIterator.problem(
-              origin,
-              "Substitution ${ was not closed with a }"
-            )
-          } else {
-            val whitespace = saver.check(t, origin, lineNumber)
-            if (whitespace != null) expression.add(whitespace)
-            expression.add(t)
-          }
-          true
-        }) ()
-      }
+      var continue = true
+      while ({
+        t = pullNextToken(saver)
+        // note that we avoid validating the allowed tokens inside
+        // the substitution here; we even allow nested substitutions
+        // in the tokenizer. The parser sorts it out.
+        if (t eq Tokens.CLOSE_CURLY) { // end the loop, done!
+          continue = false // break
+        } else if (t eq Tokens.END) {
+          throw TokenIterator.problem(
+            origin,
+            "Substitution ${ was not closed with a }"
+          )
+        } else {
+          val whitespace = saver.check(t, origin, lineNumber)
+          if (whitespace != null) expression.add(whitespace)
+          expression.add(t)
+        }
+        continue
+      }) ()
       Tokens.newSubstitution(origin, optional, expression)
     }
     @throws[ProblemException]
