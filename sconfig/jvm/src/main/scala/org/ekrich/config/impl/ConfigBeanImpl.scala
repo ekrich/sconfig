@@ -12,7 +12,7 @@ import java.lang.reflect.Type
 import java.{util => ju}
 import java.{lang => jl}
 import java.time.Duration
-import scala.util.Try
+
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigList
@@ -346,18 +346,17 @@ object ConfigBeanImpl {
     else if (parameterClass == classOf[ConfigList]) ConfigValueType.LIST
     else null
 
-  private def hasAtLeastOneBeanProperty(clazz: Class[_]): Boolean = {
-    val beanInfoOpt = Try(Introspector.getBeanInfo(clazz)).toOption
-    beanInfoOpt match {
-      case None           => false
-      case Some(beanInfo) =>
-        beanInfo
-          .getPropertyDescriptors()
-          .exists(beanProp =>
-            beanProp.getReadMethod != null && beanProp.getWriteMethod != null
-          )
+  private def hasAtLeastOneBeanProperty(clazz: Class[_]): Boolean =
+    try {
+      val beanInfo = Introspector.getBeanInfo(clazz)
+      beanInfo
+        .getPropertyDescriptors()
+        .exists(beanProp =>
+          beanProp.getReadMethod != null && beanProp.getWriteMethod != null
+        )
+    } catch {
+      case _: IntrospectionException => false
     }
-  }
 
   private def isOptionalProperty(
       beanClass: Class[_],
