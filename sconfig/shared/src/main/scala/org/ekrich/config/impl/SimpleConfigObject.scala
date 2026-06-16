@@ -7,7 +7,6 @@ import java.io.ObjectStreamException
 import java.io.Serializable
 import java.{lang as jl, util as ju}
 import java.math.BigInteger
-import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
@@ -63,15 +62,13 @@ object SimpleConfigObject {
       var i = 0
       var allDigits = true
       while (i < length) {
-        breakable {
-          val c = s.charAt(i)
-          if (!Character.isDigit(c)) {
-            allDigits = false
-            break() // continue
-          }
+        val c = s.charAt(i)
+        if (Character.isDigit(c)) {
+          i += 1
+        } else {
+          allDigits = false
+          i = length // break
         }
-        if (allDigits) i += 1
-        else i = length // exit loop
       }
       allDigits
     }

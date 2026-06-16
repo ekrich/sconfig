@@ -17,7 +17,7 @@ import java.io.ObjectOutput
 import java.io.ObjectStreamException
 import java.lang as jl
 import java.util as ju
-import scala.util.control.Breaks.*
+
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigList
@@ -102,53 +102,53 @@ object SerializedConfigValue {
   ): SimpleConfigOrigin = {
     import SerializedField._
     val m: ju.Map[SerializedField, AnyRef] = new ju.HashMap
-    breakable {
-      while (true) {
-        val field: SerializedField = readCode(in)
-        val v: AnyRef = field match {
-          case END_MARKER =>
-            break() // break - was return SimpleConfigOrigin.fromBase(baseOrigin, m)
-          case ORIGIN_DESCRIPTION =>
-            in.readInt // discard length - same for cases below
-            in.readUTF
-          case ORIGIN_LINE_NUMBER =>
-            in.readInt
-            in.readInt.asInstanceOf[jl.Integer]
-          case ORIGIN_END_LINE_NUMBER =>
-            in.readInt
-            in.readInt.asInstanceOf[jl.Integer]
-          case ORIGIN_TYPE =>
-            in.readInt
-            in.readUnsignedByte.asInstanceOf[jl.Integer]
-          case ORIGIN_URL =>
-            in.readInt
-            in.readUTF
-          case ORIGIN_RESOURCE =>
-            in.readInt
-            in.readUTF
-          case ORIGIN_COMMENTS =>
-            in.readInt
-            val size = in.readInt
-            val list = new ju.ArrayList[String](size)
-            var i = 0
-            while (i < size) {
-              list.add(in.readUTF)
-              i += 1
-            }
-            list
-          case ORIGIN_NULL_URL | ORIGIN_NULL_RESOURCE | ORIGIN_NULL_COMMENTS =>
-            // nothing to read besides code and length
-            in.readInt
-            "" // just something non-null to put in the map
-          case ROOT_VALUE | ROOT_WAS_CONFIG | VALUE_DATA | VALUE_ORIGIN =>
-            throw new IOException("Not expecting this field here: " + field)
-          case UNKNOWN =>
-            // skip unknown field
-            skipField(in)
-            null
-        }
-        if (v != null) m.put(field, v)
+    var continue = true
+    while (continue) {
+      val field: SerializedField = readCode(in)
+      val v: AnyRef = field match {
+        case END_MARKER =>
+          continue = false // break
+          null
+        case ORIGIN_DESCRIPTION =>
+          in.readInt // discard length - same for cases below
+          in.readUTF
+        case ORIGIN_LINE_NUMBER =>
+          in.readInt
+          in.readInt.asInstanceOf[jl.Integer]
+        case ORIGIN_END_LINE_NUMBER =>
+          in.readInt
+          in.readInt.asInstanceOf[jl.Integer]
+        case ORIGIN_TYPE =>
+          in.readInt
+          in.readUnsignedByte.asInstanceOf[jl.Integer]
+        case ORIGIN_URL =>
+          in.readInt
+          in.readUTF
+        case ORIGIN_RESOURCE =>
+          in.readInt
+          in.readUTF
+        case ORIGIN_COMMENTS =>
+          in.readInt
+          val size = in.readInt
+          val list = new ju.ArrayList[String](size)
+          var i = 0
+          while (i < size) {
+            list.add(in.readUTF)
+            i += 1
+          }
+          list
+        case ORIGIN_NULL_URL | ORIGIN_NULL_RESOURCE | ORIGIN_NULL_COMMENTS =>
+          // nothing to read besides code and length
+          in.readInt
+          "" // just something non-null to put in the map
+        case ROOT_VALUE | ROOT_WAS_CONFIG | VALUE_DATA | VALUE_ORIGIN =>
+          throw new IOException("Not expecting this field here: " + field)
+        case UNKNOWN =>
+          // skip unknown field
+          skipField(in)
+          null
       }
+      if (v != null) m.put(field, v)
     }
     SimpleConfigOrigin.fromBase(baseOrigin, m) // from break above
   }
@@ -272,27 +272,26 @@ object SerializedConfigValue {
   ): AbstractConfigValue = {
     var value: AbstractConfigValue = null
     var origin: SimpleConfigOrigin = null
-    breakable {
-      while (true) {
-        val code = readCode(in)
-        if (code eq SerializedField.END_MARKER) {
-          if (value == null)
-            throw new IOException(
-              "No value data found in serialization of value"
-            )
-          break() // break - previous set value
-        } else if (code eq SerializedField.VALUE_DATA) {
-          if (origin == null)
-            throw new IOException("Origin must be stored before value data")
-          in.readInt
-          value = readValueData(in, origin)
-        } else if (code eq SerializedField.VALUE_ORIGIN) {
-          in.readInt
-          origin = readOrigin(in, baseOrigin)
-        } else {
-          // ignore unknown field
-          skipField(in)
-        }
+    var continue = true
+    while (continue) {
+      val code = readCode(in)
+      if (code eq SerializedField.END_MARKER) {
+        if (value == null)
+          throw new IOException(
+            "No value data found in serialization of value"
+          )
+        continue = false // break - previous set value
+      } else if (code eq SerializedField.VALUE_DATA) {
+        if (origin == null)
+          throw new IOException("Origin must be stored before value data")
+        in.readInt
+        value = readValueData(in, origin)
+      } else if (code eq SerializedField.VALUE_ORIGIN) {
+        in.readInt
+        origin = readOrigin(in, baseOrigin)
+      } else {
+        // ignore unknown field
+        skipField(in)
       }
     }
     value // prior to break above
@@ -377,11 +376,12 @@ class SerializedConfigValue() // this has to be public for the Java deserializer
   @throws[IOException]
   @throws[ClassNotFoundException]
   override def readExternal(in: ObjectInput): Unit = {
-    breakable {
-      while (true) {
-        val code = SerializedConfigValue.readCode(in)
-        if (code eq SerializedField.END_MARKER)
-          break() // break - was return
+    var continue = true
+    while (continue) {
+      val code = SerializedConfigValue.readCode(in)
+      if (code eq SerializedField.END_MARKER) {
+        continue = false // break
+      } else {
         val input = fieldIn(in)
         if (code eq SerializedField.ROOT_VALUE)
           this.value = SerializedConfigValue.readValue(input, null)

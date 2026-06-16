@@ -7,7 +7,6 @@ import java.{lang => jl}
 import java.{util => ju}
 import java.util.Collections
 import java.util.Comparator
-import scala.util.control.Breaks._
 import org.ekrich.config.ConfigValueType
 import org.ekrich.config.ConfigValueType._
 
@@ -78,19 +77,13 @@ object DefaultTransformer {
       val o = value.asInstanceOf[AbstractConfigObject]
       val values = new ju.HashMap[Integer, AbstractConfigValue]
       o.keySet.forEach { key =>
-        breakable {
-          var i = 0
-          try {
-            i = Integer.parseInt(key, 10)
-            if (i < 0) {
-              break() // continue
-            } else {
-              values.put(i, o.get(key))
-            }
-          } catch {
-            case e: NumberFormatException =>
-              break() // continue
+        try {
+          val i = Integer.parseInt(key, 10)
+          if (i >= 0) {
+            values.put(i, o.get(key))
           }
+        } catch {
+          case e: NumberFormatException => // continue
         }
       }
       if (!values.isEmpty) {

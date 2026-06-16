@@ -7,7 +7,7 @@ import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 import java.{util => ju}
-import scala.util.control.Breaks._
+
 import org.ekrich.config._
 
 object ConfigParser {
@@ -36,15 +36,14 @@ object ConfigParser {
       val keys = new ju.ArrayList[String]
       var key = path.first
       var remaining = path.remainder
-      breakable {
-        while (key != null) {
-          keys.add(key)
-          if (remaining == null) {
-            break() // break
-          } else {
-            key = remaining.first
-            remaining = remaining.remainder
-          }
+      var continue = true
+      while (key != null && continue) {
+        keys.add(key)
+        if (remaining == null) {
+          continue = false // break
+        } else {
+          key = remaining.first
+          remaining = remaining.remainder
         }
       }
       // the withComments(null) is to ensure comments are only
@@ -280,34 +279,34 @@ object ConfigParser {
           // Grab any trailing comments on the same line
           if (i < nodes.size - 1) {
             i += 1
-            breakable {
-              while (i < nodes.size) {
-                if (nodes.get(i).isInstanceOf[ConfigNodeComment]) {
-                  val comment =
-                    nodes.get(i).asInstanceOf[ConfigNodeComment]
-                  newValue = newValue.withOrigin(
-                    newValue.origin
-                      .appendComments(
-                        ju.Collections.singletonList(comment.commentText)
-                      )
-                  )
-                  break() // break
-                } else if (nodes.get(i).isInstanceOf[ConfigNodeSingleToken]) {
-                  val curr =
-                    nodes.get(i).asInstanceOf[ConfigNodeSingleToken]
-                  if ((curr.token eq Tokens.COMMA) || Tokens
-                        .isIgnoredWhitespace(curr.token)) {
-                    // keep searching, as there could still be a comment
-                  } else {
-                    i -= 1
-                    break() // break
-                  }
+            var continue = true
+            while (i < nodes.size && continue) {
+              if (nodes.get(i).isInstanceOf[ConfigNodeComment]) {
+                val comment =
+                  nodes.get(i).asInstanceOf[ConfigNodeComment]
+                newValue = newValue.withOrigin(
+                  newValue.origin
+                    .appendComments(
+                      ju.Collections.singletonList(comment.commentText)
+                    )
+                )
+                continue = false // break
+              } else if (nodes.get(i).isInstanceOf[ConfigNodeSingleToken]) {
+                val curr =
+                  nodes.get(i).asInstanceOf[ConfigNodeSingleToken]
+                if ((curr.token eq Tokens.COMMA) || Tokens
+                      .isIgnoredWhitespace(curr.token)) {
+                  // keep searching, as there could still be a comment
                 } else {
                   i -= 1
-                  break() // break
+                  continue = false // break
                 }
-                i += 1
+              } else {
+                i -= 1
+                continue = false // break
               }
+              if (continue)
+                i += 1
             }
           }
           pathStack.pop
@@ -395,32 +394,36 @@ object ConfigParser {
       var result: AbstractConfigValue = null
       val comments = new ju.ArrayList[String]
       var lastWasNewLine = false
-      breakable {
-        document.children.forEach { node =>
-          if (node.isInstanceOf[ConfigNodeComment]) {
-            comments.add(node.asInstanceOf[ConfigNodeComment].commentText)
-            lastWasNewLine = false
-          } else if (node.isInstanceOf[ConfigNodeSingleToken]) {
-            val t = node.asInstanceOf[ConfigNodeSingleToken].token
-            if (Tokens.isNewline(t)) {
-              lineNumber += 1
-              if (lastWasNewLine && result == null) comments.clear()
-              else if (result != null) {
-                result = result.withOrigin(
-                  result.origin
-                    .appendComments(new ju.ArrayList[String](comments))
-                )
-                comments.clear()
-                break() // break
-              }
-              lastWasNewLine = true
+      val nodes = document.children
+      val size = document.children.size
+      var i = 0
+      var continue = true
+      while (i < size && continue) {
+        val node = nodes.get(i)
+        if (node.isInstanceOf[ConfigNodeComment]) {
+          comments.add(node.asInstanceOf[ConfigNodeComment].commentText)
+          lastWasNewLine = false
+        } else if (node.isInstanceOf[ConfigNodeSingleToken]) {
+          val t = node.asInstanceOf[ConfigNodeSingleToken].token
+          if (Tokens.isNewline(t)) {
+            lineNumber += 1
+            if (lastWasNewLine && result == null) comments.clear()
+            else if (result != null) {
+              result = result.withOrigin(
+                result.origin
+                  .appendComments(new ju.ArrayList[String](comments))
+              )
+              comments.clear()
+              continue = false
             }
-          } else if (node.isInstanceOf[ConfigNodeComplexValue]) {
-            result =
-              parseValue(node.asInstanceOf[ConfigNodeComplexValue], comments)
-            lastWasNewLine = false
+            lastWasNewLine = true
           }
+        } else if (node.isInstanceOf[ConfigNodeComplexValue]) {
+          result =
+            parseValue(node.asInstanceOf[ConfigNodeComplexValue], comments)
+          lastWasNewLine = false
         }
+        if (continue) i += 1
       }
       result
     }

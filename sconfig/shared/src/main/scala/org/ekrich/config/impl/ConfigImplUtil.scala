@@ -13,7 +13,6 @@ import java.net.URISyntaxException
 import java.net.URL
 import java.util as ju
 import scala.annotation.varargs
-import scala.util.control.Breaks.*
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
@@ -121,35 +120,34 @@ object ConfigImplUtil {
     val length = s.length
     if (length == 0) return s
     var start = 0
-    breakable {
-      while (start < length) {
-        val c = s.charAt(start)
-        if (c == ' ' || c == '\n') start += 1
-        else {
-          val cp = s.codePointAt(start)
-          if (isWhitespace(cp)) start += Character.charCount(cp)
-          else break() // break
-        }
+    var continue = true
+    while (start < length && continue) {
+      val c = s.charAt(start)
+      if (c == ' ' || c == '\n') start += 1
+      else {
+        val cp = s.codePointAt(start)
+        if (isWhitespace(cp)) start += Character.charCount(cp)
+        else continue = false // break
       }
     }
+
     var end = length
-    breakable {
-      while (end > start) {
-        val c = s.charAt(end - 1)
-        if (c == ' ' || c == '\n') end -= 1
-        else {
-          var cp = 0
-          var delta = 0
-          if (Character.isLowSurrogate(c)) {
-            cp = s.codePointAt(end - 2)
-            delta = 2
-          } else {
-            cp = s.codePointAt(end - 1)
-            delta = 1
-          }
-          if (isWhitespace(cp)) end -= delta
-          else break() // break
+    continue = true // reassign for next loop
+    while (end > start && continue) {
+      val c = s.charAt(end - 1)
+      if (c == ' ' || c == '\n') end -= 1
+      else {
+        var cp = 0
+        var delta = 0
+        if (Character.isLowSurrogate(c)) {
+          cp = s.codePointAt(end - 2)
+          delta = 2
+        } else {
+          cp = s.codePointAt(end - 1)
+          delta = 1
         }
+        if (isWhitespace(cp)) end -= delta
+        else continue = false // break
       }
     }
     s.substring(start, end)
