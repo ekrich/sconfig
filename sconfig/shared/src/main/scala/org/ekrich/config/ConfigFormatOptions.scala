@@ -9,10 +9,13 @@ package org.ekrich.config
  * defaults:
  *
  * {{{
- * val options = ConfigFormatOptions.defaults()
+ * val formatOptions = ConfigFormatOptions.defaults
  *   .setKeepOriginOrder(true)
  *   .setDoubleIndent(false)
  * }}}
+ *
+ * The default values are used by [[ConfigRenderOptions]] and you can get the
+ * values by calling [[ConfigRenderOptions.getConfigFormatOptions() ConfigRenderOptions.getConfigFormatOptions()]].
  *
  * @since 1.12.0
  */
