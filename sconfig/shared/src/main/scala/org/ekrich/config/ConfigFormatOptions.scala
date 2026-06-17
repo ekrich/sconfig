@@ -15,7 +15,8 @@ package org.ekrich.config
  * }}}
  *
  * The default values are used by [[ConfigRenderOptions]] and you can get the
- * values by calling [[ConfigRenderOptions.getConfigFormatOptions() ConfigRenderOptions.getConfigFormatOptions()]].
+ * values by calling
+ * [[ConfigRenderOptions.getConfigFormatOptions() ConfigRenderOptions.getConfigFormatOptions()]].
  *
  * @since 1.12.0
  */
