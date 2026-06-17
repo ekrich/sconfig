@@ -65,14 +65,6 @@ object ConfigRenderOptions {
   )
 }
 
-@deprecated("Use getConfigFormatOptions", "Since 1.12.0, will remove in 1.14.0")
-case class FormattingOptions(
-    keepOriginOrder: Boolean = false,
-    doubleIndent: Boolean = true,
-    colonAssign: Boolean = false,
-    newLineAtEnd: Boolean = true
-)
-
 final class ConfigRenderOptions private (
     private val _originComments: Boolean,
     private val _comments: Boolean,
@@ -208,88 +200,6 @@ final class ConfigRenderOptions private (
    * @since 1.12.0
    */
   def getConfigFormatOptions: ConfigFormatOptions = _configFormatOptions
-
-  @deprecated(
-    "Use getOriginComments",
-    "Since 1.12.0, will remove in 1.14.0"
-  )
-  def originComments = _originComments
-
-  @deprecated(
-    "Use getComments",
-    "Since 1.12.0, will remove in 1.14.0"
-  )
-  def comments = _comments
-
-  @deprecated(
-    "Use getFormatted",
-    "Since 1.12.0, will remove in 1.14.0"
-  )
-  def formatted = _formatted
-
-  @deprecated(
-    "Use getJson",
-    "Since 1.12.0, will remove in 1.14.0"
-  )
-  def json = _json
-
-  @deprecated(
-    "Use getShowEnvVariableValues",
-    "Since 1.12.0, will remove in 1.14.0"
-  )
-  def showEnvVariableValues = _showEnvVariableValues
-
-  /**
-   * Returns new render options with formatting options set. Formatting is
-   * dependant on formatted flag.
-   *
-   * @param value
-   *   true to enable formatting
-   * @return
-   *   options with requested setting for formatting
-   */
-  @deprecated(
-    "Use setConfigFormatOptions",
-    "Since 1.12.0, will remove in 1.14.0"
-  )
-  def setFormattingOptions(value: FormattingOptions): ConfigRenderOptions =
-    if (value == convert(_configFormatOptions)) this
-    else
-      new ConfigRenderOptions(
-        _originComments,
-        _comments,
-        _formatted,
-        _json,
-        _showEnvVariableValues,
-        convert(value)
-      )
-
-  private def convert(value: FormattingOptions): ConfigFormatOptions =
-    ConfigFormatOptions.defaults
-      .setKeepOriginOrder(value.keepOriginOrder)
-      .setDoubleIndent(value.doubleIndent)
-      .setColonAssign(value.colonAssign)
-      .setNewLineAtEnd(value.newLineAtEnd)
-
-  private def convert(value: ConfigFormatOptions): FormattingOptions =
-    FormattingOptions(
-      value.getKeepOriginOrder,
-      value.getDoubleIndent,
-      value.getColonAssign,
-      value.getNewLineAtEnd
-    )
-
-  @deprecated(
-    "Use getConfigFormatOptions",
-    "Since 1.12.0, will remove in 1.14.0"
-  )
-  def formattingOptions: FormattingOptions = convert(_configFormatOptions)
-
-  @deprecated(
-    "Use getConfigFormatOptions",
-    "Since 1.12.0, will remove in 1.14.0"
-  )
-  def getFormattingOptions: FormattingOptions = convert(_configFormatOptions)
 
   /**
    * Returns options with JSON toggled. JSON means that HOCON extensions
