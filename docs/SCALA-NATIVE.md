@@ -13,9 +13,7 @@ Use three percent signs `%%%` instead of two for dependency resolution.
 libraryDependencies ++= Seq(
   "org.ekrich" %%% "sconfig" % "x.y.z",
   "org.ekrich" %%% "sjavatime" % "a.b.c"
-),
-// required to avoid linking errors
-nativeLinkStubs := true
+)
 ```
 Please refer to the `sjavatime` [home page](https://github.com/ekrich/sjavatime)
 for the current version.
