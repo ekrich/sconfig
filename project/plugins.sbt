@@ -2,7 +2,7 @@
 resolvers += Resolver.sonatypeCentralSnapshots
 
 // versions
-val crossVer = "1.3.2"
+val crossVer = "1.4.0"
 val scalaJSVersion = "1.22.0"
 val scalaNativeVersion = "0.5.12"
 val scalafix = "0.14.7"
