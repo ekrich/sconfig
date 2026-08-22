@@ -62,7 +62,7 @@ object ConfigException {
   @throws(classOf[IOException])
   private def setOriginField[T](
       hasOriginField: T,
-      clazz: Class[_ <: Serializable],
+      clazz: Class[? <: Serializable],
       origin: ConfigOrigin
   ): Unit = {
     // circumvent "final"

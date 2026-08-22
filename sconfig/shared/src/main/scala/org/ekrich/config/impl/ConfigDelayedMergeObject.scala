@@ -58,7 +58,7 @@ final class ConfigDelayedMergeObject(
   override def resolveSubstitutions(
       context: ResolveContext,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigObject] = {
+  ): ResolveResult[? <: AbstractConfigObject] = {
     val merged =
       ConfigDelayedMerge.resolveSubstitutions(this, stack, context, source)
     merged.asObjectResult

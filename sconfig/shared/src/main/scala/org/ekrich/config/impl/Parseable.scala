@@ -406,7 +406,7 @@ object Parseable {
       getClass.getSimpleName + "(" + resource + ")"
   }
   def newResources(
-      klass: Class[_],
+      klass: Class[?],
       resource: String,
       options: ConfigParseOptions
   ): Parseable =
@@ -420,7 +420,7 @@ object Parseable {
   // We're using it because the Class API is more limited,
   // for example it lacks getResources(). So we want to be able to
   // use ClassLoader directly.
-  private def convertResourceName(klass: Class[_], resource: String) =
+  private def convertResourceName(klass: Class[?], resource: String) =
     if (resource.startsWith("/")) { // "absolute" resource, chop the slash
       resource.substring(1)
     } else {

@@ -108,11 +108,11 @@ object SimpleConfigObject {
       val aFilename = Option(aOrigin.filename).getOrElse("")
       val bFilename = Option(bOrigin.filename).getOrElse("")
 
-      val compareFiles = aFilename compareTo bFilename
+      val compareFiles = aFilename `compareTo` bFilename
 
       if (compareFiles != 0) compareFiles
       else
-        aOrigin.lineNumber compareTo bOrigin.lineNumber
+        aOrigin.lineNumber `compareTo` bOrigin.lineNumber
     }
   }
 
@@ -473,7 +473,7 @@ final class SimpleConfigObject(
   override def resolveSubstitutions(
       context: ResolveContext,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigObject] = {
+  ): ResolveResult[? <: AbstractConfigObject] = {
     if (resolveStatus eq ResolveStatus.RESOLVED)
       return ResolveResult.make(context, this)
     val sourceWithParent = source.pushParent(this)

@@ -63,7 +63,7 @@ object PropertiesParser {
   }
 
   def getPathMap(
-      map: ju.Map[_ <: AnyRef, _ <: AnyRef]
+      map: ju.Map[? <: AnyRef, ? <: AnyRef]
   ): ju.Map[Path, AnyRef] = {
     val pathMap = new ju.HashMap[Path, AnyRef]
     map.entrySet.forEach { entry =>
@@ -78,7 +78,7 @@ object PropertiesParser {
 
   def fromPathMap(
       origin: ConfigOrigin,
-      pathExpressionMap: ju.Map[_, _]
+      pathExpressionMap: ju.Map[?, ?]
   ): AbstractConfigObject = {
     val pathMap = new ju.HashMap[Path, AnyRef]
     pathExpressionMap.entrySet.forEach { entry =>

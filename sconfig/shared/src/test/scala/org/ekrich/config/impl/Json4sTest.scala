@@ -28,7 +28,7 @@ class Json4sTest extends TestUtilsJson4s {
     Parseable.newString(s, options).parseValue()
   }
 
-  private[this] def toJson(value: ConfigValue): JValue = {
+  private def toJson(value: ConfigValue): JValue = {
     value match {
       case v: ConfigObject =>
         JObject(
@@ -54,7 +54,7 @@ class Json4sTest extends TestUtilsJson4s {
     }
   }
 
-  private[this] def fromJson(jsonValue: JValue): AbstractConfigValue = {
+  private def fromJson(jsonValue: JValue): AbstractConfigValue = {
     jsonValue match {
       case JObject(fields) =>
         val m = new ju.HashMap[String, AbstractConfigValue]()

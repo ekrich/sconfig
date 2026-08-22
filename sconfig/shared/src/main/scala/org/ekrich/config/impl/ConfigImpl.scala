@@ -113,7 +113,7 @@ object ConfigImpl {
       Parseable.newResources(name, parseOptions)
   }
 
-  private[impl] class ClasspathNameSourceWithClass(val klass: Class[_])
+  private[impl] class ClasspathNameSourceWithClass(val klass: Class[?])
       extends SimpleIncluder.NameSource {
     override def nameToParseable(
         name: String,
@@ -123,7 +123,7 @@ object ConfigImpl {
   }
 
   def parseResourcesAnySyntax(
-      klass: Class[_],
+      klass: Class[?],
       resourceBasename: String,
       baseOptions: ConfigParseOptions
   ): ConfigObject = {
@@ -204,7 +204,7 @@ object ConfigImpl {
   }
 
   def fromPathMap(
-      pathMap: ju.Map[String, _],
+      pathMap: ju.Map[String, ?],
       originDescription: String
   ): ConfigObject = {
     val origin = valueOrigin(originDescription)
@@ -252,12 +252,12 @@ object ConfigImpl {
         )
     } else if (obj.isInstanceOf[Duration]) {
       new ConfigLong(origin, obj.asInstanceOf[Duration].toMillis, null)
-    } else if (obj.isInstanceOf[ju.Map[_, _]]) {
-      if (obj.asInstanceOf[ju.Map[_, _]].isEmpty)
+    } else if (obj.isInstanceOf[ju.Map[?, ?]]) {
+      if (obj.asInstanceOf[ju.Map[?, ?]].isEmpty)
         return emptyObject(origin)
       if (mapMode == FromMapMode.KEYS_ARE_KEYS) {
         val values = new ju.HashMap[String, AbstractConfigValue]
-        obj.asInstanceOf[ju.Map[_, _]].entrySet.forEach { entry =>
+        obj.asInstanceOf[ju.Map[?, ?]].entrySet.forEach { entry =>
           val key = entry.getKey
           if (!key.isInstanceOf[String])
             throw new ConfigException.BugOrBroken(
@@ -268,10 +268,10 @@ object ConfigImpl {
         }
         new SimpleConfigObject(origin, values)
       } else {
-        PropertiesParser.fromPathMap(origin, obj.asInstanceOf[ju.Map[_, _]])
+        PropertiesParser.fromPathMap(origin, obj.asInstanceOf[ju.Map[?, ?]])
       }
-    } else if (obj.isInstanceOf[jl.Iterable[_]]) {
-      val i = obj.asInstanceOf[jl.Iterable[_]].iterator
+    } else if (obj.isInstanceOf[jl.Iterable[?]]) {
+      val i = obj.asInstanceOf[jl.Iterable[?]].iterator
       if (!i.hasNext) return emptyList(origin)
       val values = new ju.ArrayList[AbstractConfigValue]
       while (i.hasNext) {

@@ -887,7 +887,7 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException.WrongType
    *   if value is not convertible to a list of objects
    */
-  def getObjectList(path: String): ju.List[_ <: ConfigObject]
+  def getObjectList(path: String): ju.List[? <: ConfigObject]
 
   /**
    * Gets a list value with `Config` elements. Throws if the path is unset or
@@ -902,7 +902,7 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException.WrongType
    *   if value is not convertible to a list of configs
    */
-  def getConfigList(path: String): ju.List[_ <: Config]
+  def getConfigList(path: String): ju.List[? <: Config]
 
   /**
    * Gets a list value with any kind of elements. Throws if the path is unset or
@@ -918,7 +918,7 @@ trait Config extends ConfigMergeable {
    * @throws ConfigException.WrongType
    *   if value is not convertible to a list
    */
-  def getAnyRefList(path: String): ju.List[_ <: AnyRef]
+  def getAnyRefList(path: String): ju.List[? <: AnyRef]
 
   /**
    * Gets a list value with elements representing a size in bytes. Throws if the

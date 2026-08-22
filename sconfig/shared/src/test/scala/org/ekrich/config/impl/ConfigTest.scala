@@ -35,7 +35,7 @@ class ConfigTest extends TestUtilsShared {
   }
 
   def merge(toMerge: AbstractConfigObject*) = {
-    val obj = mergeUnresolved(toMerge: _*)
+    val obj = mergeUnresolved(toMerge*)
     resolveNoSystem(obj, obj) match {
       case x: AbstractConfigObject => x
     }

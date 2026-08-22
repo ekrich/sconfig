@@ -59,7 +59,7 @@ final class Path @throws(classOf[ConfigException]) (
   // added as private constructor helper
   private def this(tuple: (String, Path)) = this(tuple._1, tuple._2)
 
-  def this(elements: String*) = this(Path.create(elements: _*))
+  def this(elements: String*) = this(Path.create(elements*))
 
   // append all the paths in the iterator together into one path
   def this(i: ju.Iterator[Path]) = this(Path.create(i))

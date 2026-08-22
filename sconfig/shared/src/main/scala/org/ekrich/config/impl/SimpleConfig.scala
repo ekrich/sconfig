@@ -959,7 +959,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   override def getObjectList(path: String): ju.List[ConfigObject] =
     getHomogeneousWrappedList(path, ConfigValueType.OBJECT)
 
-  override def getConfigList(path: String): ju.List[_ <: Config] = {
+  override def getConfigList(path: String): ju.List[? <: Config] = {
     val objects = getObjectList(path)
     val l = new ju.ArrayList[Config](objects.size())
     objects.forEach { o =>
@@ -968,7 +968,7 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     l
   }
 
-  override def getAnyRefList(path: String): ju.List[_ <: AnyRef] = {
+  override def getAnyRefList(path: String): ju.List[? <: AnyRef] = {
     val list = getList(path)
     val l = new ju.ArrayList[AnyRef](list.size())
     list.forEach { v =>

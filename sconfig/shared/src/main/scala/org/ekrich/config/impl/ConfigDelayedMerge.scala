@@ -27,7 +27,7 @@ object ConfigDelayedMerge {
       stack: ju.List[AbstractConfigValue],
       context: ResolveContext,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigValue] = {
+  ): ResolveResult[? <: AbstractConfigValue] = {
     if (ConfigImpl.traceSubstitutionsEnabled) {
       ConfigImpl.trace(
         context.depth,
@@ -242,7 +242,7 @@ final class ConfigDelayedMerge(
   override def resolveSubstitutions(
       context: ResolveContext,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigValue] =
+  ): ResolveResult[? <: AbstractConfigValue] =
     ConfigDelayedMerge.resolveSubstitutions(this, stack, context, source)
 
   override def makeReplacement(

@@ -64,7 +64,7 @@ object AbstractConfigObject {
 
   @varargs private[impl] def mergeOrigins(
       stack: AbstractConfigObject*
-  ): ConfigOrigin = mergeOrigins(ju.Arrays.asList(stack.toArray: _*))
+  ): ConfigOrigin = mergeOrigins(ju.Arrays.asList(stack.toArray*))
 
   private def weAreImmutable(method: String) =
     new UnsupportedOperationException(
@@ -170,7 +170,7 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
   override def resolveSubstitutions(
       context: ResolveContext,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigObject] = null
+  ): ResolveResult[? <: AbstractConfigObject] = null
 
   override def relativized(prefix: Path): AbstractConfigObject = null
 
@@ -190,7 +190,7 @@ abstract class AbstractConfigObject(_origin: ConfigOrigin)
   override def put(arg0: String, arg1: ConfigValue): ConfigValue =
     throw AbstractConfigObject.weAreImmutable("put")
 
-  override def putAll(arg0: ju.Map[_ <: String, _ <: ConfigValue]): Unit = {
+  override def putAll(arg0: ju.Map[? <: String, ? <: ConfigValue]): Unit = {
     throw AbstractConfigObject.weAreImmutable("putAll")
   }
 

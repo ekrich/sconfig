@@ -13,7 +13,7 @@ enum ResolveStatus extends jl.Enum[ResolveStatus] {
 
 object ResolveStatus {
   def fromValues(
-      values: ju.Collection[_ <: AbstractConfigValue]
+      values: ju.Collection[? <: AbstractConfigValue]
   ): ResolveStatus =
     values.scalaOps.findFold(_.resolveStatus == ResolveStatus.UNRESOLVED)(() =>
       ResolveStatus.RESOLVED /* default not found */

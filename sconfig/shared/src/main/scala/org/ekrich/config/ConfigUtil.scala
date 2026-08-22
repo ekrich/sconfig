@@ -36,7 +36,7 @@ object ConfigUtil {
    *   if there are no elements
    */
   @varargs def joinPath(elements: String*): String =
-    ConfigImplUtil.joinPath(elements: _*)
+    ConfigImplUtil.joinPath(elements*)
 
   /**
    * Converts a list of strings to a path expression, by quoting the path

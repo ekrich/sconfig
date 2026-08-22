@@ -581,11 +581,11 @@ abstract trait TestUtils {
   }
 
   def tokenSubstitution(expression: Token*) = {
-    tokenMaybeOptionalSubstitution(false, expression: _*)
+    tokenMaybeOptionalSubstitution(false, expression*)
   }
 
   def tokenOptionalSubstitution(expression: Token*) = {
-    tokenMaybeOptionalSubstitution(true, expression: _*)
+    tokenMaybeOptionalSubstitution(true, expression*)
   }
 
   // quoted string substitution (no interpretation of periods)
@@ -669,14 +669,14 @@ abstract trait TestUtils {
   def nodeKeySubstitution(s: String) =
     new ConfigNodeSimpleValue(tokenKeySubstitution(s))
   def nodeOptionalSubstitution(expression: Token*) =
-    new ConfigNodeSimpleValue(tokenOptionalSubstitution(expression: _*))
+    new ConfigNodeSimpleValue(tokenOptionalSubstitution(expression*))
   def nodeSubstitution(expression: Token*) =
-    new ConfigNodeSimpleValue(tokenSubstitution(expression: _*))
+    new ConfigNodeSimpleValue(tokenSubstitution(expression*))
 
   // this is importantly NOT using Path.newPath, which relies on
   // the parser; in the test suite we are often testing the parser,
   // so we don't want to use the parser to build the expected result.
-  def path(elements: String*) = new Path(elements: _*)
+  def path(elements: String*) = new Path(elements*)
 
   protected class TestClassLoader(
       parent: ClassLoader,
