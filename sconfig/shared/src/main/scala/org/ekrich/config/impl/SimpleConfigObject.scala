@@ -108,11 +108,11 @@ object SimpleConfigObject {
       val aFilename = Option(aOrigin.filename).getOrElse("")
       val bFilename = Option(bOrigin.filename).getOrElse("")
 
-      val compareFiles = aFilename `compareTo` bFilename
+      val compareFiles = aFilename.compareTo(bFilename)
 
       if (compareFiles != 0) compareFiles
       else
-        aOrigin.lineNumber `compareTo` bOrigin.lineNumber
+        aOrigin.lineNumber.compareTo(bOrigin.lineNumber)
     }
   }
 

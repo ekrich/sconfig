@@ -57,7 +57,7 @@ object Util {
   }
 }
 
-object FileLoad extends App {
+object FileLoad {
   def task(): Unit = {
     val conf = ConfigFactory.load("test04")
     if (!"2.0-SNAPSHOT".equals(conf.getString("akka.version"))) {
@@ -65,13 +65,15 @@ object FileLoad extends App {
     }
   }
 
-  val ms = Util.time(() => task(), 4000)
-  println("file load: " + ms + "ms")
+  def main(args: Array[String]): Unit = {
+    val ms = Util.time(() => task(), 4000)
+    println("file load: " + ms + "ms")
 
-  Util.loop(args.toIndexedSeq, () => task())
+    Util.loop(args.toIndexedSeq, () => task())
+  }
 }
 
-object Resolve extends App {
+object Resolve {
   val conf = ConfigFactory.load("test02")
 
   def task(): Unit = {
@@ -81,13 +83,15 @@ object Resolve extends App {
     }
   }
 
-  val ms = Util.time(() => task(), 3000000)
-  println("resolve: " + ms + "ms")
+  def main(args: Array[String]): Unit = {
+    val ms = Util.time(() => task(), 3000000)
+    println("resolve: " + ms + "ms")
 
-  Util.loop(args.toIndexedSeq, () => task())
+    Util.loop(args.toIndexedSeq, () => task())
+  }
 }
 
-object GetExistingPath extends App {
+object GetExistingPath {
   val conf = ConfigFactory.parseString("aaaaa.bbbbb.ccccc.d=42").resolve()
 
   def task(): Unit = {
@@ -96,13 +100,15 @@ object GetExistingPath extends App {
     }
   }
 
-  val ms = Util.time(() => task(), 2000000)
-  println("GetExistingPath: " + ms + "ms")
+  def main(args: Array[String]): Unit = {
+    val ms = Util.time(() => task(), 2000000)
+    println("GetExistingPath: " + ms + "ms")
 
-  Util.loop(args.toIndexedSeq, () => task())
+    Util.loop(args.toIndexedSeq, () => task())
+  }
 }
 
-object GetSeveralExistingPaths extends App {
+object GetSeveralExistingPaths {
   val conf = ConfigFactory
     .parseString(
       "aaaaa { bbbbb.ccccc.d=42, qqqqq.rrrrr = 43 }, xxxxx.yyyyy.zzzzz = 44 "
@@ -116,14 +122,15 @@ object GetSeveralExistingPaths extends App {
       throw new Exception("broken get")
     }
   }
+  def main(args: Array[String]): Unit = {
+    val ms = Util.time(() => task(), 5000000)
+    println("GetSeveralExistingPaths: " + ms + "ms")
 
-  val ms = Util.time(() => task(), 5000000)
-  println("GetSeveralExistingPaths: " + ms + "ms")
-
-  Util.loop(args.toIndexedSeq, () => task())
+    Util.loop(args.toIndexedSeq, () => task())
+  }
 }
 
-object HasPathOnMissing extends App {
+object HasPathOnMissing {
   val conf =
     ConfigFactory
       .parseString("aaaaa.bbbbb.ccccc.d=42,x=10, y=11, z=12")
@@ -134,14 +141,15 @@ object HasPathOnMissing extends App {
       throw new Exception("we shouldn't have this path")
     }
   }
+  def main(args: Array[String]): Unit = {
+    val ms = Util.time(() => task(), 20000000)
+    println("HasPathOnMissing: " + ms + "ms")
 
-  val ms = Util.time(() => task(), 20000000)
-  println("HasPathOnMissing: " + ms + "ms")
-
-  Util.loop(args.toIndexedSeq, () => task())
+    Util.loop(args.toIndexedSeq, () => task())
+  }
 }
 
-object CatchExceptionOnMissing extends App {
+object CatchExceptionOnMissing {
   val conf =
     ConfigFactory
       .parseString("aaaaa.bbbbb.ccccc.d=42,x=10, y=11, z=12")
@@ -163,10 +171,12 @@ object CatchExceptionOnMissing extends App {
     }
   }
 
-  anotherStackFrame(40) { () =>
-    val ms = Util.time(() => task(), 300000)
-    println("CatchExceptionOnMissing: " + ms + "ms")
+  def main(args: Array[String]): Unit = {
+    anotherStackFrame(40) { () =>
+      val ms = Util.time(() => task(), 300000)
+      println("CatchExceptionOnMissing: " + ms + "ms")
 
-    Util.loop(args.toIndexedSeq, () => task())
+      Util.loop(args.toIndexedSeq, () => task())
+    }
   }
 }
