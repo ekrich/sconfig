@@ -140,7 +140,7 @@ final class SimpleConfigList(
   override def resolveSubstitutions(
       context: ResolveContext,
       source: ResolveSource
-  ): ResolveResult[_ <: SimpleConfigList] = {
+  ): ResolveResult[? <: SimpleConfigList] = {
     if (resolved) return ResolveResult.make(context, this)
     if (context.isRestrictedToChild) {
       // if a list restricts to a child path, then it has no child paths, so nothing to do.
@@ -250,7 +250,7 @@ final class SimpleConfigList(
     }
   }
   override def contains(o: Any): Boolean = value.contains(o)
-  override def containsAll(c: ju.Collection[_]): Boolean = value.containsAll(c)
+  override def containsAll(c: ju.Collection[?]): Boolean = value.containsAll(c)
   override def get(index: Int): AbstractConfigValue = value.get(index)
   override def indexOf(o: Any): Int = value.indexOf(o)
   override def isEmpty: Boolean = value.isEmpty
@@ -279,16 +279,16 @@ final class SimpleConfigList(
     list
   }
   override def toArray: Array[Object] = value.toArray
-  override def toArray[T](a: Array[T with Object]): Array[T with Object] =
+  override def toArray[T](a: Array[T & Object]): Array[T & Object] =
     value.toArray[T](a)
   override def add(e: ConfigValue): Boolean =
     throw SimpleConfigList.weAreImmutable("add")
   override def add(index: Int, element: ConfigValue): Unit = {
     throw SimpleConfigList.weAreImmutable("add")
   }
-  override def addAll(c: ju.Collection[_ <: ConfigValue]): Boolean =
+  override def addAll(c: ju.Collection[? <: ConfigValue]): Boolean =
     throw SimpleConfigList.weAreImmutable("addAll")
-  override def addAll(index: Int, c: ju.Collection[_ <: ConfigValue]): Boolean =
+  override def addAll(index: Int, c: ju.Collection[? <: ConfigValue]): Boolean =
     throw SimpleConfigList.weAreImmutable("addAll")
   override def clear(): Unit = {
     throw SimpleConfigList.weAreImmutable("clear")
@@ -297,9 +297,9 @@ final class SimpleConfigList(
     throw SimpleConfigList.weAreImmutable("remove")
   override def remove(index: Int): ConfigValue =
     throw SimpleConfigList.weAreImmutable("remove")
-  override def removeAll(c: ju.Collection[_]): Boolean =
+  override def removeAll(c: ju.Collection[?]): Boolean =
     throw SimpleConfigList.weAreImmutable("removeAll")
-  override def retainAll(c: ju.Collection[_]): Boolean =
+  override def retainAll(c: ju.Collection[?]): Boolean =
     throw SimpleConfigList.weAreImmutable("retainAll")
   override def set(index: Int, element: ConfigValue): ConfigValue =
     throw SimpleConfigList.weAreImmutable("set")

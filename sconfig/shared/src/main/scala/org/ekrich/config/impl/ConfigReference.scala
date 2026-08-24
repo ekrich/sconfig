@@ -39,7 +39,7 @@ final class ConfigReference(
   override def resolveSubstitutions(
       context: ResolveContext,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigValue] = {
+  ): ResolveResult[? <: AbstractConfigValue] = {
     var newContext = context.addCycleMarker(this)
     var v: AbstractConfigValue = null
     try {

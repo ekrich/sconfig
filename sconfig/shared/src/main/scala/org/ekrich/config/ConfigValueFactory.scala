@@ -85,7 +85,7 @@ object ConfigValueFactory {
    *   a new [[ConfigObject]] value
    */
   def fromMap(
-      values: ju.Map[String, _],
+      values: ju.Map[String, ?],
       originDescription: String
   ): ConfigObject =
     fromAnyRef(values, originDescription).asInstanceOf[ConfigObject]
@@ -105,7 +105,7 @@ object ConfigValueFactory {
    *   a new [[ConfigList]] value
    */
   def fromIterable(
-      values: jl.Iterable[_],
+      values: jl.Iterable[?],
       originDescription: String
   ): ConfigList =
     fromAnyRef(values, originDescription).asInstanceOf[ConfigList]
@@ -136,7 +136,7 @@ object ConfigValueFactory {
    * @return
    *   a new [[ConfigObject]]
    */
-  def fromMap(values: ju.Map[String, _]): ConfigObject = fromMap(values, null)
+  def fromMap(values: ju.Map[String, ?]): ConfigObject = fromMap(values, null)
 
   /**
    * See the other overload of
@@ -148,7 +148,7 @@ object ConfigValueFactory {
    * @return
    *   a new [[ConfigList]]
    */
-  def fromIterable(values: jl.Iterable[_]): ConfigList =
+  def fromIterable(values: jl.Iterable[?]): ConfigList =
     fromIterable(values, null)
 }
 

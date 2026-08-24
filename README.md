@@ -47,6 +47,7 @@ If migrating from the original `config` library, see the migrating section below
 * Scala Native 0.5.x support from 0.7.0.
 * Scala 3 support on Scala Native 0.4.3-RC2 or greater.
 * Scala 2.11 support through version 1.4.9.
+* Scala 3.8+ and Scala.js 1.21+ usage requires Java 17 as of v2.0.0+ of sconfig.
 
 ## Usage and Help
 [![scaladoc](https://javadoc.io/badge/org.ekrich/sconfig_3.svg?label=scaladoc3)](https://javadoc.io/doc/org.ekrich/sconfig_3)

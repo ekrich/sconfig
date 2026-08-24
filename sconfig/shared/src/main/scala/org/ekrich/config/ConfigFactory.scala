@@ -758,7 +758,7 @@ object ConfigFactory extends PlatformConfigFactory {
    *   the parsed configuration
    */
   def parseResources(
-      klass: Class[_],
+      klass: Class[?],
       resource: String,
       options: ConfigParseOptions
   ): Config =
@@ -778,7 +778,7 @@ object ConfigFactory extends PlatformConfigFactory {
    * @return
    *   the parsed configuration
    */
-  def parseResources(klass: Class[_], resource: String): Config =
+  def parseResources(klass: Class[?], resource: String): Config =
     parseResources(klass, resource, ConfigParseOptions.defaults)
 
   /**
@@ -812,7 +812,7 @@ object ConfigFactory extends PlatformConfigFactory {
    *   the parsed configuration
    */
   def parseResourcesAnySyntax(
-      klass: Class[_],
+      klass: Class[?],
       resourceBasename: String,
       options: ConfigParseOptions
   ): Config =
@@ -835,7 +835,7 @@ object ConfigFactory extends PlatformConfigFactory {
    *   the parsed configuration
    */
   def parseResourcesAnySyntax(
-      klass: Class[_],
+      klass: Class[?],
       resourceBasename: String
   ): Config =
     parseResourcesAnySyntax(
@@ -1028,7 +1028,7 @@ object ConfigFactory extends PlatformConfigFactory {
    * @return
    *   the map converted to a [[Config]]
    */
-  def parseMap(values: ju.Map[String, _], originDescription: String): Config =
+  def parseMap(values: ju.Map[String, ?], originDescription: String): Config =
     ConfigImpl.fromPathMap(values, originDescription).toConfig
 
   /**
@@ -1041,7 +1041,7 @@ object ConfigFactory extends PlatformConfigFactory {
    * @return
    *   the map converted to a [[Config]]
    */
-  def parseMap(values: ju.Map[String, _]): Config = parseMap(values, null)
+  def parseMap(values: ju.Map[String, ?]): Config = parseMap(values, null)
 
   private def getConfigLoadingStrategy = {
     val className =

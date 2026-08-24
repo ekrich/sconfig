@@ -160,7 +160,7 @@ object ResolveSource {
       "ValueWithPath(value=" + value + ", pathFromRoot=" + pathFromRoot + ")"
   }
   final private[impl] class ResultWithPath private[impl] (
-      val result: ResolveResult[_ <: AbstractConfigValue],
+      val result: ResolveResult[? <: AbstractConfigValue],
       val pathFromRoot: ResolveSource.Node[Container]
   ) {
     override def toString: String =

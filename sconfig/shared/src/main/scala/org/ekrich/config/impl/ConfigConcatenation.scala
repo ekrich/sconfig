@@ -164,7 +164,7 @@ final class ConfigConcatenation(
   override def resolveSubstitutions(
       context: ResolveContext,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigValue] = {
+  ): ResolveResult[? <: AbstractConfigValue] = {
     if (ConfigImpl.traceSubstitutionsEnabled) {
       val indent = context.depth + 2
       ConfigImpl.trace(

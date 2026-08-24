@@ -187,7 +187,7 @@ object SimpleConfigOrigin {
     )
 
   private[impl] def mergeOrigins(
-      stack: ju.List[_ <: AbstractConfigValue]
+      stack: ju.List[? <: AbstractConfigValue]
   ): ConfigOrigin = {
     val origins = new ju.ArrayList[ConfigOrigin](stack.size)
     stack.forEach { v =>
@@ -196,7 +196,7 @@ object SimpleConfigOrigin {
     mergeOrigins(origins)
   }
   private[impl] def mergeOrigins(
-      stack: ju.Collection[_ <: ConfigOrigin]
+      stack: ju.Collection[? <: ConfigOrigin]
   ): ConfigOrigin =
     if (stack.isEmpty)
       throw new ConfigException.BugOrBroken("can't merge empty list of origins")

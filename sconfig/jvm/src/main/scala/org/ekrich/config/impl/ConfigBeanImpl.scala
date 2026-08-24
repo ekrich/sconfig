@@ -96,7 +96,7 @@ object ConfigBeanImpl {
       val problems = new ju.ArrayList[ConfigException.ValidationProblem]
       beanProps.forEach { beanProp =>
         val setter: Method = beanProp.getWriteMethod
-        val parameterClass: Class[_] = setter.getParameterTypes()(0)
+        val parameterClass: Class[?] = setter.getParameterTypes()(0)
         val expectedType = getValueTypeOrNull(parameterClass)
         if (expectedType != null) {
           var name = originalNames.get(beanProp.getName)
@@ -178,9 +178,9 @@ object ConfigBeanImpl {
   // types plus you can always use Object, ConfigValue, Config,
   // ConfigObject, etc.  as an escape hatch.
   private def getValue(
-      beanClass: Class[_],
+      beanClass: Class[?],
       parameterType: Type,
-      parameterClass: Class[_],
+      parameterClass: Class[?],
       config: Config,
       configPropName: String
   ): Any =
@@ -203,7 +203,7 @@ object ConfigBeanImpl {
     else if (parameterClass == classOf[ConfigMemorySize])
       config.getMemorySize(configPropName)
     else if (parameterClass == classOf[Any]) config.getAnyRef(configPropName)
-    else if (parameterClass == classOf[ju.List[_]])
+    else if (parameterClass == classOf[ju.List[?]])
       getListValue(
         beanClass,
         parameterType,
@@ -211,7 +211,7 @@ object ConfigBeanImpl {
         config,
         configPropName
       )
-    else if (parameterClass == classOf[ju.Set[_]])
+    else if (parameterClass == classOf[ju.Set[?]])
       getSetValue(
         beanClass,
         parameterType,
@@ -219,7 +219,7 @@ object ConfigBeanImpl {
         config,
         configPropName
       )
-    else if (parameterClass == classOf[ju.Map[_, _]]) { // we could do better here, but right now we don't.
+    else if (parameterClass == classOf[ju.Map[?, ?]]) { // we could do better here, but right now we don't.
       val typeArgs = parameterType
         .asInstanceOf[ParameterizedType]
         .getActualTypeArguments
@@ -251,7 +251,7 @@ object ConfigBeanImpl {
     }
 
   private def getEnumAsClass[T <: jl.Enum[T]](
-      parameterClass: Class[_]
+      parameterClass: Class[?]
   ): Class[T] =
     parameterClass.asInstanceOf[Class[T]]
 
@@ -259,9 +259,9 @@ object ConfigBeanImpl {
     elementType.asInstanceOf[Class[T]]
 
   private def getSetValue(
-      beanClass: Class[_],
+      beanClass: Class[?],
       parameterType: Type,
-      parameterClass: Class[_],
+      parameterClass: Class[?],
       config: Config,
       configPropName: String
   ) =
@@ -276,12 +276,12 @@ object ConfigBeanImpl {
     )
 
   private def getListValue(
-      beanClass: Class[_],
+      beanClass: Class[?],
       parameterType: Type,
-      parameterClass: Class[_],
+      parameterClass: Class[?],
       config: Config,
       configPropName: String
-  ): ju.List[_] = {
+  ): ju.List[?] = {
     val elementType: Type =
       parameterType.asInstanceOf[ParameterizedType].getActualTypeArguments()(0)
     if (elementType == classOf[jl.Boolean])
@@ -304,13 +304,13 @@ object ConfigBeanImpl {
       config.getObjectList(configPropName)
     else if (elementType == classOf[ConfigValue])
       config.getList(configPropName)
-    else if (elementType.asInstanceOf[Class[_]].isEnum) {
+    else if (elementType.asInstanceOf[Class[?]].isEnum) {
       val enumValues =
         config.getEnumList(getTypeAsClass(elementType), configPropName)
       enumValues
-    } else if (hasAtLeastOneBeanProperty(elementType.asInstanceOf[Class[_]])) {
+    } else if (hasAtLeastOneBeanProperty(elementType.asInstanceOf[Class[?]])) {
       val beanList = new ju.ArrayList[AnyRef]
-      val configList: ju.List[_ <: Config] =
+      val configList: ju.List[? <: Config] =
         config.getConfigList(configPropName)
       configList.forEach { listMember =>
         beanList.add(createInternal(listMember, getTypeAsClass(elementType)))
@@ -323,7 +323,7 @@ object ConfigBeanImpl {
   }
 
   // null if we can't easily say; this is heuristic/best-effort
-  private def getValueTypeOrNull(parameterClass: Class[_]) =
+  private def getValueTypeOrNull(parameterClass: Class[?]) =
     if ((parameterClass == classOf[jl.Boolean]) ||
         (parameterClass == classOf[Boolean]))
       ConfigValueType.BOOLEAN
@@ -339,14 +339,14 @@ object ConfigBeanImpl {
     else if (parameterClass == classOf[String]) ConfigValueType.STRING
     else if (parameterClass == classOf[Duration]) null
     else if (parameterClass == classOf[ConfigMemorySize]) null
-    else if (parameterClass == classOf[ju.List[_]]) ConfigValueType.LIST
-    else if (parameterClass == classOf[ju.Map[_, _]]) ConfigValueType.OBJECT
+    else if (parameterClass == classOf[ju.List[?]]) ConfigValueType.LIST
+    else if (parameterClass == classOf[ju.Map[?, ?]]) ConfigValueType.OBJECT
     else if (parameterClass == classOf[Config]) ConfigValueType.OBJECT
     else if (parameterClass == classOf[ConfigObject]) ConfigValueType.OBJECT
     else if (parameterClass == classOf[ConfigList]) ConfigValueType.LIST
     else null
 
-  private def hasAtLeastOneBeanProperty(clazz: Class[_]): Boolean =
+  private def hasAtLeastOneBeanProperty(clazz: Class[?]): Boolean =
     try {
       val beanInfo = Introspector.getBeanInfo(clazz)
       beanInfo
@@ -359,7 +359,7 @@ object ConfigBeanImpl {
     }
 
   private def isOptionalProperty(
-      beanClass: Class[_],
+      beanClass: Class[?],
       beanProp: PropertyDescriptor
   ) = {
     val field = getField(beanClass, beanProp.getName)
@@ -368,7 +368,7 @@ object ConfigBeanImpl {
       beanProp.getReadMethod.getAnnotationsByType(classOf[Optional]).length > 0
   }
 
-  private def getField(beanClass: Class[_], fieldName: String): Field = {
+  private def getField(beanClass: Class[?], fieldName: String): Field = {
     try {
       val field = beanClass.getDeclaredField(fieldName)
       field.setAccessible(true)
@@ -377,7 +377,7 @@ object ConfigBeanImpl {
       case e: NoSuchFieldException =>
       // Don't give up yet. Try to look for field in super class, if any.
     }
-    val beanSuperClass: Class[_] = beanClass.getSuperclass
+    val beanSuperClass: Class[?] = beanClass.getSuperclass
     if (beanSuperClass == null) return null
     getField(beanSuperClass, fieldName)
   }

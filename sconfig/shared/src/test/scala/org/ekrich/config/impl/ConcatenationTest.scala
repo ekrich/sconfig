@@ -255,7 +255,7 @@ class ConcatenationTest extends TestUtilsShared {
         .unwrapped
         .asScala
         .toList
-        .map(_.asInstanceOf[java.util.List[_]].asScala.toList)
+        .map(_.asInstanceOf[java.util.List[?]].asScala.toList)
     )
   }
 
@@ -271,7 +271,7 @@ class ConcatenationTest extends TestUtilsShared {
         .unwrapped
         .asScala
         .toList
-        .map(_.asInstanceOf[java.util.List[_]].asScala.toList)
+        .map(_.asInstanceOf[java.util.List[?]].asScala.toList)
     )
   }
 

@@ -12,5 +12,5 @@ import java.{util => ju}
  * [[ConfigDelayedMerge]].
  */
 trait Unmergeable {
-  def unmergedValues: ju.Collection[_ <: AbstractConfigValue]
+  def unmergedValues: ju.Collection[? <: AbstractConfigValue]
 }

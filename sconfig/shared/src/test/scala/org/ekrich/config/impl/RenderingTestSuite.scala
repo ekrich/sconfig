@@ -28,6 +28,6 @@ trait RenderingTestSuite extends TestUtilsShared {
       configFormatOptions: ConfigFormatOptions
   ) = {
     checkEqualObjects(expected, result)
-    checkEqualObjects(result, formatHocon(result)(configFormatOptions))
+    checkEqualObjects(result, formatHocon(result))
   }
 }

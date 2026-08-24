@@ -175,9 +175,9 @@ object ConfigImplUtil {
   }
   // add Scala vararg version - this is the one finally called now
   @varargs def joinPath(elements: String*): String =
-    new Path(elements: _*).render
+    new Path(elements*).render
   def joinPath(elements: ju.List[String]): String =
-    joinPath(elements.toArray(new Array[String](0)).toIndexedSeq: _*)
+    joinPath(elements.toArray(new Array[String](0)).toIndexedSeq*)
   def splitPath(path: String): ju.List[String] = {
     var p = Path.newPath(path)
     val elements = new ju.ArrayList[String]

@@ -471,7 +471,7 @@ class ConfigValueSharedTest extends TestUtilsShared {
       new SimpleConfigObject(SimpleConfigOrigin.newSimple(desc), values)
     }
     def m(values: AbstractConfigObject*) = {
-      AbstractConfigObject.mergeOrigins(values: _*).description
+      AbstractConfigObject.mergeOrigins(values*).description
     }
 
     // simplest case

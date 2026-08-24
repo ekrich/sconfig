@@ -6,64 +6,66 @@ import org.ekrich.config.{
   ConfigFormatOptions
 }
 
-object RenderExample extends App {
-  val formatted = args.contains("--formatted")
-  val originComments = args.contains("--origin-comments")
-  val comments = args.contains("--comments")
-  val hocon = args.contains("--hocon")
-  val hideEnvVariableValues = args.contains("--hide-env-variable-values")
+object RenderExample {
+  def main(args: Array[String]): Unit = {
+    val formatted = args.contains("--formatted")
+    val originComments = args.contains("--origin-comments")
+    val comments = args.contains("--comments")
+    val hocon = args.contains("--hocon")
+    val hideEnvVariableValues = args.contains("--hide-env-variable-values")
 
-  val keepOriginOrder = args.contains("--keep-origin-order")
-  val doubleIndent = !args.contains("--single-indent")
-  val colonAssign = args.contains("--colon-assign")
-  val newLineAtEnd = !args.contains("--no-new-line-eof")
-  val simplifyOneEntryNestedObjects =
-    !args.contains("--simplify-one-entry-nested-objects")
+    val keepOriginOrder = args.contains("--keep-origin-order")
+    val doubleIndent = !args.contains("--single-indent")
+    val colonAssign = args.contains("--colon-assign")
+    val newLineAtEnd = !args.contains("--no-new-line-eof")
+    val simplifyOneEntryNestedObjects =
+      !args.contains("--simplify-one-entry-nested-objects")
 
-  val configFormatOptions = ConfigFormatOptions.defaults
-    .setKeepOriginOrder(keepOriginOrder)
-    .setDoubleIndent(doubleIndent)
-    .setColonAssign(colonAssign)
-    .setNewLineAtEnd(newLineAtEnd)
-    .setSimplifyNestedObjects(simplifyOneEntryNestedObjects)
+    val configFormatOptions = ConfigFormatOptions.defaults
+      .setKeepOriginOrder(keepOriginOrder)
+      .setDoubleIndent(doubleIndent)
+      .setColonAssign(colonAssign)
+      .setNewLineAtEnd(newLineAtEnd)
+      .setSimplifyNestedObjects(simplifyOneEntryNestedObjects)
 
-  val options = ConfigRenderOptions.defaults
-    .setFormatted(formatted)
-    .setOriginComments(originComments)
-    .setComments(comments)
-    .setJson(!hocon)
-    .setShowEnvVariableValues(!hideEnvVariableValues)
-    .setConfigFormatOptions(configFormatOptions)
+    val options = ConfigRenderOptions.defaults
+      .setFormatted(formatted)
+      .setOriginComments(originComments)
+      .setComments(comments)
+      .setJson(!hocon)
+      .setShowEnvVariableValues(!hideEnvVariableValues)
+      .setConfigFormatOptions(configFormatOptions)
 
-  def render(what: String): Unit = {
-    val conf = ConfigFactory
-      .defaultOverrides()
-      .withFallback(
-        ConfigFactory
-          .parseResourcesAnySyntax(classOf[ConfigFactory], "/" + what)
-      )
-      .withFallback(ConfigFactory.defaultReference())
+    def render(what: String): Unit = {
+      val conf = ConfigFactory
+        .defaultOverrides()
+        .withFallback(
+          ConfigFactory
+            .parseResourcesAnySyntax(classOf[ConfigFactory], "/" + what)
+        )
+        .withFallback(ConfigFactory.defaultReference())
 
-    println("=== BEGIN UNRESOLVED toString() " + what)
-    print(conf.root.toString())
-    println("=== END UNRESOLVED toString() " + what)
+      println("=== BEGIN UNRESOLVED toString() " + what)
+      print(conf.root.toString())
+      println("=== END UNRESOLVED toString() " + what)
 
-    println("=== BEGIN UNRESOLVED " + what)
-    print(conf.root.render(options))
-    println("=== END UNRESOLVED " + what)
+      println("=== BEGIN UNRESOLVED " + what)
+      print(conf.root.render(options))
+      println("=== END UNRESOLVED " + what)
 
-    println("=== BEGIN RESOLVED " + what)
-    print(conf.resolve().root.render(options))
-    println("=== END RESOLVED " + what)
+      println("=== BEGIN RESOLVED " + what)
+      print(conf.resolve().root.render(options))
+      println("=== END RESOLVED " + what)
+    }
+
+    render("test01")
+    render("test06")
+    render("test05")
+    render("test12")
   }
-
-  render("test01")
-  render("test06")
-  render("test05")
-  render("test12")
 }
 
-object RenderOptions extends App {
+object RenderOptions {
   val conf = ConfigFactory.parseString("""
             foo=[1,2,3]
             # comment1
@@ -105,5 +107,8 @@ object RenderOptions extends App {
       println("=== " + count + " END RENDER WITH " + renderSpec + "===")
       count + 1
     }
-  println("Rendered " + rendered + " option combinations")
+
+  def main(args: Array[String]): Unit = {
+    println("Rendered " + rendered + " option combinations")
+  }
 }

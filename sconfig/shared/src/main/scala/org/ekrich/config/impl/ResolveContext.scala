@@ -148,7 +148,7 @@ private[impl] final class ResolveContext(
   private[impl] def resolve(
       original: AbstractConfigValue,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigValue] = {
+  ): ResolveResult[? <: AbstractConfigValue] = {
     if (ConfigImpl.traceSubstitutionsEnabled)
       ConfigImpl.trace(
         depth,
@@ -160,7 +160,7 @@ private[impl] final class ResolveContext(
   private def realResolve(
       original: AbstractConfigValue,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigValue] = {
+  ): ResolveResult[? <: AbstractConfigValue] = {
     // a fully-resolved (no restrictToChild) object can satisfy a
     // request for a restricted object, so always check that first.
     val fullKey = new MemoKey(original, null)

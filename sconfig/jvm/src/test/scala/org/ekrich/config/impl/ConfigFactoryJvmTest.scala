@@ -90,7 +90,7 @@ class ConfigFactoryJvmTest extends TestUtils {
       conf.getBooleanList("arrays.ofBoolean").asScala
     )
     val listOfLists = conf.getAnyRefList("arrays.ofArray").asScala map {
-      _.asInstanceOf[java.util.List[_]].asScala
+      _.asInstanceOf[java.util.List[?]].asScala
     }
     assertEquals(
       Seq(Seq("a", "b", "c"), Seq("a", "b", "c"), Seq("a", "b", "c")),
@@ -537,7 +537,7 @@ class ConfigFactoryJvmTest extends TestUtils {
 
     val javaEntries = conf.entrySet
     val entries = Map(
-      (javaEntries.asScala.toSeq map { e => (e.getKey(), e.getValue()) }): _*
+      (javaEntries.asScala.toSeq map { e => (e.getKey(), e.getValue()) })*
     )
     assertEquals(Some(intValue(42)), entries.get("ints.fortyTwo"))
     assertEquals(None, entries.get("nulls.null"))

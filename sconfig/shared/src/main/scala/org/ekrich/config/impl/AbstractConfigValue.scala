@@ -141,7 +141,7 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
   def resolveSubstitutions(
       context: ResolveContext,
       source: ResolveSource
-  ): ResolveResult[_ <: AbstractConfigValue] =
+  ): ResolveResult[? <: AbstractConfigValue] =
     ResolveResult.make(context, this)
 
   private[impl] def resolveStatus = ResolveStatus.RESOLVED
