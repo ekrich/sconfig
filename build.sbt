@@ -183,7 +183,11 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
             // Points strictly to the raw JVM source directory sbt 2 maps to the classpath
             (Test / unmanagedResourceDirectories).value.headOption
               .map(_.getPath)
-              .getOrElse(sys.error("The JVM project is missing its test resources directory."))
+              .getOrElse(
+                sys.error(
+                  "The JVM project is missing its test resources directory."
+                )
+              )
           }
         }
       )
