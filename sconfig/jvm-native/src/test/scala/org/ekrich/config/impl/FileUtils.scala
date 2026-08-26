@@ -5,6 +5,7 @@ package org.ekrich.config.impl
 
 import java.io.File
 import java.util.Locale
+import java.nio.file.Files
 
 /**
  * Extracted from TestUtils as they contain File and Path and are not useful on
@@ -75,13 +76,10 @@ object FileUtils {
   def withScratchDirectory[T](
       testcase: String
   )(body: File => T): Unit = {
-    val target = new File("target")
-    if (!target.isDirectory)
-      throw new RuntimeException(s"Expecting $target to exist")
     val suffix = java.lang.Integer
       .toHexString(java.util.concurrent.ThreadLocalRandom.current.nextInt)
-    val scratch = new File(target, s"$testcase-$suffix")
-    scratch.mkdirs()
+    val scratchPath = Files.createTempDirectory(s"$testcase-$suffix")
+    val scratch = scratchPath.toFile
     try {
       body(scratch)
     } finally {
