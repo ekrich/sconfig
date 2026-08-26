@@ -485,7 +485,7 @@ class ConfigFactoryJvmTest extends TestUtils {
       o1.description.startsWith("test01.conf @")
     )
     assertTrue(
-      "description ends with url and line '" + o1.description + "'",
+      s"description ends with url and line '${o1.description}' vs '$path/test01.conf: 3'",
       o1.description.endsWith(s"$path/test01.conf: 3")
     )
     assertEquals("test01.conf", o1.resource)

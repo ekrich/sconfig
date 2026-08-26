@@ -874,11 +874,24 @@ class PublicApiTest extends TestUtils {
       v2.origin.resource
     )
     assertEquals(v1.origin.resource, v2.origin.resource)
-    assertFalse(
+    assertNotEquals(
       "same urls in " + v1.origin + " " + v2.origin,
-      v1.origin.url == v2.origin.url
+      v1.origin.url,
+      v2.origin.url
     )
-    assertFalse(v1.origin.filename == v2.origin.filename)
+    // Checks that the JVM path ends with the right file name
+    assertEquals(
+      s"v1 filename path is should end with the loaded resource file: ${v1.origin.filename}",
+      true,
+      v1.origin.filename.endsWith("test01.conf")
+    )
+    // JAR dependency filename should be null
+    assertEquals(
+      s"v2 filename inside a JAR must be null: ${v2.origin.filename}",
+      null,
+      v2.origin.filename
+    )
+
   }
 
   @Test

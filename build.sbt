@@ -18,6 +18,7 @@ def canUseRelease(scalaVersion: String) = CrossVersion
     case (2, 12) => patchVersion("2.12.", scalaVersion) > 16
     case (2, 13) => patchVersion("2.13.", scalaVersion) > 8
     case (3, _)  => true // since 3.1.2
+    case _       => false // unexpected version
   }
 
 def targetJDKVersion(scalaVersion: String) =
@@ -107,16 +108,16 @@ inThisBuild(
       .mkVersion(versionFmt, ""),
     description := "Configuration library for Scala using HOCON files",
     organization := "org.ekrich",
-    homepage := Some(url("https://github.com/ekrich/sconfig")),
+    homepage := Some(uri("https://github.com/ekrich/sconfig")),
     licenses := List(
-      "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
+      "Apache-2.0" -> uri("http://www.apache.org/licenses/LICENSE-2.0")
     ),
     developers := List(
       Developer(
         id = "ekrich",
         name = "Eric K Richardson",
         email = "ekrichardson@gmail.com",
-        url = url("http://github.ekrich.org/")
+        url = uri("http://github.ekrich.org/")
       )
     )
   )
@@ -152,25 +153,46 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
   .settings(
     scalacOptions ++= {
       val jdkVersion = targetJDKVersion(scalaVersion.value)
-      if (canUseRelease(scalaVersion.value)) s"-release:$jdkVersion"
-      else s"-target:jvm-${targetJDKVersionString(jdkVersion)}"
-      +:
-      if (isScala3.value) dotcOpts else scalacOpts
+      val targetOpt = if (canUseRelease(scalaVersion.value)) {
+        Seq(s"-release:$jdkVersion")
+      } else {
+        Seq(s"-target:jvm-${targetJDKVersionString(jdkVersion)}")
+      }
+      val versionOpts = if (isScala3.value) dotcOpts else scalacOpts
+      targetOpt ++ versionOpts
     },
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %%% "scala-collection-compat" % scCompat % Test,
-      "io.github.json4s" %%% "json4s-native-core" % json4s % Test
+      "org.scala-lang.modules" %% "scala-collection-compat" % scCompat % Test,
+      "io.github.json4s" %% "json4s-native-core" % json4s % Test
     ),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
     // env vars for tests
-    Test / envVars ++= Map(
-      "testList.0" -> "0",
-      "testList.1" -> "1",
-      "testClassesPath" -> (Test / classDirectory).value.getPath,
-      "SECRET_A" -> "A", // ConfigTest.renderShowEnvVariableValues
-      "SECRET_B" -> "B", // ConfigTest.renderShowEnvVariableValues
-      "SECRET_C" -> "C" // ConfigTest.renderShowEnvVariableValues
-    )
+    Test / envVars ++= Def.uncached {
+      Map(
+        "testList.0" -> "0",
+        "testList.1" -> "1",
+        // "testClassesPath" -> (Test / classDirectory).value.getPath,
+        "SECRET_A" -> "A", // ConfigTest.renderShowEnvVariableValues
+        "SECRET_B" -> "B", // ConfigTest.renderShowEnvVariableValues
+        "SECRET_C" -> "C", // ConfigTest.renderShowEnvVariableValues
+        "testClassesPath" -> {
+          val isJSOrNative = crossProjectPlatform.value.identifier != "jvm"
+          if (isJSOrNative) {
+            (Test / classDirectory).value.getPath
+          } else {
+            // Points strictly to the raw JVM source directory sbt 2 maps to the classpath
+            (Test / unmanagedResourceDirectories).value.headOption
+              .map(_.getPath)
+              .getOrElse(
+                sys.error(
+                  "The JVM project is missing its test resources directory."
+                )
+              )
+          }
+        }
+      )
+    },
+    Test / exportJars := false
   )
   .jvmSettings(
     crossScalaVersions := versions,
@@ -208,14 +230,14 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       _.withEmbedResources(true)
     ),
     logLevel := Level.Info, // Info or Debug
-    libraryDependencies += "org.ekrich" %%% "sjavatime" % javaTime % "provided"
+    libraryDependencies += "org.ekrich" %% "sjavatime" % javaTime % "provided"
   )
   .jsConfigure(_.enablePlugins(ScalaJSJUnitPlugin))
   .jsSettings(
     crossScalaVersions := versions,
     libraryDependencies ++= Seq(
-      "org.ekrich" %%% "sjavatime" % javaTime % "provided",
-      ("org.scala-js" %%% "scalajs-weakreferences" % "1.0.0")
+      "org.ekrich" %% "sjavatime" % javaTime % "provided",
+      ("org.scala-js" %% "scalajs-weakreferences" % "1.0.0")
         .cross(CrossVersion.for3Use2_13)
     )
   )
@@ -254,7 +276,8 @@ lazy val `scalafix-tests` = (project in file("scalafix/tests"))
   .settings(
     crossScalaVersions := versionsBase,
     publish / skip := true,
-    libraryDependencies += "ch.epfl.scala" % "scalafix-testkit" % _root_.scalafix.sbt.BuildInfo.scalafixVersion % Test cross CrossVersion.full,
+    libraryDependencies += ("ch.epfl.scala" % "scalafix-testkit" % _root_.scalafix.sbt.BuildInfo.scalafixVersion % Test)
+      .cross(CrossVersion.full),
     scalafixTestkitOutputSourceDirectories := (`scalafix-output` / Compile / unmanagedSourceDirectories).value,
     scalafixTestkitInputSourceDirectories := (`scalafix-input` / Compile / unmanagedSourceDirectories).value,
     scalafixTestkitInputClasspath := (`scalafix-input` / Compile / fullClasspath).value,
@@ -279,7 +302,7 @@ lazy val ignoredABIProblems = {
   )
 }
 
-lazy val commonSettings: Seq[Setting[_]] =
+lazy val commonSettings: Seq[Setting[?]] =
   Def.settings(
     skipPublish
   )
@@ -300,28 +323,28 @@ lazy val testLib = crossProject(JVMPlatform)
 lazy val simpleLibScala = proj(
   "sconfig-simple-lib-scala",
   file("examples/scala/simple-lib")
-) dependsOn sconfigJVM
+).dependsOn(sconfigJVM)
 lazy val simpleAppScala = proj(
   "sconfig-simple-app-scala",
   file("examples/scala/simple-app")
-) dependsOn simpleLibScala
+).dependsOn(simpleLibScala)
 lazy val complexAppScala = proj(
   "sconfig-complex-app-scala",
   file("examples/scala/complex-app")
-) dependsOn simpleLibScala
+).dependsOn(simpleLibScala)
 
 lazy val simpleLibJava = proj(
   "sconfig-simple-lib-java",
   file("examples/java/simple-lib")
-) dependsOn sconfigJVM
+).dependsOn(sconfigJVM)
 lazy val simpleAppJava = proj(
   "sconfig-simple-app-java",
   file("examples/java/simple-app")
-) dependsOn simpleLibJava
+).dependsOn(simpleLibJava)
 lazy val complexAppJava = proj(
   "sconfig-complex-app-java",
   file("examples/java/complex-app")
-) dependsOn simpleLibJava
+).dependsOn(simpleLibJava)
 
 val skipPublish = Seq(
   // no artifacts in this project
