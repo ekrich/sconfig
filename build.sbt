@@ -63,9 +63,16 @@ Compile / console / scalacOptions --= Seq(
   "-Xfatal-warnings"
 )
 
-Compile / doc / scalacOptions ++= Seq(
-  "-external-mappings:java\\..*::javadoc::https://docs.oracle.com/en/java/javase/17/docs/api/"
-)
+Compile / doc / scalacOptions ++= {
+  if (isScala3.value) {
+    Seq(
+      "-groups",
+      "-external-mappings:java\\..*::javadoc::https://docs.oracle.com/en/java/javase/17/docs/api/"
+    )
+  } else {
+    Seq.empty
+  }
+}
 
 val isScala3 = Def.setting {
   CrossVersion.partialVersion(scalaVersion.value) match {
