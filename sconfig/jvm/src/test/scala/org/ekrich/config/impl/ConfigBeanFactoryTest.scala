@@ -96,6 +96,33 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
+  def testCreateAllowsUnknownConfigKeysByDefault(): Unit = {
+    val beanConfig: StringsConfig = ConfigBeanFactory.create(
+      parseConfig("{abcd=abcd, yes=yes, nope=nope}"),
+      classOf[StringsConfig]
+    )
+    assertNotNull(beanConfig)
+    assertEquals("abcd", beanConfig.getAbcd)
+    assertEquals("yes", beanConfig.getYes)
+  }
+
+  @Test
+  def testCreateFailsOnUnknownConfigKeysWhenNotAllowed(): Unit = {
+    val e = intercept[ConfigException.ValidationFailed] {
+      ConfigBeanFactory.create(
+        parseConfig("{abcd=abcd, yes=yes, nope=nope}"),
+        classOf[StringsConfig],
+        false
+      )
+    }
+    assertTrue(
+      "unknown setting error",
+      e.getMessage.contains("Unknown config setting")
+    )
+    assertTrue("error about the right property", e.getMessage.contains("nope"))
+  }
+
+  @Test
   def testCreateEnum(): Unit = {
     val beanConfig: EnumsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("enums"),
