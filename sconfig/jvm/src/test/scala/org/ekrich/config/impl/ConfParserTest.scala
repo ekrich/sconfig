@@ -1007,6 +1007,21 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
+  def valuesAfterSeparatorNewlineHaveCorrectOriginLine(): Unit = {
+    val scalar = parseConfig("a=\n42")
+    assertEquals(2, scalar.getValue("a").origin.lineNumber)
+
+    val objectAfterEquals = parseConfig("a=\n{\n b=1\n}")
+    assertEquals(2, objectAfterEquals.getObject("a").origin.lineNumber)
+
+    val objectAfterColon = parseConfig("a:\n{\n b=1\n}")
+    assertEquals(2, objectAfterColon.getObject("a").origin.lineNumber)
+
+    val arrayAfterEquals = parseConfig("a=\n[\n 1\n]")
+    assertEquals(2, arrayAfterEquals.getList("a").origin.lineNumber)
+  }
+
+  @Test
   def acceptMultiPeriodNumericPath(): Unit = {
     val conf1 = ConfigFactory.parseString("0.1.2.3=foobar1")
     assertEquals("foobar1", conf1.getString("0.1.2.3"))

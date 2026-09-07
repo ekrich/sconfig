@@ -151,6 +151,10 @@ object ConfigParser {
         )
       v
     }
+
+    private def advanceLineNumberBeforeValue(field: ConfigNodeField): Unit =
+      lineNumber += field.newlineCountBeforeValue
+
     private def parseInclude(
         values: ju.Map[String, AbstractConfigValue],
         n: ConfigNodeInclude
@@ -230,14 +234,13 @@ object ConfigParser {
           parseInclude(values, node.asInstanceOf[ConfigNodeInclude])
           lastWasNewline = false
         } else if (node.isInstanceOf[ConfigNodeField]) {
+          val field = node.asInstanceOf[ConfigNodeField]
           lastWasNewline = false
-          val path = node.asInstanceOf[ConfigNodeField].path.value
-          comments.addAll(node.asInstanceOf[ConfigNodeField].comments)
+          val path = field.path.value
+          comments.addAll(field.comments)
           // path must be on-stack while we parse the value
           pathStack.push(path)
-          if (node
-                .asInstanceOf[ConfigNodeField]
-                .separator eq Tokens.PLUS_EQUALS) { // we really should make this work, but for now throwing
+          if (field.separator eq Tokens.PLUS_EQUALS) { // we really should make this work, but for now throwing
             // an exception is better than producing an incorrect
             // result. See
             // https://github.com/lightbend/config/issues/160
@@ -252,12 +255,11 @@ object ConfigParser {
           }
           var valueNode: AbstractConfigNodeValue = null
           var newValue: AbstractConfigValue = null
-          valueNode = node.asInstanceOf[ConfigNodeField].value
+          valueNode = field.value
+          advanceLineNumberBeforeValue(field)
           // comments from the key token go to the value token
           newValue = parseValue(valueNode, comments)
-          if (node
-                .asInstanceOf[ConfigNodeField]
-                .separator eq Tokens.PLUS_EQUALS) {
+          if (field.separator eq Tokens.PLUS_EQUALS) {
             arrayCount -= 1
             val concat =
               new ju.ArrayList[AbstractConfigValue](2)
