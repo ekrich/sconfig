@@ -392,6 +392,12 @@ class ConfParserTest extends TestUtils {
     lineNumberTest(6, "a : \"\"\"foo\nbar\nbaz\n\"\"\"\n\n}")
     //   end in the middle of triple-quoted string
     lineNumberTest(5, "a : \"\"\"foo\n\n\nbar\n")
+
+    // newlines between a separator and its value are counted too; these
+    // errors come from ConfigParser, which tracks lines separately
+    lineNumberTest(3, "a =\n  1\ninclude url(\"!!!\")")
+    lineNumberTest(4, "a =\n\n  1\ninclude url(\"!!!\")")
+    lineNumberTest(3, "a =\n  1\nb = [ { c += 2 } ]")
   }
 
   @Test
