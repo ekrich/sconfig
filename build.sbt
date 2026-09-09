@@ -148,11 +148,7 @@ lazy val root = (project in file("."))
   .settings(commonSettings)
   .settings(
     name := "sconfig-root",
-    crossScalaVersions := Nil,
-    doc / aggregate := false,
-    doc := (sconfigJVM / Compile / doc).value,
-    packageDoc / aggregate := false,
-    packageDoc := (sconfigJVM / Compile / packageDoc).value
+    crossScalaVersions := Nil
   )
 
 lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
@@ -361,5 +357,7 @@ val skipPublish = Seq(
   makePom / publishArtifact := false,
   // no docs to publish
   packageDoc / publishArtifact := false,
-  publish / skip := true
+  publish / skip := true,
+  // avoid run docs
+  Compile / doc / sources := Seq.empty
 )
