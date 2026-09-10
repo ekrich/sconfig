@@ -26,4 +26,4 @@ jobs:
     - name: Setup sbt
       uses: sbt/setup-sbt@v1
     - name: Run tests
-      run: sbt +test
+      run: sbt +test +doc
