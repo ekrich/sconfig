@@ -1,7 +1,12 @@
 package org.ekrich.config.impl
 
 import org.junit.*
+import org.junit.Assert.*
+import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigFormatOptions
+import org.ekrich.config.ConfigParseOptions
+
+import scala.jdk.CollectionConverters.*
 
 // Regression tests for rendering old behaviour compatibility
 class ConfigDefaultRenderingTest extends RenderingTestSuite {
@@ -86,5 +91,38 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
         |myEmpty = " "
         |""".stripMargin
     checkEqualsAndStable(expected, result)
+  }
+
+  // an object nested inside an array is never itself "at root" - it always
+  // needs its own braces, first entry included. Porting lightbend/config#832.
+  @Test
+  def listElementsKeepTheirBraces(): Unit = {
+    val in = """root = [{foo = bar}, {baz = qux}]"""
+    val result = formatHocon(in)
+
+    val expected = """root = [
+                     |    {
+                     |        foo = bar
+                     |    },
+                     |    {
+                     |        baz = qux
+                     |    }
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // the space between two substitutions in a concatenation is unquoted in
+  // the source; re-quoting it on render turns a valid array concatenation
+  // into a parse error on the way back in. Porting lightbend/config#841.
+  @Test
+  def arrayConcatenationRoundTripsThroughRender(): Unit = {
+    val in = """ex1 = [1, 2]
+               |except = ${ex1} ${ex1}""".stripMargin
+    val result = formatHocon(in)
+
+    val resolved =
+      ConfigFactory.parseString(result, ConfigParseOptions.defaults).resolve()
+    assertEquals(List(1, 2, 1, 2), resolved.getIntList("except").asScala)
   }
 }

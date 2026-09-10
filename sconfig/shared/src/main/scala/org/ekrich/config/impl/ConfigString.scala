@@ -69,9 +69,9 @@ object ConfigString {
       } else {
         val rendered =
           if (options.getJson) ConfigImplUtil.renderJsonString(value)
-          else if (value == " ") // might need more cases to disable quotes wrapping
-            value
-          else ConfigImplUtil.renderStringUnquotedIfPossible(value)
+          // this value was never quoted in the source (it's a ConfigString.Unquoted),
+          // so re-emit it verbatim instead of re-quoting it - matches lightbend/config#841
+          else value
         sb.append(rendered)
       }
   }
