@@ -5,11 +5,11 @@ resolvers += Resolver.sonatypeCentralSnapshots
 val crossVer = "1.4.0"
 val scalaJSVersion = "1.22.0"
 val scalaNativeVersion = "0.5.12"
-val scalafix = "0.14.7"
+val scalafix = "0.14.8"
 
 // includes sbt-dynver sbt-pgp sbt-sonatype sbt-git
 addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.12.1")
-addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "1.1.6")
+addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "1.2.0")
 
 // Scala Native support
 addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % crossVer)

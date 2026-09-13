@@ -18,7 +18,7 @@ jobs:
     - name: Checkout current branch (full)
       uses: actions/checkout@v7
     - name: Setup Java
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
@@ -26,4 +26,4 @@ jobs:
     - name: Setup sbt
       uses: sbt/setup-sbt@v1
     - name: Run tests
-      run: sbt +test
+      run: sbt +test +doc

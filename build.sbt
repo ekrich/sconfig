@@ -83,7 +83,7 @@ val isScala3 = Def.setting {
 
 val scala212 = "2.12.21"
 val scala213 = "2.13.18"
-val scala3 = "3.8.4"
+val scala3 = "3.9.0"
 
 val javaTime = "1.5.0"
 val scCompat = "2.13.0"
@@ -148,11 +148,7 @@ lazy val root = (project in file("."))
   .settings(commonSettings)
   .settings(
     name := "sconfig-root",
-    crossScalaVersions := Nil,
-    doc / aggregate := false,
-    doc := (sconfigJVM / Compile / doc).value,
-    packageDoc / aggregate := false,
-    packageDoc := (sconfigJVM / Compile / packageDoc).value
+    crossScalaVersions := Nil
   )
 
 lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
@@ -361,5 +357,7 @@ val skipPublish = Seq(
   makePom / publishArtifact := false,
   // no docs to publish
   packageDoc / publishArtifact := false,
-  publish / skip := true
+  publish / skip := true,
+  // avoid run docs
+  Compile / doc / sources := Seq.empty
 )
