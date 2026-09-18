@@ -1,7 +1,7 @@
 # New Features
 
-[<- Back to README](../README.md)
+<kbd>[<- Back to README](../README.md)</kbd>
 
-This library has features that are not available in the original Lightbend `config` library. This document explains and gives examples on how th use these features. See the Scala Native and Scala.js [guide](SCALA_NATIVE.md) for features and limitations of these platforms.
+This library has features that are not available in the original Lightbend `config` library. This document explains and gives examples on how to use these features. See the Scala Native and Scala.js [guide](SCALA_NATIVE.md) for features and limitations of those platforms.
 
-[<- Back to README](../README.md)
+<kbd>[<- Back to README](../README.md)</kbd>
