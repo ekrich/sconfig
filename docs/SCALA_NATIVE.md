@@ -1,5 +1,7 @@
 # Scala Native and Scala.js Help
 
+<kbd>[<- Back to README](../README.md)</kbd>
+
 The release has minimal capabilities at this time so
 the following is an example of how to use the API.
 
@@ -109,4 +111,4 @@ val config = ConfigFactory.parseFile(file)
 Using this code with the code above gives you a working solution to use `sconfig`
 with Scala Native.
 
-[Back to README](../README.md)
+<kbd>[<- Back to README](../README.md)</kbd>
