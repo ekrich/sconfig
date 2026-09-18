@@ -24,7 +24,7 @@ libraryDependencies += "org.ekrich" %% "sconfig" % "x.y.z"
 
 To use in `sbt`, replace `x.y.z` with the version from Maven Central badge above.
 
-For non-JVM projects use `%%%` but please refer to the [Usage and Help](usage-and-help) section below for **critical** Scala Native and Scala.js usage information. The TLDR is that you must add a `java.time` library dependency to your project. Refer to the [`sjavatime` home page](https://github.com/ekrich/sjavatime) for the current version or alternative `java.time` libraries.
+For non-JVM projects use `%%%` but please refer to the [Usage and Help](#usage-and-help) section below for **critical** Scala Native and Scala.js usage information. The TLDR is that you must add a `java.time` library dependency to your project. Refer to the [`sjavatime` home page](https://github.com/ekrich/sjavatime) for the current version or alternative `java.time` libraries.
 
 [Contributors / Developers](docs/DEVELOPER.md) - Helpful hints for those wishing to contribute to this repository.
 
@@ -50,15 +50,15 @@ If migrating from the original `config` library, see the migrating section below
 [![scaladoc](https://javadoc.io/badge/org.ekrich/sconfig_3.svg?label=scaladoc3)](https://javadoc.io/doc/org.ekrich/sconfig_3)
 [![Discord](https://img.shields.io/discord/633356833498595365.svg?label=&logo=discord&logoColor=ffffff&color=404244&labelColor=6A7EC2)](https://discord.gg/XSj6hQs)
 
-Please refer to the original library documentation in the [README](https://github.com/lightbend/config).
+The intent is to keep this library in sync with the original, but each PR needs to be ported to maintain feature parity. Because of this, the *Core Reference* documentation below could contain features that are not yet implemented. Also, we added some *New Features* that **diverge** from the original codebase.
 
-This library has features that diverge from the original above. Refer to the [New Features](docs/NEW_FEATURES.md) document.
+**Core Reference:** Please refer to the original library documentation in the [README](https://github.com/lightbend/config).
 
-Use this link for a guide to using [Scala Native and Scala.js](docs/SCALA_NATIVE.md).
+**New Features:** Refer to the [New Features](docs/NEW_FEATURES.md) document for changes that are specific to this library.
 
-The intent is to keep the library in sync with the original but each PR needs to be be ported to maintain feature parity. The documentation could contain features that are not yet implemented in this library.
+**Platform Support:** Use this link for a guide to using [Scala Native and Scala.js](docs/SCALA_NATIVE.md).
 
-For specific changes, refer to the releases below.
+For specific changes, refer to the [Releases](#releases) below.
 
 ## Migrating an existing [lightbend/config](https://github.com/lightbend/config) project to sconfig
 

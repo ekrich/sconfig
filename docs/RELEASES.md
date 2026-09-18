@@ -1,6 +1,6 @@
 ## Releases and Notes
 
-[Back to README](../README.md)
+<kbd>[<- Back to README](../README.md)</kbd>
 
 Release [2.0.0](https://github.com/ekrich/sconfig/releases/tag/v2.0.0) - (2026-06-18)<br/>
 Release [1.12.4](https://github.com/ekrich/sconfig/releases/tag/v1.12.4) - (2025-12-11)<br/>
@@ -47,4 +47,4 @@ Release [0.7.6](https://github.com/ekrich/sconfig/releases/tag/v0.7.6) - (2019-0
 Release [0.7.5](https://github.com/ekrich/sconfig/releases/tag/v0.7.5) - (2019-04-05)<br/>
 Release [0.7.0](https://github.com/ekrich/sconfig/releases/tag/v0.7.0) - (2018-12-14)
 
-[Back to README](../README.md)
+<kbd>[<- Back to README](../README.md)</kbd>

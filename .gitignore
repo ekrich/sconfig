@@ -5,6 +5,7 @@
 /.bloop/
 /.metals/
 /project/**/metals.sbt
+*.semanticdb
 
 # sbt / bsp
 target/

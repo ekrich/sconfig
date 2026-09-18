@@ -1,5 +1,7 @@
 # Developer / Contributor Information
 
+<kbd>[<- Back to README](../README.md)</kbd>
+
 The following has tips and tricks for contributors to this repo.
 
 ## Cross Project and other `sbt` tips
@@ -83,4 +85,4 @@ scalafmtAll
 
 If you use VSCode you can format individual files for macOS via `shift-option F` or on Windows via `shift-alt F`
 
-[Back to README](../README.md)
+<kbd>[<- Back to README](../README.md)</kbd>
