@@ -1492,4 +1492,25 @@ class ConfigSubstitutionSharedTest extends TestUtilsShared {
     assertEquals("high", resolved.getString("p.b"))
     assertEquals("default", resolved.getString("p.c.x"))
   }
+
+  // A key can stay a delayed merge (default value, optionally overridden)
+  // after being placed inside an object that is itself one piece of an
+  // object concatenation. Resolving that inner merge has to replaceChild
+  // its way back out through the ConfigConcatenation, which holds the
+  // object as one of its "pieces", not as a value of its own.
+  // lightbend/config#725
+  @Test
+  def keyWithDefaultAndOptionalOverrideInsideObjectConcatenationResolves()
+      : Unit = {
+    val obj = parseObject("""
+        p: ${x} {
+          k: "low"
+          k: ${?u}
+        }
+        x: { a: 1 }
+    """)
+    val resolved = resolve(obj)
+    assertEquals(1, resolved.getInt("p.a"))
+    assertEquals("low", resolved.getString("p.k"))
+  }
 }

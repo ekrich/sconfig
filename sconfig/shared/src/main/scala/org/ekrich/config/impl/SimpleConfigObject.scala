@@ -333,6 +333,13 @@ final class SimpleConfigObject(
       replacement: AbstractConfigValue
   ): SimpleConfigObject = {
     val newChildren = new ju.HashMap[String, AbstractConfigValue](value)
+    def rebuild() =
+      new SimpleConfigObject(
+        origin,
+        newChildren,
+        ResolveStatus.fromValues(newChildren.values),
+        ignoresFallbacks
+      )
     val entry =
       newChildren.entrySet.scalaOps.findFold(_.getValue() eq child)(() =>
         null: ju.Map.Entry[String, AbstractConfigValue]
@@ -341,17 +348,33 @@ final class SimpleConfigObject(
         else newChildren.remove(old.getKey)
         old
       })
-    if (entry != null)
-      new SimpleConfigObject(
-        origin,
-        newChildren,
-        ResolveStatus.fromValues(newChildren.values),
-        ignoresFallbacks
-      )
-    else
-      throw new ConfigException.BugOrBroken(
-        "SimpleConfigObject.replaceChild did not find " + child + " in " + this
-      )
+    if (entry != null) rebuild()
+    else {
+      // child may not be one of our own values but a piece of a
+      // ConfigConcatenation that is: `p: ${x} { k: ${?y} }` holds the
+      // concatenation of the substitution and the object, not the object
+      // itself, so a replaceChild reaching up from inside "k" has to be
+      // routed through the concatenation. lightbend/config#725
+      val concatEntry = newChildren.entrySet.scalaOps.findFold(
+        _.getValue() match {
+          case c: ConfigConcatenation => c.pieces.scalaOps.exists(_ eq child)
+          case _                      => false
+        }
+      )(() => null: ju.Map.Entry[String, AbstractConfigValue])(old => {
+        val newConcat = old
+          .getValue()
+          .asInstanceOf[ConfigConcatenation]
+          .replaceChild(child, replacement)
+        if (newConcat != null) old.setValue(newConcat)
+        else newChildren.remove(old.getKey)
+        old
+      })
+      if (concatEntry != null) rebuild()
+      else
+        throw new ConfigException.BugOrBroken(
+          "SimpleConfigObject.replaceChild did not find " + child + " in " + this
+        )
+    }
   }
 
   // related to AbstractConfigValue.hasDescendantInList
