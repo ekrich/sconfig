@@ -333,7 +333,7 @@ final class SimpleConfigObject(
       replacement: AbstractConfigValue
   ): SimpleConfigObject = {
     val newChildren = new ju.HashMap[String, AbstractConfigValue](value)
-    def rebuilt =
+    def rebuild() =
       new SimpleConfigObject(
         origin,
         newChildren,
@@ -348,7 +348,7 @@ final class SimpleConfigObject(
         else newChildren.remove(old.getKey)
         old
       })
-    if (entry != null) rebuilt
+    if (entry != null) rebuild()
     else {
       // child may not be one of our own values but a piece of a
       // ConfigConcatenation that is: `p: ${x} { k: ${?y} }` holds the
@@ -369,7 +369,7 @@ final class SimpleConfigObject(
         else newChildren.remove(old.getKey)
         old
       })
-      if (concatEntry != null) rebuilt
+      if (concatEntry != null) rebuild()
       else
         throw new ConfigException.BugOrBroken(
           "SimpleConfigObject.replaceChild did not find " + child + " in " + this
