@@ -210,4 +210,77 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
 
     checkEqualsAndStable(expected, result)
   }
+
+  // setSimplifyNestedObjects turns an object into a path on its key, so it
+  // may only run where a key was written, and is handed that key.
+
+  @Test
+  def keepBracesOfObjectConcatenationOperand(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setSimplifyNestedObjects(true)
+
+    val in = """g = { size = 6 }
+               |e = ${g} { name = "east" }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """e = ${g}{
+                     |    name = east
+                     |}
+                     |g.size = 6
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def keepKeyOfSingleFieldUnresolvedMerge(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setSimplifyNestedObjects(true)
+
+    val in = """a : 1
+               |a : ${a}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """"a" : 1,
+                     |"a" : ${a}
+                     |
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def keepKeyOfObjectInsideUnresolvedMergeStack(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setSimplifyNestedObjects(true)
+
+    val in = """sibling : 0
+               |foo : { a : { c : 1 } }
+               |foo : ${foo.a}
+               |foo : { a : 2 }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """"foo" : {
+                     |    a.c = 1
+                     |},
+                     |"foo" : ${foo.a},
+                     |"foo" : {
+                     |    a = 2
+                     |}
+                     |
+                     |sibling = 0
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def simplifyLeafHoldingASubstitution(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setSimplifyNestedObjects(true)
+
+    val in = """r { a = ${x} }"""
+    val result = formatHocon(in)
+
+    val expected = """r.a = ${x}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
 }

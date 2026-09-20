@@ -223,17 +223,17 @@ final class SimpleConfigList(
         indent(sb, indentVal + 1, options)
 
         // single multipath needs wrapping in arrays
-        if (options.getConfigFormatOptions.getSimplifyNestedObjects && v
-              .isInstanceOf[SimpleConfigObject]) {
-          val redact = new jl.StringBuilder()
-          v.renderValue(redact, indentVal + 1, false, options)
-          if (redact.charAt(redact.length() - 1) != '}') {
-            redact.insert(0, "{ ")
-            redact.append(" }")
-          } // else no bonus chars added
-          sb.append(redact.toString)
-        } else
-          v.renderValue(sb, indentVal + 1, false, options)
+        v match {
+          // a compressed element is a path, so it needs braces of its own
+          case obj: SimpleConfigObject
+              if options.getConfigFormatOptions.getSimplifyNestedObjects =>
+            val compressed = new jl.StringBuilder()
+            if (obj.renderSimplified(compressed, indentVal + 1, null, options))
+              sb.append("{ ").append(compressed).append(" }")
+            else obj.renderValue(sb, indentVal + 1, false, options)
+          case _ =>
+            v.renderValue(sb, indentVal + 1, false, options)
+        }
 
         sb.append(",")
         if (options.getFormatted) sb.append('\n')
