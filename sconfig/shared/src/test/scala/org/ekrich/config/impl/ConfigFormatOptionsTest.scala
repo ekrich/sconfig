@@ -283,4 +283,42 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
+
+  @Test
+  def keepKeyOfUnresolvedMergeBelowSimplifiedPath(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setSimplifyNestedObjects(true)
+
+    val in = """x { y { a : 1
+               |a : ${x.y.a} } }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """x.y {
+                     |    "a" : 1,
+                     |    "a" : ${x.y.a}
+                     |
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def keepKeyOfUnresolvedMergeInsideArrayElement(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setSimplifyNestedObjects(true)
+
+    val in = """l = [ { a : 1
+               |a : ${x} } ]""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """l = [
+                     |    {
+                     |        "a" : 1,
+                     |        "a" : ${x}
+                     |
+                     |    }
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
 }

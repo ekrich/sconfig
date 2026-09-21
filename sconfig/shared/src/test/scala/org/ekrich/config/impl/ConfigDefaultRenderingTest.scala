@@ -218,4 +218,67 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                      |""".stripMargin
     checkEqualObjects(expected, result)
   }
+
+  // with no key to spell it out as repeated entries, a merge can only be
+  // described
+  @Test
+  def unresolvedMergeRenderedWithoutAKeyIsDescribed(): Unit = {
+    val merge =
+      ConfigFactory.parseString("a : 1\na : ${a}", parseOptions).root.get("a")
+    val options =
+      myDefaultRenderOptions.setConfigFormatOptions(defaultFormatOptions)
+
+    val expected =
+      """# unresolved merge of 2 values follows (
+        |# this unresolved merge will not be parseable because it's at the root of the object
+        |# the HOCON format has no way to list multiple root objects in a single file
+        |#     unmerged value 0 from String: 1
+        |1,
+        |#     unmerged value 1 from String: 2
+        |${a}
+        |# ) end of unresolved merge
+        |""".stripMargin
+    checkEqualObjects(expected, merge.render(options))
+    checkEqualObjects("1,\n${a}\n", merge.render(options.setComments(false)))
+  }
+
+  @Test
+  def unresolvedMergeInsideArrayElementRendersToAFixedPoint(): Unit = {
+    val in = """l = [ { a : 1
+               |a : ${x} } ]""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """l = [
+                     |    {
+                     |        "a" : 1,
+                     |        "a" : ${x}
+                     |
+                     |    }
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def commentsOfNestedUnresolvedMergeIndentLikeItsSiblings(): Unit = {
+    val in = """outer {
+               |  sib : 0
+               |  # c1
+               |  a : 1
+               |  # c2
+               |  a : ${outer.a}
+               |}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """outer {
+                     |    # c1
+                     |    "a" : 1,
+                     |    # c2
+                     |    "a" : ${outer.a}
+                     |
+                     |    sib = 0
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
 }
