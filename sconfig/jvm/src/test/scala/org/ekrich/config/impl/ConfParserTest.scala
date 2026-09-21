@@ -1065,6 +1065,17 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
+  def elementsAfterMultilineStringInArrayHaveCorrectOriginLine(): Unit = {
+    val tripleQuote = "\"\"\""
+    val list = parseConfig(
+      s"a = [ ${tripleQuote}x\ny${tripleQuote}, { b = 1 }, [ 2 ] ]"
+    ).getList("a")
+
+    assertEquals(2, list.get(1).origin.lineNumber)
+    assertEquals(2, list.get(2).origin.lineNumber)
+  }
+
+  @Test
   def acceptMultiPeriodNumericPath(): Unit = {
     val conf1 = ConfigFactory.parseString("0.1.2.3=foobar1")
     assertEquals("foobar1", conf1.getString("0.1.2.3"))
