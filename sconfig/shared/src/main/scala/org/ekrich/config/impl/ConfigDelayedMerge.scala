@@ -268,6 +268,10 @@ object ConfigDelayedMerge {
       }
     }
 
+    val renderedKey =
+      if (atKey == null) null
+      else if (options.getJson) ConfigImplUtil.renderJsonString(atKey)
+      else ConfigImplUtil.renderStringUnquotedIfPossible(atKey)
     val reversed = new ju.ArrayList[AbstractConfigValue]
     reversed.addAll(stack)
     ju.Collections.reverse(reversed)
@@ -287,10 +291,7 @@ object ConfigDelayedMerge {
         }
       }
       indentLine()
-      if (atKey != null) {
-        sb.append(ConfigImplUtil.renderJsonString(atKey))
-        if (options.getFormatted) sb.append(" : ") else sb.append(":")
-      }
+      if (renderedKey != null) v.renderWithRenderedKey(sb, renderedKey, options)
       v.renderValue(sb, indentVal, atRoot, options)
       sb.append(",")
       if (options.getFormatted) sb.append('\n')
