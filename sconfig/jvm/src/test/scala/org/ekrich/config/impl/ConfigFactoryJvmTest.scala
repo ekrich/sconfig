@@ -859,6 +859,14 @@ class ConfigFactoryJvmTest extends TestUtils {
                                      |        # env variables
                                      |        "<env variable>"
                                      |    ]""".stripMargin))
+    assertTrue(rendered1.contains("""|    "myList" : [
+                                     |        # env variables
+                                     |        "<env variable>",
+                                     |        # env variables
+                                     |        "<env variable>",
+                                     |        # env variables
+                                     |        "<env variable>"
+                                     |    ]""".stripMargin))
 
     val showRenderOpt = ConfigRenderOptions.defaults
     val rendered2 = config.root.render(showRenderOpt)

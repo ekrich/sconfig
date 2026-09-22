@@ -1007,6 +1007,14 @@ class ConfigSubstitutionSharedTest extends TestUtilsShared {
   }
 
   @Test
+  def listExpansionPrefersConfigValue(): Unit = {
+    val obj = parseObject("""{ L : [1, 2], S : z, a : ${L[]}, b : ${?S[]} }""")
+    val resolved = resolve(obj)
+    assertEquals(List(1, 2), resolved.getIntList("a").asScala.map(_.intValue))
+    assertEquals("z", resolved.getString("b"))
+  }
+
+  @Test
   def optionalOverrideProvided(): Unit = {
     val obj = parseObject("""{ HERE : 43, a: 42, a : ${?HERE} }""")
     val resolved = resolve(obj)
