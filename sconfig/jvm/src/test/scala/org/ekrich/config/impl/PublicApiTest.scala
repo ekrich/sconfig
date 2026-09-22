@@ -960,6 +960,53 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
+  def applicationConfCanOverrideReferenceConf(): Unit = {
+    val loader = new TestClassLoader(
+      this.getClass().getClassLoader(),
+      Map(
+        "reference.conf" -> resourceFile(
+          "test13-reference-with-substitutions.conf"
+        ).toURI().toURL(),
+        "application.conf" -> resourceFile(
+          "test13-application-override-substitutions.conf"
+        ).toURI().toURL()
+      )
+    )
+
+    assertEquals("b", ConfigFactory.defaultReference(loader).getString("a"))
+
+    val unresolved = ConfigFactory.defaultReferenceUnresolved(loader)
+    assertTrue(
+      "reference.conf is returned unresolved",
+      unresolved.root.render.contains("${b}")
+    )
+
+    val loaded = withContextClassLoader(loader) {
+      ConfigFactory.load(loader)
+    }
+    assertEquals("overridden", loaded.getString("a"))
+  }
+
+  @Test
+  def referenceConfMustResolveIndependently(): Unit = {
+    val loader = new TestClassLoader(
+      this.getClass().getClassLoader(),
+      Map(
+        "reference.conf" -> resourceFile(
+          "test13-reference-bad-substitutions.conf"
+        ).toURI().toURL(),
+        "application.conf" -> resourceFile(
+          "test13-application-override-substitutions.conf"
+        ).toURI().toURL()
+      )
+    )
+
+    intercept[ConfigException.UnresolvedSubstitution] {
+      ConfigFactory.load(loader)
+    }
+  }
+
+  @Test
   def supportsConfigLoadingStrategyAlteration(): Unit = {
     assertEquals(
       "config.strategy is not set",

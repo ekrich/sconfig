@@ -280,16 +280,32 @@ object ConfigException {
    * Thrown by [[Config!.resolve()* resolve()]].
    */
   @SerialVersionUID(1L)
-  class UnresolvedSubstitution(
+  class UnresolvedSubstitution private (
       origin: ConfigOrigin,
-      detail: String,
+      val detail: String,
+      message: String,
       cause: Throwable
-  ) extends ConfigException.Parse(
+  ) extends ConfigException.Parse(origin, message, cause) {
+    def this(origin: ConfigOrigin, detail: String, cause: Throwable) =
+      this(
         origin,
+        detail,
         "Could not resolve substitution to a value: " + detail,
         cause
-      ) {
+      )
     def this(origin: ConfigOrigin, detail: String) = this(origin, detail, null)
+
+    // used to add context (e.g. "in reference.conf") once the substitution
+    // has bubbled up to a caller who knows more than the resolver did
+    private[config] def addExtraDetail(
+        extra: String
+    ): ConfigException.UnresolvedSubstitution =
+      new ConfigException.UnresolvedSubstitution(
+        origin,
+        detail,
+        extra.format(detail),
+        this
+      )
   }
 
   /**
