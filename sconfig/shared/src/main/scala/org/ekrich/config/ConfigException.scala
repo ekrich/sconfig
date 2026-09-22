@@ -282,7 +282,7 @@ object ConfigException {
   @SerialVersionUID(1L)
   class UnresolvedSubstitution private (
       origin: ConfigOrigin,
-      val detail: String,
+      detail: String,
       message: String,
       cause: Throwable
   ) extends ConfigException.Parse(origin, message, cause) {
