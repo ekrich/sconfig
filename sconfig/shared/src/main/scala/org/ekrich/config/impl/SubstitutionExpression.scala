@@ -3,8 +3,10 @@ package org.ekrich.config.impl
 final class SubstitutionExpression(
     val path: Path,
     val optional: Boolean,
-    val listExpansion: Boolean = false
+    val listExpansion: Boolean
 ) {
+  def this(path: Path, optional: Boolean) = this(path, optional, false)
+
   private[impl] def changePath(newPath: Path) =
     if (newPath eq path) this
     else new SubstitutionExpression(newPath, optional, listExpansion)
