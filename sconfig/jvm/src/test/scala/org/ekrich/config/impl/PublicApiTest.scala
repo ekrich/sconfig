@@ -1001,9 +1001,38 @@ class PublicApiTest extends TestUtils {
       )
     )
 
-    intercept[ConfigException.UnresolvedSubstitution] {
+    val e = intercept[ConfigException.UnresolvedSubstitution] {
       ConfigFactory.load(loader)
     }
+    assertTrue(
+      "wrong message: " + e.getMessage,
+      e.getMessage.contains("substitution in reference.conf to a value: ${b}")
+    )
+    assertTrue(e.getCause.isInstanceOf[ConfigException.UnresolvedSubstitution])
+  }
+
+  @Test
+  def loadAppliesResolveOptionsToReferenceConf(): Unit = {
+    val loader = new TestClassLoader(
+      this.getClass().getClassLoader(),
+      Map(
+        "reference.conf" -> resourceFile(
+          "test13-reference-env-fallback.conf"
+        ).toURI().toURL()
+      )
+    )
+    val withEnv = ConfigFactory.load(
+      loader,
+      ConfigFactory.empty,
+      ConfigResolveOptions.defaults
+    )
+    assertEquals("A", withEnv.getString("secret"))
+    val noSystem = ConfigFactory.load(
+      loader,
+      ConfigFactory.empty,
+      ConfigResolveOptions.noSystem
+    )
+    assertFalse(noSystem.hasPath("secret"))
   }
 
   @Test
