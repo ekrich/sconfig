@@ -984,8 +984,24 @@ class ConfigSubstitutionSharedTest extends TestUtilsShared {
   }
 
   @Test
+  def throwWhenEnvNotFoundListExpansion(): Unit = {
+    val obj = parseObject("""{ a : ${NOT_HERE[]} }""")
+    val e = intercept[ConfigException.UnresolvedSubstitution] {
+      resolve(obj)
+    }
+    assertTrue(e.getMessage.contains("NOT_HERE"))
+  }
+
+  @Test
   def optionalOverrideNotProvided(): Unit = {
     val obj = parseObject("""{ a: 42, a : ${?NOT_HERE} }""")
+    val resolved = resolve(obj)
+    assertEquals(42, resolved.getInt("a"))
+  }
+
+  @Test
+  def optionalListExpansionNotProvided(): Unit = {
+    val obj = parseObject("""{ a: 42, a : ${?NOT_HERE[]} }""")
     val resolved = resolve(obj)
     assertEquals(42, resolved.getInt("a"))
   }

@@ -21,12 +21,25 @@ final class ConfigNodeSimpleValue private[impl] (val token: Token)
     else if (Tokens.isSubstitution(token)) {
       val expression =
         Tokens.getSubstitutionPathExpression(token)
-      val path =
-        PathParser.parsePathExpression(expression.iterator, token.origin)
       val optional = Tokens.getSubstitutionOptional(token)
+
+      // Detect and strip a trailing [] for the list-expansion-from-env-var
+      // syntax. Inside a substitution, [] is tokenized as OPEN_SQUARE +
+      // CLOSE_SQUARE like anywhere else; the parser sorts out that it's
+      // only valid as the very last two tokens of the expression.
+      val size = expression.size
+      val (pathExpression, listExpansion) =
+        if (size >= 2 &&
+            (expression.get(size - 2) eq Tokens.OPEN_SQUARE) &&
+            (expression.get(size - 1) eq Tokens.CLOSE_SQUARE))
+          (expression.subList(0, size - 2), true)
+        else (expression, false)
+
+      val path =
+        PathParser.parsePathExpression(pathExpression.iterator, token.origin)
       return new ConfigReference(
         token.origin,
-        new SubstitutionExpression(path, optional)
+        new SubstitutionExpression(path, optional, listExpansion)
       )
     }
     throw new ConfigException.BugOrBroken(
