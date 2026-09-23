@@ -46,7 +46,8 @@ Some older ported code already has Scala shapes, such as the `@tailrec` recursio
    left unported, or a change with no counterpart in the original, is a deviation or an
    addition.
 6. **Verify**: JVM on 2.13, 2.12 and 3; Scala.js; Scala Native unless the code is JVM-only;
-   `scalafmtCheckAll`; MiMa against `main`; and the scala-library check below. Check any
+   `scalafmtCheckAll`; MiMa against `main`; and the scala-library check below. Name the Scala
+   version in each sbt command (`++2.13.18; ...`), because sbt 2 keeps the last one. Check any
    behaviour the PR describes against the `lightbend/config` jar:
 
    ```bash

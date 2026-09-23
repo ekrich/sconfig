@@ -23,6 +23,9 @@ sbt sconfigJVM/mimaReportBinaryIssues
 - CI runs `sbt +test +doc`. Run Scala 3 and 2.12 whenever `scala-2/` or `scala-3/` sources change.
 - sbt 2 caches test results, so a repeated `test` can report `Total 0`. `testOnly` forces a real
   run.
+- sbt 2 keeps a server running between commands, and `++` sticks to it: after
+  `sbt -batch ++2.12.21 ...`, every later command still runs on 2.12. Start each command with
+  the version you mean, such as `++2.13.18;`.
 - MiMa can already report problems on `main`. Only an increase over `main` is yours.
 
 ## Judging a defect

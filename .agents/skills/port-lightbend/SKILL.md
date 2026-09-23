@@ -44,7 +44,8 @@ template.
 8. Compare every upstream diff hunk with its counterpart here.
 9. Record each deviation and addition in the porting log.
 10. Run the required matrix: JVM on Scala 2.13, 2.12 and 3; Scala.js; Scala Native unless the
-    code is JVM-only; `scalafmtCheckAll`; MiMa against `main`; the scala-library check.
+    code is JVM-only; `scalafmtCheckAll`; MiMa against `main`; the scala-library check. Start
+    each sbt command with its Scala version (`++2.13.18; ...`): sbt 2 keeps the last `++`.
 11. Prepare the PR description from the template. Produce the example's before and after output
     by running it on `main` and on the branch with a throwaway test, then delete that test.
 
