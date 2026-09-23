@@ -503,10 +503,10 @@ final class SimpleConfigObject(
 
   private def tryCompressToMultipathRec(
       keysAggregate: String
-  ): Option[MultiPathEntry] = {
+  ): MultiPathEntry = { // nullable
     def returnAsIs = if (keysAggregate.isEmpty)
-      None
-    else Some(MultiPathEntry(keysAggregate, this))
+      null
+    else new MultiPathEntry(keysAggregate, this)
 
     lazy val nextValue = values.iterator().next()
 
@@ -525,7 +525,7 @@ final class SimpleConfigObject(
             newAggregate
           )
         case other: AbstractConfigValue =>
-          Some(MultiPathEntry(newAggregate, other))
+          new MultiPathEntry(newAggregate, other)
         case _ => returnAsIs
       }
     } else returnAsIs
@@ -533,10 +533,10 @@ final class SimpleConfigObject(
 
   private def tryCompressToMultipath(
       options: ConfigRenderOptions
-  ): Option[MultiPathEntry] =
+  ): MultiPathEntry = // nullable
     if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) ||
         options.getJson || options.getOriginComments) {
-      None
+      null
     } else
       tryCompressToMultipathRec(
         ""
@@ -551,7 +551,9 @@ final class SimpleConfigObject(
     if (isEmpty) sb.append("{}")
     else {
       tryCompressToMultipath(options) match {
-        case Some(MultiPathEntry(aggKey, leafValue)) =>
+        case multiPath if multiPath != null =>
+          val aggKey = multiPath.compactedKeys
+          val leafValue = multiPath.leafNode
           // remove space after renderAtKey
           // NASTY, better design welcomed
           val lastCharIdx = sb.length() - 1
@@ -717,7 +719,7 @@ final class SimpleConfigObject(
   private def writeReplace(): Object = new SerializedConfigValue(this)
 }
 
-case class MultiPathEntry(
-    compactedKeys: String,
-    leafNode: AbstractConfigValue
+final class MultiPathEntry(
+    val compactedKeys: String,
+    val leafNode: AbstractConfigValue
 )

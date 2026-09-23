@@ -323,13 +323,12 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
       atKey: String, // nullable
       options: ConfigRenderOptions
   ): Unit = {
-    Option(atKey)
-      .foreach { key =>
-        val renderedKey =
-          if (options.getJson) ConfigImplUtil.renderJsonString(key)
-          else ConfigImplUtil.renderStringUnquotedIfPossible(key)
-        renderWithRenderedKey(sb, renderedKey, options)
-      }
+    if (atKey != null) {
+      val renderedKey =
+        if (options.getJson) ConfigImplUtil.renderJsonString(atKey)
+        else ConfigImplUtil.renderStringUnquotedIfPossible(atKey)
+      renderWithRenderedKey(sb, renderedKey, options)
+    }
     renderValue(sb, indent, atRoot, options)
   }
 
