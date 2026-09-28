@@ -1709,6 +1709,28 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
+  def exceptionSerializableWithUnresolvedSubstitution(): Unit = {
+    val loader = new TestClassLoader(
+      this.getClass().getClassLoader(),
+      Map(
+        "reference.conf" -> resourceFile(
+          "test13-reference-bad-substitutions.conf"
+        ).toURI().toURL()
+      )
+    )
+    // load() wraps the resolver's exception to name reference.conf
+    val e = intercept[ConfigException.UnresolvedSubstitution] {
+      ConfigFactory.load(loader)
+    }
+    val eCopy = checkSerializableNoMeaningfulEquals(e)
+    assertTrue(
+      "messages equal after deserialize",
+      e.getMessage.equals(eCopy.getMessage)
+    )
+    assertTrue("origins equal after deserialize", e.origin.equals(eCopy.origin))
+  }
+
+  @Test
   def invalidateCaches(): Unit = {
     val conf0 = ConfigFactory.load()
     val sys0 = ConfigFactory.systemProperties()
