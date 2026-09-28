@@ -410,7 +410,7 @@ object ConfigImpl {
     envVariablesOverrides = null
   }
 
-private def unresolvedReference(loader: ClassLoader): Config = {
+  private def unresolvedReference(loader: ClassLoader): Config = {
     val updater = new Callable[Config] {
       override def call(): Config =
         Parseable

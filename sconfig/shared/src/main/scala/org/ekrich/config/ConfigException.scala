@@ -305,7 +305,7 @@ object ConfigException {
         // would keep it in a field that cannot be serialized
         (this: ConfigException).origin,
         detail,
-        extra.format(detail),
+        String.format(extra, detail),
         this
       )
   }
