@@ -301,7 +301,9 @@ object ConfigException {
         extra: String
     ): ConfigException.UnresolvedSubstitution =
       new ConfigException.UnresolvedSubstitution(
-        origin,
+        // the transient origin of ConfigException: reading the parameter
+        // would keep it in a field that cannot be serialized
+        (this: ConfigException).origin,
         detail,
         extra.format(detail),
         this
