@@ -1414,7 +1414,7 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
-  def parseApplicationReplacementIsNoneWhenNothingSet(): Unit = {
+  def parseApplicationReplacementIsEmptyWhenNothingSet(): Unit = {
     assertEquals(
       "config.resource is not set",
       null,
