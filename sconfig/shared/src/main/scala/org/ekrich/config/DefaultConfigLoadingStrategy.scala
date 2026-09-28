@@ -8,15 +8,10 @@ package org.ekrich.config
 class DefaultConfigLoadingStrategy extends ConfigLoadingStrategy {
   override def parseApplicationConfig(
       parseOptions: ConfigParseOptions
-  ): Config = {
-    if (parseOptions.getClassLoader == null)
-      throw new ConfigException.BugOrBroken(
-        "ClassLoader should have been set here; bug in ConfigFactory. " + "(You can probably work around this bug by passing in a class loader or calling currentThread().setContextClassLoader() though.)"
-      )
+  ): Config =
     ConfigFactory
       .parseApplicationReplacement(parseOptions)
       .orElseGet(() =>
         ConfigFactory.parseResourcesAnySyntax("application", parseOptions)
       )
-  }
 }
