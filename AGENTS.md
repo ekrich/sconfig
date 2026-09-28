@@ -78,9 +78,9 @@ instead of adding a new one:
 - `ConfigSubstitutionSharedTest` and `ConfigSubstitutionTest`: `${...}` resolution
 - `ConcatenationTest`, `ConfigDocumentFactorySharedTest`, `ConfParserTest`: as named
 
-Assert the expected string with `checkEqualsAndStable` from `RenderingTestSuite`.
-`checkReparses` alone lets through a regression that still parses. Tests carry almost no
-comments.
+Assert the expected string with `checkEqualsAndStable` from `RenderingTestSuite`. A test that
+only checks that the output parses lets through a regression that still parses. Tests carry
+almost no comments.
 
 ## Renderer invariants
 
