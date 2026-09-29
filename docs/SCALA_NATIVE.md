@@ -7,14 +7,14 @@ the following is an example of how to use the API.
 
 ## Dependency for Scala Native and Scala.js
 
-Use three percent signs `%%%` instead of two for dependency resolution.
+Use three percent signs `%%%` for sbt 1.x and `%%` for sbt 2.x instead for dependency resolution.
 
 ```scala
 // sconfig uses "provided" so you have a choice of the java.time API you use
 // Refer to your preferred java.time project for version to use
 libraryDependencies ++= Seq(
-  "org.ekrich" %%% "sconfig" % "x.y.z",
-  "org.ekrich" %%% "sjavatime" % "a.b.c"
+  "org.ekrich" %% "sconfig" % "x.y.z",
+  "org.ekrich" %% "sjavatime" % "a.b.c"
 )
 ```
 Please refer to the `sjavatime` [home page](https://github.com/ekrich/sjavatime)
