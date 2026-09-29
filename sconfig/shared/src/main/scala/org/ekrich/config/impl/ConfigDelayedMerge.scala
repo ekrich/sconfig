@@ -84,8 +84,9 @@ object ConfigDelayedMerge {
           // the remainder of the stack below this one.
           if (ConfigImpl.traceSubstitutionsEnabled)
             ConfigImpl.trace(newContext.depth, "building sourceForEnd")
-          // we resetParents() here because we'll be resolving "end"
-          // against a root which does NOT contain "end"
+          // "end" is not in that root, so its parents are tracked from "end"
+          // down, and replacing something inside it puts it back over the
+          // remainder
           sourceForEnd = source.replaceWithinCurrentParent(
             replaceable.asInstanceOf[AbstractConfigValue],
             remainder
@@ -93,9 +94,14 @@ object ConfigDelayedMerge {
           if (ConfigImpl.traceSubstitutionsEnabled)
             ConfigImpl.trace(
               newContext.depth,
-              "  sourceForEnd before reset parents but after replace: " + sourceForEnd
+              "  sourceForEnd before detaching but after replace: " + sourceForEnd
             )
-          sourceForEnd = sourceForEnd.resetParents
+          sourceForEnd = sourceForEnd.detach(
+            source,
+            replaceable.asInstanceOf[AbstractConfigValue],
+            end,
+            remainder
+          )
         } else {
           if (ConfigImpl.traceSubstitutionsEnabled)
             ConfigImpl.trace(
