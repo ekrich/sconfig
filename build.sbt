@@ -301,7 +301,34 @@ lazy val ignoredABIProblems = {
   Seq(
     exclude[Problem]("org.ekrich.config.impl.*"),
     exclude[Problem]("scala.collection.compat.*"),
-    exclude[Problem]("scala.jdk.CollectionConverters*")
+    exclude[Problem]("scala.jdk.CollectionConverters*"),
+    // deprecated API removed after 1.12.0
+    exclude[DirectMissingMethodProblem](
+      "org.ekrich.config.ConfigRenderOptions.originComments()Boolean"
+    ),
+    exclude[DirectMissingMethodProblem](
+      "org.ekrich.config.ConfigRenderOptions.comments()Boolean"
+    ),
+    exclude[DirectMissingMethodProblem](
+      "org.ekrich.config.ConfigRenderOptions.formatted()Boolean"
+    ),
+    exclude[DirectMissingMethodProblem](
+      "org.ekrich.config.ConfigRenderOptions.json()Boolean"
+    ),
+    exclude[DirectMissingMethodProblem](
+      "org.ekrich.config.ConfigRenderOptions.showEnvVariableValues()Boolean"
+    ),
+    exclude[DirectMissingMethodProblem](
+      "org.ekrich.config.ConfigRenderOptions.setFormattingOptions(org.ekrich.config.FormattingOptions)org.ekrich.config.ConfigRenderOptions"
+    ),
+    exclude[DirectMissingMethodProblem](
+      "org.ekrich.config.ConfigRenderOptions.formattingOptions()org.ekrich.config.FormattingOptions"
+    ),
+    exclude[DirectMissingMethodProblem](
+      "org.ekrich.config.ConfigRenderOptions.getFormattingOptions()org.ekrich.config.FormattingOptions"
+    ),
+    exclude[MissingClassProblem]("org.ekrich.config.FormattingOptions"),
+    exclude[MissingClassProblem]("org.ekrich.config.FormattingOptions$")
   )
 }
 
