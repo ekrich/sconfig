@@ -687,7 +687,8 @@ final class SimpleConfigObject(
 
   override def containsKey(key: Any): Boolean = value.containsKey(key)
 
-  override def keySet: ju.Set[String] = value.keySet
+  override def keySet: ju.Set[String] =
+    ju.Collections.unmodifiableSet(value.keySet)
 
   override def containsValue(v: Any): Boolean = value.containsValue(v)
 
