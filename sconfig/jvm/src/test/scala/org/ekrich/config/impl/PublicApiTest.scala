@@ -1445,6 +1445,40 @@ class PublicApiTest extends TestUtils {
       assertEquals(1, overrides.getInt("testForceOverride.a"))
     } finally {
       System.clearProperty("config.override_with_env_vars")
+
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
+  }
+
+  @Test
+  def parseApplicationReplacementIsEmptyWhenNothingSet(): Unit = {
+    assertEquals(
+      "config.resource is not set",
+      null,
+      System.getProperty("config.resource")
+    )
+    assertEquals(
+      "config.file is not set",
+      null,
+      System.getProperty("config.file")
+    )
+    assertEquals(
+      "config.url is not set",
+      null,
+      System.getProperty("config.url")
+    )
+    assertFalse(ConfigFactory.parseApplicationReplacement().isPresent)
+  }
+
+  @Test
+  def parseApplicationReplacementUsesConfigResource(): Unit = {
+    try {
+      System.setProperty("config.resource", "test01.conf")
+      val replacement = ConfigFactory.parseApplicationReplacement()
+      assertTrue("replacement is present", replacement.isPresent)
+      assertEquals(42, replacement.get.getInt("ints.fortyTwo"))
+    } finally {
+      System.clearProperty("config.resource")
       ConfigImpl.reloadSystemPropertiesConfig()
     }
   }
@@ -1479,6 +1513,26 @@ class PublicApiTest extends TestUtils {
     } finally {
       System.clearProperty("config.override_with_env_vars")
       System.clearProperty("testForceOverride.a")
+
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
+  }
+
+  @Test
+  def parseApplicationReplacementRejectsMoreThanOneOverride(): Unit = {
+    try {
+      System.setProperty("config.resource", "test01.conf")
+      System.setProperty("config.file", "test02.conf")
+      val e = intercept[ConfigException.Generic] {
+        ConfigFactory.parseApplicationReplacement()
+      }
+      assertTrue(
+        "wrong exception: " + e.getMessage,
+        e.getMessage.contains("don't know which one to use")
+      )
+    } finally {
+      System.clearProperty("config.resource")
+      System.clearProperty("config.file")
       ConfigImpl.reloadSystemPropertiesConfig()
     }
   }
@@ -1491,6 +1545,36 @@ class PublicApiTest extends TestUtils {
       .render(ConfigRenderOptions.defaults.setShowEnvVariableValues(false))
     assertTrue(rendered, rendered.contains("\"a\" : \"<env variable>\""))
     assertFalse(rendered, rendered.contains("\"a\" : \"1\""))
+
+  }
+
+  @Test
+  def parseApplicationReplacementRejectsBadUrl(): Unit = {
+    try {
+      System.setProperty("config.url", "not a url")
+      val e = intercept[ConfigException.Generic] {
+        ConfigFactory.parseApplicationReplacement()
+      }
+      assertTrue(
+        "wrong exception: " + e.getMessage,
+        e.getMessage.contains("Bad URL in config.url")
+      )
+    } finally {
+      System.clearProperty("config.url")
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
+  }
+
+  @Test
+  def defaultApplicationUsesConfigResource(): Unit = {
+    try {
+      System.setProperty("config.resource", "test01.conf")
+      val application = ConfigFactory.defaultApplication()
+      assertEquals(42, application.getInt("ints.fortyTwo"))
+    } finally {
+      System.clearProperty("config.resource")
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
   }
 
   @Test
