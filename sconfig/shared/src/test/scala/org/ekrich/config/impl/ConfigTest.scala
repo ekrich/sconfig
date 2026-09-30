@@ -692,6 +692,37 @@ class ConfigTest extends TestUtilsShared {
     assertEquals("second", resolved.getString("one"))
   }
 
+  @Test
+  def resolveWithDuplicateKeyInNestedObject(): Unit = {
+    val unresolved =
+      ConfigFactory.parseString("a.b { one: first, one: ${variable} }")
+    val source = ConfigFactory.parseString("variable: second")
+    val resolved = unresolved.resolveWith(source)
+    assertEquals("second", resolved.getString("a.b.one"))
+  }
+
+  @Test
+  def resolveWithDuplicateObjectKeyAndSubstitution(): Unit = {
+    val unresolved =
+      ConfigFactory.parseString("one: { x: 1 }, one: ${v}, one: { z: 3 }")
+    val source = ConfigFactory.parseString("v: { y: 2 }")
+    val resolved = unresolved.resolveWith(source)
+    assertEquals(
+      ConfigFactory.parseString("x: 1, y: 2, z: 3").root,
+      resolved.getObject("one")
+    )
+  }
+
+  // resolveWith does not look in this config, so a self-reference is looked
+  // up in the source, as it is without the duplicate key
+  @Test
+  def resolveWithDuplicateKeyAndSelfReference(): Unit = {
+    val unresolved = ConfigFactory.parseString("k: [a], k += b")
+    val source = ConfigFactory.parseString("k: [z]")
+    val resolved = unresolved.resolveWith(source)
+    assertEquals(Seq("z", "b"), resolved.getStringList("k").asScala)
+  }
+
   /**
    * A resolver that replaces paths that start with a particular prefix with
    * strings where that prefix has been replaced with another prefix.
