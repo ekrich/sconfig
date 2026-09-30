@@ -17,6 +17,15 @@ import ScalaOps.*
 
 @SerialVersionUID(2L)
 object SimpleConfigObject {
+
+  // These render through ConfigDelayedMerge.render, which spells the stack out
+  // as repeated entries and so needs the key. Rendered as a bare value they
+  // fall back to a comment banner that does not parse, so they can neither be
+  // compressed into a path nor have their comments printed by the container.
+  private[impl] def needsItsKey(v: AbstractConfigValue): Boolean =
+    v.isInstanceOf[ConfigDelayedMerge] || v
+      .isInstanceOf[ConfigDelayedMergeObject]
+
   final private[impl] class ResolveModifier private[impl] (
       var context: ResolveContext,
       val source: ResolveSource
@@ -524,7 +533,8 @@ final class SimpleConfigObject(
           nested.tryCompressToMultipathRec(
             newAggregate
           )
-        case other: AbstractConfigValue =>
+        case other: AbstractConfigValue
+            if !SimpleConfigObject.needsItsKey(other) =>
           Some(MultiPathEntry(newAggregate, other))
         case _ => returnAsIs
       }
@@ -549,35 +559,47 @@ final class SimpleConfigObject(
       options: ConfigRenderOptions
   ): Unit = {
     if (isEmpty) sb.append("{}")
-    else {
-      tryCompressToMultipath(options) match {
-        case Some(MultiPathEntry(aggKey, leafValue)) =>
-          // remove space after renderAtKey
-          // NASTY, better design welcomed
-          val lastCharIdx = sb.length() - 1
-          if (options.getFormatted && lastCharIdx > 0 && sb.charAt(
-                lastCharIdx
-              ) == ' ')
-            sb.deleteCharAt(lastCharIdx)
-          // extend multipath
-          if (sb.length() > 0) {
-            val newLastChar = sb.charAt(
-              sb.length() - 1
-            )
-            if (newLastChar == '"' || !ConfigImplUtil.isForbiddenUnquotedChar(
-                  newLastChar // should extend path only on identifier
-                )) sb.append('.')
-          }
-
-          leafValue.renderWithRenderedKey(sb, s"$aggKey", options)
-          leafValue.renderValue(sb, indentVal, false, options)
-
-        case _ =>
-          renderValueAsMultiLineObject(sb, indentVal, atRoot, options)
-      }
-    }
+    else renderValueAsMultiLineObject(sb, indentVal, atRoot, options)
     if (atRoot && options.getFormatted && options.getConfigFormatOptions.getNewLineAtEnd)
       sb.append('\n')
+  }
+
+  // `key { a { b = v } }` renders as `key.a.b = v`. Only the caller that wrote
+  // the key can compress, so it passes the rendered key in; null means there
+  // is no key, as inside an array element.
+  private[impl] def renderSimplified(
+      sb: jl.StringBuilder,
+      indentVal: Int,
+      renderedPrefix: String,
+      options: ConfigRenderOptions
+  ): Boolean =
+    tryCompressToMultipath(options) match {
+      case Some(MultiPathEntry(aggKey, leafValue)) =>
+        val path =
+          if (renderedPrefix == null) aggKey else s"$renderedPrefix.$aggKey"
+        leafValue.renderWithRenderedKey(sb, path, options)
+        leafValue.renderValue(sb, indentVal, false, options)
+        true
+      case _ => false
+    }
+
+  override private[impl] def render(
+      sb: jl.StringBuilder,
+      indentVal: Int,
+      atRoot: Boolean,
+      atKey: String,
+      options: ConfigRenderOptions
+  ): Unit = {
+    if (atKey == null) renderValue(sb, indentVal, atRoot, options)
+    else {
+      val renderedKey =
+        if (options.getJson) ConfigImplUtil.renderJsonString(atKey)
+        else ConfigImplUtil.renderStringUnquotedIfPossible(atKey)
+      if (!renderSimplified(sb, indentVal, renderedKey, options)) {
+        renderWithRenderedKey(sb, renderedKey, options)
+        renderValue(sb, indentVal, atRoot, options)
+      }
+    }
   }
 
   private def renderValueAsMultiLineObject(
@@ -618,7 +640,8 @@ final class SimpleConfigObject(
           sb.append("\n")
         }
       }
-      printCommentsToBuffer(sb, options, innerIndent, v.origin.comments)
+      if (!SimpleConfigObject.needsItsKey(v))
+        printCommentsToBuffer(sb, options, innerIndent, v.origin.comments)
 
       AbstractConfigValue.indent(sb, innerIndent, options)
       v.render(sb, innerIndent, false /* atRoot */, k, options)

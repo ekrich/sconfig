@@ -105,4 +105,15 @@ class PublicApiFileTest extends TestUtils {
     // assertEquals("true", fromResources.getString("fromProps.bool"))
   }
 
+  @Test
+  def parseApplicationReplacementUsesConfigFile(): Unit = {
+    assertFalse(ConfigFactory.parseApplicationReplacement().isPresent)
+    try {
+      System.setProperty("config.file", resourceFile("test01.conf").getPath)
+      val replacement = ConfigFactory.parseApplicationReplacement()
+      assertEquals(42, replacement.get.getInt("ints.fortyTwo"))
+    } finally {
+      System.clearProperty("config.file")
+    }
+  }
 }

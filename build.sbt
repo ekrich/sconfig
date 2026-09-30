@@ -21,26 +21,23 @@ def canUseRelease(scalaVersion: String) = CrossVersion
     case _       => false // unexpected version
   }
 
-def targetJDKVersion(scalaVersion: String) =
+def targetJDKVersion(scalaVersion: String): Int =
   CrossVersion.partialVersion(scalaVersion) match {
     case Some((3, minor)) if minor >= 8 => 17
     case _                              => 8
   }
 // Target version as a string, for javac -target and -source flags - jdk 8 compatible
-def targetJDKVersionString(jdkVersion: Int) =
+def targetJDKVersionString(jdkVersion: Int): String =
   jdkVersion match {
     case 8       => "1.8"
     case version => version.toString
   }
 
-val prevVersion = "1.12.0"
-val nextVersion = "1.13.0"
-
 // stable snapshot is not great for publish local
 def versionFmt(out: sbtdynver.GitDescribeOutput): String = {
   val tag = out.ref.dropPrefix
   if (out.isCleanAfterTag) tag
-  else nextVersion + "-SNAPSHOT"
+  else s"$tag-${out.commitSuffix.distance}-${out.commitSuffix.sha}-SNAPSHOT"
 }
 
 val dotcOpts = List(
@@ -101,7 +98,7 @@ val versions = versionsBase :+ scala3
 ThisBuild / scalaVersion := scala213
 ThisBuild / crossScalaVersions := versions
 ThisBuild / versionScheme := Some("early-semver")
-ThisBuild / mimaFailOnNoPrevious := false
+ThisBuild / mimaReportSignatureProblems := true
 ThisBuild / resolvers += Resolver.sonatypeCentralSnapshots
 
 Compile / packageBin / packageOptions +=
@@ -227,9 +224,15 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
     // uncomment for debugging
     // Test / javaOptions += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
     // mima settings
-    mimaPreviousArtifacts := Set(
-      organization.value %% moduleName.value % prevVersion
-    ),
+    mimaFailOnNoPrevious := false,
+    mimaPreviousArtifacts := {
+      sbtdynver.DynVer
+        .getGitDescribeOutput(new java.util.Date)
+        .map { out =>
+          organization.value %% moduleName.value % out.ref.dropPrefix
+        }
+        .toSet
+    },
     mimaBinaryIssueFilters ++= ignoredABIProblems
   )
   .nativeConfigure(_.enablePlugins(ScalaNativeJUnitPlugin))

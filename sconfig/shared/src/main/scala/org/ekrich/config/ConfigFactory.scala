@@ -1006,6 +1006,100 @@ object ConfigFactory extends PlatformConfigFactory {
     parseResourcesAnySyntax(resourceBasename, ConfigParseOptions.defaults)
 
   /**
+   * Parses only the application replacement specified by one of
+   * `config.resource`, `config.file` or `config.url`, without falling back to
+   * "application.conf" on the classpath. This is the piece of
+   * [[#defaultApplication(options:org\.ekrich\.config\.ConfigParseOptions)* defaultApplication]]
+   * that lets a launch script redirect `application.conf` elsewhere, exposed
+   * standalone so callers can reuse the override-selection logic (which system
+   * property was set, and which single one must be) without also pulling in the
+   * classpath fallback.
+   *
+   * @return
+   *   a [[java.util.Optional]] containing any specified replacement, or
+   *   `Optional.empty()` if none was specified
+   */
+  def parseApplicationReplacement(): ju.Optional[Config] =
+    parseApplicationReplacement(ConfigParseOptions.defaults)
+
+  /**
+   * Like [[#parseApplicationReplacement()* parseApplicationReplacement()]] but
+   * allows you to specify a class loader to use rather than the current context
+   * class loader.
+   *
+   * @param loader
+   *   the class loader
+   * @return
+   *   a [[java.util.Optional]] containing any specified replacement, or
+   *   `Optional.empty()` if none was specified
+   */
+  def parseApplicationReplacement(loader: ClassLoader): ju.Optional[Config] =
+    parseApplicationReplacement(
+      ConfigParseOptions.defaults.setClassLoader(loader)
+    )
+
+  /**
+   * Like [[#parseApplicationReplacement()* parseApplicationReplacement()]] but
+   * allows you to specify parse options.
+   *
+   * @param parseOptions
+   *   parse options
+   * @return
+   *   a [[java.util.Optional]] containing any specified replacement, or
+   *   `Optional.empty()` if none was specified
+   */
+  def parseApplicationReplacement(
+      parseOptions: ConfigParseOptions
+  ): ju.Optional[Config] = {
+    var specified = 0
+    var resource = System.getProperty("config.resource")
+    if (resource != null) specified += 1
+    val file = System.getProperty("config.file")
+    if (file != null) specified += 1
+    val url = System.getProperty("config.url")
+    if (url != null) specified += 1
+
+    if (specified == 0) {
+      ju.Optional.empty()
+    } else if (specified > 1) {
+      throw new ConfigException.Generic(
+        "You set more than one of config.file='" + file + "', config.url='" + url + "', config.resource='" + resource + "'; don't know which one to use!"
+      )
+    } else {
+      // the override file/url/resource MUST be present or it's an error
+      val overrideOptions = parseOptions.setAllowMissing(false)
+      if (resource != null) {
+        if (resource.startsWith("/")) resource = resource.substring(1)
+        // only a resource needs a class loader; resolving it up front
+        // fails on Scala Native even when nothing is set
+        val withLoader =
+          ensureClassLoader(overrideOptions, "parseApplicationReplacement")
+        // this deliberately does not parseResourcesAnySyntax; if
+        // people want that they can use an include statement.
+        ju.Optional.of(
+          ConfigFactory.parseResources(
+            withLoader.getClassLoader,
+            resource,
+            withLoader
+          )
+        )
+      } else if (file != null) {
+        ju.Optional.of(ConfigFactory.parseFile(new File(file), overrideOptions))
+      } else {
+        try
+          ju.Optional.of(ConfigFactory.parseURL(new URL(url), overrideOptions))
+        catch {
+          case e: java.net.MalformedURLException =>
+            throw new ConfigException.Generic(
+              "Bad URL in config.url system property: '" + url + "': " + e.getMessage,
+              e
+            )
+        }
+      }
+    }
+  }
+
+  /**
    * Creates a [[Config]] based on a `java.util.Map` from paths to plain Java
    * values. Similar to
    * [[ConfigValueFactory$.fromMap(values:java\.util\.Map[String,_],originDescription:String)* ConfigValueFactory.fromMap(Map,String)]],
