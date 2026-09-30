@@ -27,6 +27,8 @@ jobs:
         cache: 'sbt'
     - name: Setup sbt
       uses: sbt/setup-sbt@v1
+      with:
+        disk-cache: false # a restored sbt 2 cache skips tests and broke scalafix-tests
     - name: Run tests
       run: sbt "+testFull; +doc"
     - name: Check binary compatibility (MiMa)
