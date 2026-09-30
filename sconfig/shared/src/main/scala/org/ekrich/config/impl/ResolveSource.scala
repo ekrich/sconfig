@@ -350,12 +350,16 @@ final class ResolveSource(
       }
       if (detached != null) detached.reattach(newPath)
       // if we end up nuking the root object itself, we replace it with an empty root
-      else if (newPath != null)
-        new ResolveSource(
-          newPath.last.asInstanceOf[AbstractConfigObject],
-          newPath
-        )
-      else new ResolveSource(SimpleConfigObject.empty)
+      else if (newPath != null) {
+        // resolveWith() uses a substitution root that is not the config
+        // object being resolved; keep that lookup root while updating
+        // the parent chain for delayed-merge self-reference semantics.
+        val lookupRoot =
+          if (pathFromRoot.last eq root)
+            newPath.last.asInstanceOf[AbstractConfigObject]
+          else root
+        new ResolveSource(lookupRoot, newPath)
+      } else new ResolveSource(SimpleConfigObject.empty)
     } else if (old eq root) new ResolveSource(rootMustBeObj(replacement))
     else {
       throw new ConfigException.BugOrBroken(
@@ -386,12 +390,20 @@ final class ResolveSource(
           newParent.asInstanceOf[Container]
         else null
       )
-    } else if ((old eq root) && replacement.isInstanceOf[Container])
-      new ResolveSource(rootMustBeObj(replacement.asInstanceOf[Container]))
-    else
-      throw new ConfigException.BugOrBroken(
-        "replace in parent not possible " + old + " with " + replacement + " in " + this
-      )
+    } else if (old eq root) {
+      if (replacement.isInstanceOf[Container])
+        new ResolveSource(rootMustBeObj(replacement.asInstanceOf[Container]))
+      else
+        throw new ConfigException.BugOrBroken(
+          "replace in parent not possible " + old + " with " + replacement + " in " + this
+        )
+    } else {
+      // pathFromRoot is null so we aren't proceeding from the root (see
+      // pushParent); resolveWith() resolves a value that isn't a descendant
+      // of the substitution root, so root can't contain "old" and there's
+      // nothing to replace.
+      this
+    }
   }
   override def toString: String =
     "ResolveSource(root=" + root + ", pathFromRoot=" + pathFromRoot + ")"
