@@ -94,8 +94,33 @@ final class ConfigReference(
           origin,
           expression.toString
         )
-    else ResolveResult.make(newContext.removeCycleMarker(this), v)
+    else {
+      // A pending merge that carries ignored fallbacks (partial resolve)
+      // cannot drop them without losing the null the source key needs, so
+      // keep this reference and substitute on a later resolve.
+      if (newContext.options.getAllowUnresolved && v
+            .isInstanceOf[Unmergeable] &&
+          SimpleConfigObject.carriesIgnoredFallback(v))
+        return ResolveResult.make(newContext.removeCycleMarker(this), this)
+      // The source key's ignored fallbacks are a merge instruction for that
+      // key, not part of the value, so the substituted copy drops them.
+      if (v.isInstanceOf[SimpleConfigObject])
+        v = v
+          .asInstanceOf[SimpleConfigObject]
+          .deferPendingIgnoredFallbacks(this, expression.path)
+          .withFallbacksNotIgnored()
+      ResolveResult.make(newContext.removeCycleMarker(this), v)
+    }
   }
+
+  // The same kind of reference to another path: the prefix is kept, so a
+  // reference from an included file still falls back to the including root.
+  private[impl] def withPath(
+      path: Path,
+      origin: ConfigOrigin
+  ): ConfigReference =
+    new ConfigReference(origin, expression.changePath(path), prefixLength)
+
   override def resolveStatus: ResolveStatus = ResolveStatus.UNRESOLVED
   // when you graft a substitution into another object,
   // you have to prefix it with the location in that object
