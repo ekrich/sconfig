@@ -27,3 +27,5 @@ jobs:
       uses: sbt/setup-sbt@v1
     - name: Run tests
       run: sbt +test +doc
+    - name: Check binary compatibility
+      run: sbt +sconfigJVM/mimaReportBinaryIssues
