@@ -28,6 +28,6 @@ jobs:
     - name: Setup sbt
       uses: sbt/setup-sbt@v1
     - name: Run tests
-      run: sbt +test +doc
+      run: sbt "+testFull; +doc"
     - name: Check binary compatibility (MiMa)
       run: sbt +sconfigJVM/mimaReportBinaryIssues
