@@ -240,8 +240,8 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
                |a : ${a}""".stripMargin
     val result = formatHocon(in)
 
-    val expected = """"a" : 1,
-                     |"a" : ${a}
+    val expected = """a = 1,
+                     |a = ${a}
                      |
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
@@ -258,11 +258,11 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
                |foo : { a : 2 }""".stripMargin
     val result = formatHocon(in)
 
-    val expected = """"foo" : {
+    val expected = """foo {
                      |    a.c = 1
                      |},
-                     |"foo" : ${foo.a},
-                     |"foo" : {
+                     |foo = ${foo.a},
+                     |foo {
                      |    a = 2
                      |}
                      |
@@ -285,6 +285,24 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
   }
 
   @Test
+  def mergeStackHonoursColonAssign(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setColonAssign(true)
+
+    val in = """a : 1
+               |a : ${a}
+               |sib : 0""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """a: 1,
+                     |a: ${a}
+                     |
+                     |sib: 0
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
   def keepKeyOfUnresolvedMergeBelowSimplifiedPath(): Unit = {
     implicit val configFormatOptions =
       initialFormatOptions.setSimplifyNestedObjects(true)
@@ -294,8 +312,8 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
     val result = formatHocon(in)
 
     val expected = """x.y {
-                     |    "a" : 1,
-                     |    "a" : ${x.y.a}
+                     |    a = 1,
+                     |    a = ${x.y.a}
                      |
                      |}
                      |""".stripMargin
@@ -313,8 +331,8 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
 
     val expected = """l = [
                      |    {
-                     |        "a" : 1,
-                     |        "a" : ${x}
+                     |        a = 1,
+                     |        a = ${x}
                      |
                      |    }
                      |]
