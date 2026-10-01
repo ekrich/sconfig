@@ -57,6 +57,9 @@ abstract class ConfigNumber(
     l.toInt
   }
 
+  // a lossless long on this class; ConfigDouble overrides to range-check
+  private[impl] def longValueRangeChecked(path: String): Long = longValue
+
   protected def longValue: Long
 
   protected def doubleValue: Double

@@ -6,6 +6,7 @@ package org.ekrich.config.impl
 import java.{lang => jl}
 import java.io.ObjectStreamException
 import java.io.Serializable
+import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigValueType
 
@@ -26,6 +27,19 @@ final class ConfigDouble(
   }
 
   override def longValue: Long = value.toLong
+
+  // Double.toLong saturates, so a value beyond the long range must fail here
+  override def longValueRangeChecked(path: String): Long = {
+    val limit = jl.Double.valueOf(Long.MaxValue.toDouble)
+    if (value.isNaN || value >= limit || value < -limit)
+      throw new ConfigException.WrongType(
+        super.origin,
+        path,
+        "64-bit integer",
+        "out-of-range value " + value
+      )
+    else value.toLong
+  }
 
   override def doubleValue: Double = value
 
