@@ -1414,6 +1414,43 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
+  def systemEnvironmentOverridesMangleNames(): Unit = {
+    val overrides = ConfigFactory.systemEnvironmentOverrides()
+    assertEquals(1, overrides.getInt("testForceOverride.a"))
+    assertEquals(2, overrides.getInt("testForceOverride.b-c"))
+    assertEquals(3, overrides.getInt("testForceOverride.d_e"))
+    assertFalse(
+      "the CONFIG_FORCE_ prefixed key itself is not carried over",
+      overrides.hasPath("CONFIG_FORCE_testForceOverride_a")
+    )
+  }
+
+  @Test
+  def defaultOverridesIgnoresEnvByDefault(): Unit = {
+    assertEquals(
+      "config.override_with_env_vars is not set",
+      null,
+      System.getProperty("config.override_with_env_vars")
+    )
+    assertFalse(
+      ConfigFactory.defaultOverrides().hasPath("testForceOverride.a")
+    )
+  }
+
+  @Test
+  def defaultOverridesUsesEnvWhenEnabled(): Unit = {
+    try {
+      System.setProperty("config.override_with_env_vars", "true")
+      val overrides = ConfigFactory.defaultOverrides()
+      assertEquals(1, overrides.getInt("testForceOverride.a"))
+    } finally {
+      System.clearProperty("config.override_with_env_vars")
+
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
+  }
+
+  @Test
   def parseApplicationReplacementIsEmptyWhenNothingSet(): Unit = {
     assertEquals(
       "config.resource is not set",
@@ -1447,6 +1484,41 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
+  def envVarOverrideWinsOverExistingValue(): Unit = {
+    try {
+      System.setProperty("config.override_with_env_vars", "true")
+      val application =
+        ConfigFactory.parseString("testForceOverride.a = 999")
+      val loaded = ConfigFactory
+        .defaultOverrides()
+        .withFallback(application)
+        .resolve()
+      assertEquals(1, loaded.getInt("testForceOverride.a"))
+    } finally {
+      System.clearProperty("config.override_with_env_vars")
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
+  }
+
+  @Test
+  def envVarOverrideWinsOverSystemPropertyInLoad(): Unit = {
+    try {
+      System.setProperty("config.override_with_env_vars", "true")
+      System.setProperty("testForceOverride.a", "7")
+      ConfigImpl.reloadSystemPropertiesConfig()
+      val loaded = ConfigFactory.load(
+        ConfigFactory.parseString("testForceOverride.a = 999")
+      )
+      assertEquals(1, loaded.getInt("testForceOverride.a"))
+    } finally {
+      System.clearProperty("config.override_with_env_vars")
+      System.clearProperty("testForceOverride.a")
+
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
+  }
+
+  @Test
   def parseApplicationReplacementRejectsMoreThanOneOverride(): Unit = {
     try {
       System.setProperty("config.resource", "test01.conf")
@@ -1463,6 +1535,17 @@ class PublicApiTest extends TestUtils {
       System.clearProperty("config.file")
       ConfigImpl.reloadSystemPropertiesConfig()
     }
+  }
+
+  @Test
+  def envVarOverrideIsHiddenWhenRendering(): Unit = {
+    val rendered = ConfigFactory
+      .systemEnvironmentOverrides()
+      .root
+      .render(ConfigRenderOptions.defaults.setShowEnvVariableValues(false))
+    assertTrue(rendered, rendered.contains("\"a\" : \"<env variable>\""))
+    assertFalse(rendered, rendered.contains("\"a\" : \"1\""))
+
   }
 
   @Test
