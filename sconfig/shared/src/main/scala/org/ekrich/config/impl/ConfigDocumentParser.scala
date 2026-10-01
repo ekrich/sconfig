@@ -265,8 +265,7 @@ object ConfigDocumentParser {
         enterNested()
         try v = parseArray
         finally nestingDepth -= 1
-      }
-      else
+      } else
         throw parseError(
           addQuoteSuggestion(
             t.toString,
@@ -628,7 +627,9 @@ object ConfigDocumentParser {
         // of it, so put it back.
         putBack(t)
         missingCurly = true
-        result = parseObject(false)
+        enterNested()
+        try result = parseObject(false)
+        finally nestingDepth -= 1
       }
       // Need to pull the children out of the resulting node so we can keep leading
       // and trailing whitespace if this was a no-brace object. Otherwise, we need to add

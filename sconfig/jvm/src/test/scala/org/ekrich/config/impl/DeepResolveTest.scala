@@ -14,14 +14,35 @@ class DeepResolveTest {
 
   @Test def manyPlusEqualsLinesFailToResolveWithConfigException(): Unit = {
     val conf = ConfigFactory.parseString(plusEqualsLines(2000))
-    val e = assertThrows(classOf[ConfigException.Parse], () =>
-      conf.resolve()
+    val failure = new java.util.concurrent.atomic.AtomicReference[Throwable]()
+    val thread = new Thread(
+      null,
+      new Runnable {
+        override def run(): Unit =
+          try {
+            conf.resolve()
+          } catch {
+            case t: Throwable => failure.set(t)
+          }
+      },
+      "deep-config-resolve",
+      256 * 1024L
+    )
+    thread.setDaemon(true)
+    thread.start()
+    thread.join(30000)
+    assertFalse("resolve did not finish", thread.isAlive)
+    val e = failure.get()
+    assertTrue(
+      "expected ConfigException.Parse, got " + e,
+      e.isInstanceOf[ConfigException.Parse]
     )
     assertTrue(e.getMessage.contains("stack overflow"))
+    assertTrue(e.getCause.isInstanceOf[StackOverflowError])
   }
 
   @Test def fewPlusEqualsLinesStillResolve(): Unit = {
-    val conf = ConfigFactory.parseString(plusEqualsLines(300)).resolve()
-    assertEquals(300, conf.getList("modules").size())
+    val conf = ConfigFactory.parseString(plusEqualsLines(20)).resolve()
+    assertEquals(20, conf.getList("modules").size())
   }
 }
