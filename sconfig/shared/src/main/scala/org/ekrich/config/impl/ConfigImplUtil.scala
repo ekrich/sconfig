@@ -25,10 +25,11 @@ object ConfigImplUtil {
   // '.' added as forbidden to disable treating it as path expression
   // paths are represented differently in the inner model
   private val forbiddenUnquotedChars =
-    "$\"{}[]:=,+#`^?!@*&\\\u00A0\u2007\u202F\uFEFF.".toCharArray
+    "$\"{}[]:=,+#`^?!@*&\\\u00A0\u2007\u202F\uFEFF."
 
   def isForbiddenUnquotedChar(c: Char): Boolean =
-    forbiddenUnquotedChars.exists(_ == c) || c.isWhitespace
+    forbiddenUnquotedChars.indexOf(c.toInt) >= 0 || java.lang.Character
+      .isWhitespace(c)
 
   def equalsHandlingNull(a: AnyRef, b: AnyRef) =
     if (a == null && b != null) false
