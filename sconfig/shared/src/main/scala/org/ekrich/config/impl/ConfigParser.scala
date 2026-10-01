@@ -11,6 +11,9 @@ import java.{util => ju}
 import org.ekrich.config._
 
 object ConfigParser {
+  // a cap on object/array nesting keeps the recursive parser away from a
+  // StackOverflowError, which would escape applications as an Error
+  private[impl] val maxNestingDepth = 100
   private[impl] def parse(
       document: ConfigNodeRoot,
       origin: ConfigOrigin,
@@ -80,6 +83,14 @@ object ConfigParser {
     // generate a reference to a list element" problem, and once we fix that
     // problem we should be able to get rid of this variable.
     private[impl] var arrayCount = 0
+    private var nestingDepth = 0
+    private def enterNested(): Unit = {
+      if (nestingDepth >= ConfigParser.maxNestingDepth)
+        throw parseError(
+          "too much nesting: more than " + ConfigParser.maxNestingDepth + " levels"
+        )
+      nestingDepth += 1
+    }
     // merge a bunch of adjacent values into one
     // value; change unquoted text into a string
     // value.
@@ -129,11 +140,15 @@ object ConfigParser {
       val startingArrayCount = arrayCount
       if (n.isInstanceOf[ConfigNodeSimpleValue])
         v = n.asInstanceOf[ConfigNodeSimpleValue].value
-      else if (n.isInstanceOf[ConfigNodeObject])
-        v = parseObject(n.asInstanceOf[ConfigNodeObject])
-      else if (n.isInstanceOf[ConfigNodeArray])
-        v = parseArray(n.asInstanceOf[ConfigNodeArray])
-      else if (n.isInstanceOf[ConfigNodeConcatenation])
+      else if (n.isInstanceOf[ConfigNodeObject]) {
+        enterNested()
+        try v = parseObject(n.asInstanceOf[ConfigNodeObject])
+        finally nestingDepth -= 1
+      } else if (n.isInstanceOf[ConfigNodeArray]) {
+        enterNested()
+        try v = parseArray(n.asInstanceOf[ConfigNodeArray])
+        finally nestingDepth -= 1
+      } else if (n.isInstanceOf[ConfigNodeConcatenation])
         v = parseConcatenation(n.asInstanceOf[ConfigNodeConcatenation])
       else
         throw parseError(
