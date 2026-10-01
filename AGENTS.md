@@ -54,8 +54,10 @@ Which rules apply depends on where the code comes from:
   It keeps the Java's shape, so later ports still diff line for line. See
   [docs/PORTING.md](docs/PORTING.md#scope).
 - **sconfig-only code** covers what `lightbend/config` lacks: `ConfigFormatOptions` and the
-  rendering paths that read it, and the platform sources in `js/`, `jvm/`, `native/` and
-  `jvm-native/`. It is idiomatic Scala: `val` over `var`, expressions over statements, pattern
+  rendering paths that read it, and platform adaptations without a Java counterpart in
+  `js/`, `jvm/`, `native/` and `jvm-native/`. A platform directory can also contain ported code,
+  such as `ConfigBeanImpl` on the JVM; classify by the Java counterpart, not the directory.
+  sconfig-only code is idiomatic Scala: `val` over `var`, expressions over statements, pattern
   matching, and `@tailrec` recursion over a `while` with a flag. Keep it in its own methods, so
   ported methods stay comparable with the Java.
 - **All `main` code** avoids the Scala library: Java collections in the API and inside methods,
@@ -88,15 +90,18 @@ instead of adding a new one:
 - `ConcatenationTest`, `ConfigDocumentFactorySharedTest`, `ConfParserTest`: as named
 
 For rendering tests, assert the expected string with `checkEqualsAndStable` from
-`RenderingTestSuite`. A test that
-only checks that the output parses lets through a regression that still parses. Tests carry
-almost no comments.
+`RenderingTestSuite`. A test that only checks that the output parses lets through a regression
+that still parses. Tests carry almost no comments.
 
 ## Renderer invariants
 
-`render` output parses back and is a fixed point: rendering it again gives the same text.
-Rendering never resolves, so `${...}` stays verbatim. `ConfigFormatOptions` and
-`setSimplifyNestedObjects` exist only in sconfig.
+For named fields rendered as HOCON, output parses back and is a fixed point: rendering it
+again with the same options gives the same text. A standalone unresolved delayed merge has no
+key to express its repeated fields and renders a description instead; see
+`ConfigDefaultRenderingTest.unresolvedMergeRenderedWithoutAKeyIsDescribed`.
+Rendering never resolves, so `${...}` stays verbatim; unresolved output is not necessarily valid
+JSON even with `setJson(true)`. Hiding environment values intentionally replaces their contents.
+`ConfigFormatOptions` and `setSimplifyNestedObjects` exist only in sconfig.
 
 ## Pull requests
 

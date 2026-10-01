@@ -21,7 +21,7 @@ These rules cover ported code: any class, method or block with a counterpart in
 its lines keep the Java's shape.
 
 Code that exists only in sconfig, such as `ConfigFormatOptions`, the rendering paths that read it
-and the platform sources, is not bound by the Java's shape. It follows the Scala style in
+and platform adaptations without a Java counterpart, is not bound by the Java's shape. It follows the Scala style in
 [AGENTS.md](../AGENTS.md#code-style). Where sconfig-only logic sits inside a ported class, keep
 it in its own methods, so the ported methods still diff against the Java. The restriction on the
 Scala library applies to both kinds of code.
