@@ -28,8 +28,9 @@ jobs:
     - name: Setup sbt
       uses: sbt/setup-sbt@v1
       with:
-        disk-cache: false # a restored sbt 2 cache skips tests and broke scalafix-tests
-    - name: Run tests
+        disk-cache: false # restored task outputs caused scalafix MissingSemanticdb
+    # sbt 2 test is incremental even without a restored disk cache.
+    - name: Run every test suite
       run: sbt "+testFull; +doc"
     - name: Check binary compatibility (MiMa)
       run: sbt +sconfigJVM/mimaReportBinaryIssues
