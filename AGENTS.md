@@ -23,6 +23,10 @@ sbt sconfigJVM/mimaReportBinaryIssues
 - CI runs `sbt +test +doc`. Run Scala 3 and 2.12 whenever `scala-2/` or `scala-3/` sources change.
 - sbt 2 caches test results, so a repeated `test` can report `Total 0`. `testOnly` forces a real
   run.
+- sbt 2 also restores compiled test classes from its cache (`~/.cache/sbt/v2`). A probe test you
+  deleted can come back, and Scala.js then fails at link time with `Referring to non-existent
+  class`. Give that run a fresh cache:
+  `sbt ';set Global / localCacheDirectory := file("/tmp/sbtcache") ;++2.13.18 ;sconfigJS/testOnly ...'`.
 - sbt 2 keeps a server running between commands, and `++` sticks to it: after
   `sbt -batch ++2.12.21 ...`, every later command still runs on 2.12. Start each command with
   the version you mean, such as `++2.13.18;`.
