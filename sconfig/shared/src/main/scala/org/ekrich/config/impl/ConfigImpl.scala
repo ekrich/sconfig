@@ -376,23 +376,50 @@ object ConfigImpl {
     EnvVariablesHolder.envVariables = loadEnvVariables
   }
 
-  def defaultReference(loader: ClassLoader): Config = {
+  private def unresolvedReference(loader: ClassLoader): Config = {
     val updater = new Callable[Config] {
-      override def call(): Config = {
-        val unresolvedResources = Parseable
+      override def call(): Config =
+        Parseable
           .newResources(
             "reference.conf",
             ConfigParseOptions.defaults.setClassLoader(loader)
           )
           .parse()
           .toConfig
-        val config = systemPropertiesAsConfig
-          .withFallback(unresolvedResources)
+    }
+    computeCachedConfig(loader, "unresolvedReference", updater)
+  }
+
+  def defaultReference(loader: ClassLoader): Config = {
+    val updater = new Callable[Config] {
+      override def call(): Config =
+        systemPropertiesAsConfig
+          .withFallback(unresolvedReference(loader))
           .resolve()
-        config
-      }
     }
     computeCachedConfig(loader, "defaultReference", updater)
+  }
+
+  /**
+   * Returns the merged "reference.conf" stack, verified to resolve on its own,
+   * but left unresolved so that a config layer falling back to it (e.g.
+   * `application.conf`) can override the substitutions it contains. See
+   * [[org.ekrich.config.ConfigFactory$.defaultReferenceUnresolved(loader:ClassLoader)* ConfigFactory.defaultReferenceUnresolved]].
+   */
+  def defaultReferenceUnresolved(loader: ClassLoader): Config = {
+    // First, verify that reference.conf resolves by itself.
+    try defaultReference(loader)
+    catch {
+      case e: ConfigException.UnresolvedSubstitution =>
+        throw e.addExtraDetail(
+          "Could not resolve substitution in reference.conf to a value: %s. " +
+            "All reference.conf files are required to be fully, independently " +
+            "resolvable, and should not require the presence of values for " +
+            "substitutions from further up the hierarchy."
+        )
+    }
+    // Now return the unresolved version
+    unresolvedReference(loader)
   }
 
   private object DebugHolder {

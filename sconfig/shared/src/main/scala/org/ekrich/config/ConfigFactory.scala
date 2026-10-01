@@ -227,7 +227,7 @@ object ConfigFactory extends PlatformConfigFactory {
   ): Config =
     defaultOverrides(loader)
       .withFallback(config)
-      .withFallback(defaultReference(loader))
+      .withFallback(ConfigImpl.defaultReferenceUnresolved(loader))
       .resolve(resolveOptions)
 
   /**
@@ -387,6 +387,40 @@ object ConfigFactory extends PlatformConfigFactory {
    */
   def defaultReference(loader: ClassLoader): Config =
     ConfigImpl.defaultReference(loader)
+
+  /**
+   * Like [[#defaultReference()* defaultReference()]], but the returned config
+   * is left unresolved, so that a config layer falling back to it (as
+   * [[#load()* load()]] does with `application.conf`) can override the
+   * substitutions it contains.
+   *
+   * The reference config is still verified to resolve on its own before it is
+   * returned: `reference.conf` is required to be fully, independently
+   * resolvable, and must not depend on values from `application.conf`. Only
+   * overriding a substitution that `reference.conf` already defines is
+   * supported; leaving a value entirely undefined in `reference.conf` for
+   * `application.conf` to fill in still fails, as before.
+   *
+   * @return
+   *   the unresolved default reference config for the context class loader
+   */
+  def defaultReferenceUnresolved(): Config =
+    defaultReferenceUnresolved(
+      checkedContextClassLoader("defaultReferenceUnresolved")
+    )
+
+  /**
+   * Like [[#defaultReferenceUnresolved()* defaultReferenceUnresolved()]] but
+   * allows you to specify a class loader to use rather than the current context
+   * class loader.
+   *
+   * @param loader
+   *   class loader to look for resources in
+   * @return
+   *   the unresolved default reference config for this class loader
+   */
+  def defaultReferenceUnresolved(loader: ClassLoader): Config =
+    ConfigImpl.defaultReferenceUnresolved(loader)
 
   /**
    * Obtains the default override configuration, which currently consists of
