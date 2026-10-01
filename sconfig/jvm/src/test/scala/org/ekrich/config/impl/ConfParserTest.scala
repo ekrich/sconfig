@@ -392,6 +392,12 @@ class ConfParserTest extends TestUtils {
     lineNumberTest(6, "a : \"\"\"foo\nbar\nbaz\n\"\"\"\n\n}")
     //   end in the middle of triple-quoted string
     lineNumberTest(5, "a : \"\"\"foo\n\n\nbar\n")
+
+    // newlines between a separator and its value are counted too; these
+    // errors come from ConfigParser, which tracks lines separately
+    lineNumberTest(3, "a =\n  1\ninclude url(\"!!!\")")
+    lineNumberTest(4, "a =\n\n  1\ninclude url(\"!!!\")")
+    lineNumberTest(3, "a =\n  1\nb = [ { c += 2 } ]")
   }
 
   @Test
@@ -1004,6 +1010,21 @@ class ConfParserTest extends TestUtils {
     // BOM here should be treated like other whitespace (ignored, since no quotes)
     val conf = ConfigFactory.parseString("foo= \uFEFFbar\uFEFF")
     assertEquals("bar", conf.getString("foo"))
+  }
+
+  @Test
+  def valuesAfterSeparatorNewlineHaveCorrectOriginLine(): Unit = {
+    val scalar = parseConfig("a=\n42")
+    assertEquals(2, scalar.getValue("a").origin.lineNumber)
+
+    val objectAfterEquals = parseConfig("a=\n{\n b=1\n}")
+    assertEquals(2, objectAfterEquals.getObject("a").origin.lineNumber)
+
+    val objectAfterColon = parseConfig("a:\n{\n b=1\n}")
+    assertEquals(2, objectAfterColon.getObject("a").origin.lineNumber)
+
+    val arrayAfterEquals = parseConfig("a=\n[\n 1\n]")
+    assertEquals(2, arrayAfterEquals.getList("a").origin.lineNumber)
   }
 
   @Test
