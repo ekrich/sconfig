@@ -184,6 +184,9 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
         "NUM_LIST_0" -> "1", // ConfigFactoryJvmTest.envVariableListExpansion
         "NUM_LIST_1" -> "2", // ConfigFactoryJvmTest.envVariableListExpansion
         "NUM_LIST_2" -> "3", // ConfigFactoryJvmTest.envVariableListExpansion
+        "GAPPED_LIST_0" -> "first", // ConfigFactoryJvmTest.envVariableListExpansionStopsAtFirstGap
+        "GAPPED_LIST_2" -> "third", // ConfigFactoryJvmTest.envVariableListExpansionStopsAtFirstGap
+        "NO_ZERO_LIST_1" -> "second", // ConfigFactoryJvmTest.envVariableListExpansionRequiresIndexZero
         "testClassesPath" -> {
           val isJSOrNative = crossProjectPlatform.value.identifier != "jvm"
           if (isJSOrNative) {
