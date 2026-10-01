@@ -38,8 +38,10 @@ Some older ported code already has Scala shapes, such as the `@tailrec` recursio
    effective behaviour, not the history.
 3. **Port the tests first**, in their own commits, into the suite that owns the behaviour (see
    [AGENTS.md](../AGENTS.md#tests)). Skip a test that is already covered here and name the test
-   that covers it. For a bug fix, each test must fail on the pre-fix revision and pass once the
-   implementation is ported. If one does not fail, investigate before continuing.
+   that covers it. For a bug fix, the regression test must fail on the pre-fix revision and
+   pass once the implementation is ported. Boundary tests may already pass before the fix;
+   identify them separately rather than deleting useful coverage. A new API may instead make
+   its test fail to compile before the port: record that separately from an assertion failure.
 4. **Translate the implementation line for line** with the tables below. Note each deviation in
    a porting log as you make it; notes written afterwards miss some.
 5. **Map the diff.** Walk the original diff hunk by hunk and find each hunk's counterpart. A hunk
@@ -48,7 +50,8 @@ Some older ported code already has Scala shapes, such as the `@tailrec` recursio
 6. **Verify**: JVM on 2.13, 2.12 and 3; Scala.js; Scala Native unless the code is JVM-only;
    `scalafmtCheckAll`; MiMa against `main`; and the scala-library check below. Name the Scala
    version in each sbt command (`++2.13.18; ...`), because sbt 2 keeps the last one. Check any
-   behaviour the PR describes against the `lightbend/config` jar:
+   behaviour the PR describes against a named `lightbend/config` version or commit. If the
+   change is unreleased, build that upstream revision instead of testing an older released jar:
 
    ```bash
    find ~/.cache/coursier -name "config-1.4.*.jar"
@@ -86,12 +89,13 @@ signatures and inside methods, with no conversion to Scala collections. The tabl
 | Java | sconfig | Watch out |
 |---|---|---|
 | `a == b` on objects | `a eq b`; `!=` becomes `ne` | Scala's `==` on objects calls `equals`. |
-| `a.equals(b)` | `a == b`, which is null-safe | On boxed numbers Scala's `==` is cooperative: `Integer(1) == Long(1)` is `true` in Scala, while `equals` is `false` in Java. Keep `.equals` where the operands can be numbers of different boxed types. |
+| `a.equals(b)` | keep `a.equals(b)` | Scala's `==` changes a null receiver from an exception to a result, and compares boxed numbers cooperatively: `Integer(1) == Long(1)` is `true` in Scala while `equals` is `false` in Java. Use `==` only after checking that these differences cannot affect the port. |
 | `x instanceof T` and a cast | `isInstanceOf[T]` and `asInstanceOf[T]` | |
 | `switch` | `match` | |
 | `null` | `null` | No `Option`. |
 | `StringBuilder` | `java.lang.StringBuilder` | Never Scala's `StringBuilder`. |
-| package-private or `protected` | `private[impl]` | Java's `protected` includes the package; Scala's does not. |
+| package-private | `private[packageName]` | Use the original package scope, e.g. `impl` or `config`, not always `impl`. |
+| `protected` | `protected[packageName]` | Java allows both same-package access and subclass access outside the package. `private[impl]` loses the latter. Preserve existing public API visibility. |
 | `static` | the companion `object` | |
 | `enum` | a class in `scala-2/` and an `enum` in `scala-3/` | Both, as with `OriginType`. |
 | `T... args` | `args: T*`, with `@varargs` when Java calls it | Pulls in `scala.collection.immutable.Seq`. |
@@ -109,6 +113,9 @@ cannot drop scala-library. What a port controls is collections, `Option`, `Strin
 jdeps -verbose:class -e 'scala\..*' target/out/jvm/scala-<version>/sconfig/classes \
   | awk '/->/ {print $3}' | sort | uniq -c | sort -rn
 ```
+
+Compare references per class, not only the aggregate counts: a dependency already used elsewhere
+can still be newly introduced by the port. Also inspect `StringOps`, `ArrayOps` and `Tuple2`.
 
 A new `ObjectRef`, `IntRef`, `BooleanRef`, `Option` or `scala.collection` entry is a deviation:
 remove it, or name it in the PR with the reason.

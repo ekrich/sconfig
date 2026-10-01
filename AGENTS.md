@@ -11,34 +11,38 @@ changes is covered in [docs/PORTING.md](docs/PORTING.md).
 ## Commands
 
 ```bash
-sbt "sconfigJVM/testOnly org.ekrich.config.impl.SomeTest"
-sbt 'sconfigJVM/testOnly org.ekrich.config.impl.* org.ekrich.config.* junit.*'  # whole JVM suite, 2.13
-sbt -batch ++3.9.0 'sconfigJVM/testOnly org.ekrich.config.impl.* org.ekrich.config.* junit.*'  # also ++2.12.21
-sbt 'sconfigJS/testOnly org.ekrich.config.impl.* org.ekrich.config.* junit.*'      # needs node on PATH
-sbt 'sconfigNative/testOnly org.ekrich.config.impl.* org.ekrich.config.* junit.*'  # slow
-sbt scalafmtAll                          # CI checks formatting
-sbt sconfigJVM/mimaReportBinaryIssues
+sbt '++2.13.18; sconfigJVM/testOnly org.ekrich.config.impl.SomeTest'
+sbt '++2.13.18; sconfigJVM/testFull'       # whole JVM suite; also ++2.12.21 and ++3.9.0
+sbt '++2.13.18; sconfigJS/testFull'        # needs node on PATH
+sbt '++2.13.18; sconfigNative/testFull'    # slow
+sbt '++2.13.18; scalafmtCheckAll'
+sbt '++2.13.18; sconfigJVM/mimaReportBinaryIssues'
 ```
 
-- CI runs `sbt +test +doc`. Run Scala 3 and 2.12 whenever `scala-2/` or `scala-3/` sources change.
-- sbt 2 caches test results, so a repeated `test` can report `Total 0`. `testOnly` forces a real
-  run.
+- Check `.github/workflows/ci.yml` for the current CI commands. Run Scala 3 and 2.12
+  whenever `scala-2/` or `scala-3/` sources change.
+- sbt 2 caches test results, so a repeated `test` can report `Total 0`. Use `testFull` for
+  every suite or `testOnly` for selected suites; zero executed tests is not verification.
 - sbt 2 also restores compiled test classes from its cache (`~/.cache/sbt/v2`). A probe test you
   deleted can come back, and Scala.js then fails at link time with `Referring to non-existent
   class`. Give that run a fresh cache:
-  `sbt ';set Global / localCacheDirectory := file("/tmp/sbtcache") ;++2.13.18 ;sconfigJS/testOnly ...'`.
+  `sbt ';set Global / localCacheDirectory := file("/tmp/sconfig-sbtcache-<unique-run-id>") ;++2.13.18 ;sconfigJS/testOnly ...'`.
 - sbt 2 keeps a server running between commands, and `++` sticks to it: after
   `sbt -batch ++2.12.21 ...`, every later command still runs on 2.12. Start each command with
   the version you mean, such as `++2.13.18;`.
-- MiMa can already report problems on `main`. Only an increase over `main` is yours.
+- Compare MiMa findings with `main` using the same Scala version and baseline artifacts.
+  Compare the individual problem signatures, not just the count: one new break can replace
+  one existing finding without changing the total.
 
 ## Judging a defect
 
 - A bug that `lightbend/config` shares is still a bug here. Say in the PR that it is shared.
 - The specification is `HOCON.md` on `lightbend/config`'s `main` branch. `docs/original/HOCON.md`
   is a 2018 snapshot.
-- Settle behaviour by running the `lightbend/config` jar, not by reasoning about it. The coursier
-  cache usually holds one: `find ~/.cache/coursier -name "config-1.4.*.jar"`.
+- Verify behaviour with a named `lightbend/config` version or commit and record it. The coursier
+  cache may hold released jars: `find ~/.cache/coursier -name "config-1.4.*.jar"`. A released jar
+  cannot verify a change that has not been released; build the relevant upstream revision then.
+  A shared bug does not override the specification.
 - [#29](https://github.com/ekrich/sconfig/issues/29) lists the `lightbend/config` PRs not yet
   ported. A gap may already be known.
 
@@ -64,8 +68,9 @@ Everywhere:
 
 - Touch only what the change needs: no drive-by reformatting, import regrouping or renames.
   Imports stay one package per line, in alphabetical order.
-- Methods without side effects drop `()`. Names say what a value is, in the present tense; never
-  `tmp`.
+- New Scala-only methods without side effects drop `()`. Preserve the calling convention of
+  Java overrides and existing public methods; changing it can break Scala source compatibility
+  even when MiMa passes. Names say what a value is, in the present tense; never `tmp`.
 - An enum case added in `scala-2/` also goes in `scala-3/`.
 - A public API change is checked with MiMa and named in the PR.
 - Behaviour that diverges from `lightbend/config` is either a bug fix argued from the
@@ -82,7 +87,8 @@ instead of adding a new one:
 - `ConfigSubstitutionSharedTest` and `ConfigSubstitutionTest`: `${...}` resolution
 - `ConcatenationTest`, `ConfigDocumentFactorySharedTest`, `ConfParserTest`: as named
 
-Assert the expected string with `checkEqualsAndStable` from `RenderingTestSuite`. A test that
+For rendering tests, assert the expected string with `checkEqualsAndStable` from
+`RenderingTestSuite`. A test that
 only checks that the output parses lets through a regression that still parses. Tests carry
 almost no comments.
 

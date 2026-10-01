@@ -37,9 +37,10 @@ template.
 4. Inspect the final upstream state.
 5. Port the tests first, in their own commits. Add tests beyond the original's where they help;
    see "More tests than the original" in docs/PORTING.md.
-6. Run the tests and record the failures, quoting the messages. For a bug fix, each test must
-   fail on the pre-fix revision and pass after the implementation is ported. If one does not
-   fail, investigate before continuing.
+6. Run the tests and record the failures, quoting the messages. For a bug fix, the regression
+   test must fail on the pre-fix revision and pass after the implementation is ported. Identify
+   boundary tests that already pass separately. If a new API makes a test fail to compile before
+   the port, distinguish that from an assertion failure.
 7. Port the implementation line for line, using the Java to Scala tables.
 8. Compare every upstream diff hunk with its counterpart here.
 9. Record each deviation and addition in the porting log.
