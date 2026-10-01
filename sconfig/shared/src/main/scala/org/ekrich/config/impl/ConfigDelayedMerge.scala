@@ -84,8 +84,9 @@ object ConfigDelayedMerge {
           // the remainder of the stack below this one.
           if (ConfigImpl.traceSubstitutionsEnabled)
             ConfigImpl.trace(newContext.depth, "building sourceForEnd")
-          // we resetParents() here because we'll be resolving "end"
-          // against a root which does NOT contain "end"
+          // "end" is not in that root, so its parents are tracked from "end"
+          // down, and replacing something inside it puts it back over the
+          // remainder
           sourceForEnd = source.replaceWithinCurrentParent(
             replaceable.asInstanceOf[AbstractConfigValue],
             remainder
@@ -93,9 +94,14 @@ object ConfigDelayedMerge {
           if (ConfigImpl.traceSubstitutionsEnabled)
             ConfigImpl.trace(
               newContext.depth,
-              "  sourceForEnd before reset parents but after replace: " + sourceForEnd
+              "  sourceForEnd before detaching but after replace: " + sourceForEnd
             )
-          sourceForEnd = sourceForEnd.resetParents
+          sourceForEnd = sourceForEnd.detach(
+            source,
+            replaceable.asInstanceOf[AbstractConfigValue],
+            end,
+            remainder
+          )
         } else {
           if (ConfigImpl.traceSubstitutionsEnabled)
             ConfigImpl.trace(
@@ -203,8 +209,21 @@ object ConfigDelayedMerge {
     last.ignoresFallbacks
   }
   // static method also used by ConfigDelayedMergeObject.
+  private def appendComment(
+      sb: jl.StringBuilder,
+      comment: String
+  ): Unit = {
+    sb.append("#")
+    // a comment already parsed back keeps its leading space, and adding
+    // another one on every pass makes the render grow without bound
+    if (!comment.startsWith(" ")) sb.append(' ')
+    sb.append(comment)
+    sb.append("\n")
+  }
+
   def render(
       stack: ju.List[AbstractConfigValue],
+      wrapperOrigin: ConfigOrigin,
       sb: jl.StringBuilder,
       indentVal: Int,
       atRoot: Boolean,
@@ -212,43 +231,62 @@ object ConfigDelayedMerge {
       options: ConfigRenderOptions
   ): Unit = {
     val commentMerge = options.getComments
-    if (commentMerge) {
+    // The banner is generated text, and it parses back as comments on the
+    // values, so a second pass re-emits it and adds a banner of its own. Under
+    // a key the stack spells out as repeated key/value entries that need no
+    // explaining, so write it only where the value has no parseable spelling.
+    val banner = commentMerge && atKey == null
+    if (banner) {
       sb.append("# unresolved merge of " + stack.size + " values follows (\n")
-      if (atKey == null) {
-        indent(sb, indentVal, options)
-        sb.append(
-          "# this unresolved merge will not be parseable because it's at the root of the object\n"
-        )
-        indent(sb, indentVal, options)
-        sb.append(
-          "# the HOCON format has no way to list multiple root objects in a single file\n"
-        )
+      indent(sb, indentVal, options)
+      sb.append(
+        "# this unresolved merge will not be parseable because it's at the root of the object\n"
+      )
+      indent(sb, indentVal, options)
+      sb.append(
+        "# the HOCON format has no way to list multiple root objects in a single file\n"
+      )
+    }
+    // The caller indented the line we start on, so the first line we write
+    // must not indent again; every line after it must.
+    var indentPending = banner
+    def indentLine(): Unit =
+      if (indentPending) indent(sb, indentVal, options)
+      else indentPending = true
+
+    // Our origin aggregates the comments of the stack, and each entry prints
+    // its own below. What is left was put on the merge itself, and with the
+    // container skipping us nothing else would print it.
+    if (commentMerge && wrapperOrigin != null) {
+      val onEntries = new ju.HashSet[String]
+      stack.forEach(v => onEntries.addAll(v.origin.comments))
+      wrapperOrigin.comments.forEach { comment =>
+        if (!onEntries.contains(comment)) {
+          indentLine()
+          appendComment(sb, comment)
+        }
       }
     }
+
     val reversed = new ju.ArrayList[AbstractConfigValue]
     reversed.addAll(stack)
     ju.Collections.reverse(reversed)
     var i = 0
     reversed.forEach { v =>
-      if (commentMerge) {
-        indent(sb, indentVal, options)
-        if (atKey != null)
-          sb.append(
-            "#     unmerged value " + i + " for key " + ConfigImplUtil
-              .renderJsonString(atKey) + " from "
-          )
-        else sb.append("#     unmerged value " + i + " from ")
+      if (banner) {
+        indentLine()
+        sb.append("#     unmerged value " + i + " from ")
         i += 1
         sb.append(v.origin.description)
         sb.append("\n")
+      }
+      if (commentMerge) {
         v.origin.comments.forEach { comment =>
-          indent(sb, indentVal, options)
-          sb.append("# ")
-          sb.append(comment)
-          sb.append("\n")
+          indentLine()
+          appendComment(sb, comment)
         }
       }
-      indent(sb, indentVal, options)
+      indentLine()
       if (atKey != null) {
         sb.append(ConfigImplUtil.renderJsonString(atKey))
         if (options.getFormatted) sb.append(" : ") else sb.append(":")
@@ -263,8 +301,8 @@ object ConfigDelayedMerge {
       sb.setLength(sb.length - 1) // also chop comma
       sb.append("\n") // put a newline back
     }
-    if (commentMerge) {
-      indent(sb, indentVal, options)
+    if (banner) {
+      indentLine()
       sb.append("# ) end of unresolved merge\n")
     }
   }
@@ -376,7 +414,7 @@ final class ConfigDelayedMerge(
       atKey: String,
       options: ConfigRenderOptions
   ): Unit = {
-    ConfigDelayedMerge.render(stack, sb, indent, atRoot, atKey, options)
+    ConfigDelayedMerge.render(stack, origin, sb, indent, atRoot, atKey, options)
   }
 
   override def renderValue(
