@@ -899,6 +899,33 @@ class ConfigFactoryJvmTest extends TestUtils {
   }
 
   @Test
+  def envVariableListExpansionStopsAtFirstGap(): Unit = {
+    val config = parseConfig("a = ${GAPPED_LIST[]}").resolve()
+    assertEquals(List("first"), config.getStringList("a").asScala.toList)
+  }
+
+  @Test
+  def envVariableListExpansionRequiresIndexZero(): Unit = {
+    val optional = parseConfig("a = ${?NO_ZERO_LIST[]}").resolve()
+    assertFalse(optional.hasPath("a"))
+    val e = intercept[ConfigException.UnresolvedSubstitution] {
+      parseConfig("a = ${NO_ZERO_LIST[]}").resolve()
+    }
+    assertTrue(e.getMessage.contains("NO_ZERO_LIST[]"))
+  }
+
+  @Test
+  def envVariableListExpansionRespectsNoSystem(): Unit = {
+    val optional = parseConfig("a = ${?MY_LIST[]}")
+      .resolve(ConfigResolveOptions.noSystem)
+    assertFalse(optional.hasPath("a"))
+    val e = intercept[ConfigException.UnresolvedSubstitution] {
+      parseConfig("a = ${MY_LIST[]}").resolve(ConfigResolveOptions.noSystem)
+    }
+    assertTrue(e.getMessage.contains("MY_LIST[]"))
+  }
+
+  @Test
   def envVariableListExpansionConcatenation(): Unit = {
     val config = ConfigFactory.load("env-variables")
 
