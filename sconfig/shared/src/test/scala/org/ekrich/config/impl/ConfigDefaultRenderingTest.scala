@@ -128,6 +128,19 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     assertEquals(List(1, 2, 1, 2), resolved.getIntList("except").asScala)
   }
 
+  // the [] list-expansion suffix (lightbend/config#833) is part of the
+  // substitution syntax, not resolved by rendering, so it stays verbatim
+  @Test
+  def envVarListExpansionSubstitutionRendersVerbatim(): Unit = {
+    val in = """a = ${FOO[]}
+               |b = ${?FOO[]}""".stripMargin
+    val result = formatHocon(in)
+    val expected = """a = ${FOO[]}
+                     |b = ${?FOO[]}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
   // An unresolved merge under a key renders as repeated key/value entries. The
   // banner it used to carry parsed back as comments on those values, so every
   // pass re-emitted them and added one of its own.
