@@ -30,7 +30,7 @@ jobs:
       with:
         disk-cache: false # restored task outputs caused scalafix MissingSemanticdb
     # sbt 2 test is incremental even without a restored disk cache.
-    - name: Run every test suite
+    - name: Run tests
       run: sbt "+testFull; +doc"
     - name: Check binary compatibility (MiMa)
       run: sbt +sconfigJVM/mimaReportBinaryIssues
