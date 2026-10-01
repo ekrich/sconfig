@@ -513,9 +513,9 @@ final class SimpleConfigObject(
   private def tryCompressToMultipathRec(
       keysAggregate: String
   ): MultiPathEntry = { // nullable
-    def returnAsIs = if (keysAggregate.isEmpty)
-      null
-    else new MultiPathEntry(keysAggregate, this)
+    def returnAsIs =
+      if (keysAggregate.isEmpty) null
+      else new MultiPathEntry(keysAggregate, this)
 
     lazy val nextValue = values.iterator().next()
 

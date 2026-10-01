@@ -25,16 +25,10 @@ object ConfigImplUtil {
   // '.' added as forbidden to disable treating it as path expression
   // paths are represented differently in the inner model
   private val forbiddenUnquotedChars =
-    "$\"{}[]:=,+#`^?!@*&\\\u00A0\u2007\u202F\uFEFF."
+    "$\"{}[]:=,+#`^?!@*&\\\u00A0\u2007\u202F\uFEFF.".toCharArray
 
   def isForbiddenUnquotedChar(c: Char): Boolean =
-    forbiddenUnquotedChars.indexOf(c) >= 0 || Character.isWhitespace(c)
-
-  private def containsForbiddenUnquotedChar(s: String): Boolean = {
-    var i = 0
-    while (i < s.length && !isForbiddenUnquotedChar(s.charAt(i))) i += 1
-    i < s.length
-  }
+    forbiddenUnquotedChars.exists(_ == c) || c.isWhitespace
 
   def equalsHandlingNull(a: AnyRef, b: AnyRef) =
     if (a == null && b != null) false
@@ -93,7 +87,7 @@ object ConfigImplUtil {
           )) // alternative '#' for comments is already in forbidden chat list
         renderJsonString(s)
       // only unquote if does not contain forbidden char or white spaces
-      else if (containsForbiddenUnquotedChar(s))
+      else if (s.exists(isForbiddenUnquotedChar))
         renderJsonString(s)
       else s
     }
