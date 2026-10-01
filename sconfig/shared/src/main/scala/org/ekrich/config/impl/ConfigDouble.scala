@@ -34,7 +34,7 @@ final class ConfigDouble(
     new ConfigDouble(origin, value, originalText)
 
   // no JSON number spelling exists for these, so quote them to keep the
-  // output valid JSON and a fixed point of parse
+  // output valid JSON; reparsing preserves getDouble conversion
   override def renderValue(
       sb: jl.StringBuilder,
       indent: Int,
