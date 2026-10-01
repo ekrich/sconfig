@@ -149,7 +149,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                      |    ${s}-2,
                      |    ${s}-3,
                      |    ${s}-4
-
+                     |]
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
@@ -305,7 +305,6 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                      |    ${s}-2,
                      |    ${s}-3
                      |]
-
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
