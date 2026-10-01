@@ -579,6 +579,52 @@ class ConfigTest extends TestUtilsShared {
   }
 
   @Test
+  def longRangeChecks(): Unit = {
+    val conf = parseConfig(
+      "{ tooPositive: 9223372036854775808," +
+        " bigDouble: 1e30, overflowingDouble: 1e999 }"
+    )
+    for (path <- Seq("tooPositive", "bigDouble", "overflowingDouble")) {
+      val e = intercept[ConfigException.WrongType] {
+        conf.getLong(path)
+      }
+      assertTrue(e.getMessage.contains("range"))
+    }
+  }
+
+  @Test
+  def longRangeChecksOnLists(): Unit = {
+    val conf = parseConfig("{ sizes: [9223372036854775808] }")
+    val e = intercept[ConfigException.WrongType] {
+      conf.getLongList("sizes")
+    }
+    assertTrue(e.getMessage.contains("range"))
+  }
+
+  @Test
+  def longRangeBoundariesStillRead(): Unit = {
+    val conf = parseConfig(
+      "{ max: 9223372036854775807, min: -9223372036854775808, fraction: 1.5 }"
+    )
+    assertEquals(Long.MaxValue, conf.getLong("max"))
+    assertEquals(Long.MinValue, conf.getLong("min"))
+    assertEquals(1L, conf.getLong("fraction"))
+    // one past Long.MinValue is a STRING whose double conversion is exactly
+    // -2^63, indistinguishable from Long.MinValue itself, so it still reads
+    val beyondMin = parseConfig("{ beyond: -9223372036854775809 }")
+    assertEquals(Long.MinValue, beyondMin.getLong("beyond"))
+  }
+
+  @Test
+  def byteSizesBeyondLongRejectInsteadOfClamping(): Unit = {
+    val conf = parseConfig("{ cache: { max-bytes: 9223372036854775808 } }")
+    val e = intercept[ConfigException.BadValue] {
+      conf.getBytes("cache.max-bytes")
+    }
+    assertTrue(e.getMessage.contains("max-bytes"))
+  }
+
+  @Test
   def isResolvedWorks(): Unit = {
     val resolved = ConfigFactory.parseString("foo = 1")
     assertTrue(
