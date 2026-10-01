@@ -28,15 +28,13 @@ object DefaultTransformer {
             val v = jl.Long.parseLong(s)
             retVal = new ConfigLong(value.origin, v, s)
           } catch {
-            case e: NumberFormatException =>
-            // try Double
-          }
-          try {
-            val v = jl.Double.parseDouble(s)
-            retVal = new ConfigDouble(value.origin, v, s)
-          } catch {
-            case e: NumberFormatException =>
-            // oh well.
+            case _: NumberFormatException =>
+              try {
+                val v = jl.Double.parseDouble(s)
+                retVal = new ConfigDouble(value.origin, v, s)
+              } catch {
+                case _: NumberFormatException => // leave it as a string
+              }
           }
           retVal
         case NULL =>

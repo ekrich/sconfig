@@ -26,7 +26,8 @@ object ConfigNumber {
       originalText: String
   ): ConfigNumber = {
     val asLong = number.toLong
-    if (asLong == number) newNumber(origin, asLong, originalText)
+    if (number < Long.MaxValue.toDouble && number > Long.MinValue.toDouble && asLong == number)
+      newNumber(origin, asLong, originalText)
     else new ConfigDouble(origin, number, originalText)
   }
 }
