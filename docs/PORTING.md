@@ -124,21 +124,21 @@ remove it, or name it in the PR with the reason.
 
 Title: `Port lightbend/config#N: <what it fixes>`, with `#N+#M` for several PRs.
 
-The body keeps these sections in this order:
+The body opens with the summary described in [AGENTS.md](../AGENTS.md#pull-requests), ending
+"Port of lightbend/config#N.". The full description below it keeps these sections in this order:
 
 1. **Source**: "Ports lightbend/config#N (merged as `abc1234`), which fixes lightbend/config#M."
    Name any follow-up PR folded in, and the item of #29 it closes.
-2. **One sentence** saying what changes for a user.
-3. **Example**: a realistic config, the call that uses it, and sconfig's output before and after
+2. **Example**: a realistic config, the call that uses it, and sconfig's output before and after
    the port, taken from running it.
-4. **Deviations from the original**: a table of where, original, here and why. With none, write
+3. **Deviations from the original**: a table of where, original, here and why. With none, write
    "None: translated line for line from `X.java`."
-5. **Tests**: the commit that adds them and which of them fail there; each original test left
+4. **Tests**: the commit that adds them and which of them fail there; each original test left
    unported, with the test here that already covers it; the tests added beyond the original's,
    each with the case it covers.
-6. **Beyond the port**: each addition, why the port needs it, and its commits. With none, write
+5. **Beyond the port**: each addition, why the port needs it, and its commits. With none, write
    "Nothing beyond the port."
-7. **Behaviour change** a user could notice, and the platforms and Scala versions the tests ran
-   on.
+6. **Behaviour change** in detail, when the summary's sentence is not enough, and the platforms
+   and Scala versions the tests ran on.
 
 <kbd>[<- Back to README](../README.md)</kbd>
