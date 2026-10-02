@@ -312,6 +312,8 @@ class ConfigValueSharedTest extends TestUtilsShared {
       m.putAll(Collections.emptyMap[String, AbstractConfigValue]())
     }
     unsupported { m.remove("a") }
+    unsupported { m.keySet().remove("a") }
+    unsupported { m.keySet().clear() }
   }
 
   @Test
