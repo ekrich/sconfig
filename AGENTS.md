@@ -19,98 +19,34 @@ sbt '++2.13.18; scalafmtCheckAll'
 sbt '++2.13.18; sconfigJVM/mimaReportBinaryIssues'
 ```
 
-- Check `.github/workflows/ci.yml` for the current CI commands. Run Scala 3 and 2.12
-  whenever `scala-2/` or `scala-3/` sources change.
-- sbt 2 caches test results, so a repeated `test` can report `Total 0`. Use `testFull` for
-  every suite or `testOnly` for selected suites; zero executed tests is not verification.
-- sbt 2 also restores compiled test classes from its cache (`~/.cache/sbt/v2`). A probe test you
-  deleted can come back, and Scala.js then fails at link time with `Referring to non-existent
-  class`. Give that run a fresh cache:
-  `sbt ';set Global / localCacheDirectory := file("/tmp/sconfig-sbtcache-<unique-run-id>") ;++2.13.18 ;sconfigJS/testOnly ...'`.
-- sbt 2 keeps a server running between commands, and `++` sticks to it: after
-  `sbt -batch ++2.12.21 ...`, every later command still runs on 2.12. Start each command with
-  the version you mean, such as `++2.13.18;`.
-- Compare MiMa findings with `main` using the same Scala version and baseline artifacts.
-  Compare the individual problem signatures, not just the count: one new break can replace
-  one existing finding without changing the total.
-
-## Judging a defect
-
-- A bug that `lightbend/config` shares is still a bug here. Say in the PR that it is shared.
-- The specification is `HOCON.md` on `lightbend/config`'s `main` branch. `docs/original/HOCON.md`
-  is a 2018 snapshot.
-- Verify behaviour with a named `lightbend/config` version or commit and record it. The coursier
-  cache may hold released jars: `find ~/.cache/coursier -name "config-1.4.*.jar"`. A released jar
-  cannot verify a change that has not been released; build the relevant upstream revision then.
-  A shared bug does not override the specification.
-- [#29](https://github.com/ekrich/sconfig/issues/29) lists the `lightbend/config` PRs not yet
-  ported. A gap may already be known.
+sbt 2 caches test results and keeps `++` between commands: use `testFull` or `testOnly`, never
+trust zero executed tests, and start every command with its `++` version. Cache workarounds and
+MiMa comparison: [docs/TESTING.md](docs/TESTING.md#running-the-build).
 
 ## Code style
 
-Which rules apply depends on where the code comes from:
+- Ported code keeps the Java's shape; sconfig-only code is idiomatic Scala in its own methods.
+- `main` code avoids the Scala library (collections, `Option`, `Try`): use `ScalaOps`, `null` or,
+  in the public API, `java.util.Optional`. Tests may use it freely.
+- Touch only what the change needs.
 
-- **Ported code** has a counterpart in `lightbend/config`: most of `impl` and the public API.
-  It keeps the Java's shape, so later ports still diff line for line. See
-  [docs/PORTING.md](docs/PORTING.md#scope).
-- **sconfig-only code** covers what `lightbend/config` lacks: `ConfigFormatOptions` and the
-  rendering paths that read it, and platform adaptations without a Java counterpart in
-  `js/`, `jvm/`, `native/` and `jvm-native/`. A platform directory can also contain ported code,
-  such as `ConfigBeanImpl` on the JVM; classify by the Java counterpart, not the directory.
-  sconfig-only code is idiomatic Scala: `val` over `var`, expressions over statements, pattern
-  matching, and `@tailrec` recursion over a `while` with a flag. Keep it in its own methods, so
-  ported methods stay comparable with the Java.
-- **All `main` code** avoids the Scala library: Java collections in the API and inside methods,
-  no Scala collections, `Option` or `Try`, and no Java↔Scala conversions. For collection work use
-  `ScalaOps` on Java collections (`exists`, `forall`, `foldLeft`, `findFold`); where Scala would
-  use `Option`, use `null` or, in the public API, `java.util.Optional`. Scala language features
-  are fine. Tests may use the Scala library freely.
-
-Everywhere:
-
-- Touch only what the change needs: no drive-by reformatting, import regrouping or renames.
-  Imports stay one package per line, in alphabetical order.
-- New Scala-only methods without side effects drop `()`. Preserve the calling convention of
-  Java overrides and existing public methods; changing it can break Scala source compatibility
-  even when MiMa passes. Names say what a value is, in the present tense; never `tmp`.
-- An enum case added in `scala-2/` also goes in `scala-3/`.
-- A public API change is checked with MiMa and named in the PR.
-- Behaviour that diverges from `lightbend/config` is either a bug fix argued from the
-  specification or a feature documented in `docs/NEW_FEATURES.md`.
+Which code counts as ported, and the remaining rules: [docs/CODE_STYLE.md](docs/CODE_STYLE.md).
 
 ## Tests
 
-Shared tests live in `sconfig/shared/src/test`. `sconfig/jvm/src/test` holds only what needs the
-JVM: environment variables, files, system properties. Extend the suite that owns the behaviour
-instead of adding a new one:
-
-- `ConfigFormatOptionsTest`: features of `ConfigFormatOptions`, which only sconfig has
-- `ConfigDefaultRenderingTest`: rendering with `ConfigFormatOptions.defaults`
-- `ConfigSubstitutionSharedTest` and `ConfigSubstitutionTest`: `${...}` resolution
-- `ConcatenationTest`, `ConfigDocumentFactorySharedTest`, `ConfParserTest`: as named
-
-For rendering tests, assert the expected string with `checkEqualsAndStable` from
-`RenderingTestSuite`. A test that only checks that the output parses lets through a regression
-that still parses. Tests carry almost no comments.
-
-## Renderer invariants
-
-For named fields rendered as HOCON, output parses back and is a fixed point: rendering it
-again with the same options gives the same text. A standalone unresolved delayed merge has no
-key to express its repeated fields and renders a description instead; see
-`ConfigDefaultRenderingTest.unresolvedMergeRenderedWithoutAKeyIsDescribed`.
-Rendering never resolves, so `${...}` stays verbatim; unresolved output is not necessarily valid
-JSON even with `setJson(true)`. Hiding environment values intentionally replaces their contents.
-`ConfigFormatOptions` and `setSimplifyNestedObjects` exist only in sconfig.
+Shared tests go in `sconfig/shared/src/test`, in the suite that owns the behaviour:
+[docs/TESTING.md](docs/TESTING.md#where-tests-go).
 
 ## Pull requests
 
 - Tests come before the implementation, in their own commits.
-- A PR carries only what it delivers: no investigation probes and no `@Ignore`d tests.
-- The description opens with a summary a reviewer can stop after, then `---` and
-  `## Full description`. The summary is two or three sentences in user terms: what went wrong,
-  with one concrete input, and what happens now. When a user who upgrades could notice more than
-  the fix, such as a config that used to load and now throws, it ends with
-  `**Behaviour change:**` and one sentence.
-- The full description shows a realistic config and its output before and after the change, taken
-  from running it. When a fix could be read as new behaviour, quote the specification.
+- A PR carries only what it delivers.
+- The description opens with a short summary and its behaviour change, then the full
+  description with a realistic config before and after:
+  [docs/PULL_REQUESTS.md](docs/PULL_REQUESTS.md).
+
+## When needed
+
+- Deciding whether something is a bug: [docs/DEFECTS.md](docs/DEFECTS.md)
+- Changing the renderer: [docs/RENDERING.md](docs/RENDERING.md)
+- Porting from `lightbend/config`: [docs/PORTING.md](docs/PORTING.md)

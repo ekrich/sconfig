@@ -22,7 +22,7 @@ its lines keep the Java's shape.
 
 Code that exists only in sconfig, such as `ConfigFormatOptions`, the rendering paths that read it
 and platform adaptations without a Java counterpart, is not bound by the Java's shape. It follows the Scala style in
-[AGENTS.md](../AGENTS.md#code-style). Where sconfig-only logic sits inside a ported class, keep
+[CODE_STYLE.md](CODE_STYLE.md). Where sconfig-only logic sits inside a ported class, keep
 it in its own methods, so the ported methods still diff against the Java. The restriction on the
 Scala library applies to both kinds of code.
 
@@ -37,7 +37,7 @@ Some older ported code already has Scala shapes, such as the `@tailrec` recursio
    lightbend/config#839, for example, was corrected by lightbend/config#846. Port the final
    effective behaviour, not the history.
 3. **Port the tests first**, in their own commits, into the suite that owns the behaviour (see
-   [AGENTS.md](../AGENTS.md#tests)). Skip a test that is already covered here and name the test
+   [TESTING.md](TESTING.md#where-tests-go)). Skip a test that is already covered here and name the test
    that covers it. For a bug fix, the regression test must fail on the pre-fix revision and
    pass once the implementation is ported. Boundary tests may already pass before the fix;
    identify them separately rather than deleting useful coverage. A new API may instead make
@@ -124,7 +124,7 @@ remove it, or name it in the PR with the reason.
 
 Title: `Port lightbend/config#N: <what it fixes>`, with `#N+#M` for several PRs.
 
-The body opens with the summary described in [AGENTS.md](../AGENTS.md#pull-requests), ending
+The body opens with the summary described in [PULL_REQUESTS.md](PULL_REQUESTS.md), ending
 "Port of lightbend/config#N.". The full description below it keeps these sections in this order:
 
 1. **Source**: "Ports lightbend/config#N (merged as `abc1234`), which fixes lightbend/config#M."
