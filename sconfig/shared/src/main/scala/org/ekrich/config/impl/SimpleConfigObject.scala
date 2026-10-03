@@ -17,6 +17,7 @@ import ScalaOps.*
 
 @SerialVersionUID(2L)
 object SimpleConfigObject {
+
   // These render through ConfigDelayedMerge.render, which spells the stack out
   // as repeated entries and so needs the key. Rendered as a bare value they
   // fall back to a comment banner that does not parse, so they can neither be
@@ -175,7 +176,6 @@ final class SimpleConfigObject(
     override val ignoresFallbacks: Boolean
 ) extends AbstractConfigObject(_origin)
     with Serializable {
-
   if (value == null)
     throw new ConfigException.BugOrBroken(
       "creating config object with null map"
@@ -512,7 +512,7 @@ final class SimpleConfigObject(
 
   private def tryCompressToMultipathRec(
       keysAggregate: String
-  ): SimpleConfigObject#MultiPathEntry = {
+  ): MultiPathEntry = {
     def returnAsIs =
       if (keysAggregate.isEmpty) null
       else new MultiPathEntry(keysAggregate, this)
@@ -543,7 +543,7 @@ final class SimpleConfigObject(
 
   private def tryCompressToMultipath(
       options: ConfigRenderOptions
-  ): SimpleConfigObject#MultiPathEntry =
+  ): MultiPathEntry =
     if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) ||
         options.getJson || options.getOriginComments) {
       null
@@ -740,9 +740,9 @@ final class SimpleConfigObject(
   // serialization all goes through SerializedConfigValue
   @throws[ObjectStreamException]
   private def writeReplace(): Object = new SerializedConfigValue(this)
-
-  private final case class MultiPathEntry(
-      compactedKeys: String,
-      leafNode: AbstractConfigValue
-  )
 }
+
+case class MultiPathEntry(
+    compactedKeys: String,
+    leafNode: AbstractConfigValue
+)
