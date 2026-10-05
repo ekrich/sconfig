@@ -29,6 +29,23 @@ Scala library applies to both kinds of code.
 Some older ported code already has Scala shapes, such as the `@tailrec` recursion in `Tokenizer`,
 `BadMap` and `ConfigDelayedMergeObject`. Leave it as it is unless a port changes those lines.
 
+## What stays as in the Java
+
+Measured on the current tree: `PathParser`, `ConfigImplUtil`, `SimpleConfigList` and
+`ConfigDelayedMerge` carry within a few lines the same number of comment lines as their Java
+originals, and `PathTest`, `TokenizerTest` and `UtilTest` have exactly the Java tests' method
+names. So a port also keeps:
+
+- **Comments and Javadoc**, copied with the code. Do not drop, reword or restate them; a change
+  to the code changes the comment as it does in the Java. A deviation gets a short comment that
+  says why, in the style of the existing ones (`// added for Scala`,
+  `// will not compile with override which is allowed in Java`).
+- **File headers**: 41 of the 59 ported `impl` files carry the original's Typesafe copyright header, so a new file for a ported class keeps the Java file's header.
+- **Member order**: fields, constructors and methods in the Java's order, so a hunk finds its
+  counterpart.
+- **Test names**: a ported test keeps the Java test's method name, file name and suite, so the
+  two stay comparable. Added tests (see below) get new names.
+
 ## Steps
 
 1. **Check it is not done yet**: #29, the open PRs, and `git log --grep "#N"`.
