@@ -139,6 +139,8 @@ object Tokenizer {
     private[impl] val firstNumberChars = "0123456789-"
     // chars JSON allows to be part of a number
     private[impl] val numberChars = "0123456789eE+-."
+    // chars JSON allows in a unicode escape
+    private[impl] val hexDigits = "0123456789abcdefABCDEF"
     // chars that stop an unquoted string
     private[impl] val notInUnquotedText = "$\"{}[]:=,+#`^?!@*&\\"
     private def isSimpleValue(t: Token) =
@@ -396,6 +398,19 @@ object Tokenizer {
           }
           val digits = new String(a)
           sbOrig.append(a)
+          // Integer.parseInt(digits, 16) accepts a leading '+' or '-' but a
+          // sign is not a hex digit (JSON allows exactly four hex digits)
+          i = 0
+          while (i < 4) {
+            if (TokenIterator.hexDigits.indexOf(a(i)) < 0)
+              throw problem(
+                digits,
+                "Malformed hex digits after \\u escape in string: '%s'".format(
+                  digits
+                )
+              )
+            i += 1
+          }
           try sb.appendCodePoint(Integer.parseInt(digits, 16))
           catch {
             case e: NumberFormatException =>
