@@ -512,10 +512,10 @@ final class SimpleConfigObject(
 
   private def tryCompressToMultipathRec(
       keysAggregate: String
-  ): Option[MultiPathEntry] = {
-    def returnAsIs = if (keysAggregate.isEmpty)
-      None
-    else Some(MultiPathEntry(keysAggregate, this))
+  ): MultiPathEntry = {
+    def returnAsIs =
+      if (keysAggregate.isEmpty) null
+      else new MultiPathEntry(keysAggregate, this)
 
     lazy val nextValue = values.iterator().next()
 
@@ -535,7 +535,7 @@ final class SimpleConfigObject(
           )
         case other: AbstractConfigValue
             if !SimpleConfigObject.needsItsKey(other) =>
-          Some(MultiPathEntry(newAggregate, other))
+          new MultiPathEntry(newAggregate, other)
         case _ => returnAsIs
       }
     } else returnAsIs
@@ -543,10 +543,10 @@ final class SimpleConfigObject(
 
   private def tryCompressToMultipath(
       options: ConfigRenderOptions
-  ): Option[MultiPathEntry] =
+  ): MultiPathEntry =
     if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) ||
         options.getJson || options.getOriginComments) {
-      None
+      null
     } else
       tryCompressToMultipathRec(
         ""
@@ -574,7 +574,9 @@ final class SimpleConfigObject(
       options: ConfigRenderOptions
   ): Boolean =
     tryCompressToMultipath(options) match {
-      case Some(MultiPathEntry(aggKey, leafValue)) =>
+      case multiPath if multiPath != null =>
+        val aggKey = multiPath.compactedKeys
+        val leafValue = multiPath.leafNode
         val path =
           if (renderedPrefix == null) aggKey else s"$renderedPrefix.$aggKey"
         leafValue.renderWithRenderedKey(sb, path, options)
@@ -741,7 +743,7 @@ final class SimpleConfigObject(
   private def writeReplace(): Object = new SerializedConfigValue(this)
 }
 
-case class MultiPathEntry(
+private final case class MultiPathEntry(
     compactedKeys: String,
     leafNode: AbstractConfigValue
 )
