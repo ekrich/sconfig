@@ -376,6 +376,40 @@ object ConfigImpl {
     EnvVariablesHolder.envVariables = loadEnvVariables
   }
 
+  private val ENV_VAR_OVERRIDE_PREFIX = "CONFIG_FORCE_"
+
+  private def loadEnvVariablesOverrides: AbstractConfigObject =
+    PropertiesParser.fromStringMap(
+      newEnvVariable("env variables overrides"),
+      ConfigImplUtil.envVariablesAsProperties(
+        System.getenv,
+        ENV_VAR_OVERRIDE_PREFIX
+      )
+    )
+
+  // filled on first use rather than in an object initializer: a failed
+  // initializer poisons the object for good, and how the failure surfaces
+  // differs between the JVM and Scala Native
+  @volatile private var envVariablesOverrides: AbstractConfigObject = null
+
+  def envVariablesOverridesAsConfigObject: AbstractConfigObject = {
+    var o = envVariablesOverrides
+    if (o == null) {
+      o = loadEnvVariablesOverrides
+      envVariablesOverrides = o
+    }
+    o
+  }
+
+  def envVariablesOverridesAsConfig: Config =
+    envVariablesOverridesAsConfigObject.toConfig
+
+  def reloadEnvVariablesOverridesConfig(): Unit = {
+    // ConfigFactory.invalidateCaches() relies on this having the side
+    // effect that it drops all caches
+    envVariablesOverrides = null
+  }
+
   def defaultReference(loader: ClassLoader): Config = {
     val updater = new Callable[Config] {
       override def call(): Config = {

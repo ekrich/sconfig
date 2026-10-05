@@ -175,6 +175,9 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
         "SECRET_A" -> "A", // ConfigTest.renderShowEnvVariableValues
         "SECRET_B" -> "B", // ConfigTest.renderShowEnvVariableValues
         "SECRET_C" -> "C", // ConfigTest.renderShowEnvVariableValues
+        "CONFIG_FORCE_testForceOverride_a" -> "1", // PublicApiTest.systemEnvironmentOverridesMangleNames
+        "CONFIG_FORCE_testForceOverride_b__c" -> "2", // PublicApiTest.systemEnvironmentOverridesMangleNames
+        "CONFIG_FORCE_testForceOverride_d___e" -> "3", // PublicApiTest.systemEnvironmentOverridesMangleNames
         "testClassesPath" -> {
           val isJSOrNative = crossProjectPlatform.value.identifier != "jvm"
           if (isJSOrNative) {

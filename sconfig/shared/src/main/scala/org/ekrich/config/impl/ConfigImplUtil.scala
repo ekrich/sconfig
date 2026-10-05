@@ -212,6 +212,83 @@ object ConfigImplUtil {
     nameBuilder.toString
   }
 
+  // Rationale on name mangling:
+  //
+  // Most shells (e.g. bash, sh, etc.) don't support any character other
+  // than alphanumeric and `_` in environment variable names. In HOCON the
+  // default separator is `.` so it is directly translated to a single `_`
+  // for convenience; `-` and `_` are less often present in config keys but
+  // they have to be representable and the only possible mapping is `_`
+  // repeated.
+  private def underscoreMappings(num: Int): Char = num match {
+    case 1 => '.'
+    case 2 => '-'
+    case 3 => '_'
+    case _ => 0
+  }
+
+  /**
+   * Turns an environment variable name into the config key it overrides, by
+   * stripping `prefix` and mangling runs of underscores back into the
+   * characters they stand in for (see [[#underscoreMappings]]).
+   *
+   * @param variable
+   *   the environment variable name, including `prefix`
+   * @param prefix
+   *   the prefix to strip, e.g. `"CONFIG_FORCE_"`
+   * @return
+   *   the config key the variable overrides
+   */
+  private[impl] def envVariableAsProperty(
+      variable: String,
+      prefix: String
+  ): String = {
+    val builder = new jl.StringBuilder
+    val strippedPrefix = variable.substring(prefix.length)
+
+    var underscores = 0
+    strippedPrefix.foreach { c =>
+      if (c == '_') underscores += 1
+      else {
+        if (underscores > 0 && underscores < 4)
+          builder.append(underscoreMappings(underscores))
+        else if (underscores > 3)
+          throw new ConfigException.BadPath(
+            variable,
+            "Environment variable contains an un-mapped number of underscores."
+          )
+        underscores = 0
+        builder.append(c)
+      }
+    }
+    if (underscores > 0 && underscores < 4)
+      builder.append(underscoreMappings(underscores))
+    else if (underscores > 3)
+      throw new ConfigException.BadPath(
+        variable,
+        "Environment variable contains an un-mapped number of underscores."
+      )
+
+    builder.toString
+  }
+
+  // only the variables starting with prefix, keyed by the config path each
+  // one overrides; the rest of the environment must not leak into the
+  // overrides (lightbend/config#686)
+  private[impl] def envVariablesAsProperties(
+      env: ju.Map[String, String],
+      prefix: String
+  ): ju.Map[String, String] = {
+    val result = new ju.HashMap[String, String]
+    val entries = env.entrySet.iterator
+    while (entries.hasNext) {
+      val entry = entries.next
+      if (entry.getKey.startsWith(prefix))
+        result.put(envVariableAsProperty(entry.getKey, prefix), entry.getValue)
+    }
+    result
+  }
+
   /**
    * Guess configuration syntax from given filename.
    *
