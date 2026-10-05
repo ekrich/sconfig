@@ -41,6 +41,8 @@ Shared tests go in `sconfig/shared/src/test`, in the suite that owns the behavio
 
 - Tests come before the implementation, in their own commits.
 - A PR carries only what it delivers.
+- A PR to a repository the agent's owner does not control, such as upstream `lightbend/config`, is
+  opened as a draft. The owner marks it ready.
 - The description opens with a short summary and its behaviour change, then the full
   description with a realistic config before and after:
   [docs/PULL_REQUESTS.md](docs/PULL_REQUESTS.md).
