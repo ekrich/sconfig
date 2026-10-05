@@ -247,9 +247,7 @@ object ConfigImplUtil {
     val strippedPrefix = variable.substring(prefix.length)
 
     var underscores = 0
-    var i = 0
-    while (i < strippedPrefix.length) {
-      val c = strippedPrefix.charAt(i)
+    strippedPrefix.foreach { c =>
       if (c == '_') underscores += 1
       else {
         if (underscores > 0 && underscores < 4)
@@ -262,7 +260,6 @@ object ConfigImplUtil {
         underscores = 0
         builder.append(c)
       }
-      i += 1
     }
     if (underscores > 0 && underscores < 4)
       builder.append(underscoreMappings(underscores))
