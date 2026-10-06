@@ -35,8 +35,9 @@ template.
 2. Check sconfig issue #29.
 3. Check existing and open PRs, and `git log --grep "#N"`.
 4. Inspect the final upstream state.
-5. Port the tests first, in their own commits. Add tests beyond the original's where they help;
-   see "More tests than the original" in docs/PORTING.md.
+5. Port the tests first, in their own commits, into the shared source set unless they are
+   platform-bound (see [docs/TESTING.md](../../../docs/TESTING.md#where-tests-go)). Add tests
+   beyond the original's where they help; see "More tests than the original" in docs/PORTING.md.
 6. Run the tests and record the failures, quoting the messages. For a bug fix, the regression
    test must fail on the pre-fix revision and pass after the implementation is ported. Identify
    boundary tests that already pass separately. If a new API makes a test fail to compile before

@@ -23,6 +23,14 @@ The commands are in [AGENTS.md](../AGENTS.md#commands).
 
 ## Where tests go
 
+New tests go in the shared source set by default, so one suite runs on the JVM, Scala.js and
+Scala Native; `parseConfig` and the `TestUtilsShared` helpers work on all three. Move a test to
+a platform source set only when it depends on something that platform owns or lacks:
+environment variables, files and system properties stay on the JVM, and a case that fails
+differently on one platform (an unimplemented shim raising `NotImplementedError`, for example)
+splits out of the shared suite. Run the shared suite on Scala.js before relying on it; a
+test that passes only on the JVM is a JVM test misplaced.
+
 Shared tests live in `sconfig/shared/src/test`. `sconfig/jvm/src/test` holds only what needs the
 JVM: environment variables, files, system properties. Extend the suite that owns the behaviour
 instead of adding a new one:

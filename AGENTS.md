@@ -34,8 +34,9 @@ Which code counts as ported, and the remaining rules: [docs/CODE_STYLE.md](docs/
 
 ## Tests
 
-Shared tests go in `sconfig/shared/src/test`, in the suite that owns the behaviour:
-[docs/TESTING.md](docs/TESTING.md#where-tests-go).
+New tests go in the shared source set by default, so they run on the JVM, Scala.js and Scala
+Native; only what a platform owns or lacks moves to its source set. They go in the suite that
+owns the behaviour: [docs/TESTING.md](docs/TESTING.md#where-tests-go).
 
 ## Pull requests
 
