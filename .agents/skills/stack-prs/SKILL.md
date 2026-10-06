@@ -33,7 +33,8 @@ Independent PRs stay independent. Stack only when separating them costs non-obvi
 
 ## Make it visible
 
-Put one line at the top of every description and one comment on every PR:
+Put one line at the top of every description, above the summary the PR rules call for, and one
+comment on every PR:
 
 - the merge order, and this PR's position
 - its own commits, its head, the test count on the stack up to it
