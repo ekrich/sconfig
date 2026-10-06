@@ -54,3 +54,4 @@ Shared tests go in `sconfig/shared/src/test`, in the suite that owns the behavio
 - Changing the renderer: [docs/RENDERING.md](docs/RENDERING.md)
 - Porting from `lightbend/config`: [docs/PORTING.md](docs/PORTING.md)
 - Reviewing a PR, and where suggested improvements go: [docs/REVIEWS.md](docs/REVIEWS.md)
+- Stacking dependent PRs, and the fallback of one combined PR: `.agents/skills/stack-prs/SKILL.md`
