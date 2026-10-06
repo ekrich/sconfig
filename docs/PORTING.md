@@ -139,12 +139,17 @@ remove it, or name it in the PR with the reason.
 
 ## The pull request
 
-Title: `Port lightbend/config#N: <what it fixes>`, with `#N+#M` for several PRs.
+Title: the upstream pull request's title, copied verbatim — no mention of lightbend in it
+(GitHub turns `lightbend/config#N` anywhere in a PR body into a cross-reference on the
+upstream timeline).
 
 The body opens with the summary described in [PULL_REQUESTS.md](PULL_REQUESTS.md), ending
-"Port of lightbend/config#N.". The full description below it keeps these sections in this order:
+"Port of lightbend/config#N." — that stays the only linked upstream reference, in the first
+sentences. Every later mention of the upstream pull request or issue is written in backticks
+so it does not link. The full description below the summary keeps these sections in this order:
 
-1. **Source**: "Ports lightbend/config#N (merged as `abc1234`), which fixes lightbend/config#M."
+1. **Source**: "Ports `lightbend/config#N` (merged as `abc1234`), which fixes
+   `lightbend/config#M`."
    Name any follow-up PR folded in, and the item of #29 it closes.
 2. **Example**: a realistic config, the call that uses it, and sconfig's output before and after
    the port, taken from running it.
