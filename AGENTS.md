@@ -40,7 +40,8 @@ Shared tests go in `sconfig/shared/src/test`, in the suite that owns the behavio
 ## Pull requests
 
 - Tests come before the implementation, in their own commits.
-- A PR carries only what it delivers.
+- A PR carries only what it delivers. Small PRs whose conflicts would be non-obvious may be
+  grouped, with a note saying why: [docs/PULL_REQUESTS.md](docs/PULL_REQUESTS.md).
 - A PR to a repository the agent's owner does not control, such as upstream `lightbend/config`, is
   opened as a draft. The owner marks it ready.
 - The description opens with a short summary and its behaviour change, then the full
@@ -52,3 +53,4 @@ Shared tests go in `sconfig/shared/src/test`, in the suite that owns the behavio
 - Deciding whether something is a bug: [docs/DEFECTS.md](docs/DEFECTS.md)
 - Changing the renderer: [docs/RENDERING.md](docs/RENDERING.md)
 - Porting from `lightbend/config`: [docs/PORTING.md](docs/PORTING.md)
+- Reviewing a PR, and where suggested improvements go: [docs/REVIEWS.md](docs/REVIEWS.md)
