@@ -17,6 +17,9 @@
   lean as the summary: enough to review the change, nothing that restates the diff.
 - A branch under review tracks `main`: rebase it when `main` moves, before asking for another
   look.
+- Check the authors before pushing: `git log --format='%an <%ae>' origin/main..HEAD`. The CLA
+  check reads the author, so a throwaway identity such as `git -c user.name=x` on a scratch
+  commit fails it once the commit is cherry-picked into a PR.
 - Small PRs may be grouped into one larger PR when keeping them apart means resolving a
   non-obvious conflict whenever one merges before the other, for example two fixes in the same
   resolver loop. Each fix stays its own test commit and fix commit, so the group can still be

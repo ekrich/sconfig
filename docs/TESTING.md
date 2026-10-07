@@ -17,6 +17,10 @@ The commands are in [AGENTS.md](../AGENTS.md#commands).
 - sbt 2 keeps a server running between commands, and `++` sticks to it: after
   `sbt -batch ++2.12.21 ...`, every later command still runs on 2.12. Start each command with
   the version you mean, such as `++2.13.18;`.
+- Scala 2.12 translates unicode escapes before parsing, comments included: a comment with
+  backslash-u followed by anything but four hex digits fails there with `error in unicode
+  escape` while 2.13 and 3 accept it. Write "backslash-u" in words, and compile the tests on 2.12
+  before every push, shared sources included.
 - Compare MiMa findings with `main` using the same Scala version and baseline artifacts.
   Compare the individual problem signatures, not just the count: one new break can replace
   one existing finding without changing the total.
@@ -41,6 +45,13 @@ instead of adding a new one:
 - `ConcatenationTest`, `ConfigDocumentFactorySharedTest`, `ConfParserTest`: as named
 
 Fixture and resource files end with a single trailing newline.
+
+A test for a stack, nesting or size limit does not depend on a deadline or on a count tuned on
+one machine. A cold JVM and one warmed up by the full suite overflow at different depths (a
+256 KiB stack: about 70 `+=` lines cold, over 1000 warm), and resolving `+=` lines is quadratic,
+so 2000 lines timed out on CI runners. Request the minimum stack
+(`new Thread(null, runnable, name, 64 * 1024L)`; the JVM raises it to its minimum), measure the
+threshold cold and warm on a few JDKs, and use several times that.
 
 For rendering tests, assert the expected string with `checkEqualsAndStable` from
 `RenderingTestSuite`. A test that only checks that the output parses lets through a regression

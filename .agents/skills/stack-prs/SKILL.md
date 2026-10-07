@@ -28,7 +28,9 @@ Independent PRs stay independent. Stack only when separating them costs non-obvi
    every head, then compare the top of the stack against the stack without the top PR on random
    inputs and one wide input for time.
 4. Every PR targets the default branch, so its diff shows the lower PRs until they merge. Say so.
-5. Push with `--force-with-lease=<branch>:<old sha>` only for branches you just restacked. Use the
+5. Check `git log --format='%an <%ae>'` over the stack first: a scratch commit with a throwaway
+   identity fails the CLA check once it is cherry-picked.
+6. Push with `--force-with-lease=<branch>:<old sha>` only for branches you just restacked. Use the
    `gh auth git-credential` helper if plain `git push` has no credentials.
 
 ## Make it visible
