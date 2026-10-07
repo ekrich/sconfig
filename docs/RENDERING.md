@@ -10,4 +10,11 @@ Rendering never resolves, so `${...}` stays verbatim; unresolved output is not n
 JSON even with `setJson(true)`. Hiding environment values intentionally replaces their contents.
 `ConfigFormatOptions` and `setSimplifyNestedObjects` exist only in sconfig.
 
+## Decisions
+
+- One space after `:`, spaces on either side of `=`, matching the output of Java properties.
+  These are deliberate; do not "fix" them or add an option to change them.
+- `render` was designed for debugging and made round-trip-safe here; a new rendering feature
+  needs a demonstrated real-world use case and an example future users can copy.
+
 <kbd>[<- Back to README](../README.md)</kbd>
