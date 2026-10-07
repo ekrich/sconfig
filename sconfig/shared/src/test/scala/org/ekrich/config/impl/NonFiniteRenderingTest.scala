@@ -18,6 +18,10 @@ class NonFiniteRenderingTest {
   private val json = ConfigRenderOptions.concise
   private val hocon = ConfigRenderOptions.concise.setJson(false)
 
+  // The cases here are not from lightbend/config: they pin that non-finite
+  // doubles render as quoted strings (ConfigDouble), which upstream still
+  // renders bare. Revisit and drop them when upstream adds equivalent
+  // coverage.
   @Test def nonFiniteDoublesRenderAsQuotedStrings(): Unit = {
     assertEquals(
       """{"a":"Infinity"}""",
