@@ -80,8 +80,10 @@ names. So a port also keeps:
 The original's tests are a floor, not a ceiling. Add tests for cases it did not foresee, for
 regressions around the code the port touches, and for differences between platforms. They go in
 their own commit after the ported tests, still before the implementation, and the PR lists them
-apart from the original's. If one still fails after the port, it has found a bug the original
-shares: note it and fix it in a separate PR rather than committing it ignored.
+apart from the original's. Each beyond-upstream test carries a one-line comment saying it is not
+from lightbend/config, what it pins and where the fix is, so it can be revisited and removed
+once upstream adds the coverage. If one still fails after the port, it has found a bug the
+original shares: note it and fix it in a separate PR rather than committing it ignored.
 
 ## Java to Scala
 

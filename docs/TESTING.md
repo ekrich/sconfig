@@ -42,6 +42,8 @@ instead of adding a new one:
 
 For rendering tests, assert the expected string with `checkEqualsAndStable` from
 `RenderingTestSuite`. A test that only checks that the output parses lets through a regression
-that still parses. Tests carry almost no comments.
+that still parses. Tests carry almost no comments, the exception being a test for behaviour
+lightbend/config does not have: it notes that, what it pins and where the fix is, so it can be
+revisited when upstream gains the coverage.
 
 <kbd>[<- Back to README](../README.md)</kbd>
