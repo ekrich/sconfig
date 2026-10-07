@@ -18,6 +18,9 @@ class DeepNestingTest {
     ("k { " * 105) + "flag = true" + (" }" * 105)
   private val deepArrays = "a = " + ("[" * 105) + "1" + ("]" * 105)
 
+  // The cases here are not from lightbend/config: they pin that deep input is
+  // bounded at parse time (ConfigDocumentParser) instead of overflowing the
+  // stack. Revisit and drop them when upstream adds equivalent coverage.
   @Test def nestedObjectsPastTheLimitFailToParse(): Unit = {
     val e = assertThrows(
       classOf[ConfigException.Parse],

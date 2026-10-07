@@ -12,6 +12,9 @@ class DeepResolveTest {
   private def plusEqualsLines(n: Int): String =
     (1 to n).map(i => s"modules += m$i").mkString("\n")
 
+  // The case here is not from lightbend/config: it pins that a resolver stack
+  // overflow surfaces as ConfigException (ResolveContext), which upstream does
+  // not wrap. Revisit and drop it when upstream adds equivalent coverage.
   @Test def manyPlusEqualsLinesFailToResolveWithConfigException(): Unit = {
     val conf = ConfigFactory.parseString(plusEqualsLines(2000))
     val failure = new java.util.concurrent.atomic.AtomicReference[Throwable]()
