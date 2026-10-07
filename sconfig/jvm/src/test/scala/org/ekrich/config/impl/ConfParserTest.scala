@@ -393,9 +393,9 @@ class ConfParserTest extends TestUtils {
     //   end in the middle of triple-quoted string
     lineNumberTest(5, "a : \"\"\"foo\n\n\nbar\n")
 
-    // newlines between a separator and its value are counted too; these
-    // errors come from ConfigParser, which tracks lines separately (the
-    // platform-neutral += case runs in OriginLineNumberSharedTest)
+    // not from lightbend/config: these two pin ConfigParser's own line
+    // counter (advanceLineNumberBeforeValue there), which upstream does not
+    // test; revisit and drop them when upstream adds equivalent coverage
     lineNumberTest(3, "a =\n  1\ninclude url(\"!!!\")")
     lineNumberTest(4, "a =\n\n  1\ninclude url(\"!!!\")")
   }
