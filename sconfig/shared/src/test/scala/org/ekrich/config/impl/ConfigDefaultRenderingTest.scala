@@ -221,6 +221,10 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
   // `+=` wraps its value in a list, and the comment above the field went to
   // the wrapped element as well as to the concatenation, so it printed twice.
+  // The commentOnPlusEquals* cases below are not from lightbend/config: they
+  // pin that a comment above a += field attaches to the field, not also to its
+  // element (ConfigParser). Revisit and drop them when upstream adds the
+  // coverage.
   @Test
   def commentOnPlusEqualsIsRenderedOnce(): Unit = {
     val in = """# two
