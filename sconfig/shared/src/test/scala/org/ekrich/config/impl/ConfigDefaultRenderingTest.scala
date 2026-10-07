@@ -131,6 +131,10 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
   // lightbend/config#800: the nested merge a partial resolve left behind has
   // no spelling in HOCON, so the render could not be read back
+  // The partiallyResolved* cases below are not from lightbend/config: they pin
+  // that a partially resolved value that cannot become an object hides the
+  // merge stack below it (ConfigDelayedMerge.cannotBecomeAnObject). Revisit
+  // and drop them when upstream adds equivalent coverage.
   @Test
   def partiallyResolvedAppendsRenderAsOneList(): Unit = {
     val in = """a = [${s}-1]
