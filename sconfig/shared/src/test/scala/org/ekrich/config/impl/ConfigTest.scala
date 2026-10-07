@@ -578,6 +578,10 @@ class ConfigTest extends TestUtilsShared {
     assertTrue(ep.getMessage.contains("range"))
   }
 
+  // The long-range cases below are not from lightbend/config: they pin that
+  // out-of-range conversions throw instead of clamping and that exact
+  // boundaries survive (ConfigDouble). Revisit and drop them when upstream
+  // adds equivalent coverage.
   @Test
   def longRangeChecks(): Unit = {
     val conf = parseConfig(
