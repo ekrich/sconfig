@@ -29,6 +29,8 @@ MiMa comparison: [docs/TESTING.md](docs/TESTING.md#running-the-build).
 - `main` code avoids the Scala library (collections, `Option`, `Try`): use `ScalaOps`, `null` or,
   in the public API, `java.util.Optional`. Tests may use it freely.
 - Touch only what the change needs.
+- Treat generated code as a draft: demand the bare minimum, then trim it again before it
+  lands.
 
 Which code counts as ported, and the remaining rules: [docs/CODE_STYLE.md](docs/CODE_STYLE.md).
 

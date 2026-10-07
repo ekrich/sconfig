@@ -28,7 +28,14 @@ Everywhere:
   Java overrides and existing public methods; changing it can break Scala source compatibility
   even when MiMa passes. Names say what a value is, in the present tense; never `tmp`.
 - An enum case added in `scala-2/` also goes in `scala-3/`.
+- Avoid extending the public API unless there is no choice; what only internal code needs
+  stays `private`.
+- A `case class` in the public API is a binary-compatibility hazard: adding a field or a
+  default parameter breaks it and costs a deprecation cycle. Model public data holders as a
+  plain class with a companion, the way `ConfigRenderOptions` does.
 - A public API change is checked with MiMa and named in the PR.
+- Build-tooling and lint-setup changes (`scalafmt`/`scalafix` rules) are the maintainer's
+  decisions; keep them out of PRs.
 - Behaviour that diverges from `lightbend/config` is either a bug fix argued from the
   specification or a feature documented in `docs/NEW_FEATURES.md`.
 

@@ -40,6 +40,8 @@ instead of adding a new one:
 - `ConfigSubstitutionSharedTest` and `ConfigSubstitutionTest`: `${...}` resolution
 - `ConcatenationTest`, `ConfigDocumentFactorySharedTest`, `ConfParserTest`: as named
 
+Fixture and resource files end with a single trailing newline.
+
 For rendering tests, assert the expected string with `checkEqualsAndStable` from
 `RenderingTestSuite`. A test that only checks that the output parses lets through a regression
 that still parses. Tests carry almost no comments, the exception being a test for behaviour

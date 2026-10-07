@@ -13,7 +13,10 @@
   first sentences of the summary. Later mentions of upstream items are in backticks so GitHub
   does not add cross-references to the upstream timeline, and a title never mentions lightbend.
 - The full description shows a realistic config and its output before and after the change, taken
-  from running it. When a fix could be read as new behaviour, quote the specification.
+  from running it. When a fix could be read as new behaviour, quote the specification. It stays as
+  lean as the summary: enough to review the change, nothing that restates the diff.
+- A branch under review tracks `main`: rebase it when `main` moves, before asking for another
+  look.
 - Small PRs may be grouped into one larger PR when keeping them apart means resolving a
   non-obvious conflict whenever one merges before the other, for example two fixes in the same
   resolver loop. Each fix stays its own test commit and fix commit, so the group can still be

@@ -48,7 +48,9 @@ names. So a port also keeps:
 
 ## Steps
 
-1. **Check it is not done yet**: #29, the open PRs, and `git log --grep "#N"`.
+1. **Check it is not done yet**: #29, the open PRs, and `git log --grep "#N"`. When #29 runs
+   out, start a numbered continuation issue where it leaves off instead of letting the tracking
+   lapse.
 2. **Find the final form.** Never port a PR from its original diff alone. It may have been
    corrected by a follow-up PR, reverted, partly superseded or changed by later commits;
    lightbend/config#839, for example, was corrected by lightbend/config#846. Port the final
