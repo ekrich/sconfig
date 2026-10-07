@@ -16,7 +16,10 @@ class DeepResolveTest {
   // overflow surfaces as ConfigException (ResolveContext), which upstream does
   // not wrap. Revisit and drop it when upstream adds equivalent coverage.
   @Test def manyPlusEqualsLinesFailToResolveWithConfigException(): Unit = {
-    val conf = ConfigFactory.parseString(plusEqualsLines(2000))
+    // 256 KiB overflows from about 70 lines (measured on JDK 17); 300 keeps a
+    // margin for JVMs with smaller frames. Resolving += lines is quadratic, so
+    // a larger count makes the test as slow as the runner, not as deep.
+    val conf = ConfigFactory.parseString(plusEqualsLines(300))
     val failure = new java.util.concurrent.atomic.AtomicReference[Throwable]()
     val thread = new Thread(
       null,
