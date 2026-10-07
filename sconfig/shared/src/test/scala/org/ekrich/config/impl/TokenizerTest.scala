@@ -323,9 +323,9 @@ class TokenizerTest extends TestUtilsShared {
     }
   }
 
-  // This case is not from lightbend/config: it pins that signs after \u are
-  // rejected (Tokenizer), which upstream still accepts. Revisit and drop it
-  // when upstream adds equivalent coverage.
+  // This case is not from lightbend/config: it pins that signs after a
+  // backslash-u escape are rejected (Tokenizer), which upstream still
+  // accepts. Revisit and drop it when upstream adds equivalent coverage.
   @Test
   def tokenizerSignInUnicodeEscapeIsParseError(): Unit = {
     // Integer.parseInt(digits, 16) accepts a leading sign, but a sign is not
