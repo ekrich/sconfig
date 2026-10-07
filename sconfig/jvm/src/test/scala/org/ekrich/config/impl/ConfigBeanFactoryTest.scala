@@ -96,6 +96,59 @@ class ConfigBeanFactoryTest extends TestUtils {
   }
 
   @Test
+  def testCreateAllowsUnknownConfigKeysByDefault(): Unit = {
+    val beanConfig: StringsConfig = ConfigBeanFactory.create(
+      parseConfig("{abcd=abcd, yes=yes, nope=nope}"),
+      classOf[StringsConfig]
+    )
+    assertNotNull(beanConfig)
+    assertEquals("abcd", beanConfig.getAbcd)
+    assertEquals("yes", beanConfig.getYes)
+  }
+
+  @Test
+  def testCreateFailsOnUnknownConfigKeysWhenNotAllowed(): Unit = {
+    val e = intercept[ConfigException.ValidationFailed] {
+      ConfigBeanFactory.create(
+        parseConfig("{abcd=abcd, yes=yes, nope=nope}"),
+        classOf[StringsConfig],
+        false
+      )
+    }
+    assertTrue(
+      "unknown setting error",
+      e.getMessage.contains("Unknown config setting")
+    )
+    assertTrue("error about the right property", e.getMessage.contains("nope"))
+  }
+
+  @Test
+  def testCreateFailsOnUnknownConfigKeysInNestedBeanWhenNotAllowed(): Unit = {
+    val config = parseConfig("valueObject { mandatoryValue = x, nope = nope }")
+    assertNotNull(ConfigBeanFactory.create(config, classOf[ObjectsConfig]))
+    val e = intercept[ConfigException.ValidationFailed] {
+      ConfigBeanFactory.create(config, classOf[ObjectsConfig], false)
+    }
+    assertTrue("error about the right property", e.getMessage.contains("nope"))
+  }
+
+  @Test
+  def testCreateFailsOnUnknownConfigKeysInListOfBeansWhenNotAllowed(): Unit = {
+    val config = loadConfig()
+      .getConfig("arrays")
+      .withoutPath("ofArray")
+      .withValue(
+        "ofStringBean",
+        parseConfig("v = [ { abcd = a, yes = y, nope = nope } ]").getValue("v")
+      )
+    assertNotNull(ConfigBeanFactory.create(config, classOf[ArraysConfig]))
+    val e = intercept[ConfigException.ValidationFailed] {
+      ConfigBeanFactory.create(config, classOf[ArraysConfig], false)
+    }
+    assertTrue("error about the right property", e.getMessage.contains("nope"))
+  }
+
+  @Test
   def testCreateEnum(): Unit = {
     val beanConfig: EnumsConfig = ConfigBeanFactory.create(
       loadConfig().getConfig("enums"),
