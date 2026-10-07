@@ -284,6 +284,10 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
     checkEqualsAndStable(expected, result)
   }
 
+  // The mergeStack* cases below are not from lightbend/config: they pin that
+  // merge stack entries are written with the render options' key and
+  // separator (ConfigDelayedMerge.render). Revisit and drop them when upstream
+  // adds equivalent coverage.
   @Test
   def mergeStackHonoursColonAssign(): Unit = {
     implicit val configFormatOptions =

@@ -222,6 +222,10 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
   // A merge stack is written as repeated fields, so its keys and separators
   // come from the render options like those of any other field.
+  // The mergeStack* cases below are not from lightbend/config: they pin that
+  // merge stack entries are written with the render options' key and
+  // separator (ConfigDelayedMerge.render). Revisit and drop them when upstream
+  // adds equivalent coverage.
   @Test
   def mergeStackUsesTheDefaultSeparator(): Unit = {
     val in = """a : 1
