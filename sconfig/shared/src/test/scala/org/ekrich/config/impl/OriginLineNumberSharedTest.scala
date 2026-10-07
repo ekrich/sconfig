@@ -64,6 +64,9 @@ class OriginLineNumberSharedTest extends TestUtilsShared {
     )
   }
 
+  // not from lightbend/config: pins the tokenize-time origins that list
+  // elements carry (recorded by ConfigNodeArray and its node subclasses);
+  // revisit and drop it when upstream adds equivalent coverage
   @Test
   def elementsAfterMultilineStringInArrayHaveCorrectOriginLine(): Unit = {
     val tripleQuote = "\"\"\""
