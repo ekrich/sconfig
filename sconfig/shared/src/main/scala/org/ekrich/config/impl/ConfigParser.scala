@@ -75,6 +75,9 @@ object ConfigParser {
       val includeContext: ConfigIncludeContext
   ) {
     private var lineNumber = 1
+    // source order of the values this context creates, for renders that
+    // keep origin order; only compared for fields sharing a line
+    private var sourceSequence = 0
     final private var pathStack = new ju.LinkedList[Path]
     // the number of lists we are inside; this is used to detect the "cannot
     // generate a reference to a list element" problem, and once we fix that
@@ -105,6 +108,10 @@ object ConfigParser {
       baseOrigin
         .asInstanceOf[SimpleConfigOrigin]
         .withLineNumber(lineNumber)
+    private def nextSourceSequence: Int = {
+      sourceSequence += 1
+      sourceSequence
+    }
     private def parseError(message: String): ConfigException.Parse =
       parseError(message, null)
     private def parseError(
@@ -139,6 +146,7 @@ object ConfigParser {
         throw parseError(
           "Expecting a value but got wrong node type: " + n.getClass
         )
+      v = v.withOrigin(v.origin.withSourceSequence(nextSourceSequence))
       if (comments != null && !comments.isEmpty) {
         v = v.withOrigin(
           v.origin.prependComments(new ju.ArrayList[String](comments))

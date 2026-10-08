@@ -24,7 +24,8 @@ object SimpleConfigOrigin {
       OriginType.GENERIC,
       null,
       null,
-      null
+      null,
+      -1
     )
   private[impl] def newFile(filename: String): SimpleConfigOrigin = {
     var url: String = null
@@ -38,11 +39,20 @@ object SimpleConfigOrigin {
       case e: MalformedURLException =>
         url = null
     }
-    new SimpleConfigOrigin(filename, -1, -1, OriginType.FILE, url, null, null)
+    new SimpleConfigOrigin(
+      filename,
+      -1,
+      -1,
+      OriginType.FILE,
+      url,
+      null,
+      null,
+      -1
+    )
   }
   private[impl] def newURL(url: URL): SimpleConfigOrigin = {
     val u = url.toExternalForm()
-    new SimpleConfigOrigin(u, -1, -1, OriginType.URL, u, null, null)
+    new SimpleConfigOrigin(u, -1, -1, OriginType.URL, u, null, null, -1)
   }
   private[impl] def newResource(
       resource: String,
@@ -57,7 +67,8 @@ object SimpleConfigOrigin {
       OriginType.RESOURCE,
       if (url != null) url.toExternalForm() else null,
       resource,
-      null
+      null,
+      -1
     )
   }
   private[impl] def newResource(resource: String): SimpleConfigOrigin =
@@ -71,7 +82,8 @@ object SimpleConfigOrigin {
       OriginType.ENV_VARIABLE,
       null,
       null,
-      null
+      null,
+      -1
     )
 
   private[impl] val MERGE_OF_PREFIX = "merge of "
@@ -136,6 +148,11 @@ object SimpleConfigOrigin {
       if (b.commentsOrNull != null) mergedComments.addAll(b.commentsOrNull)
     }
 
+    val mergedSourceSequence =
+      if (a.sourceSequence < 0) b.sourceSequence
+      else if (b.sourceSequence < 0) a.sourceSequence
+      else Math.min(a.sourceSequence, b.sourceSequence)
+
     new SimpleConfigOrigin(
       mergedDesc,
       mergedStartLine,
@@ -143,7 +160,8 @@ object SimpleConfigOrigin {
       mergedType,
       mergedURL,
       mergedResource,
-      mergedComments
+      mergedComments,
+      mergedSourceSequence
     )
   }
   private def similarity(a: SimpleConfigOrigin, b: SimpleConfigOrigin): Int = {
@@ -321,7 +339,8 @@ object SimpleConfigOrigin {
       originType,
       urlOrNull,
       resourceOrNull,
-      commentsOrNull
+      commentsOrNull,
+      -1
     )
   }
   @throws[IOException]
@@ -395,7 +414,12 @@ final class SimpleConfigOrigin protected (
     val originType: OriginType,
     val urlOrNull: String,
     val resourceOrNull: String,
-    val commentsOrNull: ju.List[String]
+    val commentsOrNull: ju.List[String],
+    // counts values in the order the parser created them, so a render can
+    // keep source order for fields that share a line; -1 when unknown.
+    // Not part of equals/hashCode and not serialized: it only breaks
+    // render-order ties.
+    val sourceSequence: Int
 ) extends ConfigOrigin {
   if (_description == null)
     throw new ConfigException.BugOrBroken("description may not be null")
@@ -410,7 +434,21 @@ final class SimpleConfigOrigin protected (
         this.originType,
         this.urlOrNull,
         this.resourceOrNull,
-        this.commentsOrNull
+        this.commentsOrNull,
+        this.sourceSequence
+      )
+  private[impl] def withSourceSequence(sequence: Int): SimpleConfigOrigin =
+    if (sequence == this.sourceSequence) this
+    else
+      new SimpleConfigOrigin(
+        this._description,
+        this._lineNumber,
+        this.endLineNumber,
+        this.originType,
+        this.urlOrNull,
+        this.resourceOrNull,
+        this.commentsOrNull,
+        sequence
       )
   private[impl] def addURL(url: URL) =
     new SimpleConfigOrigin(
@@ -420,7 +458,8 @@ final class SimpleConfigOrigin protected (
       this.originType,
       if (url != null) url.toExternalForm() else null,
       this.resourceOrNull,
-      this.commentsOrNull
+      this.commentsOrNull,
+      this.sourceSequence
     )
   override def withComments(comments: ju.List[String]): SimpleConfigOrigin =
     if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull)) this
@@ -432,7 +471,8 @@ final class SimpleConfigOrigin protected (
         this.originType,
         this.urlOrNull,
         this.resourceOrNull,
-        comments
+        comments,
+        this.sourceSequence
       )
   private[impl] def prependComments(
       comments: ju.List[String]

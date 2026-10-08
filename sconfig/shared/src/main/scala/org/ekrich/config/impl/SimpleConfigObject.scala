@@ -120,8 +120,12 @@ object SimpleConfigObject {
       val compareFiles = aFilename.compareTo(bFilename)
 
       if (compareFiles != 0) compareFiles
-      else
-        aOrigin.lineNumber.compareTo(bOrigin.lineNumber)
+      else {
+        val compareLines = aOrigin.lineNumber.compareTo(bOrigin.lineNumber)
+        if (compareLines != 0) compareLines
+        // fields from the same line keep the order the parser saw them in
+        else aOrigin.sourceSequence.compareTo(bOrigin.sourceSequence)
+      }
     }
   }
 
