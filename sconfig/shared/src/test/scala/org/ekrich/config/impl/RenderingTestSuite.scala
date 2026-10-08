@@ -18,6 +18,12 @@ trait RenderingTestSuite extends TestUtilsShared {
   def formatHocon(
       str: String
   )(implicit configFormatOptions: ConfigFormatOptions): String =
+    formatHoconWith(str, parseOptions)
+
+  def formatHoconWith(
+      str: String,
+      parseOptions: ConfigParseOptions
+  )(implicit configFormatOptions: ConfigFormatOptions): String =
     ConfigFactory
       .parseString(str, parseOptions)
       .root
