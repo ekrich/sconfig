@@ -24,7 +24,8 @@ object SimpleConfigOrigin {
       OriginType.GENERIC,
       null,
       null,
-      null
+      null,
+      -1
     )
   private[impl] def newFile(filename: String): SimpleConfigOrigin = {
     var url: String = null
@@ -38,11 +39,20 @@ object SimpleConfigOrigin {
       case e: MalformedURLException =>
         url = null
     }
-    new SimpleConfigOrigin(filename, -1, -1, OriginType.FILE, url, null, null)
+    new SimpleConfigOrigin(
+      filename,
+      -1,
+      -1,
+      OriginType.FILE,
+      url,
+      null,
+      null,
+      -1
+    )
   }
   private[impl] def newURL(url: URL): SimpleConfigOrigin = {
     val u = url.toExternalForm()
-    new SimpleConfigOrigin(u, -1, -1, OriginType.URL, u, null, null)
+    new SimpleConfigOrigin(u, -1, -1, OriginType.URL, u, null, null, -1)
   }
   private[impl] def newResource(
       resource: String,
@@ -57,7 +67,8 @@ object SimpleConfigOrigin {
       OriginType.RESOURCE,
       if (url != null) url.toExternalForm() else null,
       resource,
-      null
+      null,
+      -1
     )
   }
   private[impl] def newResource(resource: String): SimpleConfigOrigin =
@@ -71,7 +82,8 @@ object SimpleConfigOrigin {
       OriginType.ENV_VARIABLE,
       null,
       null,
-      null
+      null,
+      -1
     )
 
   private[impl] val MERGE_OF_PREFIX = "merge of "
@@ -82,6 +94,7 @@ object SimpleConfigOrigin {
     var mergedDesc: String = null
     var mergedStartLine = 0
     var mergedEndLine = 0
+    var mergedSourceOrder = 0
     var mergedComments: ju.List[String] = null
     val mergedType =
       if (a.originType eq b.originType) a.originType else OriginType.GENERIC
@@ -103,6 +116,13 @@ object SimpleConfigOrigin {
         mergedStartLine = Math.min(a.lineNumber, b.lineNumber)
 
       mergedEndLine = Math.max(a.endLineNumber, b.endLineNumber)
+
+      if (a.sourceOrder < 0)
+        mergedSourceOrder = b.sourceOrder
+      else if (b.sourceOrder < 0)
+        mergedSourceOrder = a.sourceOrder
+      else
+        mergedSourceOrder = Math.min(a.sourceOrder, b.sourceOrder)
     } else {
       // this whole merge song-and-dance was intended to avoid this case
       // whenever possible, but we've lost. Now we have to lose some
@@ -143,7 +163,8 @@ object SimpleConfigOrigin {
       mergedType,
       mergedURL,
       mergedResource,
-      mergedComments
+      mergedComments,
+      mergedSourceOrder
     )
   }
   private def similarity(a: SimpleConfigOrigin, b: SimpleConfigOrigin): Int = {
@@ -321,7 +342,8 @@ object SimpleConfigOrigin {
       originType,
       urlOrNull,
       resourceOrNull,
-      commentsOrNull
+      commentsOrNull,
+      -1 /* not serialized; keepOriginOrder ties fall back to map order */
     )
   }
   @throws[IOException]
@@ -395,7 +417,10 @@ final class SimpleConfigOrigin protected (
     val originType: OriginType,
     val urlOrNull: String,
     val resourceOrNull: String,
-    val commentsOrNull: ju.List[String]
+    val commentsOrNull: ju.List[String],
+    // position of the value among the ones parsed from its file; -1 when
+    // unknown. keepOriginOrder rendering breaks same-line ties on it.
+    private[impl] val sourceOrder: Int
 ) extends ConfigOrigin {
   if (_description == null)
     throw new ConfigException.BugOrBroken("description may not be null")
@@ -410,7 +435,8 @@ final class SimpleConfigOrigin protected (
         this.originType,
         this.urlOrNull,
         this.resourceOrNull,
-        this.commentsOrNull
+        this.commentsOrNull,
+        this.sourceOrder
       )
   private[impl] def addURL(url: URL) =
     new SimpleConfigOrigin(
@@ -420,7 +446,8 @@ final class SimpleConfigOrigin protected (
       this.originType,
       if (url != null) url.toExternalForm() else null,
       this.resourceOrNull,
-      this.commentsOrNull
+      this.commentsOrNull,
+      this.sourceOrder
     )
   override def withComments(comments: ju.List[String]): SimpleConfigOrigin =
     if (ConfigImplUtil.equalsHandlingNull(comments, this.commentsOrNull)) this
@@ -432,7 +459,21 @@ final class SimpleConfigOrigin protected (
         this.originType,
         this.urlOrNull,
         this.resourceOrNull,
-        comments
+        comments,
+        this.sourceOrder
+      )
+  private[impl] def withSourceOrder(sourceOrder: Int): SimpleConfigOrigin =
+    if (sourceOrder == this.sourceOrder) this
+    else
+      new SimpleConfigOrigin(
+        this._description,
+        this.lineNumber,
+        this.endLineNumber,
+        this.originType,
+        this.urlOrNull,
+        this.resourceOrNull,
+        this.commentsOrNull,
+        sourceOrder
       )
   private[impl] def prependComments(
       comments: ju.List[String]
