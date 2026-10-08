@@ -178,6 +178,51 @@ class Json4sTest extends TestUtilsJson4s {
     assertTrue(tested > 100) // just verify we ran a lot of tests
   }
 
+  // Beyond lightbend/config: ConfigDouble quotes non-finite values. Revisit
+  // these cases when upstream adds equivalent JSON parser coverage.
+  @Test
+  def nonFiniteRenderedValuesParseAsJsonStrings(): Unit = {
+    for ((number, text) <- Seq(
+          (Double.PositiveInfinity, "Infinity"),
+          (Double.NegativeInfinity, "-Infinity"),
+          (Double.NaN, "NaN")
+        )) {
+      val value =
+        ConfigValueFactory.fromAnyRef(java.lang.Double.valueOf(number))
+      val list = ConfigValueFactory.fromIterable(
+        ju.Arrays.asList(java.lang.Double.valueOf(number))
+      )
+      for (options <- Seq(
+            ConfigRenderOptions.concise,
+            ConfigRenderOptions.defaults
+              .setComments(false)
+              .setOriginComments(false)
+          )) {
+        val objectJson = value.atKey("a").root.render(options)
+        val listJson = list.atKey("a").root.render(options)
+        assertEquals(
+          JObject(List("a" -> JString(text))),
+          JsonParser.parse(objectJson)
+        )
+        assertEquals(
+          JObject(List("a" -> JArray(List(JString(text))))),
+          JsonParser.parse(listJson)
+        )
+        assertEquals(fromJsonWithJsonParser(objectJson), parse(objectJson))
+        assertEquals(fromJsonWithJsonParser(listJson), parse(listJson))
+      }
+    }
+  }
+
+  @Test
+  def bareNonFiniteValuesAreRejectedInJson(): Unit = {
+    for (text <- Seq("Infinity", "-Infinity", "NaN")) {
+      for (input <- Seq("{\"a\":" + text + "}", "{\"a\":[" + text + "]}")) {
+        assertThrows(classOf[ConfigException.Parse], () => parse(input))
+      }
+    }
+  }
+
   @Test
   def renderingJsonStrings(): Unit = {
     def r(s: String) = ConfigImplUtil.renderJsonString(s)
