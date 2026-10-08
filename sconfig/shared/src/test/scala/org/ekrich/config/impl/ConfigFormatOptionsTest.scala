@@ -321,4 +321,105 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
+
+  // Fields defined on one line all have origins with that line number, so
+  // with keepOriginOrder they must fall back to their source order.
+
+  @Test
+  def sameLineFieldsKeepSourceOrder(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setKeepOriginOrder(true)
+
+    val in = """r {
+               |    z = 1, y = 2, x = 3
+               |}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """r {
+                     |    z = 1
+                     |    y = 2
+                     |    x = 3
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def sameLineFieldsInNestedObjectKeepSourceOrder(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setKeepOriginOrder(true)
+
+    val in = """r {
+               |    app { name = svc, port = 8080 }
+               |}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """r {
+                     |    app {
+                     |        name = svc
+                     |        port = 8080
+                     |    }
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def fieldAfterObjectOnSameLineKeepsSourceOrder(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setKeepOriginOrder(true)
+
+    val in = """r {
+               |    q { a = 1 }, p = 2
+               |}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """r {
+                     |    q {
+                     |        a = 1
+                     |    }
+                     |    p = 2
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // A multiline string's origin carries the line where it closes, so the
+  // field written after it on that line ties with it on line number.
+  @Test
+  def fieldAfterMultilineStringOnSameLineKeepsSourceOrder(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setKeepOriginOrder(true)
+
+    // built by hand to keep the `"""` out of a triple-quoted Scala literal
+    val in = "r {\n    s = \"\"\"\ntext\n\"\"\", a = 2\n}"
+    val result = formatHocon(in)
+
+    val expected = """r {
+                     |    s = "\ntext\n"
+                     |    a = 2
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def duplicateKeySameLineFieldsKeepSourceOrder(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setKeepOriginOrder(true)
+
+    val in = """r {
+               |    q { y = 1 }, q { b = 2 }
+               |}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """r {
+                     |    q {
+                     |        y = 1
+                     |        b = 2
+                     |    }
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
 }
