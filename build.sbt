@@ -175,6 +175,18 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
         "SECRET_A" -> "A", // ConfigTest.renderShowEnvVariableValues
         "SECRET_B" -> "B", // ConfigTest.renderShowEnvVariableValues
         "SECRET_C" -> "C", // ConfigTest.renderShowEnvVariableValues
+        "CONFIG_FORCE_testForceOverride_a" -> "1", // PublicApiTest.systemEnvironmentOverridesMangleNames
+        "CONFIG_FORCE_testForceOverride_b__c" -> "2", // PublicApiTest.systemEnvironmentOverridesMangleNames
+        "CONFIG_FORCE_testForceOverride_d___e" -> "3", // PublicApiTest.systemEnvironmentOverridesMangleNames
+        "MY_LIST_0" -> "a", // ConfigFactoryJvmTest.envVariableListExpansion*
+        "MY_LIST_1" -> "b", // ConfigFactoryJvmTest.envVariableListExpansion*
+        "MY_LIST_2" -> "c", // ConfigFactoryJvmTest.envVariableListExpansion*
+        "NUM_LIST_0" -> "1", // ConfigFactoryJvmTest.envVariableListExpansion
+        "NUM_LIST_1" -> "2", // ConfigFactoryJvmTest.envVariableListExpansion
+        "NUM_LIST_2" -> "3", // ConfigFactoryJvmTest.envVariableListExpansion
+        "GAPPED_LIST_0" -> "first", // ConfigFactoryJvmTest.envVariableListExpansionStopsAtFirstGap
+        "GAPPED_LIST_2" -> "third", // ConfigFactoryJvmTest.envVariableListExpansionStopsAtFirstGap
+        "NO_ZERO_LIST_1" -> "second", // ConfigFactoryJvmTest.envVariableListExpansionRequiresIndexZero
         "testClassesPath" -> {
           val isJSOrNative = crossProjectPlatform.value.identifier != "jvm"
           if (isJSOrNative) {

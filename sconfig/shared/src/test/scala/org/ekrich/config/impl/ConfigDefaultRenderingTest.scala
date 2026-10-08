@@ -369,4 +369,17 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
+
+  // the [] list-expansion suffix (lightbend/config#833) is part of the
+  // substitution syntax, not resolved by rendering, so it stays verbatim
+  @Test
+  def envVarListExpansionSubstitutionRendersVerbatim(): Unit = {
+    val in = """a = ${FOO[]}
+               |b = ${?FOO[]}""".stripMargin
+    val result = formatHocon(in)
+    val expected = """a = ${FOO[]}
+                     |b = ${?FOO[]}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
 }

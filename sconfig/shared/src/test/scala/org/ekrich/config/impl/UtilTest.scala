@@ -3,6 +3,7 @@
  */
 package org.ekrich.config.impl
 
+import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigSyntax
 import org.junit.Assert._
 import org.junit._
@@ -130,5 +131,45 @@ class UtilTest extends TestUtilsShared {
   @Test
   def syntaxFromExtensionNull(): Unit = {
     assertNull(ConfigImplUtil.syntaxFromExtension(null))
+  }
+
+  @Test
+  def envVariableNameMangling(): Unit = {
+    assertEquals(
+      "a",
+      ConfigImplUtil.envVariableAsProperty("prefix_a", "prefix_")
+    )
+    assertEquals(
+      "a.b",
+      ConfigImplUtil.envVariableAsProperty("prefix_a_b", "prefix_")
+    )
+    assertEquals(
+      "a.b-c-d",
+      ConfigImplUtil.envVariableAsProperty("prefix_a_b__c__d", "prefix_")
+    )
+    assertEquals(
+      "a.b_c_d",
+      ConfigImplUtil.envVariableAsProperty("prefix_a_b___c___d", "prefix_")
+    )
+
+    intercept[ConfigException.BadPath] {
+      ConfigImplUtil.envVariableAsProperty("prefix_____", "prefix_")
+    }
+    intercept[ConfigException.BadPath] {
+      ConfigImplUtil.envVariableAsProperty("prefix_a_b___c____d", "prefix_")
+    }
+  }
+
+  @Test
+  def envVariablesAsPropertiesKeepsOnlyPrefixed(): Unit = {
+    val env = new java.util.HashMap[String, String]
+    env.put("prefix_a_b", "1")
+    env.put("prefix_c__d", "2")
+    env.put("HOME", "/home/x")
+    env.put("a_prefix_e", "3")
+    val props = ConfigImplUtil.envVariablesAsProperties(env, "prefix_")
+    assertEquals(2, props.size)
+    assertEquals("1", props.get("a.b"))
+    assertEquals("2", props.get("c-d"))
   }
 }
