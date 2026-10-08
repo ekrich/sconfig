@@ -34,7 +34,7 @@ class HoconPropertyTest extends TestUtilsShared {
       try ConfigFactory.parseString(input)
       catch {
         case _: ConfigException => ()
-        case t: Throwable =>
+        case t: Throwable       =>
           fail(
             "parse escaped with " + t.getClass.getName + ": " + t.getMessage +
               "\ninput: " + show(input)
@@ -68,7 +68,9 @@ class HoconPropertyTest extends TestUtilsShared {
         }
         val r2 = reparsed.root.render(renderOptions)
         assertEquals(
-          "render is not a fixed point\ninput: " + show(input) + "\nr1: " + show(r1) +
+          "render is not a fixed point\ninput: " + show(
+            input
+          ) + "\nr1: " + show(r1) +
             "\nr2: " + show(r2),
           r1,
           r2
@@ -117,13 +119,9 @@ class HoconPropertyTest extends TestUtilsShared {
     )
     value match {
       case o: ConfigDelayedMergeObject =>
-        o.unmergedValues.asScala.foreach(v =>
-          checkOriginLines(v, max, input)
-        )
+        o.unmergedValues.asScala.foreach(v => checkOriginLines(v, max, input))
       case m: ConfigDelayedMerge =>
-        m.unmergedValues.asScala.foreach(v =>
-          checkOriginLines(v, max, input)
-        )
+        m.unmergedValues.asScala.foreach(v => checkOriginLines(v, max, input))
       case o: ConfigObject =>
         o.entrySet.asScala.foreach(e =>
           checkOriginLines(e.getValue, max, input)
@@ -212,14 +210,18 @@ class HoconPropertyTest extends TestUtilsShared {
     private def array(d: Int, chaos: Boolean): String = {
       val n = between(1, 4)
       val items =
-        (1 to n).map(_ => value(d, chaos)).mkString(oneOf(Vector(", ", ",", ",\n")))
+        (1 to n)
+          .map(_ => value(d, chaos))
+          .mkString(oneOf(Vector(", ", ",", ",\n")))
       "[" + items + (if (int(10) == 0) "," else "") + "]"
     }
 
     private def obj(d: Int, chaos: Boolean): String = {
       val n = between(1, 4)
       val entries =
-        (1 to n).map(_ => entry(d, chaos)).mkString(oneOf(Vector("\n", ", ", " ")))
+        (1 to n)
+          .map(_ => entry(d, chaos))
+          .mkString(oneOf(Vector("\n", ", ", " ")))
       "{ " + entries + " }"
     }
 
@@ -276,7 +278,9 @@ class HoconPropertyTest extends TestUtilsShared {
     }
 
     private def multilineString(chaos: Boolean): String =
-      "\"\"\"" + oneOf(if (chaos) multilineChaos else multilineStrict) + "\"\"\""
+      "\"\"\"" + oneOf(
+        if (chaos) multilineChaos else multilineStrict
+      ) + "\"\"\""
 
     private def unquoted(chaos: Boolean): String =
       pick(
@@ -509,7 +513,8 @@ class HoconPropertyTest extends TestUtilsShared {
       "1_000"
     )
 
-    private val numbersSafe = numbers.filterNot(t => t == "1e1000" || t == "-1e1000")
+    private val numbersSafe =
+      numbers.filterNot(t => t == "1e1000" || t == "-1e1000")
 
     private val durationNumbers = Vector(
       "0",
