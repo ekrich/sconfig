@@ -47,6 +47,74 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
   }
 
   @Test
+  def keepOriginOrderSameLineFields(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setKeepOriginOrder(true)
+
+    val in = """z = 1, y = 2, x = 3""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """z = 1
+                     |y = 2
+                     |x = 3
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def keepOriginOrderSameLineFieldsInObject(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setKeepOriginOrder(true)
+
+    val in = """app { name = svc, port = 8080 }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """app {
+                     |    name = svc
+                     |    port = 8080
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def keepOriginOrderSameLineFieldsInNestedObject(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setKeepOriginOrder(true)
+
+    val in = """out { m = 1, mid { x = 1, y = 2 }, n = 3 }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """out {
+                     |    m = 1
+                     |    mid {
+                     |        x = 1
+                     |        y = 2
+                     |    }
+                     |    n = 3
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def keepOriginOrderSameLineAsMultilineString(): Unit = {
+    implicit val configFormatOptions =
+      initialFormatOptions.setKeepOriginOrder(true)
+
+    // the multiline string's origin line is the line it closes on,
+    // so z, y and x all sit on line 3 and have to keep their source order
+    val in = "z = \"\"\"\nfoo\n\"\"\", y = 2, x = 3"
+    val result = formatHocon(in)
+
+    val expected = """z = "\nfoo\n"
+                     |y = 2
+                     |x = 3
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
   def useTwoSpacesIndentation(): Unit = {
     implicit val configFormatOptions =
       initialFormatOptions.setDoubleIndent(false)
