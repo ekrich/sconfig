@@ -275,6 +275,10 @@ object ConfigDelayedMerge {
     val reversed = new ju.ArrayList[AbstractConfigValue]
     reversed.addAll(stack)
     ju.Collections.reverse(reversed)
+    // Repeated fields use the same separators as their containing object.
+    // A keyless merge keeps its diagnostic spelling instead.
+    val commaSeparated =
+      atKey == null || options.getJson || !options.getFormatted
     var i = 0
     reversed.forEach { v =>
       if (banner) {
@@ -293,15 +297,13 @@ object ConfigDelayedMerge {
       indentLine()
       if (renderedKey != null) v.renderWithRenderedKey(sb, renderedKey, options)
       v.renderValue(sb, indentVal, atRoot, options)
-      sb.append(",")
+      if (commaSeparated) sb.append(',')
       if (options.getFormatted) sb.append('\n')
     }
-    // chop comma or newline
-    sb.setLength(sb.length - 1)
-    if (options.getFormatted) {
-      sb.setLength(sb.length - 1) // also chop comma
-      sb.append("\n") // put a newline back
-    }
+    // The container supplies the separator after the final repeated field.
+    if (options.getFormatted) sb.setLength(sb.length - 1)
+    if (commaSeparated) sb.setLength(sb.length - 1)
+    if (atKey == null && options.getFormatted) sb.append('\n')
     if (banner) {
       indentLine()
       sb.append("# ) end of unresolved merge\n")
