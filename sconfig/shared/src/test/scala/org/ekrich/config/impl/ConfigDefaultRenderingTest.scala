@@ -171,10 +171,9 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val result = formatHocon(in)
 
     val expected = """# one
-                     |a = 1,
+                     |a = 1
                      |# two
                      |a = ${a}
-                     |
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
@@ -189,9 +188,8 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val result = formatHocon(in)
 
     val expected = """outer {
-                     |    a = 1,
+                     |    a = 1
                      |    a = ${outer.a}
-                     |
                      |    sib = 0
                      |}
                      |""".stripMargin
@@ -213,9 +211,8 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
       )
 
     val expected = """# kept
-                     |a = 1,
+                     |a = 1
                      |a = ${a}
-                     |
                      |""".stripMargin
     checkEqualObjects(expected, result)
   }
@@ -233,9 +230,8 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |sib : 0""".stripMargin
     val result = formatHocon(in)
 
-    val expected = """a = 1,
+    val expected = """a = 1
                      |a = ${a}
-                     |
                      |sib = 0
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
@@ -260,9 +256,8 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |"a b" : ${x}""".stripMargin
     val result = formatHocon(in)
 
-    val expected = """"a b" = 1,
+    val expected = """"a b" = 1
                      |"a b" = ${x}
-                     |
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
@@ -311,9 +306,8 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
     val expected = """l = [
                      |    {
-                     |        a = 1,
+                     |        a = 1
                      |        a = ${x}
-                     |
                      |    }
                      |]
                      |""".stripMargin
@@ -333,11 +327,44 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
     val expected = """outer {
                      |    # c1
-                     |    a = 1,
+                     |    a = 1
                      |    # c2
                      |    a = ${outer.a}
-                     |
                      |    sib = 0
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def repeatedMergeEntriesUseFieldSpacingForAppendedList(): Unit = {
+    val in = """a : [1]
+               |a += 2""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """a = [
+                     |    1
+                     |]
+                     |a = ${?a}[
+                     |    2
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def repeatedMergeEntriesUseFieldSpacingForNestedAppendedList(): Unit = {
+    val in = """o { a : [1]
+               |a += 2 }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """o {
+                     |    a = [
+                     |        1
+                     |    ]
+                     |    a = ${?o.a}[
+                     |        2
+                     |    ]
                      |}
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
