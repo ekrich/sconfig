@@ -38,7 +38,7 @@ final class ConfigParseOptions private (
     private val _allowMissing: Boolean,
     private val _includer: ConfigIncluder,
     private val _classLoader: ClassLoader,
-    private val _keepCommentsAcrossBlankLines: Boolean
+    private val _keepDetachedComments: Boolean
 ) {
 
   @deprecated(
@@ -89,7 +89,7 @@ final class ConfigParseOptions private (
         _allowMissing,
         _includer,
         _classLoader,
-        _keepCommentsAcrossBlankLines
+        _keepDetachedComments
       )
 
   /**
@@ -137,7 +137,7 @@ final class ConfigParseOptions private (
         _allowMissing,
         _includer,
         _classLoader,
-        _keepCommentsAcrossBlankLines
+        _keepDetachedComments
       )
   }
 
@@ -177,7 +177,7 @@ final class ConfigParseOptions private (
         allowMissing,
         _includer,
         _classLoader,
-        _keepCommentsAcrossBlankLines
+        _keepDetachedComments
       )
 
   /**
@@ -207,7 +207,7 @@ final class ConfigParseOptions private (
         _allowMissing,
         includer,
         _classLoader,
-        _keepCommentsAcrossBlankLines
+        _keepDetachedComments
       )
 
   /**
@@ -279,7 +279,7 @@ final class ConfigParseOptions private (
         _allowMissing,
         _includer,
         loader,
-        _keepCommentsAcrossBlankLines
+        _keepDetachedComments
       )
 
   /**
@@ -298,10 +298,11 @@ final class ConfigParseOptions private (
     }
 
   /**
-   * Set to keep a comment block that a blank line separates from the object
-   * field or array element below it. Off by default: the parser then drops the
-   * block exactly as `lightbend/config` does. This is an sconfig-only option,
-   * not in `lightbend/config`; see `docs/NEW_FEATURES.md` for the examples.
+   * Set to keep *detached* comments: a comment block separated from the next
+   * object field or array element by a blank line. Off by default: the parser
+   * then drops the block exactly as `lightbend/config` does. This is an
+   * sconfig-only option, not in `lightbend/config`; see `docs/NEW_FEATURES.md`
+   * for the examples.
    *
    * With the flag on:
    *
@@ -326,8 +327,8 @@ final class ConfigParseOptions private (
    * @return
    *   options with the flag set
    */
-  def setKeepCommentsAcrossBlankLines(value: Boolean): ConfigParseOptions =
-    if (_keepCommentsAcrossBlankLines == value) this
+  def setKeepDetachedComments(value: Boolean): ConfigParseOptions =
+    if (_keepDetachedComments == value) this
     else
       new ConfigParseOptions(
         _syntax,
@@ -339,12 +340,12 @@ final class ConfigParseOptions private (
       )
 
   /**
-   * Gets the current "keep comments across blank lines" flag.
+   * Gets the current "keep detached comments" flag.
    *
    * @return
-   *   whether a comment block that a blank line separates from the field below
-   *   it is kept
+   *   whether a detached comment block, one separated from the next field or
+   *   element by a blank line, is kept
    */
-  def getKeepCommentsAcrossBlankLines: Boolean =
-    _keepCommentsAcrossBlankLines
+  def getKeepDetachedComments: Boolean =
+    _keepDetachedComments
 }

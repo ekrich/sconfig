@@ -286,19 +286,20 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     checkEqualsAndStable(expected, result)
   }
 
-  // sconfig-only: ConfigParseOptions.setKeepCommentsAcrossBlankLines. Off, the
-  // parser drops a comment block that a blank line separates from the field
-  // below it, as lightbend/config does; on, the block stays with that field, in
-  // the origin and in the render. Documented in docs/NEW_FEATURES.md, wired in
-  // ConfigParser.parseObject, parseArray and parse.
-  private val keepCommentsAcrossBlankLines =
-    parseOptions.setKeepCommentsAcrossBlankLines(true)
+  // sconfig-only: ConfigParseOptions.setKeepDetachedComments, for a comment
+  // block that a blank line separates from the field below it (a detached
+  // block). Off, the parser drops the block as lightbend/config does; on, the
+  // block stays with that field, in the origin and in the render. Documented in
+  // docs/NEW_FEATURES.md, wired in ConfigParser.parseObject, parseArray and
+  // parse.
+  private val keepDetachedComments =
+    parseOptions.setKeepDetachedComments(true)
 
   @Test
-  def keepCommentsAcrossBlankLinesIsOffByDefault(): Unit = {
-    assertFalse(ConfigParseOptions.defaults.getKeepCommentsAcrossBlankLines)
-    assertFalse(parseOptions.getKeepCommentsAcrossBlankLines)
-    assertTrue(keepCommentsAcrossBlankLines.getKeepCommentsAcrossBlankLines)
+  def keepDetachedCommentsIsOffByDefault(): Unit = {
+    assertFalse(ConfigParseOptions.defaults.getKeepDetachedComments)
+    assertFalse(parseOptions.getKeepDetachedComments)
+    assertTrue(keepDetachedComments.getKeepDetachedComments)
   }
 
   // an includer that parses its content with the options the include context
@@ -319,16 +320,16 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def theOptionSetterIsIdempotentAndTogglesBack(): Unit = {
     assertSame(
       parseOptions,
-      parseOptions.setKeepCommentsAcrossBlankLines(false)
+      parseOptions.setKeepDetachedComments(false)
     )
     assertSame(
-      keepCommentsAcrossBlankLines,
-      keepCommentsAcrossBlankLines.setKeepCommentsAcrossBlankLines(true)
+      keepDetachedComments,
+      keepDetachedComments.setKeepDetachedComments(true)
     )
 
     val off =
-      keepCommentsAcrossBlankLines.setKeepCommentsAcrossBlankLines(false)
-    assertFalse(off.getKeepCommentsAcrossBlankLines)
+      keepDetachedComments.setKeepDetachedComments(false)
+    assertFalse(off.getKeepDetachedComments)
     checkEqualsAndStable("a = 1\n", formatHoconWith("# header\n\na = 1\n", off))
   }
 
@@ -347,15 +348,15 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
       .setIncluder(includer)
       .setClassLoader(classLoader)
 
-    val toggled = configured.setKeepCommentsAcrossBlankLines(true)
+    val toggled = configured.setKeepDetachedComments(true)
     assertSame(ConfigSyntax.CONF, toggled.getSyntax)
     checkEqualObjects("custom", toggled.getOriginDescription)
     assertFalse(toggled.getAllowMissing)
     assertSame(includer, toggled.getIncluder)
     assertSame(classLoader, toggled.getClassLoader)
 
-    assertFalse(configured.getKeepCommentsAcrossBlankLines)
-    val roundTripped = toggled.setKeepCommentsAcrossBlankLines(false)
+    assertFalse(configured.getKeepDetachedComments)
+    val roundTripped = toggled.setKeepDetachedComments(false)
     assertNotSame(configured, roundTripped)
     assertNotEquals(configured, roundTripped)
   }
@@ -367,23 +368,21 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val includer = parsingIncluder("x = 2\n")
     val classLoader = new TestClassLoader(null, Map.empty)
     val copies = List(
-      keepCommentsAcrossBlankLines.setSyntax(ConfigSyntax.CONF),
-      keepCommentsAcrossBlankLines.setSyntaxFromFilename("x.conf"),
-      keepCommentsAcrossBlankLines.setOriginDescription("custom"),
-      keepCommentsAcrossBlankLines.withFallbackOriginDescription("fallback"),
-      keepCommentsAcrossBlankLines.setAllowMissing(false),
-      keepCommentsAcrossBlankLines.setIncluder(includer),
-      keepCommentsAcrossBlankLines.appendIncluder(includer),
-      keepCommentsAcrossBlankLines.prependIncluder(includer),
-      keepCommentsAcrossBlankLines.setClassLoader(classLoader)
+      keepDetachedComments.setSyntax(ConfigSyntax.CONF),
+      keepDetachedComments.setSyntaxFromFilename("x.conf"),
+      keepDetachedComments.setOriginDescription("custom"),
+      keepDetachedComments.withFallbackOriginDescription("fallback"),
+      keepDetachedComments.setAllowMissing(false),
+      keepDetachedComments.setIncluder(includer),
+      keepDetachedComments.appendIncluder(includer),
+      keepDetachedComments.prependIncluder(includer),
+      keepDetachedComments.setClassLoader(classLoader)
     )
-    copies.foreach(options =>
-      assertTrue(options.getKeepCommentsAcrossBlankLines)
-    )
+    copies.foreach(options => assertTrue(options.getKeepDetachedComments))
     assertFalse(
       ConfigParseOptions.defaults
         .setSyntax(ConfigSyntax.CONF)
-        .getKeepCommentsAcrossBlankLines
+        .getKeepDetachedComments
     )
   }
 
@@ -394,7 +393,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val in = "include \"whatever\"\ny = 1\n"
     val on = parseOptions
       .setIncluder(parsingIncluder("# included\n\nx = 2\n"))
-      .setKeepCommentsAcrossBlankLines(true)
+      .setKeepDetachedComments(true)
     val off = parseOptions.setIncluder(parsingIncluder("# included\n\nx = 2\n"))
 
     checkEqualObjects(
@@ -426,7 +425,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val in = "# before include\n\ninclude \"whatever\"\ny = 1\n"
     val on = parseOptions
       .setIncluder(parsingIncluder("x = 2\n"))
-      .setKeepCommentsAcrossBlankLines(true)
+      .setKeepDetachedComments(true)
     val off = parseOptions.setIncluder(parsingIncluder("x = 2\n"))
 
     val parsedOn = ConfigFactory.parseString(in, on)
@@ -459,7 +458,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |
                |a = 1
                |""".stripMargin
-    val result = formatHoconWith(in, keepCommentsAcrossBlankLines)
+    val result = formatHoconWith(in, keepDetachedComments)
 
     val expected = """# Copyright 2025 Example
                      |# Licensed under Apache-2.0
@@ -477,7 +476,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |# part two
                |a = 1
                |""".stripMargin
-    val result = formatHoconWith(in, keepCommentsAcrossBlankLines)
+    val result = formatHoconWith(in, keepDetachedComments)
 
     val expected = """# part one
                      |# part two
@@ -496,7 +495,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |    p = 1
                |}
                |""".stripMargin
-    val result = formatHoconWith(in, keepCommentsAcrossBlankLines)
+    val result = formatHoconWith(in, keepDetachedComments)
 
     val expected = """r {
                      |    # about p
@@ -511,7 +510,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   @Test
   def aWhitespaceOnlyLineSeparatesLikeABlankLine(): Unit = {
     val in = "# header\n   \na = 1\n" // the middle line is spaces
-    val result = formatHoconWith(in, keepCommentsAcrossBlankLines)
+    val result = formatHoconWith(in, keepDetachedComments)
 
     checkEqualsAndStable("# header\na = 1\n", result)
   }
@@ -527,12 +526,12 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |# three
                |a = 1
                |""".stripMargin
-    val parsed = ConfigFactory.parseString(in, keepCommentsAcrossBlankLines)
+    val parsed = ConfigFactory.parseString(in, keepDetachedComments)
     checkEqualObjects(
       List(" one", " two", " three"),
       parsed.getValue("a").origin.comments.asScala.toList
     )
-    val result = formatHoconWith(in, keepCommentsAcrossBlankLines)
+    val result = formatHoconWith(in, keepDetachedComments)
 
     val expected = """# one
                      |# two
@@ -558,11 +557,11 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |
                |]
                |""".stripMargin
-    val parsed = ConfigFactory.parseString(in, keepCommentsAcrossBlankLines)
+    val parsed = ConfigFactory.parseString(in, keepDetachedComments)
     val list = parsed.getList("a")
     checkEqualObjects(List(" one"), list.get(0).origin.comments.asScala.toList)
     checkEqualObjects(List(" two"), list.get(1).origin.comments.asScala.toList)
-    val result = formatHoconWith(in, keepCommentsAcrossBlankLines)
+    val result = formatHoconWith(in, keepDetachedComments)
 
     val expected = """a = [
                      |    # one
@@ -585,7 +584,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                      |""".stripMargin
     checkEqualsAndStable(
       "r {\n    a = 1\n}\n",
-      formatHoconWith(inObject, keepCommentsAcrossBlankLines)
+      formatHoconWith(inObject, keepDetachedComments)
     )
 
     val inFile = """a = 1
@@ -593,7 +592,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                    |""".stripMargin
     checkEqualsAndStable(
       "a = 1\n",
-      formatHoconWith(inFile, keepCommentsAcrossBlankLines)
+      formatHoconWith(inFile, keepDetachedComments)
     )
   }
 
@@ -606,7 +605,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |
                |{a=1}
                |""".stripMargin
-    val parsed = ConfigFactory.parseString(in, keepCommentsAcrossBlankLines)
+    val parsed = ConfigFactory.parseString(in, keepDetachedComments)
     checkEqualObjects(
       List(" header"),
       parsed.root.origin.comments.asScala.toList
@@ -614,7 +613,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
     checkEqualsAndStable(
       "a = 1\n",
-      formatHoconWith(in, keepCommentsAcrossBlankLines)
+      formatHoconWith(in, keepDetachedComments)
     )
   }
 
@@ -670,12 +669,12 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
     checkEqualsAndStable(
       "r {\n    # obj\n    p {\n        x = 1\n    }\n}\n",
-      formatHoconWith(in, keepCommentsAcrossBlankLines)(simplify)
+      formatHoconWith(in, keepDetachedComments)(simplify)
     )
 
     val withoutComments =
       ConfigFactory
-        .parseString(in, keepCommentsAcrossBlankLines)
+        .parseString(in, keepDetachedComments)
         .root
         .render(
           myDefaultRenderOptions
@@ -699,7 +698,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   @Test
   def aPlusEqualsCommentIsPrintedTwiceWithTheOption(): Unit = {
     val in = "a=[]\n# plus\n\na+=2"
-    val result = formatHoconWith(in, keepCommentsAcrossBlankLines)
+    val result = formatHoconWith(in, keepDetachedComments)
 
     val expected =
       "\"a\" : [],\n# plus\n\"a\" : ${?a}[\n    # plus\n    2\n]\n\n"
