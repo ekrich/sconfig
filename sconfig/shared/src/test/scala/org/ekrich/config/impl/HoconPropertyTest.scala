@@ -295,6 +295,54 @@ class HoconPropertyTest extends TestUtilsShared {
     assertEquals(100, done)
   }
 
+  // ---------------------------------------------------------------- comments
+
+  // Comments must not be lost or duplicated by a render that has comments on.
+  // Detached comments (a blank line between the comment and the next field),
+  // comments at the end of the file and `+=` entries are left out of this
+  // property: #643, #646 and #647 cover the first two, and a `+=` entry
+  // currently prints its leading comment twice.
+  private def commentBodies(s: String): Vector[String] =
+    tokenizeAsList(s)
+      .collect {
+        case t: Tokens.Comment =>
+          t.tokenText.stripPrefix("//").stripPrefix("#").trim
+      }
+      .toVector
+      .sorted
+
+  @Test
+  def commentsAreNotLostOrDuplicated(): Unit = {
+    val attachedRenderOptions = ConfigRenderOptions.defaults
+      .setJson(false)
+      .setOriginComments(false)
+      .setComments(true)
+      .setFormatted(true)
+    val gen =
+      new DocGen(new scala.util.Random(Seed + 7), attachedOnly = true)
+    var done = 0
+    var attempts = 0
+    while (done < 200 && attempts < 3000) {
+      attempts += 1
+      val input = gen.doc(chaos = false, deep = false)
+      var config: Config = null
+      try config = ConfigFactory.parseString(input)
+      catch { case _: ConfigException => () }
+      if (config != null) {
+        done += 1
+        val rendered = config.root.render(attachedRenderOptions)
+        assertEquals(
+          "comments changed\ninput: " + show(input) + "\nrendered: " + show(
+            rendered
+          ),
+          commentBodies(input),
+          commentBodies(rendered)
+        )
+      }
+    }
+    assertEquals(200, done)
+  }
+
   private def checkOriginLines(
       value: ConfigValue,
       max: Int,
@@ -333,7 +381,12 @@ class HoconPropertyTest extends TestUtilsShared {
   private def show(s: String): String =
     s.replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
 
-  private final class DocGen(random: scala.util.Random) {
+  // `attachedOnly` keeps every comment attached to a field and drops `+=`
+  // entries, the shapes whose comments a render is expected to keep.
+  private final class DocGen(
+      random: scala.util.Random,
+      attachedOnly: Boolean = false
+  ) {
     def int(bound: Int): Int = random.nextInt(bound)
 
     def between(lo: Int, hi: Int): Int = lo + int(hi - lo + 1)
@@ -368,7 +421,11 @@ class HoconPropertyTest extends TestUtilsShared {
         val n = between(1, 4)
         val lines = (1 to n).map { i =>
           val e = entry(if (int(3) == 0) between(1, 3) else 0, chaos)
-          if (i < n && int(5) == 0) e + "\n" + oneOf(noise) else e
+          if (i < n && int(5) == 0)
+            e + "\n" + oneOf(
+              if (attachedOnly) attachedNoise else noise
+            )
+          else e
         }
         val body = lines.mkString("\n")
         val wrapped = if (int(7) == 0) "{\n" + body + "\n}" else body
@@ -387,7 +444,7 @@ class HoconPropertyTest extends TestUtilsShared {
     private def entry(d: Int, chaos: Boolean): String = {
       val pre = if (int(7) == 0) oneOf(Vector("# c\n", "// c\n")) else ""
       val post = if (int(9) == 0) oneOf(Vector(" # t", " // t")) else ""
-      val s = if (int(12) == 0) "+=" else sep
+      val s = if (!attachedOnly && int(12) == 0) "+=" else sep
       val v = if (s == "+=") atom(chaos) else value(d, chaos)
       pre + pathKey(chaos) + s + v + post
     }
@@ -438,7 +495,17 @@ class HoconPropertyTest extends TestUtilsShared {
 
     private def pathKey(chaos: Boolean): String = {
       val n = between(1, 3)
-      (1 to n).map(_ => key(chaos)).mkString(".")
+      val parts = (1 to n).map(_ => key(chaos)).mkString(".")
+      // a unique first segment keeps every field distinct, so that a comment
+      // is never attached to a value that loses a merge and disappears with it
+      if (attachedOnly) nextKeyPrefix() + "." + parts else parts
+    }
+
+    private var keyCounter = 0
+
+    private def nextKeyPrefix(): String = {
+      keyCounter += 1
+      "c" + keyCounter
     }
 
     private def key(chaos: Boolean): String =
@@ -778,6 +845,13 @@ class HoconPropertyTest extends TestUtilsShared {
       "",
       "   ",
       "\t",
+      "# noise"
+    )
+
+    // comment lines that stay attached to the field below them
+    private val attachedNoise = Vector(
+      "# include \"a.conf\"",
+      "// include required(\"b.conf\")",
       "# noise"
     )
   }
