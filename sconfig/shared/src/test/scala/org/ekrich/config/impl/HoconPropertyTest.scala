@@ -441,6 +441,43 @@ class HoconPropertyTest extends TestUtilsShared {
     }
   }
 
+  // ------------------------------------------------------------- deep shapes
+
+  // Long dotted paths and deep nesting round trip. The Scala.js platform limit
+  // is 32 path segments (33 or more throw BugOrBroken there, #648), so the
+  // deepest case stops one segment short of it.
+  @Test
+  def deepPathsAndNestingRoundTrip(): Unit = {
+    for (segments <- Vector(1, 2, 8, 16, 32)) {
+      val path = (0 until segments).map(i => "k" + i).mkString(".")
+      val config = ConfigFactory.parseString(path + " = 1").resolve()
+      assertEquals(1, config.getInt(path))
+    }
+    val simplifyOptions = ConfigRenderOptions.defaults
+      .setJson(false)
+      .setOriginComments(false)
+      .setComments(true)
+      .setFormatted(true)
+      .setConfigFormatOptions(
+        ConfigFormatOptions.defaults.setSimplifyNestedObjects(true)
+      )
+    for (levels <- Vector(1, 8, 16, 30)) {
+      val nested =
+        (0 until levels)
+          .map(i => "k" + i + " { ")
+          .mkString + "v = 1" + " }" * levels
+      val r1 = ConfigFactory.parseString(nested).root.render(simplifyOptions)
+      val r2 = ConfigFactory.parseString(r1).root.render(simplifyOptions)
+      assertEquals(
+        "not a fixed point at " + levels + " levels\nr1: " + show(
+          r1
+        ) + "\nr2: " + show(r2),
+        r1,
+        r2
+      )
+    }
+  }
+
   private def checkOriginLines(
       value: ConfigValue,
       max: Int,
