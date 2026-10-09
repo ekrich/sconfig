@@ -343,6 +343,35 @@ class HoconPropertyTest extends TestUtilsShared {
     assertEquals(200, done)
   }
 
+  // ---------------------------------------------------------------- newlines
+
+  // A newline inside a triple-quoted string is string data, so CRLF is only
+  // equivalent to LF outside those strings; the generator's multiline strings
+  // are skipped here. A trailing newline must not change anything either.
+  @Test
+  def newlineVariantsParseToTheSameConfig(): Unit = {
+    val gen = new DocGen(new scala.util.Random(Seed + 8))
+    var done = 0
+    var attempts = 0
+    while (done < 150 && attempts < 3000) {
+      attempts += 1
+      val lf = gen.doc(chaos = false, deep = false)
+      if (!lf.contains("\"\"\"")) {
+        var config: Config = null
+        try config = ConfigFactory.parseString(lf)
+        catch { case _: ConfigException => () }
+        if (config != null) {
+          done += 1
+          val crlf = ConfigFactory.parseString(lf.replace("\n", "\r\n"))
+          checkEqualObjects(config.root, crlf.root)
+          val withTrailing = ConfigFactory.parseString(lf + "\n")
+          checkEqualObjects(config.root, withTrailing.root)
+        }
+      }
+    }
+    assertEquals(150, done)
+  }
+
   private def checkOriginLines(
       value: ConfigValue,
       max: Int,
