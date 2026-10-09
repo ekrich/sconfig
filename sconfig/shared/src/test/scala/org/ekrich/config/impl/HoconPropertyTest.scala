@@ -13,6 +13,7 @@ import org.ekrich.config.ConfigList
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValue
+import org.ekrich.config.parser.ConfigDocumentFactory
 
 // Not from lightbend/config: pins that parsing generated HOCON either succeeds or throws
 // ConfigException, that rendering is a parse/reparse fixed point, and that origin line
@@ -200,6 +201,100 @@ class HoconPropertyTest extends TestUtilsShared {
     assertEquals(12, done)
   }
 
+  // -------------------------------------------------------------- document API
+
+  // The document API promises to preserve every formatting detail of its input
+  // and to render it back unchanged. The document parser normalizes whitespace
+  // before the closing brace of a substitution (`a = ${x }` renders as
+  // `a = ${x}`), so those documents are not part of the verbatim property.
+  private def hasPaddedSubstitution(s: String): Boolean = {
+    var i = 0
+    var found = false
+    while (i < s.length - 1 && !found) {
+      if (s.charAt(i) == '$' && s.charAt(i + 1) == '{') {
+        var j = i + 2
+        while (j < s.length && s.charAt(j) != '}') j += 1
+        if (j < s.length && j > i + 2 &&
+            Character.isWhitespace(s.charAt(j - 1)))
+          found = true
+        i = j
+      }
+      i += 1
+    }
+    found
+  }
+
+  @Test
+  def configDocumentRoundTripsInputVerbatim(): Unit = {
+    val gen = new DocGen(new scala.util.Random(Seed + 5))
+    var done = 0
+    var attempts = 0
+    while (done < 200 && attempts < 3000) {
+      attempts += 1
+      val input = gen.doc(chaos = false, deep = false)
+      var config: Config = null
+      try config = ConfigFactory.parseString(input)
+      catch { case _: ConfigException => () }
+      if (config != null && !hasPaddedSubstitution(input)) {
+        done += 1
+        val rendered = ConfigDocumentFactory.parseString(input).render
+        assertEquals(
+          "ConfigDocument.parseString(...).render is not verbatim\ninput: " + show(
+            input
+          ),
+          input,
+          rendered
+        )
+      }
+    }
+    assertEquals(200, done)
+  }
+
+  @Test
+  def configDocumentEditChangesOnlyTheValue(): Unit = {
+    val gen = new DocGen(new scala.util.Random(Seed + 6))
+    var done = 0
+    var attempts = 0
+    while (done < 100 && attempts < 2000) {
+      attempts += 1
+      val n = gen.between(1, 4)
+      val fields = (1 to n).map(i => gen.field("key" + i))
+      val input = fields.map(_._1).mkString("\n") + "\n"
+      var config: Config = null
+      try config = ConfigFactory.parseString(input)
+      catch { case _: ConfigException => () }
+      if (config != null && !hasPaddedSubstitution(input)) {
+        val target = fields(gen.between(0, n - 1))
+        val at = input.indexOf(target._1)
+        if (at >= 0 && input.indexOf(target._1, at + 1) < 0) {
+          done += 1
+          val document = ConfigDocumentFactory.parseString(input)
+          assertEquals("not verbatim", input, document.render)
+          val newValue = if (gen.int(2) == 0) "42" else "\"new value\""
+          val edited = document.withValueText(target._2, newValue).render
+          val expected = input.substring(0, at) + target._2 + target._3 +
+            newValue + input.substring(at + target._1.length)
+          assertEquals(
+            "withValueText changed more than the value of " + target._2 +
+              "\ninput: " + show(input) + "\nedited: " + show(edited),
+            expected,
+            edited
+          )
+          val editedConfig = ConfigFactory.parseString(edited)
+          if (newValue == "42") assertEquals(42, editedConfig.getInt(target._2))
+          else assertEquals("new value", editedConfig.getString(target._2))
+          for (field <- fields if field._2 != target._2)
+            assertEquals(
+              field._2 + " changed",
+              config.root.get(field._2),
+              editedConfig.root.get(field._2)
+            )
+        }
+      }
+    }
+    assertEquals(100, done)
+  }
+
   private def checkOriginLines(
       value: ConfigValue,
       max: Int,
@@ -244,6 +339,13 @@ class HoconPropertyTest extends TestUtilsShared {
     def between(lo: Int, hi: Int): Int = lo + int(hi - lo + 1)
 
     def oneOf[T](xs: Vector[T]): T = xs(int(xs.length))
+
+    // one top-level field: (field text, key, separator, value text)
+    def field(key: String): (String, String, String, String) = {
+      val s = sep
+      val v = value(0, chaos = false)
+      (key + s + v, key, s, v)
+    }
 
     def pick[T](weighted: (Int, () => T)*): T = {
       var n = int(weighted.map(_._1).sum)
