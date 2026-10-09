@@ -8,6 +8,7 @@ import scala.jdk.CollectionConverters.*
 import org.ekrich.config.Config
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigFactory
+import org.ekrich.config.ConfigFormatOptions
 import org.ekrich.config.ConfigList
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigRenderOptions
@@ -16,6 +17,8 @@ import org.ekrich.config.ConfigValue
 // Not from lightbend/config: pins that parsing generated HOCON either succeeds or throws
 // ConfigException, that rendering is a parse/reparse fixed point, and that origin line
 // numbers stay inside the input (deterministic core of draft PR #642, made sconfig-only).
+// Extended with the render option matrix, the document API, comment preservation,
+// newline variants, resolved rendering, deep paths and generation determinism.
 class HoconPropertyTest extends TestUtilsShared {
 
   private val Seed = 20261005L
@@ -105,6 +108,96 @@ class HoconPropertyTest extends TestUtilsShared {
       }
     }
     assertEquals(300, done)
+  }
+
+  // ------------------------------------------------------------ render options
+
+  // Rendering, parsing and rendering again with the same options must change
+  // nothing, for every combination of the render options below, not only for
+  // the default one. Combinations that are not stable today are left out
+  // deliberately, each with a minimal case:
+  //   - comments = false with simplifyNestedObjects = true: the layout depends
+  //     on comments that are not printed, so the first pass keeps the braces
+  //     and the second one collapses them: `# c\na.b = 1`;
+  //   - formatted = false with comments = true: a comment between two fields is
+  //     re-attached to the first field: `a = 1\n# c\nb = 2`;
+  //   - formatted = false with keepOriginOrder = true: with every field on one
+  //     line the origin order is undefined and fields come out reordered:
+  //     `b = 2\na = 1`.
+  private def optionMatrix: Vector[ConfigRenderOptions] = {
+    val formatOptions = (0 until 32).toVector.map { bits =>
+      ConfigFormatOptions.defaults
+        .setKeepOriginOrder((bits & 1) != 0)
+        .setDoubleIndent((bits & 2) != 0)
+        .setColonAssign((bits & 4) != 0)
+        .setNewLineAtEnd((bits & 8) != 0)
+        .setSimplifyNestedObjects((bits & 16) != 0)
+    }
+    def options(
+        formatted: Boolean,
+        comments: Boolean,
+        json: Boolean,
+        format: ConfigFormatOptions
+    ): ConfigRenderOptions =
+      ConfigRenderOptions.defaults
+        .setJson(json)
+        .setOriginComments(false)
+        .setComments(comments)
+        .setFormatted(formatted)
+        .setConfigFormatOptions(format)
+
+    val formattedWithComments = formatOptions.map(f =>
+      options(formatted = true, comments = true, json = false, f)
+    )
+    val formattedWithoutComments = formatOptions
+      .filterNot(_.getSimplifyNestedObjects)
+      .map(f => options(formatted = true, comments = false, json = false, f))
+    val compact = formatOptions
+      .filterNot(_.getKeepOriginOrder)
+      .map(f => options(formatted = false, comments = false, json = false, f))
+    val asJson = formatOptions.map(f =>
+      options(formatted = true, comments = false, json = true, f)
+    )
+    formattedWithComments ++ formattedWithoutComments ++ compact ++ asJson
+  }
+
+  @Test
+  def renderOptionMatrixIsAFixedPoint(): Unit = {
+    val matrix = optionMatrix
+    val gen = new DocGen(new scala.util.Random(Seed + 4))
+    var done = 0
+    var attempts = 0
+    while (done < 12 && attempts < 300) {
+      attempts += 1
+      val input = gen.doc(chaos = false, deep = false)
+      var config: Config = null
+      try config = ConfigFactory.parseString(input)
+      catch { case _: ConfigException => () }
+      if (config != null) {
+        done += 1
+        for (options <- matrix) {
+          val r1 = config.root.render(options)
+          var reparsed: Config = null
+          try reparsed = ConfigFactory.parseString(r1)
+          catch {
+            case e: ConfigException =>
+              fail(
+                "rendered text does not re-parse with " + options + ": " + e.getMessage +
+                  "\nrendered: " + show(r1) + "\ninput: " + show(input)
+              )
+          }
+          val r2 = reparsed.root.render(options)
+          assertEquals(
+            "render is not a fixed point with " + options + "\ninput: " + show(
+              input
+            ) + "\nr1: " + show(r1) + "\nr2: " + show(r2),
+            r1,
+            r2
+          )
+        }
+      }
+    }
+    assertEquals(12, done)
   }
 
   private def checkOriginLines(
