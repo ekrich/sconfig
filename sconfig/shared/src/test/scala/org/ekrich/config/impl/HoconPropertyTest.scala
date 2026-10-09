@@ -372,6 +372,75 @@ class HoconPropertyTest extends TestUtilsShared {
     assertEquals(150, done)
   }
 
+  // -------------------------------------------------------- resolved renders
+
+  @Test
+  def resolvedRenderIsAFixedPoint(): Unit = {
+    val gen = new DocGen(new scala.util.Random(Seed + 9))
+    var done = 0
+    var attempts = 0
+    while (done < 150 && attempts < 3000) {
+      attempts += 1
+      val input = gen.doc(chaos = false, deep = false)
+      var resolved: Config = null
+      try resolved = ConfigFactory.parseString(input).resolve()
+      catch { case _: ConfigException => () }
+      if (resolved != null) {
+        done += 1
+        val r1 = resolved.root.render(renderOptions)
+        val reparsed = ConfigFactory.parseString(r1).resolve()
+        val r2 = reparsed.root.render(renderOptions)
+        assertEquals(
+          "resolved render is not a fixed point\ninput: " + show(
+            input
+          ) + "\nr1: " + show(r1) + "\nr2: " + show(r2),
+          r1,
+          r2
+        )
+        checkEqualObjects(resolved.root, reparsed.root)
+      }
+    }
+    assertEquals(150, done)
+  }
+
+  // Appends, self-references and duplicate keys render through delayed merges;
+  // these shapes must be fixed points too.
+  @Test
+  def hardShapesAreRenderFixedPoints(): Unit = {
+    val shapes = Vector(
+      "a = 1\na = ${a}\n",
+      "a = []\na += 1\n",
+      "a = [1]\na += 2\n",
+      "foo { a = 1 }\nfoo = ${foo}\n",
+      "a = ${b}\nb = ${a}\n",
+      "a = 1\nb = ${a}\nc = ${b}\n",
+      "a.b.c = 1\na.b.d = 2\n",
+      "a = 1\na = 2\n",
+      "l = [1, 2, 3,]\n",
+      "o = { a = 1, b = 2, }\n",
+      "s = \"a\"\"b\"\n",
+      "a = ${?missing}\n"
+    )
+    for (input <- shapes) {
+      val config =
+        try ConfigFactory.parseString(input)
+        catch {
+          case e: ConfigException =>
+            fail("shape does not parse: " + show(input) + ": " + e.getMessage)
+            null
+        }
+      val r1 = config.root.render(renderOptions)
+      val r2 = ConfigFactory.parseString(r1).root.render(renderOptions)
+      assertEquals(
+        "not a fixed point\ninput: " + show(input) + "\nr1: " + show(
+          r1
+        ) + "\nr2: " + show(r2),
+        r1,
+        r2
+      )
+    }
+  }
+
   private def checkOriginLines(
       value: ConfigValue,
       max: Int,
