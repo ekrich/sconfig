@@ -314,9 +314,7 @@ lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
   import com.typesafe.tools.mima.core.ProblemFilters._
   Seq(
-    exclude[Problem]("org.ekrich.config.impl.*"),
-    exclude[Problem]("scala.collection.compat.*"),
-    exclude[Problem]("scala.jdk.CollectionConverters*")
+    exclude[Problem]("org.ekrich.config.impl.*")
   )
 }
 
