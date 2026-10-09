@@ -478,6 +478,45 @@ class HoconPropertyTest extends TestUtilsShared {
     }
   }
 
+  // ------------------------------------------------------------- determinism
+
+  // The generator must produce the same documents from the same seed on every
+  // platform, so a platform whose Random or string handling diverges fails the
+  // pinned digest below. Recompute the constant deliberately when the
+  // generator changes.
+  private def generationDigest(seed: Long, count: Int): String = {
+    val gen = new DocGen(new scala.util.Random(seed))
+    var h = 0x811c9dc5
+    for (_ <- 1 to count) {
+      val doc = gen.doc(chaos = true, deep = false)
+      var i = 0
+      while (i < doc.length) {
+        h = (h ^ doc.charAt(i).toInt) * 0x01000193
+        i += 1
+      }
+    }
+    val hex = Integer.toHexString(h)
+    ("0" * (8 - hex.length)) + hex
+  }
+
+  @Test
+  def generationIsDeterministic(): Unit = {
+    val first = {
+      val gen = new DocGen(new scala.util.Random(Seed))
+      (1 to 50).map(_ => gen.doc(chaos = true, deep = false)).toVector
+    }
+    val second = {
+      val gen = new DocGen(new scala.util.Random(Seed))
+      (1 to 50).map(_ => gen.doc(chaos = true, deep = false)).toVector
+    }
+    assertEquals(first, second)
+    assertEquals(
+      "generated documents differ from the pinned cross-platform digest",
+      "f06ac568",
+      generationDigest(Seed, 50)
+    )
+  }
+
   private def checkOriginLines(
       value: ConfigValue,
       max: Int,
