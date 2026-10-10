@@ -984,10 +984,34 @@ class ConfigSubstitutionSharedTest extends TestUtilsShared {
   }
 
   @Test
+  def throwWhenEnvNotFoundListExpansion(): Unit = {
+    val obj = parseObject("""{ a : ${NOT_HERE[]} }""")
+    val e = intercept[ConfigException.UnresolvedSubstitution] {
+      resolve(obj)
+    }
+    assertTrue(e.getMessage.contains("NOT_HERE"))
+  }
+
+  @Test
   def optionalOverrideNotProvided(): Unit = {
     val obj = parseObject("""{ a: 42, a : ${?NOT_HERE} }""")
     val resolved = resolve(obj)
     assertEquals(42, resolved.getInt("a"))
+  }
+
+  @Test
+  def optionalListExpansionNotProvided(): Unit = {
+    val obj = parseObject("""{ a: 42, a : ${?NOT_HERE[]} }""")
+    val resolved = resolve(obj)
+    assertEquals(42, resolved.getInt("a"))
+  }
+
+  @Test
+  def listExpansionPrefersConfigValue(): Unit = {
+    val obj = parseObject("""{ L : [1, 2], S : z, a : ${L[]}, b : ${?S[]} }""")
+    val resolved = resolve(obj)
+    assertEquals(List(1, 2), resolved.getIntList("a").asScala.map(_.intValue))
+    assertEquals("z", resolved.getString("b"))
   }
 
   @Test
@@ -1491,5 +1515,154 @@ class ConfigSubstitutionSharedTest extends TestUtilsShared {
     assertEquals("high", resolved.getString("p.a"))
     assertEquals("high", resolved.getString("p.b"))
     assertEquals("default", resolved.getString("p.c.x"))
+  }
+
+  // A key can stay a delayed merge (default value, optionally overridden)
+  // after being placed inside an object that is itself one piece of an
+  // object concatenation. Resolving that inner merge has to replaceChild
+  // its way back out through the ConfigConcatenation, which holds the
+  // object as one of its "pieces", not as a value of its own.
+  // lightbend/config#725
+  @Test
+  def keyWithDefaultAndOptionalOverrideInsideObjectConcatenationResolves()
+      : Unit = {
+    val obj = parseObject("""
+        p: ${x} {
+          k: "low"
+          k: ${?u}
+        }
+        x: { a: 1 }
+    """)
+    val resolved = resolve(obj)
+    assertEquals(1, resolved.getInt("p.a"))
+    assertEquals("low", resolved.getString("p.k"))
+  }
+
+  @Test
+  def optionalOverrideInsideObjectConcatenationWinsWhenSet(): Unit = {
+    val obj = parseObject("""
+        p: ${x} { k: "low", k: ${?u} }
+        x: { a: 1 }
+        u: "high"
+    """)
+    assertEquals("high", resolve(obj).getString("p.k"))
+  }
+
+  // the report in lightbend/config#725, with the concatenation further down
+  @Test
+  def delayedMergeInsideNestedObjectConcatenationResolves(): Unit = {
+    val obj = parseObject("""
+        does.not.resolve {
+          first-object { key1 = 12345 }
+          second-object {
+            concat-object = ${does.not.resolve.first-object} {
+              key2 = abcdefg
+              key2 = ${?u}
+            }
+          }
+        }
+    """)
+    val concat = resolve(obj)
+      .getConfig("does.not.resolve.second-object.concat-object")
+    assertEquals(12345, concat.getInt("key1"))
+    assertEquals("abcdefg", concat.getString("key2"))
+  }
+
+  // lightbend/config#356
+  @Test
+  def objectOverrideInsideObjectConcatenationResolves(): Unit = {
+    val obj = parseObject("""
+        test.component { type = test, properties { url = test } }
+        app.component { type = app, properties { host = prod } }
+        app-test = ${app} { component = reset, component = ${test.component} }
+    """)
+    assertEquals(
+      parseObject("{ type = test, properties { url = test } }"),
+      resolve(obj).getConfig("app-test.component").root
+    )
+  }
+
+  @Test
+  def delayedMergeInsideObjectConcatenationInListResolves(): Unit = {
+    val obj = parseObject("""
+        l: [ ${x} { k: "low", k: ${?u} } ]
+        x: { a: 1 }
+    """)
+    val element = resolve(obj).getConfigList("l").get(0)
+    assertEquals(1, element.getInt("a"))
+    assertEquals("low", element.getString("k"))
+  }
+
+  // on either end of a merge stack, the concatenation is resolved against a
+  // root that does not hold it
+  @Test
+  def delayedMergeInsideObjectConcatenationInMergeStackResolves(): Unit = {
+    val above = parseObject("""
+        p: { z: 0 }
+        p: ${x} { k: "low", k: ${?u} }
+        x: { a: 1 }
+    """)
+    val below = parseObject("""
+        p: ${x} { k: "low", k: ${?u} }
+        p: { z: 0 }
+        x: { a: 1 }
+    """)
+    for (obj <- List(above, below)) {
+      val p = resolve(obj).getConfig("p")
+      assertEquals(0, p.getInt("z"))
+      assertEquals(1, p.getInt("a"))
+      assertEquals("low", p.getString("k"))
+    }
+  }
+
+  // an application config over a library's reference config
+  @Test
+  def delayedMergeInsideObjectConcatenationUnderFallbackResolves(): Unit = {
+    val reference = ConfigFactory.parseString("""
+        p: ${x} { k: "low", k: ${?u} }
+        x: { a: 1 }
+    """)
+    val resolved =
+      ConfigFactory.parseString("p.z = 0").withFallback(reference).resolve()
+    assertEquals(0, resolved.getInt("p.z"))
+    assertEquals("low", resolved.getString("p.k"))
+  }
+
+  // `k += b` looks up the k just above it, which is inside the concatenation
+  @Test
+  def appendInsideObjectConcatenationInMergeStackSeesTheValueAbove(): Unit = {
+    val obj = parseObject("""
+        p: { z: 0 }
+        p: ${x} { k: [a], k += b }
+        x: {}
+    """)
+    assertEquals(
+      List("a", "b"),
+      resolve(obj).getStringList("p.k").asScala.toList
+    )
+  }
+
+  @Test
+  def selfReferentialObjectConcatenationInMergeStackResolves(): Unit = {
+    val obj = parseObject("""
+        p: { z: 0 }
+        p: ${p} { k: [a], k += b }
+    """)
+    val p = resolve(obj).getConfig("p")
+    assertEquals(0, p.getInt("z"))
+    assertEquals(List("a", "b"), p.getStringList("k").asScala.toList)
+  }
+
+  @Test
+  def objectConcatenationInsideObjectConcatenationInMergeStackResolves()
+      : Unit = {
+    val obj = parseObject("""
+        p: { z: 0 }
+        p: ${x} { q: { y: 0 }, q: ${x} { k: [a], k += b } }
+        x: {}
+    """)
+    val q = resolve(obj).getConfig("p.q")
+    assertEquals(0, q.getInt("y"))
+    assertEquals(List("a", "b"), q.getStringList("k").asScala.toList)
   }
 }

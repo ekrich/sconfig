@@ -148,7 +148,7 @@ final class ConfigDelayedMergeObject(
       atKey: String,
       options: ConfigRenderOptions
   ): Unit = {
-    ConfigDelayedMerge.render(stack, sb, indent, atRoot, atKey, options)
+    ConfigDelayedMerge.render(stack, origin, sb, indent, atRoot, atKey, options)
   }
   override def renderValue(
       sb: jl.StringBuilder,

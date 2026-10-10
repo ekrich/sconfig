@@ -1,6 +1,7 @@
 package org.ekrich.config.impl
 
 import java.lang as jl
+import java.util as ju
 
 import org.ekrich.config.ConfigException
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
@@ -69,6 +70,34 @@ object ResolveSource {
       findInObject(v.asInstanceOf[AbstractConfigObject], next, newParents)
     else new ValueWithPath(null, newParents)
   }
+  // looks for baseName_0, baseName_1, ... in envObj until one is missing;
+  // returns null (not an empty list) if baseName_0 itself isn't present
+  private def expandEnvVarList(
+      envObj: AbstractConfigObject,
+      basePath: Path
+  ): AbstractConfigValue = {
+    val baseName = basePath.render
+    val origin = SimpleConfigOrigin.newSimple(
+      "env list expansion of " + baseName
+    )
+
+    val values = new ju.ArrayList[AbstractConfigValue]
+    var continue = true
+    var i = 0
+    while (continue) {
+      val elementPath = Path.newKey(baseName + "_" + i)
+      val v = findInObject(envObj, elementPath).value
+      if (v == null) continue = false
+      else {
+        values.add(v)
+        i += 1
+      }
+    }
+
+    if (values.isEmpty) null
+    else new SimpleConfigList(origin, values)
+  }
+
   // returns null if the replacement results in deleting all the nodes.
   private def replace(
       list: ResolveSource.Node[Container],
@@ -151,6 +180,37 @@ object ResolveSource {
       sb.toString
     }
   }
+  // A merge stack resolves an end that cannot merge against a root holding
+  // only what is below that end, so that a self-reference looks below. The end
+  // is then not in the root. Once something inside it is replaced, it has to
+  // go back in, over what is below it, or a self-reference inside it would
+  // look up the wrong value.
+  final private[impl] class Detached(
+      // source whose current parent holds `slot`
+      val outer: ResolveSource,
+      val slot: AbstractConfigValue,
+      val end: AbstractConfigValue,
+      // null if the end is the bottom of the stack
+      val below: AbstractConfigValue
+  ) {
+    private[impl] def reattach(
+        newPath: ResolveSource.Node[Container]
+    ): ResolveSource = {
+      val newEnd =
+        if (newPath == null) null
+        else newPath.last.asInstanceOf[AbstractConfigValue]
+      val newSlot =
+        if (newEnd == null) below
+        else if (below == null) newEnd
+        else newEnd.withFallback(below)
+      val newOuter = outer.replaceWithinCurrentParent(slot, newSlot)
+      new ResolveSource(
+        newOuter.root,
+        newPath,
+        new Detached(newOuter, newSlot, newEnd, below)
+      )
+    }
+  }
   // value is allowed to be null
   final private[impl] class ValueWithPath private[impl] (
       val value: AbstractConfigValue,
@@ -173,7 +233,10 @@ final class ResolveSource(
     // This is used for knowing the chain of parents we used to get here.
     // null if we should assume we are not a descendant of the root.
     // the root itself should be a node in this if non-null.
-    val pathFromRoot: ResolveSource.Node[Container]
+    val pathFromRoot: ResolveSource.Node[Container],
+    // non-null while resolving a merge stack end that is not in the root;
+    // pathFromRoot then starts at that end instead of at the root
+    detached: ResolveSource.Detached = null
 ) {
   def this(root: AbstractConfigObject) = this(root, null)
 
@@ -215,16 +278,35 @@ final class ResolveSource(
           ResolveSource.findInObject(root, result.result.context, unprefixed)
       }
       if (result.result.value == null && result.result.context.options.getUseSystemEnvironment) {
-        if (ConfigImpl.traceSubstitutionsEnabled)
-          ConfigImpl.trace(
-            result.result.context.depth,
-            s"$unprefixed - looking up in system environment"
+        if (subst.listExpansion) {
+          if (ConfigImpl.traceSubstitutionsEnabled)
+            ConfigImpl.trace(
+              result.result.context.depth,
+              s"$unprefixed - looking up list expansion in system environment"
+            )
+          val listValue = ResolveSource.expandEnvVarList(
+            ConfigImpl.envVariablesAsConfigObject,
+            unprefixed
           )
-        result = ResolveSource.findInObject(
-          ConfigImpl.envVariablesAsConfigObject,
-          context,
-          unprefixed
-        )
+          if (listValue != null)
+            result = new ResolveSource.ResultWithPath(
+              ResolveResult.make(result.result.context, listValue),
+              new ResolveSource.Node[Container](
+                ConfigImpl.envVariablesAsConfigObject
+              )
+            )
+        } else {
+          if (ConfigImpl.traceSubstitutionsEnabled)
+            ConfigImpl.trace(
+              result.result.context.depth,
+              s"$unprefixed - looking up in system environment"
+            )
+          result = ResolveSource.findInObject(
+            ConfigImpl.envVariablesAsConfigObject,
+            context,
+            unprefixed
+          )
+        }
       }
     }
     if (ConfigImpl.traceSubstitutionsEnabled)
@@ -243,6 +325,12 @@ final class ResolveSource(
     if (pathFromRoot == null) {
       if (parent eq root)
         new ResolveSource(root, new ResolveSource.Node[Container](parent))
+      else if (detached != null && (parent eq detached.end))
+        new ResolveSource(
+          root,
+          new ResolveSource.Node[Container](parent),
+          detached
+        )
       else {
         if (ConfigImpl.traceSubstitutionsEnabled) {
           // this hasDescendant check is super-expensive so it's a
@@ -266,11 +354,25 @@ final class ResolveSource(
           )
         }
       }
-      new ResolveSource(root, pathFromRoot.prepend(parent))
+      new ResolveSource(root, pathFromRoot.prepend(parent), detached)
     }
   }
   private[impl] def resetParents =
-    if (pathFromRoot == null) this else new ResolveSource(root)
+    if (pathFromRoot == null && detached == null) this
+    else new ResolveSource(root)
+  // for resolving `end` of the merge stack `slot`, which `outer`'s current
+  // parent holds and this source already has replaced by `below`
+  private[impl] def detach(
+      outer: ResolveSource,
+      slot: AbstractConfigValue,
+      end: AbstractConfigValue,
+      below: AbstractConfigValue
+  ) =
+    new ResolveSource(
+      root,
+      null,
+      new ResolveSource.Detached(outer, slot, end, below)
+    )
   private[impl] def replaceCurrentParent(
       old: Container,
       replacement: Container
@@ -294,8 +396,9 @@ final class ResolveSource(
         )
         ConfigImpl.trace("path was: " + pathFromRoot + " is now " + newPath)
       }
+      if (detached != null) detached.reattach(newPath)
       // if we end up nuking the root object itself, we replace it with an empty root
-      if (newPath != null)
+      else if (newPath != null)
         new ResolveSource(
           newPath.last.asInstanceOf[AbstractConfigObject],
           newPath

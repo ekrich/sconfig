@@ -177,10 +177,10 @@ final class ConfigConcatenation(
         count += 1
       }
     }
-    // Right now there's no reason to pushParent here because the
-    // content of ConfigConcatenation should not need to replaceChild,
-    // but if it did we'd have to do this.
-    val sourceWithParent = source // .pushParent(this)
+    // an object piece can hold a merge stack, which replaces itself in its
+    // parents while resolving, so we have to be one of them
+    // (lightbend/config#725)
+    val sourceWithParent = source.pushParent(this)
     var newContext = context
     val resolved =
       new ju.ArrayList[AbstractConfigValue](pieces.size)

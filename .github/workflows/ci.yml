@@ -17,6 +17,8 @@ jobs:
     steps:
     - name: Checkout current branch (full)
       uses: actions/checkout@v7
+      with:
+        fetch-depth: 0 # tags for mima
     - name: Setup Java
       uses: actions/setup-java@v6
       with:
@@ -25,5 +27,9 @@ jobs:
         cache: 'sbt'
     - name: Setup sbt
       uses: sbt/setup-sbt@v1
+      with:
+        disk-cache: false
     - name: Run tests
-      run: sbt +test +doc
+      run: sbt "+testFull; +doc"
+    - name: Check binary compatibility (MiMa)
+      run: sbt +sconfigJVM/mimaReportBinaryIssues
