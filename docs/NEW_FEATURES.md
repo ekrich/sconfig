@@ -2,9 +2,13 @@
 
 <kbd>[<- Back to README](../README.md)</kbd>
 
+## Scala Native and Scala.js Support
+
 This library has features that are not available in the original Lightbend `config` library. This document explains and gives examples on how to use these features. See the Scala Native and Scala.js [guide](SCALA_NATIVE.md) for features and limitations of those platforms.
 
-## Keeping detached comments
+## HOCON Formatting
+
+### Keeping detached comments
 
 A comment block separated from the next object field or array element by a blank line is *detached*. `lightbend/config` attaches a comment block to the following object field or array element only when no blank line intervenes; a blank line drops the whole block, so a config file's licence header, which convention separates from the first setting, disappears from `render()`. sconfig keeps a detached block when the caller asks for it with `ConfigParseOptions.setKeepDetachedComments(true)`:
 
