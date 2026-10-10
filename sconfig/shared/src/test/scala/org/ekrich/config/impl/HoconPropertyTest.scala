@@ -72,10 +72,9 @@ class HoconPropertyTest extends TestUtilsShared {
         }
         val r2 = reparsed.root.render(renderOptions)
         assertEquals(
-          "render is not a fixed point\ninput: " + show(
-            input
-          ) + "\nr1: " + show(r1) +
-            "\nr2: " + show(r2),
+          "render is not a fixed point\ninput: " + show(input)
+            + "\nr1: " + show(r1)
+            + "\nr2: " + show(r2),
           r1,
           r2
         )
@@ -189,9 +188,9 @@ class HoconPropertyTest extends TestUtilsShared {
           }
           val r2 = reparsed.root.render(options)
           assertEquals(
-            "render is not a fixed point with " + options + "\ninput: " + show(
-              input
-            ) + "\nr1: " + show(r1) + "\nr2: " + show(r2),
+            "render is not a fixed point with " + options
+              + "\ninput: " + show(input)
+              + "\nr1: " + show(r1) + "\nr2: " + show(r2),
             r1,
             r2
           )
