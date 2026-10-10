@@ -2,10 +2,22 @@
 
 <kbd>[<- Back to README](../README.md)</kbd>
 
+This file is the specification of how sconfig differs from `lightbend/config`: every behaviour
+that exists here and not upstream gets a section saying what it does and why it exists. A
+feature without a section here is a divergence waiting to be "fixed" by the next port.
+
 ## Scala Native and Scala.js Support
 
-This library has features that are not available in the original Lightbend `config` library. This document explains and gives examples on how to use these features. See the Scala Native and Scala.js [guide](SCALA_NATIVE.md) for features and limitations of those platforms.
+For features and limitations of Scala Native and Scala.js see the
+[guide](SCALA_NATIVE.md).
 
 ## HOCON Formatting
+
+### `ConfigFormatOptions`
+
+Renders configuration with formatting choices the Java library does not offer: indentation
+width, key-value separator (`=` or `:`), brace location, and simplification of nested objects
+to dotted paths. sconfig-only; the renderer reads it through
+[RENDERING.md](RENDERING.md#the-fixed-point).
 
 <kbd>[<- Back to README](../README.md)</kbd>
