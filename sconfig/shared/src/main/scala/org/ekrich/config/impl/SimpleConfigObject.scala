@@ -736,7 +736,7 @@ final class SimpleConfigObject(
   override def size: Int = value.size
 
   override def values: ju.Collection[ConfigValue] =
-    new ju.HashSet[ConfigValue](value.values)
+    new ju.ArrayList[ConfigValue](value.values)
 
   // serialization all goes through SerializedConfigValue
   @throws[ObjectStreamException]
