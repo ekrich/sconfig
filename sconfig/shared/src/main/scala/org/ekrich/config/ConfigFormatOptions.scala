@@ -32,7 +32,7 @@ object ConfigFormatOptions {
    *   - doubleIndent = false
    *   - colonAssign = false
    *   - newLineAtEnd = true
-   *   - simplifyOneEntryNestedObjects = false
+   *   - simplifyNestedObjects = false
    */
   def defaults = new ConfigFormatOptions(false, false, false, true, false)
 }
@@ -170,7 +170,8 @@ final class ConfigFormatOptions private (
   def getNewLineAtEnd: Boolean = newLineAtEnd
 
   /**
-   * Set to simplify nested objects
+   * Set to simplify nested objects: an object with a single field is collapsed
+   * into a dotted path, so `a { b { c = 1 } }` becomes `a.b.c = 1`.
    *
    * @param value
    *   true to enable the property, false otherwise

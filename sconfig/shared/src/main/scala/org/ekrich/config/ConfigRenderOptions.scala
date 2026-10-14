@@ -289,7 +289,7 @@ final class ConfigRenderOptions private (
       if (_configFormatOptions.getColonAssign) sb.append("colonAssign,")
       if (_configFormatOptions.newLineAtEnd) sb.append("newLineAtEnd,")
       if (_configFormatOptions.getSimplifyNestedObjects)
-        sb.append("simplifyOneEntryNestedObjects,")
+        sb.append("simplifyNestedObjects,")
     }
     if (_json) sb.append("json,")
     if (_showEnvVariableValues) sb.append("showEnvVariableValues,")

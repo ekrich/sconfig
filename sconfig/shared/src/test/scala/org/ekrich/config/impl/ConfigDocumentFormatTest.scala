@@ -492,4 +492,30 @@ class ConfigDocumentFormatTest {
     check(in, in, simplify, jsonParse)
     check(in, in, defaults.setColonAssign(true), jsonParse)
   }
+
+  // ---- the examples in docs/NEW_FEATURES.md
+
+  @Test
+  def docsHoconExample(): Unit = {
+    val in = """include "base.conf"
+               |app{
+               |name="demo"   # the app name
+               |ports=[80,443]
+               |}""".stripMargin
+    val expected = """include "base.conf"
+                     |app {
+                     |  name = "demo" # the app name
+                     |  ports = [80, 443]
+                     |}
+                     |""".stripMargin
+    checkText(in, expected)
+  }
+
+  @Test
+  def docsJsonExample(): Unit =
+    check(
+      """{"a":1,"b":{"c":[1,2]}}""",
+      "{ \"a\": 1, \"b\": { \"c\": [1, 2] } }\n",
+      parse = jsonParse
+    )
 }
