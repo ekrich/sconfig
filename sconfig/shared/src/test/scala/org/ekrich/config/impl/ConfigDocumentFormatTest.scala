@@ -4,6 +4,7 @@ import org.ekrich.config._
 import org.ekrich.config.parser._
 import org.junit.Assert._
 import org.junit.Test
+import scala.annotation.nowarn
 
 class ConfigDocumentFormatTest {
   private val defaults = ConfigFormatOptions.defaults
@@ -364,6 +365,7 @@ class ConfigDocumentFormatTest {
     )
 
   @Test
+  @nowarn("cat=deprecation")
   def noEffectOptions(): Unit = {
     val in = "b = 1\na = 2"
     val expected = "b = 1\na = 2\n"

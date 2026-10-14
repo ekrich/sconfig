@@ -90,7 +90,7 @@ object AbstractConfigValue {
   private[impl] def formatOptions(
       options: ConfigRenderOptions
   ): ConfigFormatOptions =
-    options.getConfigFormatOptions
+    options.formatOptions
 
   private[impl] trait Modifier {
     // keyOrNull is null for non-objects

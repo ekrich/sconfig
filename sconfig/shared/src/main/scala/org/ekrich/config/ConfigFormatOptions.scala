@@ -14,9 +14,9 @@ package org.ekrich.config
  *   .setColonAssign(true)
  * }}}
  *
- * [[ConfigRenderOptions]] uses these defaults with `doubleIndent = true`, so
- * its output keeps the 4 space indent. You can get its values by calling
- * [[ConfigRenderOptions.getConfigFormatOptions() ConfigRenderOptions.getConfigFormatOptions()]].
+ * These options are for `ConfigDocument.format`. They are also carried on
+ * [[ConfigRenderOptions]], with `doubleIndent = true`, but that use is
+ * deprecated and will be removed in 3.0.0.
  *
  * @since 1.12.0
  */
@@ -38,10 +38,10 @@ object ConfigFormatOptions {
 }
 
 final class ConfigFormatOptions private (
-    private val keepOriginOrder: Boolean,
+    private[config] val keepOriginOrder: Boolean,
     private val doubleIndent: Boolean,
     private val colonAssign: Boolean,
-    private val newLineAtEnd: Boolean,
+    private[config] val newLineAtEnd: Boolean,
     private val simplifyNestedObjects: Boolean
 ) {
 
@@ -53,6 +53,10 @@ final class ConfigFormatOptions private (
    * @return
    *   the new [[ConfigFormatOptions]] object
    */
+  @deprecated(
+    "Has no effect on ConfigDocument.format; only the deprecated ConfigRenderOptions formatting uses it",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def setKeepOriginOrder(value: Boolean): ConfigFormatOptions =
     if (value == keepOriginOrder) this
     else
@@ -70,6 +74,10 @@ final class ConfigFormatOptions private (
    * @return
    *   true if set, false otherwise
    */
+  @deprecated(
+    "Has no effect on ConfigDocument.format; only the deprecated ConfigRenderOptions formatting uses it",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def getKeepOriginOrder: Boolean = keepOriginOrder
 
   /**
@@ -134,6 +142,10 @@ final class ConfigFormatOptions private (
    * @return
    *   the new [[ConfigFormatOptions]] object
    */
+  @deprecated(
+    "Has no effect on ConfigDocument.format; only the deprecated ConfigRenderOptions formatting uses it",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def setNewLineAtEnd(value: Boolean): ConfigFormatOptions =
     if (value == newLineAtEnd) this
     else
@@ -151,6 +163,10 @@ final class ConfigFormatOptions private (
    * @return
    *   true if set, false otherwise
    */
+  @deprecated(
+    "Has no effect on ConfigDocument.format; only the deprecated ConfigRenderOptions formatting uses it",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def getNewLineAtEnd: Boolean = newLineAtEnd
 
   /**

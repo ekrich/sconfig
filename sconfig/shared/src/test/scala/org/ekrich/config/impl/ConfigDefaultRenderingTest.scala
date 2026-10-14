@@ -10,10 +10,12 @@ import org.ekrich.config.ConfigFormatOptions
 import org.ekrich.config.ConfigParseOptions
 import org.ekrich.config.ConfigRenderOptions
 
+import scala.annotation.nowarn
 import scala.jdk.CollectionConverters.*
 
 // Regression tests for rendering old behaviour compatibility
 class ConfigDefaultRenderingTest extends RenderingTestSuite {
+  @nowarn("cat=deprecation")
   private implicit val defaultFormatOptions: ConfigFormatOptions =
     ConfigRenderOptions.defaults.getConfigFormatOptions
 
@@ -199,6 +201,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   }
 
   @Test
+  @nowarn("cat=deprecation")
   def commentsOnTheMergeItselfSurvive(): Unit = {
     val root = ConfigFactory.parseString("a : 1\na : ${a}", parseOptions).root
     val merge = root.get("a")
@@ -223,6 +226,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   // with no key to spell it out as repeated entries, a merge can only be
   // described
   @Test
+  @nowarn("cat=deprecation")
   def unresolvedMergeRenderedWithoutAKeyIsDescribed(): Unit = {
     val merge =
       ConfigFactory.parseString("a : 1\na : ${a}", parseOptions).root.get("a")

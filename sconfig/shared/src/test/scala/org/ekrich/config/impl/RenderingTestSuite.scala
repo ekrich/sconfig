@@ -6,6 +6,7 @@ import org.ekrich.config.{
   ConfigParseOptions,
   ConfigRenderOptions
 }
+import scala.annotation.nowarn
 
 trait RenderingTestSuite extends TestUtilsShared {
   val parseOptions = ConfigParseOptions.defaults.setAllowMissing(true)
@@ -15,6 +16,7 @@ trait RenderingTestSuite extends TestUtilsShared {
     .setComments(true)
     .setFormatted(true)
 
+  @nowarn("cat=deprecation")
   def renderHocon(
       str: String
   )(implicit configFormatOptions: ConfigFormatOptions): String =

@@ -3,12 +3,14 @@ package org.ekrich.config.impl
 import org.ekrich.config.ConfigFormatOptions
 import org.ekrich.config.ConfigRenderOptions
 import org.junit.*
+import scala.annotation.nowarn
 // tests for new features of Rendering (since fork from lightbend)
 class ConfigFormatOptionsTest extends RenderingTestSuite {
   // the renderer's defaults, which keep the 4 space indent
   val initialFormatOptions = ConfigFormatOptions.defaults.setDoubleIndent(true)
 
   @Test
+  @nowarn("cat=deprecation")
   def defaultIndent(): Unit = {
     Assert.assertFalse(ConfigFormatOptions.defaults.getDoubleIndent)
     Assert.assertTrue(
@@ -20,6 +22,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
   }
 
   @Test
+  @nowarn("cat=deprecation")
   def noNewLineAtTheEnd(): Unit = {
     implicit val configFormatOptions =
       initialFormatOptions.setNewLineAtEnd(false)
@@ -31,6 +34,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
   }
 
   @Test
+  @nowarn("cat=deprecation")
   def keepOriginOrderOfEntries(): Unit = {
     implicit val configFormatOptions =
       initialFormatOptions.setKeepOriginOrder(true)
