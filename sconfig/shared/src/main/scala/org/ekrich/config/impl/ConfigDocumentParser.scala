@@ -306,13 +306,12 @@ object ConfigDocumentParser {
         val kindText = Tokens.getUnquotedText(t)
         if (kindText.startsWith("required(")) {
           val r = kindText.replaceFirst("required\\(", "")
-          if (r.length > 0) putBack(Tokens.newUnquotedText(t.origin, r))
-          children.add(new ConfigNodeSingleToken(t))
-          // children.add(new ConfigNodeSingleToken(tOpen));
+          children.add(new ConfigNodeSingleToken(openParen(t, r)))
           val res = parseIncludeResource(children, true)
           t = nextTokenCollectingWhitespace(children)
           if (Tokens.isUnquotedText(t) && Tokens.getUnquotedText(t) == ")") {
-            // OK, close paren
+            // keep the close paren so the node renders as written
+            children.add(new ConfigNodeSingleToken(t))
           } else throw parseError(ExpectingClosingParenthesisError + t)
           res
         } else {
@@ -324,6 +323,19 @@ object ConfigDocumentParser {
         parseIncludeResource(children, false)
       }
     }
+    // The token for an open paren such as `file(`. When more text follows in
+    // the same token, it is put back and only the part up to the paren is
+    // kept, so it is not in the node twice.
+    private def openParen(t: Token, rest: String): Token =
+      if (rest.length > 0) {
+        putBack(Tokens.newUnquotedText(t.origin, rest))
+        val text = Tokens.getUnquotedText(t)
+        Tokens.newUnquotedText(
+          t.origin,
+          text.substring(0, text.length - rest.length)
+        )
+      } else t
+
     private def parseIncludeResource(
         children: ju.ArrayList[AbstractConfigNode],
         isRequired: Boolean
@@ -349,8 +361,7 @@ object ConfigDocumentParser {
             "expecting include parameter to be quoted filename, file(), classpath(), or url(). No spaces are allowed before the open paren. Not expecting: " + t
           )
         val r = kindText.replaceFirst("[^(]*\\(", "")
-        if (r.length > 0) putBack(Tokens.newUnquotedText(t.origin, r))
-        children.add(new ConfigNodeSingleToken(t))
+        children.add(new ConfigNodeSingleToken(openParen(t, r)))
         // skip space inside parens
         t = nextTokenCollectingWhitespace(children)
         // quoted string
@@ -365,7 +376,12 @@ object ConfigDocumentParser {
               .getUnquotedText(t)
               .startsWith(")")) {
           val rest = Tokens.getUnquotedText(t).substring(1)
-          if (rest.length > 0) putBack(Tokens.newUnquotedText(t.origin, rest))
+          if (rest.length > 0) {
+            putBack(Tokens.newUnquotedText(t.origin, rest))
+            children.add(
+              new ConfigNodeSingleToken(Tokens.newUnquotedText(t.origin, ")"))
+            )
+          } else children.add(new ConfigNodeSingleToken(t))
         } else throw parseError(ExpectingClosingParenthesisError + t)
         new ConfigNodeInclude(children, kind, isRequired)
       } else if (Tokens.isValueWithType(t, ConfigValueType.STRING)) {
