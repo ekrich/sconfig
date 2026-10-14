@@ -399,6 +399,58 @@ class ConfigDocumentFormatTest {
       defaults.setDoubleIndent(true)
     )
 
+  // comments, arrays, and five levels of nesting
+  @Test
+  def doubleIndentDeep(): Unit = {
+    val in = """a {
+               |# c
+               |b = [
+               |{
+               |c {
+               |d = [1,
+               |2]
+               |}
+               |}
+               |]
+               |}
+               |""".stripMargin
+    val expected = """a {
+                     |    # c
+                     |    b = [
+                     |        {
+                     |            c {
+                     |                d = [
+                     |                    1
+                     |                    2
+                     |                ]
+                     |            }
+                     |        }
+                     |    ]
+                     |}
+                     |""".stripMargin
+    check(in, expected, defaults.setDoubleIndent(true))
+  }
+
+  @Test
+  def doubleIndentJson(): Unit = {
+    val in = """{
+               |"a": {
+               |"b": [1,
+               |2]
+               |}
+               |}""".stripMargin
+    val expected = """{
+                     |    "a": {
+                     |        "b": [
+                     |            1,
+                     |            2
+                     |        ]
+                     |    }
+                     |}
+                     |""".stripMargin
+    check(in, expected, defaults.setDoubleIndent(true), jsonParse)
+  }
+
   @Test
   def colonAssign(): Unit =
     check(
