@@ -85,4 +85,8 @@ scalafmtAll
 
 If you use VSCode you can format individual files for macOS via `shift-option F` or on Windows via `shift-alt F`
 
+## Porting from lightbend/config
+
+Fixes made in `lightbend/config` are still ported here. See [Porting](PORTING.md) for the steps, the Java to Scala conventions and what a port's pull request shows.
+
 <kbd>[<- Back to README](../README.md)</kbd>
