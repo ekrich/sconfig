@@ -85,7 +85,8 @@ object AbstractConfigValue {
 
   // The one place the value renderer reads the format options. They are
   // carried on ConfigRenderOptions only until that is removed in the next
-  // major release; then this returns ConfigFormatOptions.defaults.
+  // major release; then this returns the fixed
+  // ConfigFormatOptions.defaults.setDoubleIndent(true).
   private[impl] def formatOptions(
       options: ConfigRenderOptions
   ): ConfigFormatOptions =
