@@ -15,7 +15,7 @@ trait RenderingTestSuite extends TestUtilsShared {
     .setComments(true)
     .setFormatted(true)
 
-  def formatHocon(
+  def renderHocon(
       str: String
   )(implicit configFormatOptions: ConfigFormatOptions): String =
     ConfigFactory
@@ -29,14 +29,14 @@ trait RenderingTestSuite extends TestUtilsShared {
       configFormatOptions: ConfigFormatOptions
   ) = {
     checkEqualObjects(expected, result)
-    checkEqualObjects(result, formatHocon(result))
+    checkEqualObjects(result, renderHocon(result))
   }
 
   // rendered text has to be readable back, or a round trip loses the config
   def checkReparses(result: String)(implicit
       configFormatOptions: ConfigFormatOptions
   ) =
-    try formatHocon(result)
+    try renderHocon(result)
     catch {
       case e: ConfigException.Parse =>
         throw new AssertionError(
