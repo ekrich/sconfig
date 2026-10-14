@@ -7,6 +7,7 @@ import java.{lang => jl}
 import java.{util => ju}
 import ju.Collections
 import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigFormatOptions
 import org.ekrich.config.ConfigMergeable
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
@@ -78,16 +79,17 @@ object AbstractConfigValue {
       indent: Int,
       options: ConfigRenderOptions
   ): Unit = {
-    if (options.getFormatted) {
-      var remaining = indent
-      while (remaining > 0) {
-        sb.append(
-          if (options.getConfigFormatOptions.getDoubleIndent) "    " else "  "
-        )
-        remaining -= 1
-      }
-    }
+    if (options.getFormatted)
+      FormatUtil.indent(sb, indent, formatOptions(options))
   }
+
+  // The one place the value renderer reads the format options. They are
+  // carried on ConfigRenderOptions only until that is removed in the next
+  // major release; then this returns ConfigFormatOptions.defaults.
+  private[impl] def formatOptions(
+      options: ConfigRenderOptions
+  ): ConfigFormatOptions =
+    options.getConfigFormatOptions
 
   private[impl] trait Modifier {
     // keyOrNull is null for non-objects
@@ -360,11 +362,10 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
         if (options.getFormatted) sb.append(' ')
       } else {
         sb.append(
-          if (options.getFormatted) {
-            if (options.getConfigFormatOptions.getColonAssign) ": " else " = "
-          } else {
-            if (options.getConfigFormatOptions.getColonAssign) ":" else "="
-          }
+          FormatUtil.separator(
+            AbstractConfigValue.formatOptions(options),
+            options.getFormatted
+          )
         )
       }
     }
