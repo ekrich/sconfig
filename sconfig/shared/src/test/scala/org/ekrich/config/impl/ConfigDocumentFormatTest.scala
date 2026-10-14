@@ -275,6 +275,49 @@ class ConfigDocumentFormatTest {
   def commentOnlyDocument(): Unit =
     check("  # just a comment", "# just a comment\n")
 
+  @Test
+  def headerAndFooterComments(): Unit = {
+    val in = """# Copyright header
+               |  # line 2
+               |
+               |
+               |app {
+               |name = x
+               |}
+               |# trailing comment at end of file
+               |
+               |
+               |""".stripMargin
+    val expected = """# Copyright header
+                     |# line 2
+                     |
+                     |app {
+                     |  name = x
+                     |}
+                     |# trailing comment at end of file
+                     |""".stripMargin
+    check(in, expected)
+  }
+
+  @Test
+  def commentsAroundBracedRoot(): Unit = {
+    val in = """  # before
+               |
+               |
+               |{
+               |a = 1
+               |}
+               |# after""".stripMargin
+    val expected = """# before
+                     |
+                     |{
+                     |  a = 1
+                     |}
+                     |# after
+                     |""".stripMargin
+    check(in, expected)
+  }
+
   // ---- kept as written
 
   @Test
