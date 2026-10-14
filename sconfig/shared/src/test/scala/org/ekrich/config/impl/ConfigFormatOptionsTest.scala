@@ -1,10 +1,23 @@
 package org.ekrich.config.impl
 
 import org.ekrich.config.ConfigFormatOptions
+import org.ekrich.config.ConfigRenderOptions
 import org.junit.*
 // tests for new features of Rendering (since fork from lightbend)
 class ConfigFormatOptionsTest extends RenderingTestSuite {
-  val initialFormatOptions = ConfigFormatOptions.defaults
+  // the renderer's defaults, which keep the 4 space indent
+  val initialFormatOptions = ConfigFormatOptions.defaults.setDoubleIndent(true)
+
+  @Test
+  def defaultIndent(): Unit = {
+    Assert.assertFalse(ConfigFormatOptions.defaults.getDoubleIndent)
+    Assert.assertTrue(
+      ConfigRenderOptions.defaults.getConfigFormatOptions.getDoubleIndent
+    )
+    Assert.assertTrue(
+      ConfigRenderOptions.concise.getConfigFormatOptions.getDoubleIndent
+    )
+  }
 
   @Test
   def noNewLineAtTheEnd(): Unit = {

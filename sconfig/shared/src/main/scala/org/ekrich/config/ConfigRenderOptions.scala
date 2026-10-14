@@ -30,7 +30,8 @@ object ConfigRenderOptions {
    *   - formatted = true
    *   - json = true
    *   - showEnvVariableValues = true
-   *   - configFormatOptions = [[ConfigFormatOptions$.default*]]
+   *   - configFormatOptions = [[ConfigFormatOptions$.default*]] with
+   *     doubleIndent = true
    */
   def defaults = new ConfigRenderOptions(
     true,
@@ -38,7 +39,7 @@ object ConfigRenderOptions {
     true,
     true,
     true,
-    ConfigFormatOptions.defaults
+    ConfigFormatOptions.defaults.setDoubleIndent(true)
   )
 
   /**
@@ -53,7 +54,8 @@ object ConfigRenderOptions {
    *   - formatted = false
    *   - json = true
    *   - showEnvVariableValues = true
-   *   - configFormatOptions = [[ConfigFormatOptions$.default*]]
+   *   - configFormatOptions = [[ConfigFormatOptions$.default*]] with
+   *     doubleIndent = true
    */
   def concise = new ConfigRenderOptions(
     false,
@@ -61,7 +63,7 @@ object ConfigRenderOptions {
     false,
     true,
     true,
-    ConfigFormatOptions.defaults
+    ConfigFormatOptions.defaults.setDoubleIndent(true)
   )
 }
 

@@ -8,13 +8,14 @@ import java.{util => ju}
 import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigFormatOptions
 import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.ConfigRenderOptions
 
 import scala.jdk.CollectionConverters.*
 
 // Regression tests for rendering old behaviour compatibility
 class ConfigDefaultRenderingTest extends RenderingTestSuite {
   private implicit val defaultFormatOptions: ConfigFormatOptions =
-    ConfigFormatOptions.defaults
+    ConfigRenderOptions.defaults.getConfigFormatOptions
 
   @Test
   def newLineAtTheEnd(): Unit = {

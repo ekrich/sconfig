@@ -11,11 +11,11 @@ package org.ekrich.config
  * {{{
  * val formatOptions = ConfigFormatOptions.defaults
  *   .setKeepOriginOrder(true)
- *   .setDoubleIndent(false)
+ *   .setColonAssign(true)
  * }}}
  *
- * The default values are used by [[ConfigRenderOptions]] and you can get the
- * values by calling
+ * [[ConfigRenderOptions]] uses these defaults with `doubleIndent = true`, so
+ * its output keeps the 4 space indent. You can get its values by calling
  * [[ConfigRenderOptions.getConfigFormatOptions() ConfigRenderOptions.getConfigFormatOptions()]].
  *
  * @since 1.12.0
@@ -29,12 +29,12 @@ object ConfigFormatOptions {
    *   the default options
    *
    *   - keepOriginOrder = false
-   *   - doubleIndent = true
+   *   - doubleIndent = false
    *   - colonAssign = false
    *   - newLineAtEnd = true
    *   - simplifyOneEntryNestedObjects = false
    */
-  def defaults = new ConfigFormatOptions(false, true, false, true, false)
+  def defaults = new ConfigFormatOptions(false, false, false, true, false)
 }
 
 final class ConfigFormatOptions private (
