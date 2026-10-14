@@ -21,7 +21,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def newLineAtTheEnd(): Unit = {
     val in = """r {
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
     val expected = """r {}
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
@@ -36,7 +36,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |        }
                |     }
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |    p {
@@ -56,7 +56,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |      "n-m"=1
                |    n:"ALA"
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |    n = ALA
@@ -70,7 +70,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   @Test
   def dontSimplifyOneEntryNestedObjects(): Unit = {
     val in = """r.p.d= 42"""
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected =
       """r {
@@ -88,7 +88,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
       """except: ${ex1} ${ex2}
         |myEmpty: " "
         |""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected =
       """except = ${ex1} ${ex2}
@@ -101,7 +101,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   @Test
   def listElementsKeepTheirBraces(): Unit = {
     val in = """root = [{foo = bar}, {baz = qux}]"""
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """root = [
                      |    {
@@ -122,7 +122,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def arrayConcatenationRoundTripsThroughRender(): Unit = {
     val in = """ex1 = [1, 2]
                |except = ${ex1} ${ex1}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val resolved =
       ConfigFactory.parseString(result, ConfigParseOptions.defaults).resolve()
@@ -156,9 +156,9 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
         |a : ${a}""".stripMargin
     )
     inputs.foreach { in =>
-      val result = formatHocon(in)
+      val result = renderHocon(in)
       checkReparses(result)
-      checkEqualObjects(result, formatHocon(result))
+      checkEqualObjects(result, renderHocon(result))
     }
   }
 
@@ -168,7 +168,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |a : 1
                |# two
                |a : ${a}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """# one
                      |"a" : 1,
@@ -186,7 +186,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |  a : 1
                |  a : ${outer.a}
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """outer {
                      |    "a" : 1,
@@ -247,7 +247,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def unresolvedMergeInsideArrayElementRendersToAFixedPoint(): Unit = {
     val in = """l = [ { a : 1
                |a : ${x} } ]""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """l = [
                      |    {
@@ -269,7 +269,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                |  # c2
                |  a : ${outer.a}
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """outer {
                      |    # c1
@@ -289,7 +289,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def envVarListExpansionSubstitutionRendersVerbatim(): Unit = {
     val in = """a = ${FOO[]}
                |b = ${?FOO[]}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
     val expected = """a = ${FOO[]}
                      |b = ${?FOO[]}
                      |""".stripMargin
