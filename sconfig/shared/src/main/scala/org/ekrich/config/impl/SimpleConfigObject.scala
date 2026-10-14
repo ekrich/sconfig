@@ -562,7 +562,7 @@ final class SimpleConfigObject(
     if (isEmpty) sb.append("{}")
     else renderValueAsMultiLineObject(sb, indentVal, atRoot, options)
     val fmt = AbstractConfigValue.formatOptions(options)
-    if (atRoot && options.getFormatted && fmt.getNewLineAtEnd)
+    if (atRoot && options.getFormatted && fmt.newLineAtEnd)
       sb.append('\n')
   }
 
@@ -623,7 +623,7 @@ final class SimpleConfigObject(
     val keys = new ju.ArrayList[String]
     keys.addAll(keySet)
     val ordering =
-      if (AbstractConfigValue.formatOptions(options).getKeepOriginOrder)
+      if (AbstractConfigValue.formatOptions(options).keepOriginOrder)
         new SimpleConfigObject.KeepOriginRenderComparator(str =>
           value.get(str).origin
         )

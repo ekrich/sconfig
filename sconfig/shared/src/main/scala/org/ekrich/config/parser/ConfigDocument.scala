@@ -95,10 +95,10 @@ trait ConfigDocument {
    * same on every platform.
    *
    * Of the options, `doubleIndent`, `colonAssign`, and `simplifyNestedObjects`
-   * apply. `keepOriginOrder` and `newLineAtEnd` have no effect: the order is
-   * always kept and the text always ends with one newline. For JSON documents
-   * the separator stays `:` and `simplifyNestedObjects` is ignored, so the
-   * result is still JSON.
+   * apply. `keepOriginOrder` and `newLineAtEnd` are deprecated and have no
+   * effect: the order is always kept and the text always ends with one newline.
+   * For JSON documents the separator stays `:` and `simplifyNestedObjects` is
+   * ignored, so the result is still JSON.
    *
    * Text inserted later with [[withValueText]] or [[withValue]] is not
    * formatted, so call `format` last.
