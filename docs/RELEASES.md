@@ -2,6 +2,7 @@
 
 <kbd>[<- Back to README](../README.md)</kbd>
 
+Release [2.1.0](https://github.com/ekrich/sconfig/releases/tag/v2.1.0) - (2026-10-11)<br/>
 Release [2.0.0](https://github.com/ekrich/sconfig/releases/tag/v2.0.0) - (2026-06-18)<br/>
 Release [1.12.4](https://github.com/ekrich/sconfig/releases/tag/v1.12.4) - (2025-12-11)<br/>
 Release [1.12.3](https://github.com/ekrich/sconfig/releases/tag/v1.12.3) - (2025-12-10)<br/>
