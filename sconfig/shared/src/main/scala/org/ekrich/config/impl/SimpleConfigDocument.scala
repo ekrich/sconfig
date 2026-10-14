@@ -44,6 +44,18 @@ final class SimpleConfigDocument private[impl] (
       parseOptions
     )
   override def hasPath(path: String): Boolean = configNodeTree.hasValue(path)
+  override def format(options: ConfigFormatOptions): ConfigDocument = {
+    val syntax = parseOptions.getSyntax
+    val text =
+      ConfigDocumentFormatter.format(configNodeTree, options, syntax)
+    // parse the text back so the new document has its own tree
+    val origin = configNodeTree.origin
+    val reader = new StringReader(text)
+    val tokens = Tokenizer.tokenize(origin, reader, syntax)
+    val tree = ConfigDocumentParser.parse(tokens, origin, parseOptions)
+    reader.close()
+    new SimpleConfigDocument(tree, parseOptions)
+  }
   override def render: String = configNodeTree.render
   override def equals(other: Any): Boolean =
     other.isInstanceOf[ConfigDocument] &&

@@ -1,5 +1,6 @@
 package org.ekrich.config.parser
 
+import org.ekrich.config.ConfigFormatOptions
 import org.ekrich.config.ConfigValue
 
 /**
@@ -82,6 +83,33 @@ trait ConfigDocument {
    *   true if the path exists in the document, otherwise false
    */
   def hasPath(path: String): Boolean
+
+  /**
+   * Returns a new ConfigDocument with the text formatted. The original
+   * ConfigDocument is not modified.
+   *
+   * Formatting only changes layout: indentation, spacing, separators, commas,
+   * and blank lines. It keeps the meaning, the order of fields, comments,
+   * includes, `+=`, and duplicate keys as written. It never loads includes,
+   * resolves substitutions, or reads environment variables, so it works the
+   * same on every platform.
+   *
+   * Of the options, `doubleIndent`, `colonAssign`, and `simplifyNestedObjects`
+   * apply. `keepOriginOrder` and `newLineAtEnd` have no effect: the order is
+   * always kept and the text always ends with one newline. For JSON documents
+   * the separator stays `:` and `simplifyNestedObjects` is ignored, so the
+   * result is still JSON.
+   *
+   * Text inserted later with [[withValueText]] or [[withValue]] is not
+   * formatted, so call `format` last.
+   *
+   * @param options
+   *   the formatting options
+   * @return
+   *   a new ConfigDocument with the formatted text
+   * @since 2.2.0
+   */
+  def format(options: ConfigFormatOptions): ConfigDocument
 
   /**
    * The original text of the input, modified if necessary with any replaced or
