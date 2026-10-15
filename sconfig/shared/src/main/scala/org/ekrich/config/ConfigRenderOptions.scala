@@ -30,7 +30,8 @@ object ConfigRenderOptions {
    *   - formatted = true
    *   - json = true
    *   - showEnvVariableValues = true
-   *   - configFormatOptions = [[ConfigFormatOptions$.default*]]
+   *   - configFormatOptions = [[ConfigFormatOptions$.default*]] with
+   *     doubleIndent = true
    */
   def defaults = new ConfigRenderOptions(
     true,
@@ -38,7 +39,7 @@ object ConfigRenderOptions {
     true,
     true,
     true,
-    ConfigFormatOptions.defaults
+    ConfigFormatOptions.defaults.setDoubleIndent(true)
   )
 
   /**
@@ -53,7 +54,8 @@ object ConfigRenderOptions {
    *   - formatted = false
    *   - json = true
    *   - showEnvVariableValues = true
-   *   - configFormatOptions = [[ConfigFormatOptions$.default*]]
+   *   - configFormatOptions = [[ConfigFormatOptions$.default*]] with
+   *     doubleIndent = true
    */
   def concise = new ConfigRenderOptions(
     false,
@@ -61,7 +63,7 @@ object ConfigRenderOptions {
     false,
     true,
     true,
-    ConfigFormatOptions.defaults
+    ConfigFormatOptions.defaults.setDoubleIndent(true)
   )
 }
 
@@ -180,6 +182,10 @@ final class ConfigRenderOptions private (
    *   the new ConfigRenderOptions object with the new formatting setting
    * @since 1.12.0
    */
+  @deprecated(
+    "Use ConfigDocument.format to format config text",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def setConfigFormatOptions(value: ConfigFormatOptions): ConfigRenderOptions =
     if (value == _configFormatOptions) this
     else
@@ -199,7 +205,14 @@ final class ConfigRenderOptions private (
    *   the config format option
    * @since 1.12.0
    */
+  @deprecated(
+    "Use ConfigDocument.format to format config text",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def getConfigFormatOptions: ConfigFormatOptions = _configFormatOptions
+
+  // for the renderer, which must not call the deprecated getter
+  private[config] def formatOptions: ConfigFormatOptions = _configFormatOptions
 
   /**
    * Returns options with JSON toggled. JSON means that HOCON extensions
@@ -271,12 +284,12 @@ final class ConfigRenderOptions private (
     if (_comments) sb.append("comments,")
     if (_formatted) {
       sb.append("formatted,")
-      if (_configFormatOptions.getKeepOriginOrder) sb.append("keepOriginOrder,")
+      if (_configFormatOptions.keepOriginOrder) sb.append("keepOriginOrder,")
       if (_configFormatOptions.getDoubleIndent) sb.append("doubleIndent,")
       if (_configFormatOptions.getColonAssign) sb.append("colonAssign,")
-      if (_configFormatOptions.getNewLineAtEnd) sb.append("newLineAtEnd,")
+      if (_configFormatOptions.newLineAtEnd) sb.append("newLineAtEnd,")
       if (_configFormatOptions.getSimplifyNestedObjects)
-        sb.append("simplifyOneEntryNestedObjects,")
+        sb.append("simplifyNestedObjects,")
     }
     if (_json) sb.append("json,")
     if (_showEnvVariableValues) sb.append("showEnvVariableValues,")

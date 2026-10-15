@@ -20,6 +20,15 @@ libraryDependencies ++= Seq(
 Please refer to the `sjavatime` [home page](https://github.com/ekrich/sjavatime)
 for the current version.
 
+## Includes
+
+`include` statements are not supported on Scala.js and Scala Native.
+
+## Formatting
+
+[HOCON Formatting](NEW_FEATURES.md#hocon-formatting) works the same on
+Scala.js and Scala Native as on the JVM.
+
 ## Read from String example
 
 This assumes that you read a file into a `configStr` first. Other methods

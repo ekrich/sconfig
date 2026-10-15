@@ -314,7 +314,10 @@ lazy val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
   import com.typesafe.tools.mima.core.ProblemFilters._
   Seq(
-    exclude[Problem]("org.ekrich.config.impl.*")
+    exclude[Problem]("org.ekrich.config.impl.*"),
+    exclude[ReversedMissingMethodProblem](
+      "org.ekrich.config.parser.ConfigDocument.format"
+    )
   )
 }
 
