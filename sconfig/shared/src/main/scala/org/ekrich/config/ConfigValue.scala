@@ -50,6 +50,10 @@ trait ConfigValue extends ConfigMergeable {
    * Renders the config value as a HOCON string. This method is primarily
    * intended for debugging, so it tries to add helpful comments and whitespace.
    *
+   * <p> To format a config file, use `ConfigDocument.format` instead. It works
+   * on the text of the file and keeps includes, comments, and the order of
+   * fields.
+   *
    * <p> If the config value has not been resolved (see
    * [[Config!.resolve()* Config.resolve()]]), it's possible that it can't be
    * rendered as valid HOCON. In that case the rendering should still be useful
@@ -66,8 +70,12 @@ trait ConfigValue extends ConfigMergeable {
   /**
    * Renders the config value to a string, using the provided options.
    *
+   * <p> To format a config file, use `ConfigDocument.format` instead. It works
+   * on the text of the file and keeps includes, comments, and the order of
+   * fields.
+   *
    * <p> If the config value has not been resolved (see
-   * [[[Config!.resolve()* Config.resolve()]]), it's possible that it can't be
+   * [[Config!.resolve()* Config.resolve()]]), it's possible that it can't be
    * rendered as valid HOCON. In that case the rendering should still be useful
    * for debugging but you might not be able to parse it. If the value has been
    * resolved, it will always be parseable.

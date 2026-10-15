@@ -460,6 +460,19 @@ class ConfigDocumentFormatTest {
     )
 
   @Test
+  def formatOptionsToString(): Unit = {
+    assertEquals("ConfigFormatOptions()", defaults.toString)
+    assertEquals(
+      "ConfigFormatOptions(doubleIndent,colonAssign,simplifyNestedObjects)",
+      defaults
+        .setDoubleIndent(true)
+        .setColonAssign(true)
+        .setSimplifyNestedObjects(true)
+        .toString
+    )
+  }
+
+  @Test
   @nowarn("cat=deprecation")
   def noEffectOptions(): Unit = {
     val in = "b = 1\na = 2"
