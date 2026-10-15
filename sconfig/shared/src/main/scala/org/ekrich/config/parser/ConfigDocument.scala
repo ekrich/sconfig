@@ -86,7 +86,12 @@ trait ConfigDocument {
 
   /**
    * Returns a new ConfigDocument with the text formatted. The original
-   * ConfigDocument is not modified.
+   * ConfigDocument is not modified. Call [[render]] on the result to get the
+   * formatted text:
+   *
+   * {{{
+   * val text = ConfigDocumentFactory.parseString(input).format(options).render
+   * }}}
    *
    * Formatting only changes layout: indentation, spacing, separators, commas,
    * and blank lines. It keeps the meaning, the order of fields, comments,
@@ -113,7 +118,8 @@ trait ConfigDocument {
 
   /**
    * The original text of the input, modified if necessary with any replaced or
-   * added values.
+   * added values. The text is written exactly as the document holds it. To
+   * format it, call [[format]] first and render the result.
    *
    * @return
    *   the modified original text

@@ -1,5 +1,7 @@
 package org.ekrich.config
 
+import java.lang as jl
+
 /**
  * A set of options related to formatting.
  *
@@ -10,13 +12,14 @@ package org.ekrich.config
  *
  * {{{
  * val formatOptions = ConfigFormatOptions.defaults
- *   .setKeepOriginOrder(true)
+ *   .setDoubleIndent(true)
  *   .setColonAssign(true)
  * }}}
  *
- * These options are for `ConfigDocument.format`. They are also carried on
- * [[ConfigRenderOptions]], with `doubleIndent = true`, but that use is
- * deprecated and will be removed in 3.0.0.
+ * These options are for `ConfigDocument.format`, except `keepOriginOrder` and
+ * `newLineAtEnd`, which have no effect there and are deprecated. The options
+ * are also carried on [[ConfigRenderOptions]], with `doubleIndent = true`, but
+ * that use is deprecated. Both will be removed in 3.0.0.
  *
  * @since 1.12.0
  */
@@ -197,4 +200,18 @@ final class ConfigFormatOptions private (
    */
   def getSimplifyNestedObjects: Boolean = simplifyNestedObjects
 
+  // only the options kept after 3.0.0; keepOriginOrder and newLineAtEnd are
+  // deprecated and left out
+  override def toString: String = {
+    val sb = new jl.StringBuilder("ConfigFormatOptions(")
+    if (doubleIndent) sb.append("doubleIndent,")
+    if (colonAssign) sb.append("colonAssign,")
+    if (simplifyNestedObjects) sb.append("simplifyNestedObjects,")
+    val lastIndex = sb.length - 1
+    if (sb.charAt(lastIndex) == ',')
+      sb.setCharAt(lastIndex, ')')
+    else
+      sb.append(')')
+    sb.toString
+  }
 }
