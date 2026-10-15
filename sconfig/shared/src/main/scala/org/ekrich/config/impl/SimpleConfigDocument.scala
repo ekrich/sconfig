@@ -51,9 +51,19 @@ final class SimpleConfigDocument private[impl] (
     // parse the text back so the new document has its own tree
     val origin = configNodeTree.origin
     val reader = new StringReader(text)
-    val tokens = Tokenizer.tokenize(origin, reader, syntax)
-    val tree = ConfigDocumentParser.parse(tokens, origin, parseOptions)
-    reader.close()
+    val tree =
+      try {
+        val tokens = Tokenizer.tokenize(origin, reader, syntax)
+        ConfigDocumentParser.parse(tokens, origin, parseOptions)
+      } catch {
+        // the input parsed, so this is a formatter bug; the line number in
+        // the cause is for the formatted text, not the input
+        case e: ConfigException =>
+          throw new ConfigException.BugOrBroken(
+            "format produced text that does not parse: " + e.getMessage,
+            e
+          )
+      } finally reader.close()
     new SimpleConfigDocument(tree, parseOptions)
   }
   override def render: String = configNodeTree.render
