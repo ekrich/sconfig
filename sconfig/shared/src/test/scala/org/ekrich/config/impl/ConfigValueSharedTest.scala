@@ -334,6 +334,25 @@ class ConfigValueSharedTest extends TestUtilsShared {
     )
   }
 
+  // Beyond lightbend/config: SimpleConfigObject.values is unmodifiable here;
+  // revisit when upstream adds equivalent protection and coverage.
+  @Test
+  def configObjectValuesAreUnmodifiable(): Unit = {
+    val obj = parseObject("{ a=1, b=1, c=2 }")
+    val values = obj.values()
+
+    unsupported { values.clear() }
+    unsupported { values.remove(intValue(1)) }
+    unsupported { values.removeIf(_ => true) }
+    val iterator = values.iterator()
+    iterator.next()
+    unsupported { iterator.remove() }
+
+    assertEquals(parseObject("{ a=1, b=1, c=2 }"), obj)
+    assertEquals(3, values.size())
+    assertEquals(3, obj.values().size())
+  }
+
   @Test
   def configListImplementsList(): Unit = {
     val scalaSeq = Seq[AbstractConfigValue](
