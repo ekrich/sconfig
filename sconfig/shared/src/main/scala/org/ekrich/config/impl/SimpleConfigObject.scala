@@ -735,9 +735,8 @@ final class SimpleConfigObject(
 
   override def size: Int = value.size
 
-  // Unlike upstream's copy, keep the view unmodifiable, as with keySet.
   override def values: ju.Collection[ConfigValue] =
-    ju.Collections.unmodifiableCollection[ConfigValue](value.values)
+    new ju.ArrayList[ConfigValue](value.values)
 
   // serialization all goes through SerializedConfigValue
   @throws[ObjectStreamException]
