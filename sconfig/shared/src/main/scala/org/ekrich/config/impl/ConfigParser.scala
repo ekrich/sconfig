@@ -75,6 +75,9 @@ object ConfigParser {
       val includeContext: ConfigIncludeContext
   ) {
     private var lineNumber = 1
+    // counts the values of this file in source order; keepOriginOrder
+    // rendering breaks ties between fields defined on one line on it
+    private var nextSourceOrder = 0
     final private var pathStack = new ju.LinkedList[Path]
     // the number of lists we are inside; this is used to detect the "cannot
     // generate a reference to a list element" problem, and once we fix that
@@ -149,6 +152,12 @@ object ConfigParser {
         throw new ConfigException.BugOrBroken(
           "Bug in config parser: unbalanced array count"
         )
+      v = v.withOrigin(
+        v.origin
+          .asInstanceOf[SimpleConfigOrigin]
+          .withSourceOrder(nextSourceOrder)
+      )
+      nextSourceOrder += 1
       v
     }
     private def parseInclude(
