@@ -105,6 +105,15 @@ object ConfigParser {
       baseOrigin
         .asInstanceOf[SimpleConfigOrigin]
         .withLineNumber(lineNumber)
+    // prefer the origin captured at tokenize time (correct even after a
+    // multiline string, which the line counter cannot see past); fall back to
+    // the line counter for nodes built without one.
+    private def nodeOrigin(n: ConfigNodeComplexValue): SimpleConfigOrigin =
+      n.origin match {
+        case o: SimpleConfigOrigin => o
+        case _                     => lineOrigin
+      }
+
     private def parseError(message: String): ConfigException.Parse =
       parseError(message, null)
     private def parseError(
@@ -207,7 +216,7 @@ object ConfigParser {
     private def parseObject(n: ConfigNodeObject): AbstractConfigObject = {
       val values =
         new ju.HashMap[String, AbstractConfigValue]
-      val objectOrigin = lineOrigin
+      val objectOrigin = nodeOrigin(n)
       var lastWasNewline = false
       val nodes =
         new ju.ArrayList[AbstractConfigNode](n.children)
@@ -344,7 +353,7 @@ object ConfigParser {
 
     private def parseArray(n: ConfigNodeArray) = {
       arrayCount += 1
-      val arrayOrigin = lineOrigin
+      val arrayOrigin = nodeOrigin(n)
       val values = new ju.ArrayList[AbstractConfigValue]
       var lastWasNewLine = false
       val comments = new ju.ArrayList[String]
