@@ -9,6 +9,7 @@ import org.junit._
 import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigResolveOptions
 import org.ekrich.config.ConfigFactory
+import org.ekrich.config.ConfigRenderOptions
 import scala.jdk.CollectionConverters._
 
 /**
@@ -1517,6 +1518,80 @@ class ConfigSubstitutionSharedTest extends TestUtilsShared {
     assertEquals("default", resolved.getString("p.c.x"))
   }
 
+  private val partially = ConfigResolveOptions.defaults.setAllowUnresolved(true)
+  private val concise = ConfigRenderOptions.concise
+
+  // lightbend/config#800: each `+=` stacked another delayed merge on the last,
+  // and resolving that against a fallback died with BugOrBroken
+  // The partiallyResolved* cases below are not from lightbend/config: they pin
+  // that a partially resolved value that cannot become an object hides the
+  // merge stack below it (ConfigDelayedMerge.cannotBecomeAnObject). Revisit and
+  // drop them when upstream adds equivalent coverage.
+  @Test
+  def partiallyResolvedAppendsResolveAgainstAFallbackInEitherOrder(): Unit = {
+    val partial = ConfigFactory
+      .parseString("""a = [${s}-1]
+                     |a += ${s}-2
+                     |a += ${s}-3
+                     |a += ${s}-4""".stripMargin)
+      .resolve(partially)
+    val s = ConfigFactory.parseString("s = abc")
+    val expected = List("abc-1", "abc-2", "abc-3", "abc-4")
+
+    val after = partial.withFallback(s).resolve()
+    assertEquals(expected, after.getStringList("a").asScala.toList)
+    val before = s.withFallback(partial).resolve()
+    assertEquals(expected, before.getStringList("a").asScala.toList)
+  }
+
+  // what a list hides is not evaluated, unresolved or not
+  @Test
+  def partiallyResolvedListHidesTheValuesBelowIt(): Unit = {
+    val partial = ConfigFactory
+      .parseString("""a = ${nope}
+                     |a = [${s}]""".stripMargin)
+      .resolve(partially)
+
+    assertEquals("""{"a":[${s}]}""", partial.root.render(concise))
+  }
+
+  // the concatenation read `a` from below before the list hid it
+  @Test
+  def partiallyResolvedSelfReferenceKeepsWhatItReadBelow(): Unit = {
+    val partial = ConfigFactory
+      .parseString("""a = [1]
+                     |a = ${a} [${s}]""".stripMargin)
+      .resolve(partially)
+
+    assertEquals("""{"a":[1,${s}]}""", partial.root.render(concise))
+    val s = ConfigFactory.parseString("s = 2")
+    assertEquals(
+      List(1, 2),
+      partial.withFallback(s).resolve().getIntList("a").asScala.toList
+    )
+  }
+
+  @Test
+  def partiallyResolvedStringSelfReferencesResolveAgainstAFallbackInEitherOrder()
+      : Unit = {
+    val partial = ConfigFactory
+      .parseString("""a = ${s}-1
+                     |a = ${a}-2
+                     |a = ${a}-3
+                     |a = ${a}-4""".stripMargin)
+      .resolve(partially)
+    val s = ConfigFactory.parseString("s = abc")
+
+    assertEquals(
+      "abc-1-2-3-4",
+      partial.withFallback(s).resolve().getString("a")
+    )
+    assertEquals(
+      "abc-1-2-3-4",
+      s.withFallback(partial).resolve().getString("a")
+    )
+  }
+
   // A key can stay a delayed merge (default value, optionally overridden)
   // after being placed inside an object that is itself one piece of an
   // object concatenation. Resolving that inner merge has to replaceChild
@@ -1579,6 +1654,71 @@ class ConfigSubstitutionSharedTest extends TestUtilsShared {
     assertEquals(
       parseObject("{ type = test, properties { url = test } }"),
       resolve(obj).getConfig("app-test.component").root
+    )
+  }
+
+  @Test
+  def partiallyResolvedAppendsToASubstitutionResolveAgainstAFallbackInEitherOrder()
+      : Unit = {
+    val partial = ConfigFactory
+      .parseString("""a = ${base}
+                     |a += ${s}-2
+                     |a += ${s}-3
+                     |a += ${s}-4""".stripMargin)
+      .resolve(partially)
+    val fallback = ConfigFactory.parseString("base = [z]\ns = abc")
+    val expected = List("z", "abc-2", "abc-3", "abc-4")
+
+    val after = partial.withFallback(fallback).resolve()
+    assertEquals(expected, after.getStringList("a").asScala.toList)
+    val before = fallback.withFallback(partial).resolve()
+    assertEquals(expected, before.getStringList("a").asScala.toList)
+  }
+
+  @Test
+  def partiallyResolvedObjectConcatenationStillMergesWithTheObjectBelowIt()
+      : Unit = {
+    val partial = ConfigFactory
+      .parseString("""a = { q = 1 }
+                     |a = ${x} { r = 2 }""".stripMargin)
+      .resolve(partially)
+
+    val x = ConfigFactory.parseString("x = { p = 0 }")
+    assertEquals(
+      """{"p":0,"q":1,"r":2}""",
+      partial.withFallback(x).resolve().getValue("a").render(concise)
+    )
+  }
+
+  // the whitespace between two substitutions is dropped if both are objects
+  @Test
+  def partiallyResolvedSubstitutionsApartStillMergeWithTheObjectBelowThem()
+      : Unit = {
+    val partial = ConfigFactory
+      .parseString("""a = { q = 1 }
+                     |a = ${x} ${y}""".stripMargin)
+      .resolve(partially)
+
+    val xy = ConfigFactory.parseString("x = { r = 2 }\ny = { t = 3 }")
+    assertEquals(
+      """{"q":1,"r":2,"t":3}""",
+      partial.withFallback(xy).resolve().getValue("a").render(concise)
+    )
+  }
+
+  // ${x} may still turn out to be an object, so the object below it has to
+  // stay in the stack
+  @Test
+  def partiallyResolvedSubstitutionStillMergesWithTheObjectBelowIt(): Unit = {
+    val partial = ConfigFactory
+      .parseString("""a = { q = 1 }
+                     |a = ${x}""".stripMargin)
+      .resolve(partially)
+
+    val x = ConfigFactory.parseString("x = { r = 2 }")
+    assertEquals(
+      """{"a":{"q":1,"r":2},"x":{"r":2}}""",
+      partial.withFallback(x).resolve().root.render(concise)
     )
   }
 
