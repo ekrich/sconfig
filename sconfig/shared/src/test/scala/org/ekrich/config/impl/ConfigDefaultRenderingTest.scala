@@ -8,6 +8,7 @@ import java.{util => ju}
 import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigFormatOptions
 import org.ekrich.config.ConfigParseOptions
+import org.ekrich.config.ConfigRenderOptions
 
 import scala.jdk.CollectionConverters.*
 
@@ -170,10 +171,9 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val result = formatHocon(in)
 
     val expected = """# one
-                     |"a" : 1,
+                     |a = 1
                      |# two
-                     |"a" : ${a}
-                     |
+                     |a = ${a}
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
@@ -188,9 +188,8 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val result = formatHocon(in)
 
     val expected = """outer {
-                     |    "a" : 1,
-                     |    "a" : ${outer.a}
-                     |
+                     |    a = 1
+                     |    a = ${outer.a}
                      |    sib = 0
                      |}
                      |""".stripMargin
@@ -212,11 +211,68 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
       )
 
     val expected = """# kept
-                     |"a" : 1,
-                     |"a" : ${a}
-                     |
+                     |a = 1
+                     |a = ${a}
                      |""".stripMargin
     checkEqualObjects(expected, result)
+  }
+
+  // A merge stack is written as repeated fields, so its keys and separators
+  // come from the render options like those of any other field.
+  // The mergeStack* cases below are not from lightbend/config: they pin that
+  // merge stack entries are written with the render options' key and
+  // separator (ConfigDelayedMerge.render). Revisit and drop them when upstream
+  // adds equivalent coverage.
+  @Test
+  def mergeStackUsesTheDefaultSeparator(): Unit = {
+    val in = """a : 1
+               |a : ${a}
+               |sib : 0""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """a = 1
+                     |a = ${a}
+                     |sib = 0
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def mergeStackUsesTheCompactSeparator(): Unit = {
+    val in = """a : 1
+               |a : ${a}
+               |sib : 0""".stripMargin
+    val result = ConfigFactory
+      .parseString(in, parseOptions)
+      .root
+      .render(ConfigRenderOptions.concise.setJson(false))
+
+    checkEqualObjects("a=1,a=${a},sib=0", result)
+  }
+
+  @Test
+  def mergeStackQuotesKeysThatNeedIt(): Unit = {
+    val in = """"a b" : 1
+               |"a b" : ${x}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """"a b" = 1
+                     |"a b" = ${x}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def mergeStackInJsonKeepsQuotedKeysAndColons(): Unit = {
+    val in = """a : 1
+               |a : ${a}
+               |sib : 0""".stripMargin
+    val result = ConfigFactory
+      .parseString(in, parseOptions)
+      .root
+      .render(ConfigRenderOptions.concise)
+
+    checkEqualObjects("""{"a":1,"a":${a},"sib":0}""", result)
   }
 
   // with no key to spell it out as repeated entries, a merge can only be
@@ -250,9 +306,8 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
     val expected = """l = [
                      |    {
-                     |        "a" : 1,
-                     |        "a" : ${x}
-                     |
+                     |        a = 1
+                     |        a = ${x}
                      |    }
                      |]
                      |""".stripMargin
@@ -272,11 +327,44 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
     val expected = """outer {
                      |    # c1
-                     |    "a" : 1,
+                     |    a = 1
                      |    # c2
-                     |    "a" : ${outer.a}
-                     |
+                     |    a = ${outer.a}
                      |    sib = 0
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def repeatedMergeEntriesUseFieldSpacingForAppendedList(): Unit = {
+    val in = """a : [1]
+               |a += 2""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """a = [
+                     |    1
+                     |]
+                     |a = ${?a}[
+                     |    2
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def repeatedMergeEntriesUseFieldSpacingForNestedAppendedList(): Unit = {
+    val in = """o { a : [1]
+               |a += 2 }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """o {
+                     |    a = [
+                     |        1
+                     |    ]
+                     |    a = ${?o.a}[
+                     |        2
+                     |    ]
                      |}
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
