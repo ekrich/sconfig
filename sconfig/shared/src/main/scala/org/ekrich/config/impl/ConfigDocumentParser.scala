@@ -57,6 +57,14 @@ object ConfigDocumentParser {
     // used to modify the error message to reflect that
     // someone may think this is .properties format.
     private[impl] var equalsCount = 0
+    private var nestingDepth = 0
+    private def enterNested(): Unit = {
+      if (nestingDepth >= ConfigParser.maxNestingDepth)
+        throw parseError(
+          "too much nesting: more than " + ConfigParser.maxNestingDepth + " levels"
+        )
+      nestingDepth += 1
+    }
 
     private def popToken: Token = {
       if (buffer.isEmpty) return tokens.next
@@ -249,9 +257,15 @@ object ConfigDocumentParser {
       val startingEqualsCount = equalsCount
       if (Tokens.isValue(t) || Tokens.isUnquotedText(t) || Tokens
             .isSubstitution(t)) v = new ConfigNodeSimpleValue(t)
-      else if (t eq Tokens.OPEN_CURLY) v = parseObject(true)
-      else if (t eq Tokens.OPEN_SQUARE) v = parseArray
-      else
+      else if (t eq Tokens.OPEN_CURLY) {
+        enterNested()
+        try v = parseObject(true)
+        finally nestingDepth -= 1
+      } else if (t eq Tokens.OPEN_SQUARE) {
+        enterNested()
+        try v = parseArray
+        finally nestingDepth -= 1
+      } else
         throw parseError(
           addQuoteSuggestion(
             t.toString,
@@ -613,7 +627,9 @@ object ConfigDocumentParser {
         // of it, so put it back.
         putBack(t)
         missingCurly = true
-        result = parseObject(false)
+        enterNested()
+        try result = parseObject(false)
+        finally nestingDepth -= 1
       }
       // Need to pull the children out of the resulting node so we can keep leading
       // and trailing whitespace if this was a no-brace object. Otherwise, we need to add
