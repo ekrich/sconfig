@@ -4,9 +4,14 @@
 package org.ekrich.config.impl
 
 import java.{util => ju}
+import org.ekrich.config.ConfigOrigin
 
 abstract class ConfigNodeComplexValue(
-    _children: ju.Collection[AbstractConfigNode]
+    _children: ju.Collection[AbstractConfigNode],
+    // null for nodes built without one; ConfigParser falls back to its line
+    // counter then. ConfigNodeRoot inherits this rather than declaring its
+    // own -- Scala has no field shadowing.
+    val origin: ConfigOrigin = null
 ) extends AbstractConfigNodeValue {
   // why create ArrayList from Collection?
   val children: ju.List[AbstractConfigNode] =

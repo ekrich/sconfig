@@ -381,6 +381,7 @@ object ConfigDocumentParser {
       var afterComma = false
       val lastPath: Path = null // always null here ??
       var lastInsideEquals = false
+      val objectOrigin = baseOrigin.withLineNumber(lineNumber)
       val objectNodes =
         new ju.ArrayList[AbstractConfigNode]
       var keyValueNodes: ju.ArrayList[AbstractConfigNode] = null
@@ -519,12 +520,13 @@ object ConfigDocumentParser {
           }
         }
       }
-      new ConfigNodeObject(objectNodes)
+      new ConfigNodeObject(objectNodes, objectOrigin)
     }
 
     private def parseArray: ConfigNodeComplexValue = {
       val children =
         new ju.ArrayList[AbstractConfigNode]
+      val arrayOrigin = baseOrigin.withLineNumber(lineNumber)
       children.add(new ConfigNodeSingleToken(Tokens.OPEN_SQUARE))
       // invoked just after the OPEN_SQUARE
       var t: Token = null
@@ -535,7 +537,7 @@ object ConfigDocumentParser {
         // special-case the first element
         if (t eq Tokens.CLOSE_SQUARE) {
           children.add(new ConfigNodeSingleToken(t))
-          return new ConfigNodeArray(children)
+          return new ConfigNodeArray(children, arrayOrigin)
         } else if (Tokens.isValue(t) || (t eq Tokens.OPEN_CURLY) ||
             (t eq Tokens.OPEN_SQUARE) || Tokens.isUnquotedText(t) ||
             Tokens.isSubstitution(t)) {
@@ -585,7 +587,7 @@ object ConfigDocumentParser {
           }
         }
       }
-      return new ConfigNodeArray(children)
+      return new ConfigNodeArray(children, arrayOrigin)
     }
 
     private[impl] def parse: ConfigNodeRoot = {

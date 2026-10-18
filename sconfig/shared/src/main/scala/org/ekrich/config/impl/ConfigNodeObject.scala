@@ -1,16 +1,18 @@
 package org.ekrich.config.impl
 
+import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigSyntax
 import java.util as ju
 import ScalaOps.*
 
 final class ConfigNodeObject private[impl] (
-    _children: ju.Collection[AbstractConfigNode]
-) extends ConfigNodeComplexValue(_children) {
+    _children: ju.Collection[AbstractConfigNode],
+    _origin: ConfigOrigin = null
+) extends ConfigNodeComplexValue(_children, _origin) {
   override def newNode(
       nodes: ju.Collection[AbstractConfigNode]
   ): ConfigNodeComplexValue =
-    new ConfigNodeObject(nodes)
+    new ConfigNodeObject(nodes, origin)
 
   def hasValue(desiredPath: Path): Boolean =
     children.scalaOps.exists {
