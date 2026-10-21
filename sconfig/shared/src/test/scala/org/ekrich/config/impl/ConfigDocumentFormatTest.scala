@@ -80,6 +80,16 @@ class ConfigDocumentFormatTest {
     check(in, in)
   }
 
+  // the field is kept as written: no colon, and its other lines and its
+  // object value are not reindented
+  @Test
+  def fieldWithCommentKeptWithOptions(): Unit = {
+    val in = "a {\nb = # note\n  1\nc = # obj\n{\nd = 1\n}\ne = 2\n}\n"
+    val expected =
+      "a {\n    b = # note\n  1\n    c = # obj\n{\nd = 1\n}\n    e: 2\n}\n"
+    check(in, expected, defaults.setDoubleIndent(true).setColonAssign(true))
+  }
+
   @Test
   def plusEqualsKept(): Unit =
     check("a+=1\nb  +=  2\n", "a += 1\nb += 2\n")

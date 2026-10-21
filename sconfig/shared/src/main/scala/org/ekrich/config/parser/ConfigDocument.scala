@@ -99,6 +99,10 @@ trait ConfigDocument {
    * resolves substitutions, or reads environment variables, so it works the
    * same on every platform.
    *
+   * A field with a comment between its key and value is kept as written, apart
+   * from the indentation of its first line, so the comment stays with the
+   * value it describes.
+   *
    * Of the options, `doubleIndent`, `colonAssign`, and `simplifyNestedObjects`
    * apply. `keepOriginOrder` and `newLineAtEnd` are deprecated and have no
    * effect: the order is always kept and the text always ends with one newline.
