@@ -72,7 +72,11 @@ Everything else is fixed, so formatted files look the same everywhere:
   several blank lines into one and removes blank lines at the start of the
   file and at the start and end of an object or array.
 - Joins a field that is split across lines, such as `a =` with the value
-  on the next line, unless there is a comment inside it.
+  on the next line.
+- Keeps a field with a comment between its key and value exactly as
+  written, so the comment stays with the value it describes. Only its first
+  line is indented; its separator, its other lines, and any object or array
+  value are not changed.
 - Keeps objects and arrays that are on one line on one line, written as
   `{ a = 1, b = 2 }` and `[80, 443]`. An object or array that spans lines
   gets its opening and closing brackets on their own lines. Empty ones are
