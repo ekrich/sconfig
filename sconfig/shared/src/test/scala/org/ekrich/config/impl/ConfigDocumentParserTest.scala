@@ -130,6 +130,13 @@ class ConfigDocumentParserTest extends TestUtilsShared {
     parseTest("{  foo  :  bar  }")
     parseTest("{foo:bar}     ")
     parseTest("""{include "foo.conf"}""")
+    parseTest("""include file("foo.conf")""")
+    parseTest("""include classpath("foo.conf")""")
+    parseTest("""include url("http://example.com/foo.conf")""")
+    parseTest("""include required("foo.conf")""")
+    parseTest("""include required(file("foo.conf"))""")
+    parseTest("""include required( classpath( "foo.conf" ) )""")
+    parseTest("include file(  \n  \"foo.conf\"  \n  )")
     parseTest("   \n{foo:bar}\n    ")
 
     // Can parse a map with all simple types
