@@ -20,19 +20,35 @@ libraryDependencies ++= Seq(
 Please refer to the `sjavatime` [home page](https://github.com/ekrich/sjavatime)
 for the current version.
 
+## Formatting
+
+[HOCON Formatting](NEW_FEATURES.md#hocon-formatting) is full featured and
+works the same on Scala.js and Scala Native as on the JVM. A `ConfigDocument`
+never loads `include` statements, so files with includes can be formatted;
+the includes are kept as written.
+
 ## Includes
 
 `include` statements are not supported on Scala.js and Scala Native.
 
-## Formatting
+The class `java.net.URL` is not available on either platform, and because
+`include` uses `URL`, it is not supported. Even finding classpath resources
+requires `URL`, because the signature is
+`getResources(name: String): Enumeration[URL]`.
 
-[HOCON Formatting](NEW_FEATURES.md#hocon-formatting) works the same on
-Scala.js and Scala Native as on the JVM.
+Instead of using `include`, read each file yourself and combine the configs
+with `withFallback`, where the first config wins:
+
+```scala
+val config = ConfigFactory
+  .parseString(appConfStr)
+  .withFallback(ConfigFactory.parseString(defaultsConfStr))
+  .resolve()
+```
 
 ## Read from String example
 
-This assumes that you read a file into a `configStr` first. Other methods
-that don't use `File` or `URL` should also work.
+This works on both Scala.js and Scala Native.
 
 ```scala
 import org.ekrich.config.ConfigFactory
@@ -56,7 +72,7 @@ val isGit = conf.getBoolean("project.git")
 
 ## Using Reader - StringReader example
 
-Both JS and Native now support `java.io.Reader` which allows using `sconfig`
+Both Scala.js and Scala Native support `java.io.Reader` which allows using `sconfig`
 to parse all supported formats by passing a filename with extension. See the
 following examples from the shared `ConfigFactoryTest` file.
 
@@ -85,7 +101,7 @@ val specialChars = config.getString("fromProps.specialChars")
 In Scala Native `java.io.FileReader` is available so you can create a
 `FileReader` from a `File`.
 
-### How to read a HOCON configuation file using Scala Native
+### How to read a HOCON configuration file using Scala Native
 
 In order to read a configuration file you need to know the relative
 path from where the executable was started or use an absolute path. If the 

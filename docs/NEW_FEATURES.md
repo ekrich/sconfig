@@ -2,11 +2,14 @@
 
 <kbd>[<- Back to README](../README.md)</kbd>
 
-This library has features that are not available in the original Lightbend `config` library. This document explains and gives examples on how to use these features.
+This library has features that are not available in the original Lightbend
+`config` library. This document explains and gives examples on how to use
+these features.
 
 ## Scala Native and Scala.js Support
 
-See the Scala Native and Scala.js [guide](SCALA_NATIVE.md) for features and limitations of those platforms.
+See the Scala Native and Scala.js [guide](SCALA_NATIVE.md) for features and
+limitations of those platforms.
 
 ## HOCON Formatting
 
@@ -54,7 +57,7 @@ formatted.
 |---|---|---|
 | `doubleIndent` | `false` | Indent with 4 spaces instead of 2. |
 | `colonAssign` | `false` | Write `key: value` instead of `key = value`. `+=` and `key { ... }` are not changed. |
-| `simplifyNestedObjects` | `false` | Collapse objects with a single field into a dotted path: `a { b { c = 1 } }` becomes `a.b.c = 1`. Not applied when there is a comment, an include, or `+=` in the nested objects. |
+| `simplifyNestedObjects` | `false` | Collapse objects with a single field into a path expression: `a { b { c = 1 } }` becomes `a.b.c = 1`. Not applied when there is a comment, an include, or `+=` in the nested objects. |
 
 ```scala
 val options = ConfigFormatOptions.defaults
@@ -67,7 +70,8 @@ val options = ConfigFormatOptions.defaults
 Everything else is fixed, so formatted files look the same everywhere:
 
 - Indents by nesting depth, including comment and include lines.
-- Writes one space around `=` and `:`, and `key {` before an object.
+- Writes `key = value`, or `key: value` with `colonAssign`, so a `:` or `=`
+  in the input is changed to match. Writes `key {` before an object.
 - Keeps your line breaks between fields and array elements, but collapses
   several blank lines into one and removes blank lines at the start of the
   file and at the start and end of an object or array.
