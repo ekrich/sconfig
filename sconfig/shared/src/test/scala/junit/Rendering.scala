@@ -1,5 +1,3 @@
-package foo
-
 import org.ekrich.config.{
   ConfigFactory,
   ConfigRenderOptions,
