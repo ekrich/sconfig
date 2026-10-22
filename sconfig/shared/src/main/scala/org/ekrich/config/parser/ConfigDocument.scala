@@ -100,8 +100,8 @@ trait ConfigDocument {
    * same on every platform.
    *
    * A field with a comment between its key and value is kept as written, apart
-   * from the indentation of its first line, so the comment stays with the
-   * value it describes.
+   * from the indentation of its first line, so the comment stays with the value
+   * it describes.
    *
    * Of the options, `doubleIndent`, `colonAssign`, and `simplifyNestedObjects`
    * apply. `keepOriginOrder` and `newLineAtEnd` are deprecated and have no
