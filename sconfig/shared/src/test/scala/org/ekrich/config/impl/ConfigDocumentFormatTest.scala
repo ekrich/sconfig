@@ -493,8 +493,10 @@ class ConfigDocumentFormatTest {
 
   private val simplify = defaults.setSimplifyNestedObjects(true)
 
+  // the reverse of "Paths as keys" in the HOCON spec: nested objects with one
+  // field each become a path expression, a { b { c = 1 } } to a.b.c = 1
   @Test
-  def simplifyChains(): Unit = {
+  def simplifyToPathExpressions(): Unit = {
     check("a { b { c = 1 } }\n", "a.b.c = 1\n", simplify)
     val in = """a {
                |  b {
@@ -527,7 +529,7 @@ class ConfigDocumentFormatTest {
 
   @Test
   def simplifyNotApplied(): Unit = {
-    // a comment, an include, or += anywhere in the chain stops it
+    // a comment, an include, or += anywhere in the nesting stops it
     val withComment = "a {\n  # note\n  b = 1\n}\n"
     check(withComment, withComment, simplify)
     val withInclude = "a {\n  include \"x.conf\"\n}\n"
@@ -536,6 +538,89 @@ class ConfigDocumentFormatTest {
     check(withPlusEquals, withPlusEquals, simplify)
     // an empty object has no field to pull up
     check("a {}\n", "a {}\n", simplify)
+  }
+
+  // the next three tests use the inputs of ConfigFormatOptionsTest, which
+  // tests the deprecated renderer options and is removed in 3.0.0
+
+  @Test
+  def simplifyInsideOtherSyntax(): Unit = {
+    // nesting below an object with several fields
+    val in = """r { p { "d.ap" { s= 42 } }
+               | e.h {
+               |   f= 1
+               |   foo.bar= 2
+               | }}
+               | g.d {s=44}""".stripMargin
+    val expected = """r {
+                     |  p."d.ap".s = 42
+                     |  e.h {
+                     |    f = 1
+                     |    foo.bar = 2
+                     |  }
+                     |}
+                     |g.d.s = 44
+                     |""".stripMargin
+    check(in, expected, simplify)
+    // `=` before the object, and an object concatenation left as written
+    check(
+      "g = { size = 6 }\ne = ${g} { name = \"east\" }\n",
+      "g.size = 6\ne = ${g} { name = \"east\" }\n",
+      simplify
+    )
+    // an array element keeps its braces, its fields are simplified
+    check(
+      "r { ma: [ { si { foo: so } } ]\n kio: 1\n }",
+      "r {\n  ma = [{ si.foo = so }]\n  kio = 1\n}\n",
+      simplify
+    )
+    // a substitution at the end of the path
+    check("r { a = ${x} }\n", "r.a = ${x}\n", simplify)
+  }
+
+  // duplicate keys stop the path expression and stay in order
+  @Test
+  def simplifyWithDuplicateKeys(): Unit = {
+    check("a : 1\na : ${a}\n", "a = 1\na = ${a}\n", simplify)
+    check(
+      "x { y { a : 1\na : ${x.y.a} } }\n",
+      "x.y {\n  a = 1\n  a = ${x.y.a}\n}\n",
+      simplify
+    )
+    val in = """sibling : 0
+               |foo : { a : { c : 1 } }
+               |foo : ${foo.a}
+               |foo : { a : 2 }
+               |""".stripMargin
+    val expected = """sibling = 0
+                     |foo.a.c = 1
+                     |foo = ${foo.a}
+                     |foo.a = 2
+                     |""".stripMargin
+    check(in, expected, simplify)
+    check(
+      "l = [ { a : 1\na : ${x} } ]\n",
+      "l = [\n  {\n    a = 1\n    a = ${x}\n  }\n]\n",
+      simplify
+    )
+  }
+
+  @Test
+  def simplifyWithCommentsAndEmptyObject(): Unit = {
+    // a trailing comment inside the nesting stops it there
+    val in = """// before
+               |r {
+               | b {
+               | d= 42 // middle
+               | }
+               | }// after""".stripMargin
+    val expected = """// before
+                     |r.b {
+                     |  d = 42 // middle
+                     |} // after
+                     |""".stripMargin
+    check(in, expected, simplify)
+    check("r {\n}", "r {}\n", simplify)
   }
 
   // ---- JSON

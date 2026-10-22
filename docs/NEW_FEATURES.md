@@ -54,7 +54,7 @@ formatted.
 |---|---|---|
 | `doubleIndent` | `false` | Indent with 4 spaces instead of 2. |
 | `colonAssign` | `false` | Write `key: value` instead of `key = value`. `+=` and `key { ... }` are not changed. |
-| `simplifyNestedObjects` | `false` | Collapse objects with a single field into a dotted path: `a { b { c = 1 } }` becomes `a.b.c = 1`. Not applied when there is a comment, an include, or `+=` in the chain. |
+| `simplifyNestedObjects` | `false` | Collapse objects with a single field into a dotted path: `a { b { c = 1 } }` becomes `a.b.c = 1`. Not applied when there is a comment, an include, or `+=` in the nested objects. |
 
 ```scala
 val options = ConfigFormatOptions.defaults
