@@ -29,12 +29,27 @@ the includes are kept as written.
 
 ## Includes
 
-`include` statements are not supported on Scala.js and Scala Native.
+The library itself does not resolve `include` statements on Scala.js and Scala
+Native. The include kinds differ, because Scala Native has a real `java.io`
+while Scala.js has no file system at all:
 
-The class `java.net.URL` is not available on either platform, and because
-`include` uses `URL`, it is not supported. Even finding classpath resources
-requires `URL`, because the signature is
-`getResources(name: String): Enumeration[URL]`.
+| Include                       | Scala.js          | Scala Native      |
+| ----------------------------- | ----------------- | ----------------- |
+| `include "name.conf"`         | `ConfigException` | `ConfigException` |
+| `include file("x.conf")`      | `ConfigException` | works             |
+| `include url("file:...")`     | `ConfigException` | `ConfigException` |
+| `include classpath("x.conf")` | `ConfigException` | `ConfigException` |
+
+The `ConfigException` is a `ConfigException.Generic`, not a
+`NotImplementedError`, so a caller can catch it, and its message names the way
+out: `ConfigParseOptions.setIncluder`. `ConfigFactory.parseFile(file)` throws on
+Scala.js for the same reason.
+
+The class `java.net.URL` is not available on either platform, and a classpath
+lookup requires `getResources(name: String): Enumeration[URL]`. On Scala Native
+`java.io` is real, which is why `file()` includes work there.
+
+### Combine configs with `withFallback`
 
 Instead of using `include`, read each file yourself and combine the configs
 with `withFallback`, where the first config wins:
@@ -45,6 +60,90 @@ val config = ConfigFactory
   .withFallback(ConfigFactory.parseString(defaultsConfStr))
   .resolve()
 ```
+
+### Resolve includes with your own `ConfigIncluder`
+
+`ConfigParseOptions.setIncluder` makes includes work on every platform,
+including a Scala.js program in a browser: the library calls your
+`ConfigIncluder` and does no IO of its own. The includer below answers include
+names from a map of text; this is the class `CallerIncluderTest` runs on all
+three platforms.
+
+```scala
+import java.io.File
+
+import org.ekrich.config._
+
+class MapIncluder(entries: Map[String, String])
+    extends ConfigIncluder
+    with ConfigIncluderFile
+    with ConfigIncluderClasspath {
+
+  override def withFallback(fallback: ConfigIncluder): ConfigIncluder = this
+
+  override def include(
+      context: ConfigIncludeContext,
+      what: String
+  ): ConfigObject =
+    resolve(context, what)
+
+  override def includeFile(
+      context: ConfigIncludeContext,
+      what: File
+  ): ConfigObject =
+    resolve(context, what.getPath())
+
+  override def includeResources(
+      context: ConfigIncludeContext,
+      what: String
+  ): ConfigObject =
+    resolve(context, what)
+
+  private def resolve(
+      context: ConfigIncludeContext,
+      name: String
+  ): ConfigObject =
+    textFor(name) match {
+      case Some(text) =>
+        ConfigFactory.parseString(text, context.parseOptions).root
+      case None =>
+        if (context.parseOptions.getAllowMissing) {
+          ConfigFactory.empty.root
+        } else {
+          throw new ConfigException.IO(
+            ConfigFactory.empty.origin,
+            "include was not found: '" + name + "'"
+          )
+        }
+    }
+
+  private def textFor(name: String): Option[String] = {
+    val candidates =
+      if (hasExtension(name)) List(name)
+      else List(name + ".conf", name + ".json", name + ".properties")
+    candidates.collectFirst {
+      case candidate if entries.contains(candidate) => entries(candidate)
+    }
+  }
+
+  private def hasExtension(name: String): Boolean =
+    name.endsWith(".conf") || name.endsWith(".json") ||
+      name.endsWith(".properties")
+}
+
+val config = ConfigFactory.parseString(
+  "include \"base.conf\"\na = 1\n",
+  ConfigParseOptions.defaults
+    .setIncluder(new MapIncluder(Map("base.conf" -> "b = 2\n")))
+)
+config.getInt("b") // 2
+```
+
+A name reaches the includer exactly as it appears in the `include` statement:
+a nested include is looked up as given, not relative to the including file, and
+a name without an extension is looked up with each extension in turn. The
+includer does not have to answer `url()` includes; implement `ConfigIncluderURL`
+if you need them.
 
 ## Read from String example
 
