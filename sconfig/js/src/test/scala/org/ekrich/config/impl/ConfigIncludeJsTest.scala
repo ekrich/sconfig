@@ -98,7 +98,9 @@ class ConfigIncludeJsTest {
 
   @Test def requiredMissingIncludeThrowsConfigException(): Unit = {
     try {
-      ConfigFactory.parseString("include required(\"does-not-exist.conf\")\na = 1\n")
+      ConfigFactory.parseString(
+        "include required(\"does-not-exist.conf\")\na = 1\n"
+      )
       fail("expected a ConfigException for a required missing include")
     } catch {
       case _: ConfigException => ()
@@ -133,7 +135,8 @@ class ConfigIncludeJsTest {
   }
 
   @Test def windowsLikeNameFallsBackToFile(): Unit = {
-    val config = ConfigFactory.parseString("include \"C:/does-not-exist.conf\"\na = 1\n")
+    val config =
+      ConfigFactory.parseString("include \"C:/does-not-exist.conf\"\na = 1\n")
     assertEquals(1, config.getInt("a"))
   }
 }
