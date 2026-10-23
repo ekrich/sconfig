@@ -64,14 +64,35 @@ class ConfigIncludeNativeTest {
     }
   }
 
+  @Test def heuristicHttpIncludeIsNotSilentlyDropped(): Unit = {
+    try {
+      ConfigFactory.parseString(
+        "include \"http://example.com/other.conf\"\na = 1\n"
+      )
+      fail("a remote include must not be dropped silently")
+    } catch {
+      case _: ConfigException => ()
+    }
+  }
+
   @Test def unsupportedUrlSchemeIsReported(): Unit = {
     try {
       ConfigFactory.parseString(
         "include url(\"http://example.com/other.conf\")\na = 1\n"
       )
-      fail("expected a ConfigException for an unsupported URL scheme")
+      fail("expected a ConfigException for an unsupported URL protocol")
     } catch {
-      case _: ConfigException => ()
+      case e: ConfigException =>
+        val message = e.getMessage
+        assertTrue(
+          "the message must name the protocol, not call it an invalid URL: " + message,
+          message != null && !message.contains("invalid URL")
+        )
     }
+  }
+
+  @Test def windowsLikeNameFallsBackToFile(): Unit = {
+    val config = ConfigFactory.parseString("include \"C:/does-not-exist.conf\"\na = 1\n")
+    assertEquals(1, config.getInt("a"))
   }
 }
