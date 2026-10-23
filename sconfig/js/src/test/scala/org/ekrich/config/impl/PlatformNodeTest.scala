@@ -29,9 +29,8 @@ class PlatformNodeTest {
   }
 
   @Test def requireFunctionIsUsed(): Unit = {
-    val require = js.Any.fromFunction1((name: String) =>
-      js.Dynamic.literal(module = name)
-    )
+    val require =
+      js.Any.fromFunction1((name: String) => js.Dynamic.literal(module = name))
     val fs = PlatformNode.builtin("fs", require, js.undefined)
     assertEquals("fs", fs.module.asInstanceOf[String])
   }
