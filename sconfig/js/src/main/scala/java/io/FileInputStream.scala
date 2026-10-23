@@ -3,6 +3,8 @@ package java.io
 import scala.scalajs.js
 import scala.scalajs.js.typedarray.Uint8Array
 
+import org.ekrich.config.impl.PlatformNode
+
 /**
  * A `java.io.FileInputStream` for Scala.js backed by the Node.js `fs` module.
  *
@@ -12,11 +14,13 @@ import scala.scalajs.js.typedarray.Uint8Array
 class FileInputStream(file: File) extends InputStream {
   private val bytes: Uint8Array =
     try
-      NodeJs.builtin("fs").readFileSync(file.getPath()).asInstanceOf[Uint8Array]
+      PlatformNode.fs
+        .readFileSync(file.getPath())
+        .asInstanceOf[Uint8Array]
     catch {
       case e: js.JavaScriptException =>
         throw new FileNotFoundException(
-          file.getPath + " (" + e.getMessage + ")"
+          file.getPath() + " (" + e.getMessage + ")"
         )
     }
 

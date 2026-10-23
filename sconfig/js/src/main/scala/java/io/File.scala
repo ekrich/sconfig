@@ -3,27 +3,28 @@ package java.io
 import java.net.URI
 
 import scala.scalajs.js
-import scala.scalajs.js.Dynamic.{global => g}
+
+import org.ekrich.config.impl.PlatformNode
 
 /**
  * A small `java.io.File` for Scala.js, backed by the Node.js `fs` module.
  *
  * Scala.js has no file system in the browser, so only the methods `sconfig`
  * needs to resolve `include` statements are implemented. Outside Node.js they
- * throw an `UnsupportedOperationException` that says why.
+ * throw a `ConfigException` that points at `ConfigParseOptions.setIncluder`.
  */
 class File(path: String) extends Serializable with Comparable[File] {
   def this(parent: File, child: String) =
     this(
       if (File.isAbsolutePath(child)) child
-      else File.join(parent.getPath, child)
+      else File.join(parent.getPath(), child)
     )
 
   def this(uri: URI) = this(uri.getPath)
 
-  def compareTo(other: File): Int = getPath.compareTo(other.getPath)
+  def compareTo(other: File): Int = getPath().compareTo(other.getPath())
 
-  def exists(): Boolean = File.fs.existsSync(getPath).asInstanceOf[Boolean]
+  def exists(): Boolean = File.fs.existsSync(getPath()).asInstanceOf[Boolean]
 
   def getPath(): String = path
 
@@ -42,11 +43,11 @@ class File(path: String) extends Serializable with Comparable[File] {
     if (parent == null) null else new File(parent)
   }
 
-  override def toString(): String = getPath
+  override def toString(): String = getPath()
 }
 
 private[io] object File {
-  private[io] def fs: js.Dynamic = NodeJs.builtin("fs")
+  private[io] def fs: js.Dynamic = PlatformNode.fs
 
   private[io] def isAbsolutePath(path: String): Boolean =
     path.startsWith("/") || path.startsWith("\\") ||
@@ -75,44 +76,7 @@ private[io] object File {
     if (isAbsolutePath(path)) path
     else {
       val cwd =
-        NodeJs.process.map(_.cwd().asInstanceOf[String]).getOrElse(".")
+        PlatformNode.process.map(_.cwd().asInstanceOf[String]).getOrElse(".")
       join(cwd, path)
     }
-}
-
-/**
- * Access to Node.js built-in modules. A Scala.js program can also run in a
- * browser, where neither `require` nor `process` exists; the error then says
- * that the file system is only available on Node.js.
- */
-private[io] object NodeJs {
-  private[io] def process: Option[js.Dynamic] = {
-    val process = g.process
-    if (js.typeOf(process) == "undefined") None
-    else Some(process.asInstanceOf[js.Dynamic])
-  }
-
-  private[io] def builtin(name: String): js.Dynamic = {
-    val require = g.require
-    if (js.typeOf(require) == "function")
-      require(name).asInstanceOf[js.Dynamic]
-    else
-      process match {
-        case Some(p) =>
-          val mainModule = p.mainModule
-          if (js.typeOf(mainModule) != "undefined" &&
-              js.typeOf(mainModule.require) == "function")
-            mainModule.require(name).asInstanceOf[js.Dynamic]
-          else if (js.typeOf(p.getBuiltinModule) == "function")
-            p.getBuiltinModule(name).asInstanceOf[js.Dynamic]
-          else
-            throw new UnsupportedOperationException(
-              "Node.js module '" + name + "' is not available in this JavaScript environment"
-            )
-        case None =>
-          throw new UnsupportedOperationException(
-            "The Node.js module '" + name + "' is not available; sconfig needs Node.js to read files on Scala.js"
-          )
-      }
-  }
 }
