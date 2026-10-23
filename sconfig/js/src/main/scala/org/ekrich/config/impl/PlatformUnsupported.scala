@@ -4,13 +4,12 @@ import org.ekrich.config.ConfigException
 
 /**
  * The error thrown by every `java.io` and `java.net` stub on Scala.js, where
- * the library does no IO and the caller supplies it through a
- * `ConfigIncluder`.
+ * the library does no IO and the caller supplies it through a `ConfigIncluder`.
  *
  * `ConfigException.Generic` and not `ConfigException.IO`: the includer reads an
  * `IO` error as "the next extension may exist" and as "allow missing"
- * (`SimpleIncluder.fromBasename`), and `Parseable` turns an `IOException` into a
- * missing include when `allowMissing` is set, so an `IO` error here would
+ * (`SimpleIncluder.fromBasename`), and `Parseable` turns an `IOException` into
+ * a missing include when `allowMissing` is set, so an `IO` error here would
  * disappear.
  */
 object PlatformUnsupported {
