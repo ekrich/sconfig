@@ -9,8 +9,8 @@ import org.ekrich.config.ConfigException
  *
  * `ConfigException.Generic` and not `ConfigException.IO`: the includer reads an
  * `IO` error as "the next extension may exist" and as "allow missing"
- * (`SimpleIncluder.fromBasename`), and `Parseable` turns an `IOException` into a
- * missing include when `allowMissing` is set, so an `IO` error here would
+ * (`SimpleIncluder.fromBasename`), and `Parseable` turns an `IOException` into
+ * a missing include when `allowMissing` is set, so an `IO` error here would
  * disappear.
  */
 object PlatformUnsupported {
