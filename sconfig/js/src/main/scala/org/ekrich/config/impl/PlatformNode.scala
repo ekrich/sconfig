@@ -33,10 +33,8 @@ object PlatformNode {
     else if (js.typeOf(processValue) != "undefined") {
       val process = processValue.asInstanceOf[js.Dynamic]
       val mainModule = process.mainModule
-      if (
-        js.typeOf(mainModule) != "undefined" &&
-        js.typeOf(mainModule.require) == "function"
-      )
+      if (js.typeOf(mainModule) != "undefined" &&
+          js.typeOf(mainModule.require) == "function")
         mainModule.require(name).asInstanceOf[js.Dynamic]
       else if (js.typeOf(process.getBuiltinModule) == "function")
         process.getBuiltinModule(name).asInstanceOf[js.Dynamic]
