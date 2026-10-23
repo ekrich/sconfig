@@ -35,16 +35,19 @@ Node.js. A file include uses the platform file system:
 - `include "base.conf"` looks for the file relative to the file that
   contains the statement, then on the classpath;
 - `include file("base.conf")` reads the path as given;
-- `include url("file:...")` reads a `file:` URL. Other URL protocols are
-  rejected with a `ConfigException`, because parsing is synchronous and
-  neither Scala Native nor Scala.js has a general URL stack;
+- `include url("file:...")` reads a `file:` URL. A URL with a protocol the
+  JDK knows (`http`, `https`, `ftp`, `jar`) fails with a `ConfigException`
+  when it is read, because parsing is synchronous and neither Scala Native nor
+  Scala.js has a general URL stack; a name with no protocol, or with a
+  protocol the JDK does not know, is treated as a file name;
 - `include classpath("...")` finds no resources on either platform, so a
   missing classpath include is ignored unless it is `required`.
 
 On Scala.js only Node.js has a file system. In a browser the file methods
-throw `UnsupportedOperationException`; read the files yourself and combine
-the configs with `withFallback`, where the first config wins, or supply a
-custom `ConfigIncluder`:
+throw a `ConfigException` whose message points at
+`ConfigParseOptions.setIncluder`; read the files yourself and combine the
+configs with `withFallback`, where the first config wins, or supply a custom
+`ConfigIncluder`:
 
 ```scala
 val config = ConfigFactory
