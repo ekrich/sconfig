@@ -29,15 +29,22 @@ the includes are kept as written.
 
 ## Includes
 
-`include` statements are not supported on Scala.js and Scala Native.
+`include` works on Scala Native and on Scala.js when the program runs on
+Node.js. A file include uses the platform file system:
 
-The class `java.net.URL` is not available on either platform, and because
-`include` uses `URL`, it is not supported. Even finding classpath resources
-requires `URL`, because the signature is
-`getResources(name: String): Enumeration[URL]`.
+- `include "base.conf"` looks for the file relative to the file that
+  contains the statement, then on the classpath;
+- `include file("base.conf")` reads the path as given;
+- `include url("file:...")` reads a `file:` URL. Other URL protocols are
+  rejected with a `ConfigException`, because parsing is synchronous and
+  neither Scala Native nor Scala.js has a general URL stack;
+- `include classpath("...")` finds no resources on either platform, so a
+  missing classpath include is ignored unless it is `required`.
 
-Instead of using `include`, read each file yourself and combine the configs
-with `withFallback`, where the first config wins:
+On Scala.js only Node.js has a file system. In a browser the file methods
+throw `UnsupportedOperationException`; read the files yourself and combine
+the configs with `withFallback`, where the first config wins, or supply a
+custom `ConfigIncluder`:
 
 ```scala
 val config = ConfigFactory
