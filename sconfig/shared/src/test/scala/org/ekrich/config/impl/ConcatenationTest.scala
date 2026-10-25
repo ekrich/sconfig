@@ -6,11 +6,67 @@ package org.ekrich.config.impl
 import org.junit.Assert._
 import org.junit._
 
-import org.ekrich.config.ConfigException
+import org.ekrich.config.{ConfigException, ConfigFactory, ConfigParseOptions, ConfigValueType}
 
 import scala.jdk.CollectionConverters._
 
 class ConcatenationTest extends TestUtilsShared {
+  // the comment above a += field belongs to the field; the synthetic list
+  // element must not carry it too
+  @Test
+  def fieldCommentOnAppendSurvivesResolve(): Unit = {
+    for (prefix <- Seq("", "a=[1]\n")) {
+      val resolved = ConfigFactory.parseString(prefix + "# two\na += 2").resolve()
+      assertEquals(
+        List(" two"),
+        resolved.getValue("a").origin.comments.asScala.toList
+      )
+      val list = resolved.getList("a")
+      assertEquals(
+        List(),
+        list.get(list.size - 1).origin.comments.asScala.toList
+      )
+    }
+  }
+
+  @Test
+  def appendedElementKeepsSourceLocation(): Unit = {
+    val options = ConfigParseOptions.defaults.setOriginDescription("append source")
+    val resolved = ConfigFactory.parseString("a=[]\n# two\na += 2", options).resolve()
+    val element = resolved.getList("a").get(0)
+    assertTrue(
+      "unexpected origin description: " + element.origin.description,
+      element.origin.description.startsWith("append source")
+    )
+    assertEquals(3, element.origin.lineNumber)
+    assertEquals(ConfigValueType.NUMBER, element.valueType)
+    assertEquals(2, element.unwrapped)
+  }
+
+  @Test
+  def appendedObjectChildCommentIsPreserved(): Unit = {
+    val resolved = ConfigFactory.parseString("# two\na += {\n # child\n x=1\n}").resolve()
+    val element = resolved.getObjectList("a").get(0)
+    assertEquals(List(), element.origin.comments.asScala.toList)
+    assertEquals(List(" child"), element.get("x").origin.comments.asScala.toList)
+    assertEquals(List(" two"), resolved.getValue("a").origin.comments.asScala.toList)
+  }
+
+  @Test
+  def trailingAppendCommentStaysOnField(): Unit = {
+    val parsed = ConfigFactory.parseString("a += 2 # c")
+    assertEquals(List(" c"), parsed.root.get("a").origin.comments.asScala.toList)
+    val resolved = parsed.resolve()
+    assertEquals(
+      List(),
+      resolved.getList("a").get(0).origin.comments.asScala.toList
+    )
+    assertEquals(
+      List(2),
+      resolved.getIntList("a").asScala.toList.map(_.toInt)
+    )
+  }
+
   @Test
   def noSubstitutionsStringConcat(): Unit = {
     val conf = parseConfig(""" a :  true "xyz" 123 foo  """).resolve()
