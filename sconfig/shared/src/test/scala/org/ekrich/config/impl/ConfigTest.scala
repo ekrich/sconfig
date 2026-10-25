@@ -93,6 +93,15 @@ class ConfigTest extends TestUtilsShared {
   }
 
   @Test
+  def negativeNumberWithoutIntegerPartIsString(): Unit = {
+    // like .33, -.33 is not a JSON number, but still converts to a number on request
+    val conf = parseConfig("a = -.33")
+    assertEquals(ConfigValueType.STRING, conf.getValue("a").valueType)
+    assertEquals("-.33", conf.getString("a"))
+    assertEquals(-0.33, conf.getDouble("a"), 1e-6)
+  }
+
+  @Test
   def mergeTrivial(): Unit = {
     val obj1 = parseObject("""{ "a" : 1 }""")
     val obj2 = parseObject("""{ "b" : 2 }""")
