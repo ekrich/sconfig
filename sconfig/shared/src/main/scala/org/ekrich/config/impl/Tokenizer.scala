@@ -337,7 +337,11 @@ object Tokenizer {
       putBack(c)
       val s = sb.toString
       try
-        if (containedDecimalOrE) {
+        // JSON requires a digit before the decimal point. ".33" never reaches
+        // here and ends up as unquoted text, so treat "-.33" the same way.
+        if (s.startsWith("-."))
+          throw new NumberFormatException("no digit before the decimal point")
+        else if (containedDecimalOrE) {
           // force floating point representation
           Tokens.newDouble(lineOrigin, s.toDouble, s)
         } else { // this should throw if the integer is too large for Long
