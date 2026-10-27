@@ -1,23 +1,40 @@
 package org.ekrich.config.impl
 
 import org.ekrich.config.ConfigFormatOptions
+import org.ekrich.config.ConfigRenderOptions
 import org.junit.*
+import scala.annotation.nowarn
 // tests for new features of Rendering (since fork from lightbend)
 class ConfigFormatOptionsTest extends RenderingTestSuite {
-  val initialFormatOptions = ConfigFormatOptions.defaults
+  // the renderer's defaults, which keep the 4 space indent
+  val initialFormatOptions = ConfigFormatOptions.defaults.setDoubleIndent(true)
 
   @Test
+  @nowarn("cat=deprecation")
+  def defaultIndent(): Unit = {
+    Assert.assertFalse(ConfigFormatOptions.defaults.getDoubleIndent)
+    Assert.assertTrue(
+      ConfigRenderOptions.defaults.getConfigFormatOptions.getDoubleIndent
+    )
+    Assert.assertTrue(
+      ConfigRenderOptions.concise.getConfigFormatOptions.getDoubleIndent
+    )
+  }
+
+  @Test
+  @nowarn("cat=deprecation")
   def noNewLineAtTheEnd(): Unit = {
     implicit val configFormatOptions =
       initialFormatOptions.setNewLineAtEnd(false)
     val in = """r {
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
     val expected = "r {}"
     checkEqualsAndStable(expected, result)
   }
 
   @Test
+  @nowarn("cat=deprecation")
   def keepOriginOrderOfEntries(): Unit = {
     implicit val configFormatOptions =
       initialFormatOptions.setKeepOriginOrder(true)
@@ -31,7 +48,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
                |    n="ALA"
                |  }
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |    p {
@@ -58,7 +75,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
                |        }
                |     }
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |  p {
@@ -80,7 +97,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
                |      n-m=1
                |    n:"ALA"
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |    n: ALA
@@ -103,7 +120,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
         | d= 42 // middle
         | }
         | }// after""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected =
       """# before
@@ -131,7 +148,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
         | d= 42 // middle
         | }
         | }// after""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected =
       """h = holder
@@ -153,7 +170,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
       initialFormatOptions.setSimplifyNestedObjects(true)
 
     val in = """r { "p.at" { d= 42 } }"""
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected =
       """r."p.at".d = 42
@@ -173,7 +190,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
         |   foo.bar= 2
         | }}
         | g.d {s=44}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected =
       """g.d.s = 44
@@ -197,7 +214,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
       """r { ma: [ { si.foo: so } ]
         | kio: 1
         | }""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected =
       """r {
@@ -221,7 +238,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
 
     val in = """g = { size = 6 }
                |e = ${g} { name = "east" }""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """e = ${g}{
                      |    name = east
@@ -238,7 +255,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
 
     val in = """a : 1
                |a : ${a}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """"a" : 1,
                      |"a" : ${a}
@@ -256,7 +273,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
                |foo : { a : { c : 1 } }
                |foo : ${foo.a}
                |foo : { a : 2 }""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """"foo" : {
                      |    a.c = 1
@@ -277,7 +294,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
       initialFormatOptions.setSimplifyNestedObjects(true)
 
     val in = """r { a = ${x} }"""
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r.a = ${x}
                      |""".stripMargin
@@ -291,7 +308,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
 
     val in = """x { y { a : 1
                |a : ${x.y.a} } }""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """x.y {
                      |    "a" : 1,
@@ -309,7 +326,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
 
     val in = """l = [ { a : 1
                |a : ${x} } ]""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """l = [
                      |    {
