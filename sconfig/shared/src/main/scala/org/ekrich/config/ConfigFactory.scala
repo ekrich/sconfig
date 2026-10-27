@@ -31,6 +31,7 @@ import org.ekrich.config.impl.Parseable
  */
 object ConfigFactory extends PlatformConfigFactory {
   private val STRATEGY_PROPERTY_NAME = "config.strategy"
+  private val OVERRIDE_WITH_ENV_PROPERTY_NAME = "config.override_with_env_vars"
 
   /**
    * Loads an application's configuration from the given classpath resource or
@@ -227,7 +228,7 @@ object ConfigFactory extends PlatformConfigFactory {
   ): Config =
     defaultOverrides(loader)
       .withFallback(config)
-      .withFallback(defaultReference(loader))
+      .withFallback(ConfigImpl.defaultReferenceUnresolved(loader))
       .resolve(resolveOptions)
 
   /**
@@ -389,6 +390,40 @@ object ConfigFactory extends PlatformConfigFactory {
     ConfigImpl.defaultReference(loader)
 
   /**
+   * Like [[#defaultReference()* defaultReference()]], but the returned config
+   * is left unresolved, so that a config layer falling back to it (as
+   * [[#load()* load()]] does with `application.conf`) can override the
+   * substitutions it contains.
+   *
+   * The reference config is still verified to resolve on its own before it is
+   * returned: `reference.conf` is required to be fully, independently
+   * resolvable, and must not depend on values from `application.conf`. Only
+   * overriding a substitution that `reference.conf` already defines is
+   * supported; leaving a value entirely undefined in `reference.conf` for
+   * `application.conf` to fill in still fails, as before.
+   *
+   * @return
+   *   the unresolved default reference config for the context class loader
+   */
+  def defaultReferenceUnresolved(): Config =
+    defaultReferenceUnresolved(
+      checkedContextClassLoader("defaultReferenceUnresolved")
+    )
+
+  /**
+   * Like [[#defaultReferenceUnresolved()* defaultReferenceUnresolved()]] but
+   * allows you to specify a class loader to use rather than the current context
+   * class loader.
+   *
+   * @param loader
+   *   class loader to look for resources in
+   * @return
+   *   the unresolved default reference config for this class loader
+   */
+  def defaultReferenceUnresolved(loader: ClassLoader): Config =
+    ConfigImpl.defaultReferenceUnresolved(loader)
+
+  /**
    * Obtains the default override configuration, which currently consists of
    * system properties. The returned override configuration will already have
    * substitutions resolved.
@@ -402,7 +437,10 @@ object ConfigFactory extends PlatformConfigFactory {
    * @return
    *   the default override configuration
    */
-  def defaultOverrides(): Config = systemProperties()
+  def defaultOverrides(): Config =
+    if (getOverrideWithEnv)
+      systemEnvironmentOverrides().withFallback(systemProperties())
+    else systemProperties()
 
   /**
    * Like [[#defaultOverrides()* defaultOverrides()]] but allows you to specify
@@ -413,7 +451,7 @@ object ConfigFactory extends PlatformConfigFactory {
    * @return
    *   the default override configuration
    */
-  def defaultOverrides(loader: ClassLoader): Config = systemProperties()
+  def defaultOverrides(loader: ClassLoader): Config = defaultOverrides()
 
   /**
    * Obtains the default application-specific configuration, which defaults to
@@ -508,6 +546,7 @@ object ConfigFactory extends PlatformConfigFactory {
     // We rely on this having the side effect that it drops all caches
     ConfigImpl.reloadSystemPropertiesConfig()
     ConfigImpl.reloadEnvVariablesConfig()
+    ConfigImpl.reloadEnvVariablesOverridesConfig()
   }
 
   /**
@@ -558,6 +597,34 @@ object ConfigFactory extends PlatformConfigFactory {
    *   system properties parsed into a [[Config]]
    */
   def systemProperties(): Config = ConfigImpl.systemPropertiesAsConfig
+
+  /**
+   * Gets a [[Config]] containing the system's environment variables used to
+   * override configuration keys. Environment variables taken into consideration
+   * start with `CONFIG_FORCE_`.
+   *
+   * Environment variables are mangled in the following way after stripping the
+   * prefix `CONFIG_FORCE_`:
+   *
+   *   - `_` (1 underscore) becomes `.` (dot)
+   *   - `__` (2 underscores) becomes `-` (dash)
+   *   - `___` (3 underscores) becomes `_` (underscore)
+   *
+   * A variable like `CONFIG_FORCE_a_b__c___d` is translated to the config key
+   * `a.b-c_d`.
+   *
+   * This method can return a global immutable singleton, so it's preferred over
+   * parsing environment variables yourself.
+   *
+   * [[#defaultOverrides()* defaultOverrides()]] will include the system
+   * environment variable overrides if `config.override_with_env_vars` is set to
+   * `true`.
+   *
+   * @return
+   *   system environment variable overrides parsed into a [[Config]]
+   */
+  def systemEnvironmentOverrides(): Config =
+    ConfigImpl.envVariablesOverridesAsConfig
 
   /**
    * Gets a [[Config]] containing the system's environment variables. This
@@ -1169,6 +1236,11 @@ object ConfigFactory extends PlatformConfigFactory {
       new DefaultConfigLoadingStrategy()
     }
   }
+
+  private def getOverrideWithEnv: Boolean =
+    java.lang.Boolean.parseBoolean(
+      System.getProperties.getProperty(OVERRIDE_WITH_ENV_PROPERTY_NAME)
+    )
 }
 
 final class ConfigFactory private () {}

@@ -1,5 +1,6 @@
 package org.ekrich.config.parser
 
+import org.ekrich.config.ConfigFormatOptions
 import org.ekrich.config.ConfigValue
 
 /**
@@ -84,8 +85,45 @@ trait ConfigDocument {
   def hasPath(path: String): Boolean
 
   /**
+   * Returns a new ConfigDocument with the text formatted. The original
+   * ConfigDocument is not modified. Call [[render]] on the result to get the
+   * formatted text:
+   *
+   * {{{
+   * val text = ConfigDocumentFactory.parseString(input).format(options).render
+   * }}}
+   *
+   * Formatting only changes layout: indentation, spacing, separators, commas,
+   * and blank lines. It keeps the meaning, the order of fields, comments,
+   * includes, `+=`, and duplicate keys as written. It never loads includes,
+   * resolves substitutions, or reads environment variables, so it works the
+   * same on every platform.
+   *
+   * A field with a comment between its key and value is kept as written, apart
+   * from the indentation of its first line, so the comment stays with the value
+   * it describes.
+   *
+   * Of the options, `doubleIndent`, `colonAssign`, and `simplifyNestedObjects`
+   * apply. `keepOriginOrder` and `newLineAtEnd` are deprecated and have no
+   * effect: the order is always kept and the text always ends with one newline.
+   * For JSON documents the separator stays `:` and `simplifyNestedObjects` is
+   * ignored, so the result is still JSON.
+   *
+   * Text inserted later with [[withValueText]] or [[withValue]] is not
+   * formatted, so call `format` last.
+   *
+   * @param options
+   *   the formatting options
+   * @return
+   *   a new ConfigDocument with the formatted text
+   * @since 2.2.0
+   */
+  def format(options: ConfigFormatOptions): ConfigDocument
+
+  /**
    * The original text of the input, modified if necessary with any replaced or
-   * added values.
+   * added values. The text is written exactly as the document holds it. To
+   * format it, call [[format]] first and render the result.
    *
    * @return
    *   the modified original text

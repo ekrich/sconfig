@@ -1,6 +1,7 @@
 package org.ekrich.config.impl
 
 import java.lang as jl
+import java.util as ju
 
 import org.ekrich.config.ConfigException
 import org.ekrich.config.impl.AbstractConfigValue.NotPossibleToResolve
@@ -69,6 +70,34 @@ object ResolveSource {
       findInObject(v.asInstanceOf[AbstractConfigObject], next, newParents)
     else new ValueWithPath(null, newParents)
   }
+  // looks for baseName_0, baseName_1, ... in envObj until one is missing;
+  // returns null (not an empty list) if baseName_0 itself isn't present
+  private def expandEnvVarList(
+      envObj: AbstractConfigObject,
+      basePath: Path
+  ): AbstractConfigValue = {
+    val baseName = basePath.render
+    val origin = SimpleConfigOrigin.newSimple(
+      "env list expansion of " + baseName
+    )
+
+    val values = new ju.ArrayList[AbstractConfigValue]
+    var continue = true
+    var i = 0
+    while (continue) {
+      val elementPath = Path.newKey(baseName + "_" + i)
+      val v = findInObject(envObj, elementPath).value
+      if (v == null) continue = false
+      else {
+        values.add(v)
+        i += 1
+      }
+    }
+
+    if (values.isEmpty) null
+    else new SimpleConfigList(origin, values)
+  }
+
   // returns null if the replacement results in deleting all the nodes.
   private def replace(
       list: ResolveSource.Node[Container],
@@ -249,16 +278,35 @@ final class ResolveSource(
           ResolveSource.findInObject(root, result.result.context, unprefixed)
       }
       if (result.result.value == null && result.result.context.options.getUseSystemEnvironment) {
-        if (ConfigImpl.traceSubstitutionsEnabled)
-          ConfigImpl.trace(
-            result.result.context.depth,
-            s"$unprefixed - looking up in system environment"
+        if (subst.listExpansion) {
+          if (ConfigImpl.traceSubstitutionsEnabled)
+            ConfigImpl.trace(
+              result.result.context.depth,
+              s"$unprefixed - looking up list expansion in system environment"
+            )
+          val listValue = ResolveSource.expandEnvVarList(
+            ConfigImpl.envVariablesAsConfigObject,
+            unprefixed
           )
-        result = ResolveSource.findInObject(
-          ConfigImpl.envVariablesAsConfigObject,
-          context,
-          unprefixed
-        )
+          if (listValue != null)
+            result = new ResolveSource.ResultWithPath(
+              ResolveResult.make(result.result.context, listValue),
+              new ResolveSource.Node[Container](
+                ConfigImpl.envVariablesAsConfigObject
+              )
+            )
+        } else {
+          if (ConfigImpl.traceSubstitutionsEnabled)
+            ConfigImpl.trace(
+              result.result.context.depth,
+              s"$unprefixed - looking up in system environment"
+            )
+          result = ResolveSource.findInObject(
+            ConfigImpl.envVariablesAsConfigObject,
+            context,
+            unprefixed
+          )
+        }
       }
     }
     if (ConfigImpl.traceSubstitutionsEnabled)

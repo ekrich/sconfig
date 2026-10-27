@@ -960,6 +960,82 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
+  def applicationConfCanOverrideReferenceConf(): Unit = {
+    val loader = new TestClassLoader(
+      this.getClass().getClassLoader(),
+      Map(
+        "reference.conf" -> resourceFile(
+          "test13-reference-with-substitutions.conf"
+        ).toURI().toURL(),
+        "application.conf" -> resourceFile(
+          "test13-application-override-substitutions.conf"
+        ).toURI().toURL()
+      )
+    )
+
+    assertEquals("b", ConfigFactory.defaultReference(loader).getString("a"))
+
+    val unresolved = ConfigFactory.defaultReferenceUnresolved(loader)
+    assertTrue(
+      "reference.conf is returned unresolved",
+      unresolved.root.render.contains("${b}")
+    )
+
+    val loaded = withContextClassLoader(loader) {
+      ConfigFactory.load(loader)
+    }
+    assertEquals("overridden", loaded.getString("a"))
+  }
+
+  @Test
+  def referenceConfMustResolveIndependently(): Unit = {
+    val loader = new TestClassLoader(
+      this.getClass().getClassLoader(),
+      Map(
+        "reference.conf" -> resourceFile(
+          "test13-reference-bad-substitutions.conf"
+        ).toURI().toURL(),
+        "application.conf" -> resourceFile(
+          "test13-application-override-substitutions.conf"
+        ).toURI().toURL()
+      )
+    )
+
+    val e = intercept[ConfigException.UnresolvedSubstitution] {
+      ConfigFactory.load(loader)
+    }
+    assertTrue(
+      "wrong message: " + e.getMessage,
+      e.getMessage.contains("substitution in reference.conf to a value: ${b}")
+    )
+    assertTrue(e.getCause.isInstanceOf[ConfigException.UnresolvedSubstitution])
+  }
+
+  @Test
+  def loadAppliesResolveOptionsToReferenceConf(): Unit = {
+    val loader = new TestClassLoader(
+      this.getClass().getClassLoader(),
+      Map(
+        "reference.conf" -> resourceFile(
+          "test13-reference-env-fallback.conf"
+        ).toURI().toURL()
+      )
+    )
+    val withEnv = ConfigFactory.load(
+      loader,
+      ConfigFactory.empty,
+      ConfigResolveOptions.defaults
+    )
+    assertEquals("A", withEnv.getString("secret"))
+    val noSystem = ConfigFactory.load(
+      loader,
+      ConfigFactory.empty,
+      ConfigResolveOptions.noSystem
+    )
+    assertFalse(noSystem.hasPath("secret"))
+  }
+
+  @Test
   def supportsConfigLoadingStrategyAlteration(): Unit = {
     assertEquals(
       "config.strategy is not set",
@@ -1414,6 +1490,43 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
+  def systemEnvironmentOverridesMangleNames(): Unit = {
+    val overrides = ConfigFactory.systemEnvironmentOverrides()
+    assertEquals(1, overrides.getInt("testForceOverride.a"))
+    assertEquals(2, overrides.getInt("testForceOverride.b-c"))
+    assertEquals(3, overrides.getInt("testForceOverride.d_e"))
+    assertFalse(
+      "the CONFIG_FORCE_ prefixed key itself is not carried over",
+      overrides.hasPath("CONFIG_FORCE_testForceOverride_a")
+    )
+  }
+
+  @Test
+  def defaultOverridesIgnoresEnvByDefault(): Unit = {
+    assertEquals(
+      "config.override_with_env_vars is not set",
+      null,
+      System.getProperty("config.override_with_env_vars")
+    )
+    assertFalse(
+      ConfigFactory.defaultOverrides().hasPath("testForceOverride.a")
+    )
+  }
+
+  @Test
+  def defaultOverridesUsesEnvWhenEnabled(): Unit = {
+    try {
+      System.setProperty("config.override_with_env_vars", "true")
+      val overrides = ConfigFactory.defaultOverrides()
+      assertEquals(1, overrides.getInt("testForceOverride.a"))
+    } finally {
+      System.clearProperty("config.override_with_env_vars")
+
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
+  }
+
+  @Test
   def parseApplicationReplacementIsEmptyWhenNothingSet(): Unit = {
     assertEquals(
       "config.resource is not set",
@@ -1447,6 +1560,41 @@ class PublicApiTest extends TestUtils {
   }
 
   @Test
+  def envVarOverrideWinsOverExistingValue(): Unit = {
+    try {
+      System.setProperty("config.override_with_env_vars", "true")
+      val application =
+        ConfigFactory.parseString("testForceOverride.a = 999")
+      val loaded = ConfigFactory
+        .defaultOverrides()
+        .withFallback(application)
+        .resolve()
+      assertEquals(1, loaded.getInt("testForceOverride.a"))
+    } finally {
+      System.clearProperty("config.override_with_env_vars")
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
+  }
+
+  @Test
+  def envVarOverrideWinsOverSystemPropertyInLoad(): Unit = {
+    try {
+      System.setProperty("config.override_with_env_vars", "true")
+      System.setProperty("testForceOverride.a", "7")
+      ConfigImpl.reloadSystemPropertiesConfig()
+      val loaded = ConfigFactory.load(
+        ConfigFactory.parseString("testForceOverride.a = 999")
+      )
+      assertEquals(1, loaded.getInt("testForceOverride.a"))
+    } finally {
+      System.clearProperty("config.override_with_env_vars")
+      System.clearProperty("testForceOverride.a")
+
+      ConfigImpl.reloadSystemPropertiesConfig()
+    }
+  }
+
+  @Test
   def parseApplicationReplacementRejectsMoreThanOneOverride(): Unit = {
     try {
       System.setProperty("config.resource", "test01.conf")
@@ -1463,6 +1611,17 @@ class PublicApiTest extends TestUtils {
       System.clearProperty("config.file")
       ConfigImpl.reloadSystemPropertiesConfig()
     }
+  }
+
+  @Test
+  def envVarOverrideIsHiddenWhenRendering(): Unit = {
+    val rendered = ConfigFactory
+      .systemEnvironmentOverrides()
+      .root
+      .render(ConfigRenderOptions.defaults.setShowEnvVariableValues(false))
+    assertTrue(rendered, rendered.contains("\"a\" : \"<env variable>\""))
+    assertFalse(rendered, rendered.contains("\"a\" : \"1\""))
+
   }
 
   @Test
@@ -1547,6 +1706,28 @@ class PublicApiTest extends TestUtils {
       "messages equal after deserialize",
       e.getMessage.equals(eCopy.getMessage)
     )
+  }
+
+  @Test
+  def exceptionSerializableWithUnresolvedSubstitution(): Unit = {
+    val loader = new TestClassLoader(
+      this.getClass().getClassLoader(),
+      Map(
+        "reference.conf" -> resourceFile(
+          "test13-reference-bad-substitutions.conf"
+        ).toURI().toURL()
+      )
+    )
+    // load() wraps the resolver's exception to name reference.conf
+    val e = intercept[ConfigException.UnresolvedSubstitution] {
+      ConfigFactory.load(loader)
+    }
+    val eCopy = checkSerializableNoMeaningfulEquals(e)
+    assertTrue(
+      "messages equal after deserialize",
+      e.getMessage.equals(eCopy.getMessage)
+    )
+    assertTrue("origins equal after deserialize", e.origin.equals(eCopy.origin))
   }
 
   @Test

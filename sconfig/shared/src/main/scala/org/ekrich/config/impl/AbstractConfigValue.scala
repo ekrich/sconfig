@@ -7,6 +7,7 @@ import java.{lang => jl}
 import java.{util => ju}
 import ju.Collections
 import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigFormatOptions
 import org.ekrich.config.ConfigMergeable
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigOrigin
@@ -78,16 +79,18 @@ object AbstractConfigValue {
       indent: Int,
       options: ConfigRenderOptions
   ): Unit = {
-    if (options.getFormatted) {
-      var remaining = indent
-      while (remaining > 0) {
-        sb.append(
-          if (options.getConfigFormatOptions.getDoubleIndent) "    " else "  "
-        )
-        remaining -= 1
-      }
-    }
+    if (options.getFormatted)
+      FormatUtil.indent(sb, indent, formatOptions(options))
   }
+
+  // The one place the value renderer reads the format options. They are
+  // carried on ConfigRenderOptions only until that is removed in the next
+  // major release; then this returns the fixed
+  // ConfigFormatOptions.defaults.setDoubleIndent(true).
+  private[impl] def formatOptions(
+      options: ConfigRenderOptions
+  ): ConfigFormatOptions =
+    options.formatOptions
 
   private[impl] trait Modifier {
     // keyOrNull is null for non-objects
@@ -323,13 +326,12 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
       atKey: String, // nullable
       options: ConfigRenderOptions
   ): Unit = {
-    Option(atKey)
-      .foreach { key =>
-        val renderedKey =
-          if (options.getJson) ConfigImplUtil.renderJsonString(key)
-          else ConfigImplUtil.renderStringUnquotedIfPossible(key)
-        renderWithRenderedKey(sb, renderedKey, options)
-      }
+    if (atKey != null) {
+      val renderedKey =
+        if (options.getJson) ConfigImplUtil.renderJsonString(atKey)
+        else ConfigImplUtil.renderStringUnquotedIfPossible(atKey)
+      renderWithRenderedKey(sb, renderedKey, options)
+    }
     renderValue(sb, indent, atRoot, options)
   }
 
@@ -361,11 +363,10 @@ abstract class AbstractConfigValue private[impl] (val _origin: ConfigOrigin)
         if (options.getFormatted) sb.append(' ')
       } else {
         sb.append(
-          if (options.getFormatted) {
-            if (options.getConfigFormatOptions.getColonAssign) ": " else " = "
-          } else {
-            if (options.getConfigFormatOptions.getColonAssign) ":" else "="
-          }
+          FormatUtil.separator(
+            AbstractConfigValue.formatOptions(options),
+            options.getFormatted
+          )
         )
       }
     }

@@ -512,10 +512,10 @@ final class SimpleConfigObject(
 
   private def tryCompressToMultipathRec(
       keysAggregate: String
-  ): Option[MultiPathEntry] = {
-    def returnAsIs = if (keysAggregate.isEmpty)
-      None
-    else Some(MultiPathEntry(keysAggregate, this))
+  ): MultiPathEntry = {
+    def returnAsIs =
+      if (keysAggregate.isEmpty) null
+      else new MultiPathEntry(keysAggregate, this)
 
     lazy val nextValue = values.iterator().next()
 
@@ -525,8 +525,7 @@ final class SimpleConfigObject(
       val newKeyElement = ConfigImplUtil.renderStringUnquotedIfPossible(
         keySet.iterator().next()
       )
-      val newAggregate = (if (keysAggregate.isEmpty) ""
-                          else s"$keysAggregate.") + newKeyElement
+      val newAggregate = FormatUtil.joinPath(keysAggregate, newKeyElement)
 
       nextValue match {
         case nested: SimpleConfigObject =>
@@ -535,7 +534,7 @@ final class SimpleConfigObject(
           )
         case other: AbstractConfigValue
             if !SimpleConfigObject.needsItsKey(other) =>
-          Some(MultiPathEntry(newAggregate, other))
+          new MultiPathEntry(newAggregate, other)
         case _ => returnAsIs
       }
     } else returnAsIs
@@ -543,14 +542,16 @@ final class SimpleConfigObject(
 
   private def tryCompressToMultipath(
       options: ConfigRenderOptions
-  ): Option[MultiPathEntry] =
-    if (!(options.getFormatted && options.getConfigFormatOptions.getSimplifyNestedObjects) ||
+  ): MultiPathEntry = {
+    val fmt = AbstractConfigValue.formatOptions(options)
+    if (!(options.getFormatted && fmt.getSimplifyNestedObjects) ||
         options.getJson || options.getOriginComments) {
-      None
+      null
     } else
       tryCompressToMultipathRec(
         ""
       )
+  }
 
   override def renderValue(
       sb: jl.StringBuilder,
@@ -560,7 +561,8 @@ final class SimpleConfigObject(
   ): Unit = {
     if (isEmpty) sb.append("{}")
     else renderValueAsMultiLineObject(sb, indentVal, atRoot, options)
-    if (atRoot && options.getFormatted && options.getConfigFormatOptions.getNewLineAtEnd)
+    val fmt = AbstractConfigValue.formatOptions(options)
+    if (atRoot && options.getFormatted && fmt.newLineAtEnd)
       sb.append('\n')
   }
 
@@ -574,9 +576,10 @@ final class SimpleConfigObject(
       options: ConfigRenderOptions
   ): Boolean =
     tryCompressToMultipath(options) match {
-      case Some(MultiPathEntry(aggKey, leafValue)) =>
-        val path =
-          if (renderedPrefix == null) aggKey else s"$renderedPrefix.$aggKey"
+      case multiPath if multiPath != null =>
+        val aggKey = multiPath.compactedKeys
+        val leafValue = multiPath.leafNode
+        val path = FormatUtil.joinPath(renderedPrefix, aggKey)
         leafValue.renderWithRenderedKey(sb, path, options)
         leafValue.renderValue(sb, indentVal, false, options)
         true
@@ -620,7 +623,7 @@ final class SimpleConfigObject(
     val keys = new ju.ArrayList[String]
     keys.addAll(keySet)
     val ordering =
-      if (options.getConfigFormatOptions.getKeepOriginOrder)
+      if (AbstractConfigValue.formatOptions(options).keepOriginOrder)
         new SimpleConfigObject.KeepOriginRenderComparator(str =>
           value.get(str).origin
         )
@@ -678,10 +681,7 @@ final class SimpleConfigObject(
     if (options.getComments) {
       comments.forEach { comment =>
         AbstractConfigValue.indent(sb, innerIndent, options)
-        sb.append("#")
-        if (!comment.startsWith(" ")) sb.append(' ')
-        sb.append(comment)
-        sb.append("\n")
+        FormatUtil.appendComment(sb, comment)
       }
     }
   }
@@ -710,7 +710,8 @@ final class SimpleConfigObject(
 
   override def containsKey(key: Any): Boolean = value.containsKey(key)
 
-  override def keySet: ju.Set[String] = value.keySet
+  override def keySet: ju.Set[String] =
+    ju.Collections.unmodifiableSet(value.keySet)
 
   override def containsValue(v: Any): Boolean = value.containsValue(v)
 
@@ -733,14 +734,14 @@ final class SimpleConfigObject(
   override def size: Int = value.size
 
   override def values: ju.Collection[ConfigValue] =
-    new ju.HashSet[ConfigValue](value.values)
+    new ju.ArrayList[ConfigValue](value.values)
 
   // serialization all goes through SerializedConfigValue
   @throws[ObjectStreamException]
   private def writeReplace(): Object = new SerializedConfigValue(this)
 }
 
-case class MultiPathEntry(
+private final case class MultiPathEntry(
     compactedKeys: String,
     leafNode: AbstractConfigValue
 )
