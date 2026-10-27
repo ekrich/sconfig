@@ -6,6 +6,8 @@ package org.ekrich.config.impl
 import org.junit.Assert._
 import org.junit.Test
 
+import org.ekrich.config.{ConfigException, ConfigFactory}
+
 import language.implicitConversions
 
 class TokenizerTest extends TestUtilsShared {
@@ -302,6 +304,8 @@ class TokenizerTest extends TestUtilsShared {
       "\"\\u12\"", // too short
       "\"\\u1\"", // too short
       "\"\\u\"", // too short
+      "\"\\u+041\"", // sign is not a hex digit
+      "\"\\u-041\"", // sign is not a hex digit
       "\"", // just a single quote
       """ "abcdefg""", // no end quote
       """\"\""", // file ends with a backslash
@@ -317,6 +321,41 @@ class TokenizerTest extends TestUtilsShared {
         maybeProblem.isDefined
       )
     }
+  }
+
+  // This case is not from lightbend/config: it pins that signs after a
+  // backslash-u escape are rejected (Tokenizer), which upstream still
+  // accepts. Revisit and drop it when upstream adds equivalent coverage.
+  @Test
+  def tokenizerSignInUnicodeEscapeIsParseError(): Unit = {
+    // Integer.parseInt(digits, 16) accepts a leading sign, but a sign is not
+    // a hex digit (RFC 8259 section 7: exactly four hexadecimal digits), so
+    // both inputs must be a ConfigException.Parse - for '-' the old code used
+    // to throw a bare IllegalArgumentException from appendCodePoint(-65)
+    val e = intercept[ConfigException.Parse] {
+      ConfigFactory.parseString("a = \"\\u+041\"")
+    }
+    assertTrue(
+      "unexpected message: " + e.getMessage,
+      e.getMessage.contains(
+        "Malformed hex digits after \\u escape in string: '+041'"
+      )
+    )
+    val e2 = intercept[ConfigException.Parse] {
+      ConfigFactory.parseString("b = \"\\u-041\"")
+    }
+    assertTrue(
+      "unexpected message: " + e2.getMessage,
+      e2.getMessage.contains(
+        "Malformed hex digits after \\u escape in string: '-041'"
+      )
+    )
+    // surrogate pairs must keep working (\u0046 is covered in
+    // tokenizerUnescapeStrings)
+    assertEquals(
+      "\uD83D\uDE00",
+      ConfigFactory.parseString("d = \"\\uD83D\\uDE00\"").getString("d")
+    )
   }
 
   @Test
