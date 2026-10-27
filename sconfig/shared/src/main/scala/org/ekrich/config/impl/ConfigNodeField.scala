@@ -63,6 +63,21 @@ final class ConfigNodeField(_children: ju.Collection[AbstractConfigNode])
       child.asInstanceOf[ConfigNodeSingleToken].token
     )
 
+  private[impl] def newlineCountBeforeValue: Int = {
+    var newlineCount = 0
+    var i = 0
+    while (i < children.size) {
+      val child = children.get(i)
+      if (child.isInstanceOf[AbstractConfigNodeValue])
+        return newlineCount
+      if (child.isInstanceOf[ConfigNodeSingleToken] &&
+          Tokens.isNewline(child.asInstanceOf[ConfigNodeSingleToken].token))
+        newlineCount += 1
+      i += 1
+    }
+    newlineCount
+  }
+
   private[impl] def comments: ju.List[String] = {
     val comments = new ju.ArrayList[String]
     children.forEach { child =>
