@@ -631,7 +631,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                     |
                     |a = 1
                     |""".stripMargin
-    checkEqualsAndStable("a = 1\n", formatHocon(licence))
+    checkEqualsAndStable("a = 1\n", renderHocon(licence))
 
     val order = """# one
                   |
@@ -640,7 +640,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                   |# three
                   |a = 1
                   |""".stripMargin
-    checkEqualsAndStable("# three\na = 1\n", formatHocon(order))
+    checkEqualsAndStable("# three\na = 1\n", renderHocon(order))
 
     val array = """a = [
                   |# one
@@ -651,7 +651,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                   |2
                   |]
                   |""".stripMargin
-    checkEqualsAndStable("a = [\n    1,\n    2\n]\n", formatHocon(array))
+    checkEqualsAndStable("a = [\n    1,\n    2\n]\n", renderHocon(array))
 
     val braced = "# header\n\n{a=1}\n"
     checkEqualObjects(
@@ -666,7 +666,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   @Test
   def simplifyNestedObjectsDoesNotCompressAnObjectWithKeptComments(): Unit = {
     val simplify =
-      ConfigFormatOptions.defaults.setSimplifyNestedObjects(true)
+      defaultFormatOptions.setSimplifyNestedObjects(true)
     val in = """r{
                |# obj
                |
@@ -692,7 +692,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     )
 
     // with the option off there are no comments and the path still compresses
-    checkEqualObjects("r.p.x = 1\n", formatHocon(in)(simplify))
+    checkEqualObjects("r.p.x = 1\n", renderHocon(in)(simplify))
   }
 
   // known limitation, pinned so a change is noticed: with the option on, the
