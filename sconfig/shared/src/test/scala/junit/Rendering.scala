@@ -1,12 +1,12 @@
-package foo
-
 import org.ekrich.config.{
   ConfigFactory,
   ConfigRenderOptions,
   ConfigFormatOptions
 }
+import scala.annotation.nowarn
 
 object RenderExample {
+  @nowarn("cat=deprecation")
   def main(args: Array[String]): Unit = {
     val formatted = args.contains("--formatted")
     val originComments = args.contains("--origin-comments")

@@ -1,5 +1,7 @@
 package org.ekrich.config
 
+import java.lang as jl
+
 /**
  * A set of options related to formatting.
  *
@@ -10,13 +12,14 @@ package org.ekrich.config
  *
  * {{{
  * val formatOptions = ConfigFormatOptions.defaults
- *   .setKeepOriginOrder(true)
- *   .setDoubleIndent(false)
+ *   .setDoubleIndent(true)
+ *   .setColonAssign(true)
  * }}}
  *
- * The default values are used by [[ConfigRenderOptions]] and you can get the
- * values by calling
- * [[ConfigRenderOptions.getConfigFormatOptions() ConfigRenderOptions.getConfigFormatOptions()]].
+ * These options are for `ConfigDocument.format`, except `keepOriginOrder` and
+ * `newLineAtEnd`, which have no effect there and are deprecated. The options
+ * are also carried on [[ConfigRenderOptions]], with `doubleIndent = true`, but
+ * that use is deprecated. Both will be removed in 3.0.0.
  *
  * @since 1.12.0
  */
@@ -29,19 +32,19 @@ object ConfigFormatOptions {
    *   the default options
    *
    *   - keepOriginOrder = false
-   *   - doubleIndent = true
+   *   - doubleIndent = false
    *   - colonAssign = false
    *   - newLineAtEnd = true
-   *   - simplifyOneEntryNestedObjects = false
+   *   - simplifyNestedObjects = false
    */
-  def defaults = new ConfigFormatOptions(false, true, false, true, false)
+  def defaults = new ConfigFormatOptions(false, false, false, true, false)
 }
 
 final class ConfigFormatOptions private (
-    private val keepOriginOrder: Boolean,
+    private[config] val keepOriginOrder: Boolean,
     private val doubleIndent: Boolean,
     private val colonAssign: Boolean,
-    private val newLineAtEnd: Boolean,
+    private[config] val newLineAtEnd: Boolean,
     private val simplifyNestedObjects: Boolean
 ) {
 
@@ -53,6 +56,10 @@ final class ConfigFormatOptions private (
    * @return
    *   the new [[ConfigFormatOptions]] object
    */
+  @deprecated(
+    "Has no effect on ConfigDocument.format; only the deprecated ConfigRenderOptions formatting uses it",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def setKeepOriginOrder(value: Boolean): ConfigFormatOptions =
     if (value == keepOriginOrder) this
     else
@@ -70,6 +77,10 @@ final class ConfigFormatOptions private (
    * @return
    *   true if set, false otherwise
    */
+  @deprecated(
+    "Has no effect on ConfigDocument.format; only the deprecated ConfigRenderOptions formatting uses it",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def getKeepOriginOrder: Boolean = keepOriginOrder
 
   /**
@@ -134,6 +145,10 @@ final class ConfigFormatOptions private (
    * @return
    *   the new [[ConfigFormatOptions]] object
    */
+  @deprecated(
+    "Has no effect on ConfigDocument.format; only the deprecated ConfigRenderOptions formatting uses it",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def setNewLineAtEnd(value: Boolean): ConfigFormatOptions =
     if (value == newLineAtEnd) this
     else
@@ -151,10 +166,15 @@ final class ConfigFormatOptions private (
    * @return
    *   true if set, false otherwise
    */
+  @deprecated(
+    "Has no effect on ConfigDocument.format; only the deprecated ConfigRenderOptions formatting uses it",
+    "Since 2.2.0, will remove in 3.0.0"
+  )
   def getNewLineAtEnd: Boolean = newLineAtEnd
 
   /**
-   * Set to simplify nested objects
+   * Set to simplify nested objects: an object with a single field is collapsed
+   * into a dotted path, so `a { b { c = 1 } }` becomes `a.b.c = 1`.
    *
    * @param value
    *   true to enable the property, false otherwise
@@ -180,4 +200,18 @@ final class ConfigFormatOptions private (
    */
   def getSimplifyNestedObjects: Boolean = simplifyNestedObjects
 
+  // only the options kept after 3.0.0; keepOriginOrder and newLineAtEnd are
+  // deprecated and left out
+  override def toString: String = {
+    val sb = new jl.StringBuilder("ConfigFormatOptions(")
+    if (doubleIndent) sb.append("doubleIndent,")
+    if (colonAssign) sb.append("colonAssign,")
+    if (simplifyNestedObjects) sb.append("simplifyNestedObjects,")
+    val lastIndex = sb.length - 1
+    if (sb.charAt(lastIndex) == ',')
+      sb.setCharAt(lastIndex, ')')
+    else
+      sb.append(')')
+    sb.toString
+  }
 }
