@@ -6,6 +6,7 @@ import org.ekrich.config.{
   ConfigParseOptions,
   ConfigRenderOptions
 }
+import scala.annotation.nowarn
 
 trait RenderingTestSuite extends TestUtilsShared {
   val parseOptions = ConfigParseOptions.defaults.setAllowMissing(true)
@@ -15,7 +16,8 @@ trait RenderingTestSuite extends TestUtilsShared {
     .setComments(true)
     .setFormatted(true)
 
-  def formatHocon(
+  @nowarn("cat=deprecation")
+  def renderHocon(
       str: String
   )(implicit configFormatOptions: ConfigFormatOptions): String =
     formatHoconWith(str, parseOptions)
@@ -35,14 +37,14 @@ trait RenderingTestSuite extends TestUtilsShared {
       configFormatOptions: ConfigFormatOptions
   ) = {
     checkEqualObjects(expected, result)
-    checkEqualObjects(result, formatHocon(result))
+    checkEqualObjects(result, renderHocon(result))
   }
 
   // rendered text has to be readable back, or a round trip loses the config
   def checkReparses(result: String)(implicit
       configFormatOptions: ConfigFormatOptions
   ) =
-    try formatHocon(result)
+    try renderHocon(result)
     catch {
       case e: ConfigException.Parse =>
         throw new AssertionError(

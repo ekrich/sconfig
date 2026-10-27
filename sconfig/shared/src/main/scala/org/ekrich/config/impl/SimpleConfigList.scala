@@ -214,10 +214,7 @@ final class SimpleConfigList(
         if (options.getComments) {
           v.origin.comments.forEach { comment =>
             indent(sb, indentVal + 1, options)
-            sb.append("#")
-            if (!comment.startsWith(" ")) sb.append(' ')
-            sb.append(comment)
-            sb.append("\n")
+            FormatUtil.appendComment(sb, comment)
           }
         }
         indent(sb, indentVal + 1, options)
@@ -226,7 +223,7 @@ final class SimpleConfigList(
         v match {
           // a compressed element is a path, so it needs braces of its own
           case obj: SimpleConfigObject
-              if options.getConfigFormatOptions.getSimplifyNestedObjects =>
+              if formatOptions(options).getSimplifyNestedObjects =>
             val compressed = new jl.StringBuilder()
             if (obj.renderSimplified(compressed, indentVal + 1, null, options))
               sb.append("{ ").append(compressed).append(" }")
