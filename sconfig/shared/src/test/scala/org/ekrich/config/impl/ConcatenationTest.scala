@@ -6,11 +6,48 @@ package org.ekrich.config.impl
 import org.junit.Assert._
 import org.junit._
 
-import org.ekrich.config.{ConfigException, ConfigFactory, ConfigParseOptions, ConfigValueType}
+import org.ekrich.config.{ConfigException, ConfigFactory, ConfigParseOptions, ConfigRenderOptions, ConfigValueType}
 
 import scala.jdk.CollectionConverters._
 
 class ConcatenationTest extends TestUtilsShared {
+  private val renderOptions =
+    ConfigRenderOptions.defaults.setJson(false).setOriginComments(false)
+
+  @Test
+  def loneAppendCommentIsRenderedOnce(): Unit = {
+    assertEquals(
+      "# two\na = ${?a}[\n    2\n]\n",
+      ConfigFactory.parseString("# two\na += 2").root.render(renderOptions)
+    )
+  }
+
+  @Test
+  def objectAppendCommentIsRenderedOnce(): Unit = {
+    assertEquals(
+      "# two\na = ${?a}[\n    {\n        x = 1\n    }\n]\n",
+      ConfigFactory
+        .parseString("# two\na += { x = 1 }")
+        .root
+        .render(renderOptions)
+    )
+  }
+
+  @Test
+  def appendAfterDefinitionCommentIsRenderedOnceAfterResolve(): Unit = {
+    for (
+      (input, expected) <- Seq(
+        ("a=[]\n# two\na += 2", "# two\na = [\n    2\n]\n"),
+        ("a=[1]\n# two\na += 2", "# two\na = [\n    1,\n    2\n]\n")
+      )
+    ) {
+      assertEquals(
+        expected,
+        ConfigFactory.parseString(input).resolve().root.render(renderOptions)
+      )
+    }
+  }
+
   // the comment above a += field belongs to the field; the synthetic list
   // element must not carry it too
   @Test
