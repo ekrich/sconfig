@@ -6,7 +6,13 @@ package org.ekrich.config.impl
 import org.junit.Assert._
 import org.junit._
 
-import org.ekrich.config.{ConfigException, ConfigFactory, ConfigParseOptions, ConfigRenderOptions, ConfigValueType}
+import org.ekrich.config.{
+  ConfigException,
+  ConfigFactory,
+  ConfigParseOptions,
+  ConfigRenderOptions,
+  ConfigValueType
+}
 
 import scala.jdk.CollectionConverters._
 
@@ -35,12 +41,10 @@ class ConcatenationTest extends TestUtilsShared {
 
   @Test
   def appendAfterDefinitionCommentIsRenderedOnceAfterResolve(): Unit = {
-    for (
-      (input, expected) <- Seq(
-        ("a=[]\n# two\na += 2", "# two\na = [\n    2\n]\n"),
-        ("a=[1]\n# two\na += 2", "# two\na = [\n    1,\n    2\n]\n")
-      )
-    ) {
+    for ((input, expected) <- Seq(
+          ("a=[]\n# two\na += 2", "# two\na = [\n    2\n]\n"),
+          ("a=[1]\n# two\na += 2", "# two\na = [\n    1,\n    2\n]\n")
+        )) {
       assertEquals(
         expected,
         ConfigFactory.parseString(input).resolve().root.render(renderOptions)
@@ -53,7 +57,8 @@ class ConcatenationTest extends TestUtilsShared {
   @Test
   def fieldCommentOnAppendSurvivesResolve(): Unit = {
     for (prefix <- Seq("", "a=[1]\n")) {
-      val resolved = ConfigFactory.parseString(prefix + "# two\na += 2").resolve()
+      val resolved =
+        ConfigFactory.parseString(prefix + "# two\na += 2").resolve()
       assertEquals(
         List(" two"),
         resolved.getValue("a").origin.comments.asScala.toList
@@ -68,8 +73,10 @@ class ConcatenationTest extends TestUtilsShared {
 
   @Test
   def appendedElementKeepsSourceLocation(): Unit = {
-    val options = ConfigParseOptions.defaults.setOriginDescription("append source")
-    val resolved = ConfigFactory.parseString("a=[]\n# two\na += 2", options).resolve()
+    val options =
+      ConfigParseOptions.defaults.setOriginDescription("append source")
+    val resolved =
+      ConfigFactory.parseString("a=[]\n# two\na += 2", options).resolve()
     val element = resolved.getList("a").get(0)
     assertTrue(
       "unexpected origin description: " + element.origin.description,
@@ -82,17 +89,27 @@ class ConcatenationTest extends TestUtilsShared {
 
   @Test
   def appendedObjectChildCommentIsPreserved(): Unit = {
-    val resolved = ConfigFactory.parseString("# two\na += {\n # child\n x=1\n}").resolve()
+    val resolved =
+      ConfigFactory.parseString("# two\na += {\n # child\n x=1\n}").resolve()
     val element = resolved.getObjectList("a").get(0)
     assertEquals(List(), element.origin.comments.asScala.toList)
-    assertEquals(List(" child"), element.get("x").origin.comments.asScala.toList)
-    assertEquals(List(" two"), resolved.getValue("a").origin.comments.asScala.toList)
+    assertEquals(
+      List(" child"),
+      element.get("x").origin.comments.asScala.toList
+    )
+    assertEquals(
+      List(" two"),
+      resolved.getValue("a").origin.comments.asScala.toList
+    )
   }
 
   @Test
   def trailingAppendCommentStaysOnField(): Unit = {
     val parsed = ConfigFactory.parseString("a += 2 # c")
-    assertEquals(List(" c"), parsed.root.get("a").origin.comments.asScala.toList)
+    assertEquals(
+      List(" c"),
+      parsed.root.get("a").origin.comments.asScala.toList
+    )
     val resolved = parsed.resolve()
     assertEquals(
       List(),
