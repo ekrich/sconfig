@@ -48,7 +48,7 @@ See [Contributing](docs/CONTRIBUTING.md) for helpful hints for those wishing to 
 * Scala 2.11 support through version 1.4.9.
 * Scala 3.8+ and Scala.js 1.21+ usage requires Java 17 as of v2.0.0+ of sconfig.
 * Scala 3.9.0 or greater required as of v2.1.0.
-* Scala 2.12 support through version 2.1.x.
+* Scala 2.12 dropped in version 2.2.0.
 
 ## Usage and Help
 [![scaladoc](https://javadoc.io/badge/org.ekrich/sconfig_3.svg?label=scaladoc3)](https://javadoc.io/doc/org.ekrich/sconfig_3)
