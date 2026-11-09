@@ -22,7 +22,8 @@ object ConfigParser {
       origin,
       document,
       SimpleIncluder.makeFull(options.getIncluder),
-      includeContext
+      includeContext,
+      options.getKeepDetachedComments
     )
     context.parse
   }
@@ -72,7 +73,9 @@ object ConfigParser {
       val baseOrigin: ConfigOrigin,
       val document: ConfigNodeRoot,
       val includer: FullIncluder,
-      val includeContext: ConfigIncludeContext
+      val includeContext: ConfigIncludeContext,
+      // sconfig only: ConfigParseOptions.setKeepDetachedComments
+      val keepDetachedComments: Boolean
   ) {
     private var lineNumber = 1
     final private var pathStack = new ju.LinkedList[Path]
@@ -221,7 +224,9 @@ object ConfigParser {
         } else if (node.isInstanceOf[ConfigNodeSingleToken] &&
             Tokens.isNewline(node.asInstanceOf[ConfigNodeSingleToken].token)) {
           lineNumber += 1
-          if (lastWasNewline) { // Drop all comments if there was a blank line and start a new comment block
+          // sconfig only: keep the block when asked to, instead of dropping it
+          // as lightbend/config does (NEW_FEATURES.md)
+          if (lastWasNewline && !keepDetachedComments) { // Drop all comments if there was a blank line and start a new comment block
             comments.clear()
           }
           lastWasNewline = true
@@ -356,7 +361,9 @@ object ConfigParser {
         } else if (node.isInstanceOf[ConfigNodeSingleToken] &&
             Tokens.isNewline(node.asInstanceOf[ConfigNodeSingleToken].token)) {
           lineNumber += 1
-          if (lastWasNewLine && v == null) comments.clear()
+          // sconfig only: keep the block when asked to, as in parseObject
+          if (lastWasNewLine && v == null && !keepDetachedComments)
+            comments.clear()
           else if (v != null) {
             values.add(
               v.withOrigin(
@@ -407,7 +414,9 @@ object ConfigParser {
           val t = node.asInstanceOf[ConfigNodeSingleToken].token
           if (Tokens.isNewline(t)) {
             lineNumber += 1
-            if (lastWasNewLine && result == null) comments.clear()
+            // sconfig only: keep the block when asked to, as in parseObject
+            if (lastWasNewLine && result == null && !keepDetachedComments)
+              comments.clear()
             else if (result != null) {
               result = result.withOrigin(
                 result.origin
