@@ -311,7 +311,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
     val in = """a : 1
                |a : ${a}
                |sib : 0""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """a: 1
                      |a: ${a}
@@ -367,7 +367,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
     val in = """r {
                |    z = 1, y = 2, x = 3
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |    z = 1
@@ -386,7 +386,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
     val in = """r {
                |    app { name = svc, port = 8080 }
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |    app {
@@ -406,7 +406,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
     val in = """r {
                |    q { a = 1 }, p = 2
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |    q {
@@ -427,7 +427,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
 
     // built by hand to keep the `"""` out of a triple-quoted Scala literal
     val in = "r {\n    s = \"\"\"\ntext\n\"\"\", a = 2\n}"
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |    s = "\ntext\n"
@@ -445,7 +445,7 @@ class ConfigFormatOptionsTest extends RenderingTestSuite {
     val in = """r {
                |    q { y = 1 }, q { b = 2 }
                |}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """r {
                      |    q {
