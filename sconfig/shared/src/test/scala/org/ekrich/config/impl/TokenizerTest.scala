@@ -306,6 +306,8 @@ class TokenizerTest extends TestUtilsShared {
       "\"\\u\"", // too short
       "\"\\u+041\"", // sign is not a hex digit
       "\"\\u-041\"", // sign is not a hex digit
+      "\"\\u\uFF10\uFF10\uFF14\uFF11\"", // fullwidth digits are not hex digits
+      "\"\\u\u0660\u0660\u0664\u0661\"", // Arabic-Indic digits are not hex digits
       "\"", // just a single quote
       """ "abcdefg""", // no end quote
       """\"\""", // file ends with a backslash
@@ -323,9 +325,9 @@ class TokenizerTest extends TestUtilsShared {
     }
   }
 
-  // This case is not from lightbend/config: it pins that signs after a
-  // backslash-u escape are rejected (Tokenizer), which upstream still
-  // accepts. Revisit and drop it when upstream adds equivalent coverage.
+  // The sign cases now also appear in lightbend/config#890 (still an open
+  // PR there, so the upstream parser itself still accepts them); this keeps
+  // pinning the rejection, at the Tokenizer level as well, until that lands.
   @Test
   def tokenizerSignInUnicodeEscapeIsParseError(): Unit = {
     // Integer.parseInt(digits, 16) accepts a leading sign, but a sign is not
@@ -355,6 +357,32 @@ class TokenizerTest extends TestUtilsShared {
     assertEquals(
       "\uD83D\uDE00",
       ConfigFactory.parseString("d = \"\\uD83D\\uDE00\"").getString("d")
+    )
+  }
+
+  // From lightbend/config#890: Unicode decimal digits such as FULLWIDTH ZERO
+  // (U+FF10) and ARABIC-INDIC ZERO (U+0660) carry digit values, so on the JVM
+  // Integer.parseInt(digits, 16) used to accept them as hex digits and a
+  // backslash-u escape of fullwidth 0041 decoded to 'A' instead of failing.
+  @Test
+  def tokenizerNonAsciiDigitsInUnicodeEscapeAreParseError(): Unit = {
+    val e = intercept[ConfigException.Parse] {
+      ConfigFactory.parseString("a = \"\\u\uFF10\uFF10\uFF14\uFF11\"")
+    }
+    assertTrue(
+      "unexpected message: " + e.getMessage,
+      e.getMessage.contains(
+        "Malformed hex digits after \\u escape in string: '\uFF10\uFF10\uFF14\uFF11'"
+      )
+    )
+    val e2 = intercept[ConfigException.Parse] {
+      ConfigFactory.parseString("b = \"\\u\u0660\u0660\u0664\u0661\"")
+    }
+    assertTrue(
+      "unexpected message: " + e2.getMessage,
+      e2.getMessage.contains(
+        "Malformed hex digits after \\u escape in string: '\u0660\u0660\u0664\u0661'"
+      )
     )
   }
 
