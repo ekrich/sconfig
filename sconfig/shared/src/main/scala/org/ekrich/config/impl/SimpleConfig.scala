@@ -730,7 +730,8 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
     n.intValueRangeChecked(path)
   }
 
-  override def getLong(path: String): Long = getNumber(path).longValue
+  override def getLong(path: String): Long =
+    getConfigNumber(path).longValueRangeChecked(path)
 
   override def getDouble(path: String): Double = getNumber(path).doubleValue
 
@@ -877,9 +878,10 @@ final class SimpleConfig private[impl] (val confObj: AbstractConfigObject)
   }
 
   override def getLongList(path: String): ju.List[jl.Long] = {
-    val numbers = getNumberList(path)
+    val numbers = getHomogeneousWrappedList(path, ConfigValueType.NUMBER)
+      .asInstanceOf[ju.List[ConfigNumber]]
     val l = new ju.ArrayList[jl.Long](numbers.size())
-    numbers.forEach(n => l.add(n.longValue))
+    numbers.forEach(v => l.add(v.longValueRangeChecked(path)))
     l
   }
 

@@ -392,6 +392,12 @@ class ConfParserTest extends TestUtils {
     lineNumberTest(6, "a : \"\"\"foo\nbar\nbaz\n\"\"\"\n\n}")
     //   end in the middle of triple-quoted string
     lineNumberTest(5, "a : \"\"\"foo\n\n\nbar\n")
+
+    // not from lightbend/config: these two pin ConfigParser's own line
+    // counter (advanceLineNumberBeforeValue there), which upstream does not
+    // test; revisit and drop them when upstream adds equivalent coverage
+    lineNumberTest(3, "a =\n  1\ninclude url(\"!!!\")")
+    lineNumberTest(4, "a =\n\n  1\ninclude url(\"!!!\")")
   }
 
   @Test
@@ -1004,6 +1010,70 @@ class ConfParserTest extends TestUtils {
     // BOM here should be treated like other whitespace (ignored, since no quotes)
     val conf = ConfigFactory.parseString("foo= \uFEFFbar\uFEFF")
     assertEquals("bar", conf.getString("foo"))
+  }
+
+  // java.net.URL errors are JVM-specific (the JS URL shim does not throw
+  // MalformedURLException), so these stay on this suite. See #625.
+  @Test
+  def parseErrorAfterMultilineStringNamesIncludeLine(): Unit = {
+    val e = intercept[ConfigException.Parse](
+      parseConfig("a = \"\"\"one\n two\n three\n\"\"\"\ninclude url(\"!!!\")\n")
+    )
+    assertEquals(5, e.origin.lineNumber)
+    assertEquals(
+      "test string: 5: include url() specifies an invalid URL: !!!",
+      e.getMessage
+    )
+  }
+
+  @Test
+  def parseErrorAfterSeveralMultilineStringsNamesIncludeLine(): Unit = {
+    val e = intercept[ConfigException.Parse](
+      parseConfig(
+        "x = \"\"\"one\n two\"\"\"\ny = \"\"\"three\n four\"\"\"\ninclude url(\"!!!\")\n"
+      )
+    )
+    assertEquals(5, e.origin.lineNumber)
+    assertEquals(
+      "test string: 5: include url() specifies an invalid URL: !!!",
+      e.getMessage
+    )
+  }
+
+  @Test
+  def parseErrorAfterMultilineStringInNestedObjectNamesIncludeLine(): Unit = {
+    // the include is on line 7, inside an object nested in an array
+    val text = Seq(
+      "a = [",
+      "  {",
+      "    x = \"\"\"one",
+      " two",
+      " three",
+      "\"\"\"",
+      "    include url(\"!!!\")",
+      "  }",
+      "]"
+    ).mkString("\n")
+    val e = intercept[ConfigException.Parse](parseConfig(text))
+    assertEquals(7, e.origin.lineNumber)
+    assertEquals(
+      "test string: 7: include url() specifies an invalid URL: !!!",
+      e.getMessage
+    )
+  }
+
+  @Test
+  def parseErrorAfterMultilineStringWithCrLfNamesIncludeLine(): Unit = {
+    val e = intercept[ConfigException.Parse](
+      parseConfig(
+        "a = \"\"\"one\r\n two\r\n three\r\n\"\"\"\r\ninclude url(\"!!!\")\r\n"
+      )
+    )
+    assertEquals(5, e.origin.lineNumber)
+    assertEquals(
+      "test string: 5: include url() specifies an invalid URL: !!!",
+      e.getMessage
+    )
   }
 
   @Test

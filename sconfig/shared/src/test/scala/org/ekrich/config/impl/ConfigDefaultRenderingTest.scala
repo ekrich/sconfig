@@ -7,11 +7,16 @@ import java.{util => ju}
 
 import org.ekrich.config.ConfigFactory
 import org.ekrich.config.ConfigFormatOptions
+import org.ekrich.config.ConfigIncludeContext
+import org.ekrich.config.ConfigIncluder
+import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigParseOptions
-import org.ekrich.config.ConfigRenderOptions
+import org.ekrich.config.ConfigResolveOptions
 
 import scala.annotation.nowarn
 import scala.jdk.CollectionConverters.*
+import org.ekrich.config.ConfigRenderOptions
+import org.ekrich.config.ConfigSyntax
 
 // Regression tests for rendering old behaviour compatibility
 class ConfigDefaultRenderingTest extends RenderingTestSuite {
@@ -173,10 +178,9 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val result = renderHocon(in)
 
     val expected = """# one
-                     |"a" : 1,
+                     |a = 1
                      |# two
-                     |"a" : ${a}
-                     |
+                     |a = ${a}
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
@@ -191,9 +195,8 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val result = renderHocon(in)
 
     val expected = """outer {
-                     |    "a" : 1,
-                     |    "a" : ${outer.a}
-                     |
+                     |    a = 1
+                     |    a = ${outer.a}
                      |    sib = 0
                      |}
                      |""".stripMargin
@@ -216,13 +219,152 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
       )
 
     val expected = """# kept
-                     |"a" : 1,
-                     |"a" : ${a}
-                     |
+                     |a = 1
+                     |a = ${a}
                      |""".stripMargin
     checkEqualObjects(expected, result)
   }
 
+  // A merge stack is written as repeated fields, so its keys and separators
+  // come from the render options like those of any other field.
+  // The mergeStack* cases below are not from lightbend/config: they pin that
+  // merge stack entries are written with the render options' key and
+  // separator (ConfigDelayedMerge.render). Revisit and drop them when upstream
+  // adds equivalent coverage.
+  @Test
+  def mergeStackUsesTheDefaultSeparator(): Unit = {
+    val in = """a : 1
+               |a : ${a}
+               |sib : 0""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """a = 1
+                     |a = ${a}
+                     |sib = 0
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def mergeStackUsesTheCompactSeparator(): Unit = {
+    val in = """a : 1
+               |a : ${a}
+               |sib : 0""".stripMargin
+    val result = ConfigFactory
+      .parseString(in, parseOptions)
+      .root
+      .render(ConfigRenderOptions.concise.setJson(false))
+
+    checkEqualObjects("a=1,a=${a},sib=0", result)
+  }
+
+  @Test
+  def mergeStackQuotesKeysThatNeedIt(): Unit = {
+    val in = """"a b" : 1
+               |"a b" : ${x}""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """"a b" = 1
+                     |"a b" = ${x}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def mergeStackInJsonKeepsQuotedKeysAndColons(): Unit = {
+    val in = """a : 1
+               |a : ${a}
+               |sib : 0""".stripMargin
+    val result = ConfigFactory
+      .parseString(in, parseOptions)
+      .root
+      .render(ConfigRenderOptions.concise)
+
+    checkEqualObjects("""{"a":1,"a":${a},"sib":0}""", result)
+  }
+
+  // `+=` wraps its value in a list, and the comment above the field went to
+  // the wrapped element as well as to the concatenation, so it printed twice.
+  // The commentOnPlusEquals* cases below are not from lightbend/config: they
+  // pin that a comment above a += field attaches to the field, not also to its
+  // element (ConfigParser). Revisit and drop them when upstream adds the
+  // coverage.
+  @Test
+  def commentOnPlusEqualsIsRenderedOnce(): Unit = {
+    val in = """# two
+               |a += 2""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """# two
+                     |a = ${?a}[
+                     |    2
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def commentOnPlusEqualsAfterADefinitionIsRenderedOnce(): Unit = {
+    val in = """a : [1]
+               |# two
+               |a += 2""".stripMargin
+    val result = formatHocon(in)
+
+    assertEquals(1, result.split("# two", -1).length - 1)
+    checkEqualObjects(result, formatHocon(result))
+  }
+
+  @Test
+  def commentOnPlusEqualsSurvivesResolve(): Unit = {
+    val in = """a : [1]
+               |# two
+               |a += 2""".stripMargin
+    val resolved = ConfigFactory.parseString(in, parseOptions).resolve()
+
+    assertEquals(
+      List(" two"),
+      resolved.getValue("a").origin.comments.asScala.toList
+    )
+  }
+
+  @Test
+  def commentOnPlusEqualsOfAnObjectIsRenderedOnce(): Unit = {
+    val in = """# two
+               |a += { x = 1 }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """# two
+                     |a = ${?a}[
+                     |    {
+                     |        x = 1
+                     |    }
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // resolved, the comment stays above the field and no longer above 2
+  @Test
+  def commentOnPlusEqualsIsRenderedOnceAfterResolve(): Unit = {
+    val in = """a : [1]
+               |# two
+               |a += 2""".stripMargin
+    val result = ConfigFactory
+      .parseString(in, parseOptions)
+      .resolve()
+      .root
+      .render(
+        myDefaultRenderOptions.setConfigFormatOptions(defaultFormatOptions)
+      )
+
+    val expected = """# two
+                     |a = [
+                     |    1,
+                     |    2
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
   // with no key to spell it out as repeated entries, a merge can only be
   // described
   @Test
@@ -255,9 +397,8 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
     val expected = """l = [
                      |    {
-                     |        "a" : 1,
-                     |        "a" : ${x}
-                     |
+                     |        a = 1
+                     |        a = ${x}
                      |    }
                      |]
                      |""".stripMargin
@@ -277,13 +418,427 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
 
     val expected = """outer {
                      |    # c1
-                     |    "a" : 1,
+                     |    a = 1
                      |    # c2
-                     |    "a" : ${outer.a}
-                     |
+                     |    a = ${outer.a}
                      |    sib = 0
                      |}
                      |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // sconfig-only: ConfigParseOptions.setKeepDetachedComments, for a comment
+  // block that a blank line separates from the field below it (a detached
+  // block). Off, the parser drops the block as lightbend/config does; on, the
+  // block stays with that field, in the origin and in the render. Documented in
+  // docs/NEW_FEATURES.md, wired in ConfigParser.parseObject, parseArray and
+  // parse.
+  private val keepDetachedComments =
+    parseOptions.setKeepDetachedComments(true)
+
+  @Test
+  def keepDetachedCommentsIsOffByDefault(): Unit = {
+    assertFalse(ConfigParseOptions.defaults.getKeepDetachedComments)
+    assertFalse(parseOptions.getKeepDetachedComments)
+    assertTrue(keepDetachedComments.getKeepDetachedComments)
+  }
+
+  // an includer that parses its content with the options the include context
+  // hands it, the way SimpleIncluder parses a real include
+  private def parsingIncluder(content: String): ConfigIncluder =
+    new ConfigIncluder {
+      def include(
+          context: ConfigIncludeContext,
+          what: String
+      ): ConfigObject =
+        ConfigFactory.parseString(content, context.parseOptions).root
+      def withFallback(fallback: ConfigIncluder): ConfigIncluder = this
+    }
+
+  // sconfig-only API, like the class's other setters: the same value returns
+  // this, and the flag toggles both ways
+  @Test
+  def theOptionSetterIsIdempotentAndTogglesBack(): Unit = {
+    assertSame(
+      parseOptions,
+      parseOptions.setKeepDetachedComments(false)
+    )
+    assertSame(
+      keepDetachedComments,
+      keepDetachedComments.setKeepDetachedComments(true)
+    )
+
+    val off =
+      keepDetachedComments.setKeepDetachedComments(false)
+    assertFalse(off.getKeepDetachedComments)
+    checkEqualsAndStable("a = 1\n", formatHoconWith("# header\n\na = 1\n", off))
+  }
+
+  // sconfig-only API: toggling the flag on preserves the configured syntax,
+  // origin description, allowMissing, includer and class loader, and leaves the
+  // configured instance alone. The class keeps identity equality, so a copy
+  // with the same fields is a new instance, not an equal one.
+  @Test
+  def theOptionSetterPreservesTheOtherFields(): Unit = {
+    val includer = parsingIncluder("x = 2\n")
+    val classLoader = new TestClassLoader(null, Map.empty)
+    val configured = ConfigParseOptions.defaults
+      .setSyntax(ConfigSyntax.CONF)
+      .setOriginDescription("custom")
+      .setAllowMissing(false)
+      .setIncluder(includer)
+      .setClassLoader(classLoader)
+
+    val toggled = configured.setKeepDetachedComments(true)
+    assertSame(ConfigSyntax.CONF, toggled.getSyntax)
+    checkEqualObjects("custom", toggled.getOriginDescription)
+    assertFalse(toggled.getAllowMissing)
+    assertSame(includer, toggled.getIncluder)
+    assertSame(classLoader, toggled.getClassLoader)
+
+    assertFalse(configured.getKeepDetachedComments)
+    val roundTripped = toggled.setKeepDetachedComments(false)
+    assertNotSame(configured, roundTripped)
+    assertNotEquals(configured, roundTripped)
+  }
+
+  // sconfig-only API: every copy path carries the flag along with the field it
+  // changes, so a configured instance keeps the option
+  @Test
+  def everyCopyPathPreservesTheOption(): Unit = {
+    val includer = parsingIncluder("x = 2\n")
+    val classLoader = new TestClassLoader(null, Map.empty)
+    val copies = List(
+      keepDetachedComments.setSyntax(ConfigSyntax.CONF),
+      keepDetachedComments.setSyntaxFromFilename("x.conf"),
+      keepDetachedComments.setOriginDescription("custom"),
+      keepDetachedComments.withFallbackOriginDescription("fallback"),
+      keepDetachedComments.setAllowMissing(false),
+      keepDetachedComments.setIncluder(includer),
+      keepDetachedComments.appendIncluder(includer),
+      keepDetachedComments.prependIncluder(includer),
+      keepDetachedComments.setClassLoader(classLoader)
+    )
+    copies.foreach(options => assertTrue(options.getKeepDetachedComments))
+    assertFalse(
+      ConfigParseOptions.defaults
+        .setSyntax(ConfigSyntax.CONF)
+        .getKeepDetachedComments
+    )
+  }
+
+  // sconfig-only: the include context derives its parse options from the
+  // caller's, so the option reaches the parse inside the included file too
+  @Test
+  def theOptionReachesParsingInsideAnIncludedFile(): Unit = {
+    val in = "include \"whatever\"\ny = 1\n"
+    val on = parseOptions
+      .setIncluder(parsingIncluder("# included\n\nx = 2\n"))
+      .setKeepDetachedComments(true)
+    val off = parseOptions.setIncluder(parsingIncluder("# included\n\nx = 2\n"))
+
+    checkEqualObjects(
+      List(" included"),
+      ConfigFactory
+        .parseString(in, on)
+        .getValue("x")
+        .origin
+        .comments
+        .asScala
+        .toList
+    )
+    checkEqualObjects(
+      List[String](),
+      ConfigFactory
+        .parseString(in, off)
+        .getValue("x")
+        .origin
+        .comments
+        .asScala
+        .toList
+    )
+  }
+
+  // sconfig-only: with the option on, a kept block before include attaches to
+  // the next local field, not to the included file
+  @Test
+  def aCommentBlockBeforeIncludeAttachesToTheNextLocalField(): Unit = {
+    val in = "# before include\n\ninclude \"whatever\"\ny = 1\n"
+    val on = parseOptions
+      .setIncluder(parsingIncluder("x = 2\n"))
+      .setKeepDetachedComments(true)
+    val off = parseOptions.setIncluder(parsingIncluder("x = 2\n"))
+
+    val parsedOn = ConfigFactory.parseString(in, on)
+    checkEqualObjects(
+      List[String](),
+      parsedOn.getValue("x").origin.comments.asScala.toList
+    )
+    checkEqualObjects(
+      List(" before include"),
+      parsedOn.getValue("y").origin.comments.asScala.toList
+    )
+    checkEqualObjects(
+      List[String](),
+      ConfigFactory
+        .parseString(in, off)
+        .getValue("y")
+        .origin
+        .comments
+        .asScala
+        .toList
+    )
+  }
+
+  // not from lightbend/config: it drops the header, and so does the default
+  // here, so the option has to be on for the two lines to survive
+  @Test
+  def commentsSeparatedFromTheFollowingFieldByABlankLineAreKept(): Unit = {
+    val in = """# Copyright 2025 Example
+               |# Licensed under Apache-2.0
+               |
+               |a = 1
+               |""".stripMargin
+    val result = formatHoconWith(in, keepDetachedComments)
+
+    val expected = """# Copyright 2025 Example
+                     |# Licensed under Apache-2.0
+                     |a = 1
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // not from lightbend/config: with the option on, the part above the blank
+  // line is kept too, not only the part below it
+  @Test
+  def aBlankLineInsideACommentBlockKeepsTheLinesAboveIt(): Unit = {
+    val in = """# part one
+               |
+               |# part two
+               |a = 1
+               |""".stripMargin
+    val result = formatHoconWith(in, keepDetachedComments)
+
+    val expected = """# part one
+                     |# part two
+                     |a = 1
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // not from lightbend/config, like the tests above, for a field nested in an
+  // object
+  @Test
+  def aBlankLineBeforeAFieldInAnObjectKeepsItsComments(): Unit = {
+    val in = """r {
+               |    # about p
+               |
+               |    p = 1
+               |}
+               |""".stripMargin
+    val result = formatHoconWith(in, keepDetachedComments)
+
+    val expected = """r {
+                     |    # about p
+                     |    p = 1
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // not from lightbend/config: a whitespace-only line separates blocks like an
+  // empty one, so the option keeps the comment there too
+  @Test
+  def aWhitespaceOnlyLineSeparatesLikeABlankLine(): Unit = {
+    val in = "# header\n   \na = 1\n" // the middle line is spaces
+    val result = formatHoconWith(in, keepDetachedComments)
+
+    checkEqualsAndStable("# header\na = 1\n", result)
+  }
+
+  // not from lightbend/config: both comment syntaxes are kept, in source order,
+  // and the render normalizes them to '#'
+  @Test
+  def commentsOfBothSyntaxesKeepTheirSourceOrder(): Unit = {
+    val in = """# one
+               |
+               |// two
+               |
+               |# three
+               |a = 1
+               |""".stripMargin
+    val parsed = ConfigFactory.parseString(in, keepDetachedComments)
+    checkEqualObjects(
+      List(" one", " two", " three"),
+      parsed.getValue("a").origin.comments.asScala.toList
+    )
+    val result = formatHoconWith(in, keepDetachedComments)
+
+    val expected = """# one
+                     |# two
+                     |# three
+                     |a = 1
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // not from lightbend/config: a block that a blank line separates from the
+  // array element below it stays on that element; the trailing block has no
+  // element after it and is dropped, as on both revisions
+  @Test
+  def aBlankLineBeforeAnArrayElementKeepsItsComments(): Unit = {
+    val in = """a = [
+               |# one
+               |
+               |1,
+               |// two
+               |
+               |2
+               |# tail
+               |
+               |]
+               |""".stripMargin
+    val parsed = ConfigFactory.parseString(in, keepDetachedComments)
+    val list = parsed.getList("a")
+    checkEqualObjects(List(" one"), list.get(0).origin.comments.asScala.toList)
+    checkEqualObjects(List(" two"), list.get(1).origin.comments.asScala.toList)
+    val result = formatHoconWith(in, keepDetachedComments)
+
+    val expected = """a = [
+                     |    # one
+                     |    1,
+                     |    # two
+                     |    2
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // a block with no following field or element has nothing to attach to, so it
+  // is dropped as on both revisions (lightbend/config does the same)
+  @Test
+  def commentsWithNoFollowingFieldAreStillDropped(): Unit = {
+    val inObject = """r {
+                     |    a = 1
+                     |    # trailing
+                     |}
+                     |""".stripMargin
+    checkEqualsAndStable(
+      "r {\n    a = 1\n}\n",
+      formatHoconWith(inObject, keepDetachedComments)
+    )
+
+    val inFile = """a = 1
+                   |# trailing
+                   |""".stripMargin
+    checkEqualsAndStable(
+      "a = 1\n",
+      formatHoconWith(inFile, keepDetachedComments)
+    )
+  }
+
+  // not from lightbend/config: a header outside a braced root is kept in the
+  // root object's origin but is not rendered, since the renderer prints the
+  // comments of fields, not of the root object itself
+  @Test
+  def aHeaderBeforeABracedRootStaysInTheOriginButIsNotRendered(): Unit = {
+    val in = """# header
+               |
+               |{a=1}
+               |""".stripMargin
+    val parsed = ConfigFactory.parseString(in, keepDetachedComments)
+    checkEqualObjects(
+      List(" header"),
+      parsed.root.origin.comments.asScala.toList
+    )
+
+    checkEqualsAndStable(
+      "a = 1\n",
+      formatHoconWith(in, keepDetachedComments)
+    )
+  }
+
+  // default off: the same inputs drop the comments exactly as lightbend/config
+  // does, so origin.comments and the render do not change
+  @Test
+  def withoutTheOptionBlankLineSeparatedCommentsStayDropped(): Unit = {
+    val licence = """# Copyright 2025 Example
+                    |# Licensed under Apache-2.0
+                    |
+                    |a = 1
+                    |""".stripMargin
+    checkEqualsAndStable("a = 1\n", formatHocon(licence))
+
+    val order = """# one
+                  |
+                  |// two
+                  |
+                  |# three
+                  |a = 1
+                  |""".stripMargin
+    checkEqualsAndStable("# three\na = 1\n", formatHocon(order))
+
+    val array = """a = [
+                  |# one
+                  |
+                  |1,
+                  |// two
+                  |
+                  |2
+                  |]
+                  |""".stripMargin
+    checkEqualsAndStable("a = [\n    1,\n    2\n]\n", formatHocon(array))
+
+    val braced = "# header\n\n{a=1}\n"
+    checkEqualObjects(
+      List[String](),
+      ConfigFactory.parseString(braced).root.origin.comments.asScala.toList
+    )
+  }
+
+  // setSimplifyNestedObjects(true) compresses r.p.x only while the objects
+  // carry no comments: with the option on, the kept comment blocks the
+  // compression, even when comments are not rendered
+  @Test
+  def simplifyNestedObjectsDoesNotCompressAnObjectWithKeptComments(): Unit = {
+    val simplify =
+      ConfigFormatOptions.defaults.setSimplifyNestedObjects(true)
+    val in = """r{
+               |# obj
+               |
+               |p{x=1}}""".stripMargin
+
+    checkEqualsAndStable(
+      "r {\n    # obj\n    p {\n        x = 1\n    }\n}\n",
+      formatHoconWith(in, keepDetachedComments)(simplify)
+    )
+
+    val withoutComments =
+      ConfigFactory
+        .parseString(in, keepDetachedComments)
+        .root
+        .render(
+          myDefaultRenderOptions
+            .setComments(false)
+            .setConfigFormatOptions(simplify)
+        )
+    checkEqualObjects(
+      "r {\n    p {\n        x = 1\n    }\n}\n",
+      withoutComments
+    )
+
+    // with the option off there are no comments and the path still compresses
+    checkEqualObjects("r.p.x = 1\n", formatHocon(in)(simplify))
+  }
+
+  // the comment above a += field is printed once with the option on as well
+  // (plus-equals-comment-once); keep-detached-comments pinned the old double print
+  @Test
+  def aPlusEqualsCommentIsPrintedOnceWithTheOption(): Unit = {
+    val in = "a=[]\n# plus\n\na+=2"
+    val result = formatHoconWith(in, keepDetachedComments)
+
+    val expected = "a = []\n# plus\na = ${?a}[\n    2\n]\n"
     checkEqualsAndStable(expected, result)
   }
 
@@ -296,6 +851,93 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val result = renderHocon(in)
     val expected = """a = ${FOO[]}
                      |b = ${?FOO[]}
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  // lightbend/config#800: the nested merge a partial resolve left behind has
+  // no spelling in HOCON, so the render could not be read back
+  // The partiallyResolved* cases below are not from lightbend/config: they pin
+  // that a partially resolved value that cannot become an object hides the
+  // merge stack below it (ConfigDelayedMerge.cannotBecomeAnObject). Revisit
+  // and drop them when upstream adds equivalent coverage.
+  @Test
+  def partiallyResolvedAppendsRenderAsOneList(): Unit = {
+    val in = """a = [${s}-1]
+               |a += ${s}-2
+               |a += ${s}-3
+               |a += ${s}-4""".stripMargin
+    val partial = ConfigFactory
+      .parseString(in, parseOptions)
+      .resolve(ConfigResolveOptions.defaults.setAllowUnresolved(true))
+    val result = partial.root.render(
+      myDefaultRenderOptions.setConfigFormatOptions(defaultFormatOptions)
+    )
+
+    val expected = """a = [
+                     |    ${s}-1,
+                     |    ${s}-2,
+                     |    ${s}-3,
+                     |    ${s}-4
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def partiallyResolvedSelfReferencesRenderAsOneValue(): Unit = {
+    val in = """a = ${s}-1
+               |a = ${a}-2
+               |a = ${a}-3
+               |b = ${base}
+               |b += ${s}-2
+               |b += ${s}-3""".stripMargin
+    val partial = ConfigFactory
+      .parseString(in, parseOptions)
+      .resolve(ConfigResolveOptions.defaults.setAllowUnresolved(true))
+    val result = partial.root.render(
+      myDefaultRenderOptions.setConfigFormatOptions(defaultFormatOptions)
+    )
+
+    val expected = """a = ${s}"-1-2-3"
+                     |b = ${base}[
+                     |    ${s}-2,
+                     |    ${s}-3
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def repeatedMergeEntriesUseFieldSpacingForAppendedList(): Unit = {
+    val in = """a : [1]
+               |a += 2""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """a = [
+                     |    1
+                     |]
+                     |a = ${?a}[
+                     |    2
+                     |]
+                     |""".stripMargin
+    checkEqualsAndStable(expected, result)
+  }
+
+  @Test
+  def repeatedMergeEntriesUseFieldSpacingForNestedAppendedList(): Unit = {
+    val in = """o { a : [1]
+               |a += 2 }""".stripMargin
+    val result = formatHocon(in)
+
+    val expected = """o {
+                     |    a = [
+                     |        1
+                     |    ]
+                     |    a = ${?o.a}[
+                     |        2
+                     |    ]
+                     |}
                      |""".stripMargin
     checkEqualsAndStable(expected, result)
   }
