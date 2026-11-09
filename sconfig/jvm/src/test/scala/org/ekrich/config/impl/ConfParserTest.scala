@@ -1006,6 +1006,70 @@ class ConfParserTest extends TestUtils {
     assertEquals("bar", conf.getString("foo"))
   }
 
+  // java.net.URL errors are JVM-specific (the JS URL shim does not throw
+  // MalformedURLException), so these stay on this suite. See #625.
+  @Test
+  def parseErrorAfterMultilineStringNamesIncludeLine(): Unit = {
+    val e = intercept[ConfigException.Parse](
+      parseConfig("a = \"\"\"one\n two\n three\n\"\"\"\ninclude url(\"!!!\")\n")
+    )
+    assertEquals(5, e.origin.lineNumber)
+    assertEquals(
+      "test string: 5: include url() specifies an invalid URL: !!!",
+      e.getMessage
+    )
+  }
+
+  @Test
+  def parseErrorAfterSeveralMultilineStringsNamesIncludeLine(): Unit = {
+    val e = intercept[ConfigException.Parse](
+      parseConfig(
+        "x = \"\"\"one\n two\"\"\"\ny = \"\"\"three\n four\"\"\"\ninclude url(\"!!!\")\n"
+      )
+    )
+    assertEquals(5, e.origin.lineNumber)
+    assertEquals(
+      "test string: 5: include url() specifies an invalid URL: !!!",
+      e.getMessage
+    )
+  }
+
+  @Test
+  def parseErrorAfterMultilineStringInNestedObjectNamesIncludeLine(): Unit = {
+    // the include is on line 7, inside an object nested in an array
+    val text = Seq(
+      "a = [",
+      "  {",
+      "    x = \"\"\"one",
+      " two",
+      " three",
+      "\"\"\"",
+      "    include url(\"!!!\")",
+      "  }",
+      "]"
+    ).mkString("\n")
+    val e = intercept[ConfigException.Parse](parseConfig(text))
+    assertEquals(7, e.origin.lineNumber)
+    assertEquals(
+      "test string: 7: include url() specifies an invalid URL: !!!",
+      e.getMessage
+    )
+  }
+
+  @Test
+  def parseErrorAfterMultilineStringWithCrLfNamesIncludeLine(): Unit = {
+    val e = intercept[ConfigException.Parse](
+      parseConfig(
+        "a = \"\"\"one\r\n two\r\n three\r\n\"\"\"\r\ninclude url(\"!!!\")\r\n"
+      )
+    )
+    assertEquals(5, e.origin.lineNumber)
+    assertEquals(
+      "test string: 5: include url() specifies an invalid URL: !!!",
+      e.getMessage
+    )
+  }
+
   @Test
   def acceptMultiPeriodNumericPath(): Unit = {
     val conf1 = ConfigFactory.parseString("0.1.2.3=foobar1")
