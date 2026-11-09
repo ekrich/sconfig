@@ -57,6 +57,14 @@ object ConfigDocumentParser {
     // used to modify the error message to reflect that
     // someone may think this is .properties format.
     private[impl] var equalsCount = 0
+    private var nestingDepth = 0
+    private def enterNested(): Unit = {
+      if (nestingDepth >= ConfigParser.maxNestingDepth)
+        throw parseError(
+          "too much nesting: more than " + ConfigParser.maxNestingDepth + " levels"
+        )
+      nestingDepth += 1
+    }
 
     private def popToken: Token = {
       if (buffer.isEmpty) return tokens.next
@@ -249,9 +257,15 @@ object ConfigDocumentParser {
       val startingEqualsCount = equalsCount
       if (Tokens.isValue(t) || Tokens.isUnquotedText(t) || Tokens
             .isSubstitution(t)) v = new ConfigNodeSimpleValue(t)
-      else if (t eq Tokens.OPEN_CURLY) v = parseObject(true)
-      else if (t eq Tokens.OPEN_SQUARE) v = parseArray
-      else
+      else if (t eq Tokens.OPEN_CURLY) {
+        enterNested()
+        try v = parseObject(true)
+        finally nestingDepth -= 1
+      } else if (t eq Tokens.OPEN_SQUARE) {
+        enterNested()
+        try v = parseArray
+        finally nestingDepth -= 1
+      } else
         throw parseError(
           addQuoteSuggestion(
             t.toString,
@@ -397,6 +411,7 @@ object ConfigDocumentParser {
       var afterComma = false
       val lastPath: Path = null // always null here ??
       var lastInsideEquals = false
+      val objectOrigin = baseOrigin.withLineNumber(lineNumber)
       val objectNodes =
         new ju.ArrayList[AbstractConfigNode]
       var keyValueNodes: ju.ArrayList[AbstractConfigNode] = null
@@ -535,12 +550,13 @@ object ConfigDocumentParser {
           }
         }
       }
-      new ConfigNodeObject(objectNodes)
+      new ConfigNodeObject(objectNodes, objectOrigin)
     }
 
     private def parseArray: ConfigNodeComplexValue = {
       val children =
         new ju.ArrayList[AbstractConfigNode]
+      val arrayOrigin = baseOrigin.withLineNumber(lineNumber)
       children.add(new ConfigNodeSingleToken(Tokens.OPEN_SQUARE))
       // invoked just after the OPEN_SQUARE
       var t: Token = null
@@ -551,7 +567,7 @@ object ConfigDocumentParser {
         // special-case the first element
         if (t eq Tokens.CLOSE_SQUARE) {
           children.add(new ConfigNodeSingleToken(t))
-          return new ConfigNodeArray(children)
+          return new ConfigNodeArray(children, arrayOrigin)
         } else if (Tokens.isValue(t) || (t eq Tokens.OPEN_CURLY) ||
             (t eq Tokens.OPEN_SQUARE) || Tokens.isUnquotedText(t) ||
             Tokens.isSubstitution(t)) {
@@ -601,7 +617,7 @@ object ConfigDocumentParser {
           }
         }
       }
-      return new ConfigNodeArray(children)
+      return new ConfigNodeArray(children, arrayOrigin)
     }
 
     private[impl] def parse: ConfigNodeRoot = {
@@ -629,7 +645,9 @@ object ConfigDocumentParser {
         // of it, so put it back.
         putBack(t)
         missingCurly = true
-        result = parseObject(false)
+        enterNested()
+        try result = parseObject(false)
+        finally nestingDepth -= 1
       }
       // Need to pull the children out of the resulting node so we can keep leading
       // and trailing whitespace if this was a no-brace object. Otherwise, we need to add

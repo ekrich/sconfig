@@ -578,6 +578,104 @@ class ConfigTest extends TestUtilsShared {
     assertTrue(ep.getMessage.contains("range"))
   }
 
+  // The long-range cases below are not from lightbend/config: they pin that
+  // out-of-range conversions throw instead of clamping and that exact
+  // boundaries survive (ConfigDouble). Revisit and drop them when upstream
+  // adds equivalent coverage.
+  @Test
+  def longRangeChecks(): Unit = {
+    val conf = parseConfig(
+      "{ tooPositive: 9223372036854775808," +
+        " bigDouble: 1e30, overflowingDouble: 1e999, negative: -1e30, negativeInfinity: -1e999, roundedMinimum: -9223372036854775809, exponent: 9.223372036854776e18, nan: \"NaN\" }"
+    )
+    for (path <- Seq(
+          "tooPositive",
+          "bigDouble",
+          "overflowingDouble",
+          "negative",
+          "negativeInfinity",
+          "roundedMinimum",
+          "exponent",
+          "nan"
+        )) {
+      val e = intercept[ConfigException.WrongType] {
+        conf.getLong(path)
+      }
+      assertTrue(e.getMessage.contains("range"))
+    }
+  }
+
+  @Test
+  def longRangeChecksOnLists(): Unit = {
+    for (value <- Seq(
+          "9223372036854775808",
+          "-1e30",
+          "-9223372036854775809",
+          "\"NaN\"",
+          "\"Infinity\""
+        )) {
+      val conf = parseConfig(s"{ sizes: [1, $value] }")
+      val e = intercept[ConfigException.WrongType] { conf.getLongList("sizes") }
+      assertTrue(e.getMessage.contains("range"))
+      assertTrue(e.getMessage.contains("sizes"))
+    }
+  }
+
+  @Test
+  def longRangeBoundariesStillRead(): Unit = {
+    val conf = parseConfig(
+      "{ max: 9223372036854775807, min: -9223372036854775808, fraction: 1.5 }"
+    )
+    assertEquals(Long.MaxValue, conf.getLong("max"))
+    assertEquals(Long.MinValue, conf.getLong("min"))
+    assertEquals(1L, conf.getLong("fraction"))
+    val strings = parseConfig(
+      "{ max: \"9223372036854775807\", min: \"-9223372036854775808\" }"
+    )
+    assertEquals(Long.MaxValue, strings.getLong("max"))
+    assertEquals(Long.MinValue, strings.getLong("min"))
+    val list = parseConfig(
+      "{ values: [\"9223372036854775807\", \"-9223372036854775808\", -1.5, 1.5] }"
+    )
+    assertEquals(
+      java.util.Arrays
+        .asList[java.lang.Long](Long.MaxValue, Long.MinValue, -1L, 1L),
+      list.getLongList("values")
+    )
+  }
+
+  @Test
+  def byteSizesBeyondLongRejectInsteadOfClamping(): Unit = {
+    val conf = parseConfig("{ cache: { max-bytes: 9223372036854775808 } }")
+    val e = intercept[ConfigException.BadValue] {
+      conf.getBytes("cache.max-bytes")
+    }
+    assertTrue(e.getMessage.contains("max-bytes"))
+  }
+
+  @Test
+  def programmaticLongRangeChecks(): Unit = {
+    for (number <- Seq(
+          Double.NaN,
+          Double.PositiveInfinity,
+          Double.NegativeInfinity,
+          Long.MaxValue.toDouble
+        )) {
+      val conf = ConfigValueFactory
+        .fromAnyRef(java.lang.Double.valueOf(number))
+        .atKey("value")
+      intercept[ConfigException.WrongType] { conf.getLong("value") }
+    }
+    val minimum = ConfigValueFactory
+      .fromAnyRef(java.lang.Double.valueOf(Long.MinValue.toDouble))
+      .atKey("value")
+    assertEquals(Long.MinValue, minimum.getLong("value"))
+    val belowMaximum = ConfigValueFactory
+      .fromAnyRef(java.lang.Double.valueOf(9223372036854774784.0))
+      .atKey("value")
+    assertEquals(9223372036854774784L, belowMaximum.getLong("value"))
+  }
+
   @Test
   def isResolvedWorks(): Unit = {
     val resolved = ConfigFactory.parseString("foo = 1")
@@ -680,6 +778,47 @@ class ConfigTest extends TestUtilsShared {
     val source = ConfigFactory.parseString("a = 43")
     val resolved = unresolved.resolveWith(source)
     assertEquals(43, resolved.getInt("foo"))
+  }
+
+  // https://github.com/lightbend/config/issues/855
+  @Test
+  def resolveWithDuplicateKeyAndSubstitution(): Unit = {
+    val unresolved =
+      ConfigFactory.parseString("""{ "one": "first", "one": ${variable}}""")
+    val source = ConfigFactory.parseString("""{ "variable": "second"}""")
+    val resolved = unresolved.resolveWith(source)
+    assertEquals("second", resolved.getString("one"))
+  }
+
+  @Test
+  def resolveWithDuplicateKeyInNestedObject(): Unit = {
+    val unresolved =
+      ConfigFactory.parseString("a.b { one: first, one: ${variable} }")
+    val source = ConfigFactory.parseString("variable: second")
+    val resolved = unresolved.resolveWith(source)
+    assertEquals("second", resolved.getString("a.b.one"))
+  }
+
+  @Test
+  def resolveWithDuplicateObjectKeyAndSubstitution(): Unit = {
+    val unresolved =
+      ConfigFactory.parseString("one: { x: 1 }, one: ${v}, one: { z: 3 }")
+    val source = ConfigFactory.parseString("v: { y: 2 }")
+    val resolved = unresolved.resolveWith(source)
+    assertEquals(
+      ConfigFactory.parseString("x: 1, y: 2, z: 3").root,
+      resolved.getObject("one")
+    )
+  }
+
+  // resolveWith does not look in this config, so a self-reference is looked
+  // up in the source, as it is without the duplicate key
+  @Test
+  def resolveWithDuplicateKeyAndSelfReference(): Unit = {
+    val unresolved = ConfigFactory.parseString("k: [a], k += b")
+    val source = ConfigFactory.parseString("k: [z]")
+    val resolved = unresolved.resolveWith(source)
+    assertEquals(Seq("z", "b"), resolved.getStringList("k").asScala)
   }
 
   /**

@@ -11,6 +11,9 @@ import java.{util => ju}
 import org.ekrich.config._
 
 object ConfigParser {
+  // a cap on object/array nesting keeps the recursive parser away from a
+  // StackOverflowError, which would escape applications as an Error
+  private[impl] val maxNestingDepth = 100
   private[impl] def parse(
       document: ConfigNodeRoot,
       origin: ConfigOrigin,
@@ -22,7 +25,8 @@ object ConfigParser {
       origin,
       document,
       SimpleIncluder.makeFull(options.getIncluder),
-      includeContext
+      includeContext,
+      options.getKeepDetachedComments
     )
     context.parse
   }
@@ -72,14 +76,28 @@ object ConfigParser {
       val baseOrigin: ConfigOrigin,
       val document: ConfigNodeRoot,
       val includer: FullIncluder,
-      val includeContext: ConfigIncludeContext
+      val includeContext: ConfigIncludeContext,
+      // sconfig only: ConfigParseOptions.setKeepDetachedComments
+      val keepDetachedComments: Boolean
   ) {
     private var lineNumber = 1
+    // counts the values of this file in source order; keepOriginOrder
+    // rendering breaks ties between fields defined on one line on it
+    private var nextSourceOrder = 0
     final private var pathStack = new ju.LinkedList[Path]
     // the number of lists we are inside; this is used to detect the "cannot
     // generate a reference to a list element" problem, and once we fix that
     // problem we should be able to get rid of this variable.
     private[impl] var arrayCount = 0
+    private var nestingDepth = 0
+    private def enterNested(n: AbstractConfigNode): Unit = {
+      if (nestingDepth >= ConfigParser.maxNestingDepth)
+        throw parseError(
+          "too much nesting: more than " + ConfigParser.maxNestingDepth + " levels",
+          n
+        )
+      nestingDepth += 1
+    }
     // merge a bunch of adjacent values into one
     // value; change unquoted text into a string
     // value.
@@ -105,13 +123,41 @@ object ConfigParser {
       baseOrigin
         .asInstanceOf[SimpleConfigOrigin]
         .withLineNumber(lineNumber)
-    private def parseError(message: String): ConfigException.Parse =
-      parseError(message, null)
+    // prefer the origin captured at tokenize time (correct even after a
+    // multiline string, which the line counter cannot see past); fall back to
+    // the line counter for nodes built without one.
+    private def nodeOrigin(n: ConfigNodeComplexValue): SimpleConfigOrigin =
+      n.origin match {
+        case o: SimpleConfigOrigin => o
+        case _                     => lineOrigin
+      }
+
+    // the line counter cannot see the newlines embedded in a multiline token,
+    // so build a diagnostic origin from the offending node's tokens instead;
+    // the tokenizer records an origin (with line) for every token it pulls.
+    // fall back to the counter for nodes whose tokens carry no line.
+    private def parseErrorOrigin(n: AbstractConfigNode): SimpleConfigOrigin = {
+      val tokens = n.tokens.iterator
+      while (tokens.hasNext) {
+        val line = tokens.next.lineNumber
+        if (line >= 0)
+          return baseOrigin
+            .asInstanceOf[SimpleConfigOrigin]
+            .withLineNumber(line)
+      }
+      lineOrigin
+    }
     private def parseError(
         message: String,
-        cause: Throwable
+        n: AbstractConfigNode
     ): ConfigException.Parse =
-      new ConfigException.Parse(lineOrigin, message, cause)
+      parseError(message, null, n)
+    private def parseError(
+        message: String,
+        cause: Throwable,
+        n: AbstractConfigNode
+    ): ConfigException.Parse =
+      new ConfigException.Parse(parseErrorOrigin(n), message, cause)
     private def fullCurrentPath = {
       // pathStack has top of stack at front
       if (pathStack.isEmpty)
@@ -129,15 +175,20 @@ object ConfigParser {
       val startingArrayCount = arrayCount
       if (n.isInstanceOf[ConfigNodeSimpleValue])
         v = n.asInstanceOf[ConfigNodeSimpleValue].value
-      else if (n.isInstanceOf[ConfigNodeObject])
-        v = parseObject(n.asInstanceOf[ConfigNodeObject])
-      else if (n.isInstanceOf[ConfigNodeArray])
-        v = parseArray(n.asInstanceOf[ConfigNodeArray])
-      else if (n.isInstanceOf[ConfigNodeConcatenation])
+      else if (n.isInstanceOf[ConfigNodeObject]) {
+        enterNested(n)
+        try v = parseObject(n.asInstanceOf[ConfigNodeObject])
+        finally nestingDepth -= 1
+      } else if (n.isInstanceOf[ConfigNodeArray]) {
+        enterNested(n)
+        try v = parseArray(n.asInstanceOf[ConfigNodeArray])
+        finally nestingDepth -= 1
+      } else if (n.isInstanceOf[ConfigNodeConcatenation])
         v = parseConcatenation(n.asInstanceOf[ConfigNodeConcatenation])
       else
         throw parseError(
-          "Expecting a value but got wrong node type: " + n.getClass
+          "Expecting a value but got wrong node type: " + n.getClass,
+          n
         )
       if (comments != null && !comments.isEmpty) {
         v = v.withOrigin(
@@ -149,8 +200,18 @@ object ConfigParser {
         throw new ConfigException.BugOrBroken(
           "Bug in config parser: unbalanced array count"
         )
+      v = v.withOrigin(
+        v.origin
+          .asInstanceOf[SimpleConfigOrigin]
+          .withSourceOrder(nextSourceOrder)
+      )
+      nextSourceOrder += 1
       v
     }
+
+    private def advanceLineNumberBeforeValue(field: ConfigNodeField): Unit =
+      lineNumber += field.newlineCountBeforeValue
+
     private def parseInclude(
         values: ju.Map[String, AbstractConfigValue],
         n: ConfigNodeInclude
@@ -168,7 +229,8 @@ object ConfigParser {
             case e: MalformedURLException =>
               throw parseError(
                 "include url() specifies an invalid URL: " + n.name,
-                e
+                e,
+                n
               )
           }
           obj = includer.includeURL(cic, url).asInstanceOf[AbstractConfigObject]
@@ -190,7 +252,8 @@ object ConfigParser {
       // See https://github.com/lightbend/config/issues/160
       if (arrayCount > 0 && (obj.resolveStatus ne ResolveStatus.RESOLVED))
         throw parseError(
-          "Due to current limitations of the config parser, when an include statement is nested inside a list value, " + "${} substitutions inside the included file cannot be resolved correctly. Either move the include outside of the list value or " + "remove the ${} statements from the included file."
+          "Due to current limitations of the config parser, when an include statement is nested inside a list value, " + "${} substitutions inside the included file cannot be resolved correctly. Either move the include outside of the list value or " + "remove the ${} statements from the included file.",
+          n
         )
       if (!pathStack.isEmpty) {
         val prefix = fullCurrentPath
@@ -207,7 +270,7 @@ object ConfigParser {
     private def parseObject(n: ConfigNodeObject): AbstractConfigObject = {
       val values =
         new ju.HashMap[String, AbstractConfigValue]
-      val objectOrigin = lineOrigin
+      val objectOrigin = nodeOrigin(n)
       var lastWasNewline = false
       val nodes =
         new ju.ArrayList[AbstractConfigNode](n.children)
@@ -221,7 +284,9 @@ object ConfigParser {
         } else if (node.isInstanceOf[ConfigNodeSingleToken] &&
             Tokens.isNewline(node.asInstanceOf[ConfigNodeSingleToken].token)) {
           lineNumber += 1
-          if (lastWasNewline) { // Drop all comments if there was a blank line and start a new comment block
+          // sconfig only: keep the block when asked to, instead of dropping it
+          // as lightbend/config does (NEW_FEATURES.md)
+          if (lastWasNewline && !keepDetachedComments) { // Drop all comments if there was a blank line and start a new comment block
             comments.clear()
           }
           lastWasNewline = true
@@ -230,20 +295,20 @@ object ConfigParser {
           parseInclude(values, node.asInstanceOf[ConfigNodeInclude])
           lastWasNewline = false
         } else if (node.isInstanceOf[ConfigNodeField]) {
+          val field = node.asInstanceOf[ConfigNodeField]
           lastWasNewline = false
-          val path = node.asInstanceOf[ConfigNodeField].path.value
-          comments.addAll(node.asInstanceOf[ConfigNodeField].comments)
+          val path = field.path.value
+          comments.addAll(field.comments)
           // path must be on-stack while we parse the value
           pathStack.push(path)
-          if (node
-                .asInstanceOf[ConfigNodeField]
-                .separator eq Tokens.PLUS_EQUALS) { // we really should make this work, but for now throwing
+          if (field.separator eq Tokens.PLUS_EQUALS) { // we really should make this work, but for now throwing
             // an exception is better than producing an incorrect
             // result. See
             // https://github.com/lightbend/config/issues/160
             if (arrayCount > 0)
               throw parseError(
-                "Due to current limitations of the config parser, += does not work nested inside a list. " + "+= expands to a ${} substitution and the path in ${} cannot currently refer to list elements. " + "You might be able to move the += outside of the list and then refer to it from inside the list with ${}."
+                "Due to current limitations of the config parser, += does not work nested inside a list. " + "+= expands to a ${} substitution and the path in ${} cannot currently refer to list elements. " + "You might be able to move the += outside of the list and then refer to it from inside the list with ${}.",
+                field
               )
             // because we will put it in an array after the fact so
             // we want this to be incremented during the parseValue
@@ -252,12 +317,11 @@ object ConfigParser {
           }
           var valueNode: AbstractConfigNodeValue = null
           var newValue: AbstractConfigValue = null
-          valueNode = node.asInstanceOf[ConfigNodeField].value
+          valueNode = field.value
+          advanceLineNumberBeforeValue(field)
           // comments from the key token go to the value token
           newValue = parseValue(valueNode, comments)
-          if (node
-                .asInstanceOf[ConfigNodeField]
-                .separator eq Tokens.PLUS_EQUALS) {
+          if (field.separator eq Tokens.PLUS_EQUALS) {
             arrayCount -= 1
             val concat =
               new ju.ArrayList[AbstractConfigValue](2)
@@ -268,9 +332,13 @@ object ConfigParser {
                 true /* optional */
               )
             )
+            // the comments describe the field, which the concatenation
+            // stands for; on the element too they would print twice
+            val element =
+              newValue.withOrigin(newValue.origin.withComments(null))
             val list = new SimpleConfigList(
               newValue.origin,
-              ju.Collections.singletonList(newValue)
+              ju.Collections.singletonList(element)
             )
             concat.add(previousRef)
             concat.add(list)
@@ -320,7 +388,8 @@ object ConfigParser {
               // could become an object).
               if (flavor eq ConfigSyntax.JSON)
                 throw parseError(
-                  "JSON does not allow duplicate fields: '" + key + "' was already seen at " + existing.origin.description
+                  "JSON does not allow duplicate fields: '" + key + "' was already seen at " + existing.origin.description,
+                  field
                 )
               else newValue = newValue.withFallback(existing)
             }
@@ -344,7 +413,7 @@ object ConfigParser {
 
     private def parseArray(n: ConfigNodeArray) = {
       arrayCount += 1
-      val arrayOrigin = lineOrigin
+      val arrayOrigin = nodeOrigin(n)
       val values = new ju.ArrayList[AbstractConfigValue]
       var lastWasNewLine = false
       val comments = new ju.ArrayList[String]
@@ -356,7 +425,9 @@ object ConfigParser {
         } else if (node.isInstanceOf[ConfigNodeSingleToken] &&
             Tokens.isNewline(node.asInstanceOf[ConfigNodeSingleToken].token)) {
           lineNumber += 1
-          if (lastWasNewLine && v == null) comments.clear()
+          // sconfig only: keep the block when asked to, as in parseObject
+          if (lastWasNewLine && v == null && !keepDetachedComments)
+            comments.clear()
           else if (v != null) {
             values.add(
               v.withOrigin(
@@ -407,7 +478,9 @@ object ConfigParser {
           val t = node.asInstanceOf[ConfigNodeSingleToken].token
           if (Tokens.isNewline(t)) {
             lineNumber += 1
-            if (lastWasNewLine && result == null) comments.clear()
+            // sconfig only: keep the block when asked to, as in parseObject
+            if (lastWasNewLine && result == null && !keepDetachedComments)
+              comments.clear()
             else if (result != null) {
               result = result.withOrigin(
                 result.origin
