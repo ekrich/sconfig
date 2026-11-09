@@ -236,7 +236,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val in = """a : 1
                |a : ${a}
                |sib : 0""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """a = 1
                      |a = ${a}
@@ -262,7 +262,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def mergeStackQuotesKeysThatNeedIt(): Unit = {
     val in = """"a b" : 1
                |"a b" : ${x}""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """"a b" = 1
                      |"a b" = ${x}
@@ -293,7 +293,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def commentOnPlusEqualsIsRenderedOnce(): Unit = {
     val in = """# two
                |a += 2""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """# two
                      |a = ${?a}[
@@ -308,10 +308,10 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     val in = """a : [1]
                |# two
                |a += 2""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     assertEquals(1, result.split("# two", -1).length - 1)
-    checkEqualObjects(result, formatHocon(result))
+    checkEqualObjects(result, renderHocon(result))
   }
 
   @Test
@@ -331,7 +331,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def commentOnPlusEqualsOfAnObjectIsRenderedOnce(): Unit = {
     val in = """# two
                |a += { x = 1 }""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """# two
                      |a = ${?a}[
@@ -767,7 +767,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                     |
                     |a = 1
                     |""".stripMargin
-    checkEqualsAndStable("a = 1\n", formatHocon(licence))
+    checkEqualsAndStable("a = 1\n", renderHocon(licence))
 
     val order = """# one
                   |
@@ -776,7 +776,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                   |# three
                   |a = 1
                   |""".stripMargin
-    checkEqualsAndStable("# three\na = 1\n", formatHocon(order))
+    checkEqualsAndStable("# three\na = 1\n", renderHocon(order))
 
     val array = """a = [
                   |# one
@@ -787,7 +787,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
                   |2
                   |]
                   |""".stripMargin
-    checkEqualsAndStable("a = [\n    1,\n    2\n]\n", formatHocon(array))
+    checkEqualsAndStable("a = [\n    1,\n    2\n]\n", renderHocon(array))
 
     val braced = "# header\n\n{a=1}\n"
     checkEqualObjects(
@@ -802,7 +802,9 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   @Test
   def simplifyNestedObjectsDoesNotCompressAnObjectWithKeptComments(): Unit = {
     val simplify =
-      ConfigFormatOptions.defaults.setSimplifyNestedObjects(true)
+      ConfigFormatOptions.defaults
+        .setDoubleIndent(true)
+        .setSimplifyNestedObjects(true)
     val in = """r{
                |# obj
                |
@@ -828,7 +830,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
     )
 
     // with the option off there are no comments and the path still compresses
-    checkEqualObjects("r.p.x = 1\n", formatHocon(in)(simplify))
+    checkEqualObjects("r.p.x = 1\n", renderHocon(in)(simplify))
   }
 
   // the comment above a += field is printed once with the option on as well
@@ -912,7 +914,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def repeatedMergeEntriesUseFieldSpacingForAppendedList(): Unit = {
     val in = """a : [1]
                |a += 2""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """a = [
                      |    1
@@ -928,7 +930,7 @@ class ConfigDefaultRenderingTest extends RenderingTestSuite {
   def repeatedMergeEntriesUseFieldSpacingForNestedAppendedList(): Unit = {
     val in = """o { a : [1]
                |a += 2 }""".stripMargin
-    val result = formatHocon(in)
+    val result = renderHocon(in)
 
     val expected = """o {
                      |    a = [
