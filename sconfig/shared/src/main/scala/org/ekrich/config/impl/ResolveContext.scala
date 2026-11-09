@@ -26,6 +26,14 @@ object ResolveContext {
           "NotPossibleToResolve was thrown from an outermost resolve",
           e
         )
+      case e: StackOverflowError =>
+        // resolving recurses per '+=' layer; catching here, after the
+        // recursion has unwound, turns the Error into a ConfigException
+        throw new ConfigException.Parse(
+          value.origin,
+          "config too large to resolve (stack overflow)",
+          e
+        )
     }
   }
 }
