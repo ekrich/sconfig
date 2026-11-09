@@ -7,6 +7,7 @@ import java.{lang => jl}
 import java.io.ObjectStreamException
 import java.io.Serializable
 import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValueType
 
 @SerialVersionUID(2L)
@@ -31,6 +32,18 @@ final class ConfigDouble(
 
   override def newCopy(origin: ConfigOrigin): AbstractConfigValue =
     new ConfigDouble(origin, value, originalText)
+
+  // no JSON number spelling exists for these, so quote them to keep the
+  // output valid JSON; reparsing preserves getDouble conversion
+  override def renderValue(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit =
+    if (!hideEnvVariableValue(options) && (value.isNaN || value.isInfinite)) {
+      sb.append('"').append(value.toString).append('"')
+    } else super.renderValue(sb, indent, atRoot, options)
 
   // serialization all goes through SerializedConfigValue
   @throws[ObjectStreamException]
