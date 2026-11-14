@@ -20,10 +20,11 @@ import org.ekrich.config.ConfigValueType
  * since a concat of objects really will merge, not concatenate.
  */
 object ConfigConcatenation {
-  private def isIgnoredWhitespace(value: AbstractConfigValue) =
-    value.isInstanceOf[ConfigString] && !(value
-      .asInstanceOf[ConfigString])
-      .wasQuoted
+  private def isIgnoredWhitespace(value: AbstractConfigValue): Boolean = {
+    if (!value.isInstanceOf[ConfigString]) return false
+    val s = value.asInstanceOf[ConfigString]
+    !s.wasQuoted && ConfigImplUtil.unicodeTrim(s.unwrapped).isEmpty
+  }
 
   /**
    * Add left and right, or their merger, to builder.
