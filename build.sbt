@@ -15,7 +15,6 @@ def patchVersion(prefix: String, scalaVersion: String): Int =
 def canUseRelease(scalaVersion: String) = CrossVersion
   .partialVersion(scalaVersion)
   .fold(false) {
-    case (2, 12) => patchVersion("2.12.", scalaVersion) > 16
     case (2, 13) => patchVersion("2.13.", scalaVersion) > 8
     case (3, _)  => true // since 3.1.2
     case _       => false // unexpected version
@@ -55,7 +54,6 @@ val scalacOpts = dotcOpts ++ List(
 )
 
 Compile / console / scalacOptions --= Seq(
-  // "-Xlint:nonlocal-return", // for 2.12 console
   "-Ywarn-unused:imports",
   "-Xfatal-warnings"
 )
@@ -78,21 +76,18 @@ val isScala3 = Def.setting {
   }
 }
 
-val scala212 = "2.12.21"
 val scala213 = "2.13.18"
 val scala3 = "3.9.0"
 
 val javaTime = "1.5.0"
-val scCompat = "2.13.0"
 val json4s = "4.1.1"
 
-// We use the 2.12 and 2.13 version that the scalafix library uses
-// and when the scalafix version gets updated the system will build
-// using those Scala version. The Scala versions above are versions
-// that get updated via Scala Steward and will match the scalafix
-// versions when scalafix version is updated and in sync with the
-// latest Scala versions.
-val versionsBase = _root_.scalafix.sbt.BuildInfo.supportedScalaVersions
+// We use the 2.13 version that the scalafix library uses and when
+// the scalafix version gets updated the system will build using that
+// Scala version. The Scala versions above are versions that get
+// updated via Scala Steward and will match the scalafix version when
+// scalafix is updated and in sync with the latest Scala versions.
+val versionsBase = Seq(_root_.scalafix.sbt.BuildInfo.scala213)
 val versions = versionsBase :+ scala3
 
 ThisBuild / scalaVersion := scala213
@@ -162,7 +157,6 @@ lazy val sconfig = crossProject(JVMPlatform, NativePlatform, JSPlatform)
       targetOpt ++ versionOpts
     },
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %% "scala-collection-compat" % scCompat % Test,
       "io.github.json4s" %% "json4s-native-core" % json4s % Test
     ),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-s", "-v"),
