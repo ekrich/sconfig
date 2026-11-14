@@ -30,6 +30,18 @@ class ConcatenationTest extends TestUtilsShared {
   }
 
   @Test
+  def negativeNumberWithoutIntegerPartAfterString(): Unit = {
+    val conf = parseConfig(""" a : foo -.33 """).resolve()
+    assertEquals("foo -.33", conf.getString("a"))
+  }
+
+  @Test
+  def negativeNumberWithoutIntegerPartBeforeString(): Unit = {
+    val conf = parseConfig(""" a : -.33 foo """).resolve()
+    assertEquals("-.33 foo", conf.getString("a"))
+  }
+
+  @Test
   def stringConcatCannotSpanLines(): Unit = {
     val e = intercept[ConfigException.Parse] {
       parseConfig(""" a : ${x}

@@ -268,6 +268,16 @@ class ConfigDocumentParserTest extends TestUtilsShared {
       "Token not allowed in valid JSON"
     )
 
+    // JSON does not support numbers without a leading digit
+    parseJSONFailuresTest(
+      """{"foo": .33}""",
+      "Token not allowed in valid JSON"
+    )
+    parseJSONFailuresTest(
+      """{"foo": -.33}""",
+      "Token not allowed in valid JSON"
+    )
+
     // JSON does not support substitutions
     parseJSONFailuresTest(
       """{"foo": ${"a.b"}}""",
