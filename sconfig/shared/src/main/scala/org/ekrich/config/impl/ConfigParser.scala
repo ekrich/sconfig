@@ -268,9 +268,13 @@ object ConfigParser {
                 true /* optional */
               )
             )
+            // the comments describe the field, which the concatenation
+            // stands for; on the element too they would print twice
+            val element =
+              newValue.withOrigin(newValue.origin.withComments(null))
             val list = new SimpleConfigList(
               newValue.origin,
-              ju.Collections.singletonList(newValue)
+              ju.Collections.singletonList(element)
             )
             concat.add(previousRef)
             concat.add(list)
