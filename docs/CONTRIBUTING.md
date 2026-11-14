@@ -2,6 +2,76 @@
 
 <kbd>[<- Back to README](../README.md)</kbd>
 
+Thank you for your interest in sconfig! This guide explains how the project
+works and what we look for in a contribution. Please read it before opening a pull request.
+
+## Very important notice about Scala.js and Scala Native
+
+Supporting Scala.js and Scala Native took years of careful work, in sconfig
+and upstream in the Scala.js and Scala Native javalibs. The `java.io` and
+`java.net` classes and the `Platform*` classes under `sconfig/js` and
+`sconfig/native` let the shared code link and run on those platforms. These are adaptors and stubs and not supported in upstream and should not be in this project at all as they can conflict with real third party libraries so they should not be changed.
+
+For example, `include` is not supported on these platforms (see
+[Includes](SCALA_NATIVE.md#includes)). HOCON.md says:
+
+> Implementations need not support files, Java resources, or URLs; and they
+> need not support particular URL protocols.
+
+## Philosophy
+
+`sconfig` is a Scala port of [lightbend/config](https://github.com/lightbend/config).
+Its goal is to behave like the original, so people moving between the two
+libraries meet few surprises. As long as lightbend/config is maintained at a reasonable cadence, `sconfig` normally follows it: fixes and features land there first and are then ported here. `sconfig` can disagree with upstream or fix
+things on its own when there is a good reason, but that is the exception.
+Keeping the code close to the original also keeps it easy to maintain and easy
+to compare.
+
+`sconfig` was ported to Scala so `scalafmt` could run on Scala Native.
+[scalafmt](https://scalameta.org/scalafmt/) reads its settings from HOCON with
+config, and the port lets it be compiled into a native application. The
+[original proposal](https://github.com/lightbend/config/pull/600) shows how the
+port was done: one class at a time, with every test passing after every commit.
+Scala.js support followed and then Scala 3.
+
+The one deliberate addition is [HOCON formatting](NEW_FEATURES.md#hocon-formatting)
+through `ConfigDocument`.
+
+## Scala and Java code used in the implementation
+
+The API and implementation are lightbend/config's Java code ported to Scala,
+so they use the Java library. The main code (`src/main`) avoids the Scala
+standard library (`Option`, `Vector`, tuples, Scala collections) and uses Java
+types (`java.util.*`, `null`, and `Optional` in the API). The helpers in
+`org.ekrich.config.impl.ScalaOps` allow some functional code over Java
+collections, the same approach as the Scala.js and Scala Native javalib. The
+test code (`src/test`) is in Scala, and may use Scala collections and other
+Scala library code. Upstream's tests are also in Scala, so they port with few
+changes.
+
+## Pull request requirements
+
+For a pull request to be considered, it has to:
+
+1. Be small and focused on one change.
+2. Come with tests. Each commit should build and pass all tests.
+3. Pass `scalafmt` and the MiMa binary compatibility check (see below).
+4. Explain what the change does and why, briefly and to the point.
+5. Please make an issue for any item that may need discussion.
+
+If these are not met, the pull request may be closed without review.
+
+## Use of AI tools
+
+AI tools are welcome, and we follow the
+[Scala 3 LLM policy](https://github.com/scala/scala3/blob/main/LLM_POLICY.md)
+in spirit. You are responsible for every line you submit, and you should be
+able to explain it and answer review questions yourself. Test it locally
+before submitting, keep the change small, and say in the PR whether AI tools
+were used and how you checked the result. Edit generated text until it is
+short and to the point, as long summaries and excessive detail are noise for
+reviewers.
+
 The following has tips and tricks for contributors to this repo.
 
 ## Cross Project and other `sbt` tips
