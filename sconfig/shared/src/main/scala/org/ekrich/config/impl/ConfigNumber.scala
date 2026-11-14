@@ -26,8 +26,16 @@ object ConfigNumber {
       originalText: String
   ): ConfigNumber = {
     val asLong = number.toLong
-    if (asLong == number) newNumber(origin, asLong, originalText)
+    if (fitsLong(number)) newNumber(origin, asLong, originalText)
     else new ConfigDouble(origin, number, originalText)
+  }
+
+  // Long.MAX_VALUE rounds up to 2^63 when converted to double, so the upper
+  // bound is 2^63 itself and not Long.MaxValue.toDouble (Scala, unlike Java,
+  // has no hex floating-point literal).
+  private[impl] def fitsLong(number: Double): Boolean = {
+    val twoPow63 = 9223372036854775808.0
+    number >= -twoPow63 && number < twoPow63 && number.toLong == number
   }
 }
 
@@ -61,10 +69,8 @@ abstract class ConfigNumber(
 
   protected def doubleValue: Double
 
-  private def isWhole = {
-    val asLong = longValue
-    asLong == doubleValue
-  }
+  private def isWhole =
+    !(this.isInstanceOf[ConfigDouble]) || ConfigNumber.fitsLong(doubleValue)
 
   override def canEqual(other: Any): Boolean = other.isInstanceOf[ConfigNumber]
 

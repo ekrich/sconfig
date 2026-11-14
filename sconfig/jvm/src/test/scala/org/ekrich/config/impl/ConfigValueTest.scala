@@ -7,7 +7,7 @@ import org.junit.Assert._
 import org.junit._
 import java.net.URL
 import scala.jdk.CollectionConverters._
-import org.ekrich.config.ConfigList
+import org.ekrich.config.{ConfigFactory, ConfigList, ConfigValueFactory}
 
 import FileUtils._
 
@@ -58,6 +58,37 @@ class ConfigValueTest extends TestUtils {
     val a = longValue(Integer.MAX_VALUE + 42L)
     val b = checkSerializable(expectedSerialization, a)
     assertEquals(Integer.MAX_VALUE + 42L, b.unwrapped)
+  }
+
+  // Long.MAX_VALUE rounds up to 2^63 when converted to double, so 2^63
+  // itself must stay a double and must not equal Long.MaxValue
+  @Test
+  def preservesPositiveLongBoundary(): Unit = {
+    val config = ConfigFactory.parseString("""
+        high = 9223372036854775808.0
+        inside = 9223372036854774784.0
+        low = -9223372036854775808.0
+        max = 9223372036854775807
+        """)
+    assertTrue(
+      "2^63 must not saturate to Long.MAX_VALUE",
+      config.getNumber("high").isInstanceOf[java.lang.Double]
+    )
+    assertEquals(9223372036854775808.0, config.getDouble("high"), 0.0)
+    assertEquals(9223372036854774784L, config.getLong("inside"))
+    assertEquals(Long.MinValue, config.getLong("low"))
+    assertFalse(config.getValue("high").equals(config.getValue("max")))
+    assertFalse(config.getValue("max").equals(config.getValue("high")))
+    assertEquals(
+      ConfigValueFactory.fromAnyRef(java.lang.Long.valueOf(Long.MaxValue)),
+      config.getValue("max")
+    )
+
+    val one = ConfigValueFactory.fromAnyRef(java.lang.Double.valueOf(1.0))
+    val integer = ConfigValueFactory.fromAnyRef(java.lang.Integer.valueOf(1))
+    assertEquals(one, integer)
+    assertEquals(integer, one)
+    assertEquals(one.hashCode, integer.hashCode)
   }
 
   @Test
