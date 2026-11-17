@@ -9,6 +9,7 @@ import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.impl.AbstractConfigValue._
+import org.ekrich.config.impl.ScalaOps._
 import org.ekrich.config.ConfigValueType
 
 /**
@@ -53,8 +54,12 @@ object ConfigDelayedMerge {
     while (!stopped && ends.hasNext) {
       val end = ends.next()
       // a substitution hidden by a value it cannot merge with is never
-      // evaluated (HOCON spec), so stop once merged ignores fallbacks
-      if (merged != null && merged.ignoresFallbacks) {
+      // evaluated (HOCON spec), so stop once merged ignores fallbacks. A value
+      // that cannot become an object hides the rest even while a substitution
+      // inside it is unresolved, its own references to the values below
+      // having been resolved by now
+      if (merged != null &&
+          (merged.ignoresFallbacks || cannotBecomeAnObject(merged))) {
         if (ConfigImpl.traceSubstitutionsEnabled)
           ConfigImpl.trace(
             newContext.depth,
@@ -159,6 +164,22 @@ object ConfigDelayedMerge {
     }
     ResolveResult.make(newContext, merged)
   }
+
+  // a list, or a concatenation of which a piece makes a list or a string
+  private def cannotBecomeAnObject(v: AbstractConfigValue): Boolean =
+    v match {
+      case _: SimpleConfigList    => true
+      case c: ConfigConcatenation =>
+        c.pieces.scalaOps.exists {
+          case _: SimpleConfigList => true
+          // whitespace between two objects is dropped
+          case s: ConfigString =>
+            s.wasQuoted || !s.unwrapped.forall(ConfigImplUtil.isWhitespace(_))
+          case _: Unmergeable | _: AbstractConfigObject => false
+          case _                                        => true
+        }
+      case _ => false
+    }
 
   // true when 'merged' holds every key of 'end' with a value that ignores
   // fallbacks, so merging 'end' underneath it would drop all of it
