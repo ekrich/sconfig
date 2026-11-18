@@ -6,6 +6,8 @@ package org.ekrich.config.impl
 import org.junit.Assert._
 import org.junit.Test
 
+import org.ekrich.config.{ConfigException, ConfigFactory}
+
 import language.implicitConversions
 
 class TokenizerTest extends TestUtilsShared {
@@ -302,6 +304,10 @@ class TokenizerTest extends TestUtilsShared {
       "\"\\u12\"", // too short
       "\"\\u1\"", // too short
       "\"\\u\"", // too short
+      "\"\\u+041\"", // sign is not a hex digit
+      "\"\\u-041\"", // sign is not a hex digit
+      "\"\\u\uFF10\uFF10\uFF14\uFF11\"", // fullwidth digits are not hex digits
+      "\"\\u\u0660\u0660\u0664\u0661\"", // Arabic-Indic digits are not hex digits
       "\"", // just a single quote
       """ "abcdefg""", // no end quote
       """\"\""", // file ends with a backslash
@@ -317,6 +323,67 @@ class TokenizerTest extends TestUtilsShared {
         maybeProblem.isDefined
       )
     }
+  }
+
+  // The sign cases now also appear in lightbend/config#890 (still an open
+  // PR there, so the upstream parser itself still accepts them); this keeps
+  // pinning the rejection, at the Tokenizer level as well, until that lands.
+  @Test
+  def tokenizerSignInUnicodeEscapeIsParseError(): Unit = {
+    // Integer.parseInt(digits, 16) accepts a leading sign, but a sign is not
+    // a hex digit (RFC 8259 section 7: exactly four hexadecimal digits), so
+    // both inputs must be a ConfigException.Parse - for '-' the old code used
+    // to throw a bare IllegalArgumentException from appendCodePoint(-65)
+    val e = intercept[ConfigException.Parse] {
+      ConfigFactory.parseString("a = \"\\u+041\"")
+    }
+    assertTrue(
+      "unexpected message: " + e.getMessage,
+      e.getMessage.contains(
+        "Malformed hex digits after \\u escape in string: '+041'"
+      )
+    )
+    val e2 = intercept[ConfigException.Parse] {
+      ConfigFactory.parseString("b = \"\\u-041\"")
+    }
+    assertTrue(
+      "unexpected message: " + e2.getMessage,
+      e2.getMessage.contains(
+        "Malformed hex digits after \\u escape in string: '-041'"
+      )
+    )
+    // surrogate pairs must keep working (\u0046 is covered in
+    // tokenizerUnescapeStrings)
+    assertEquals(
+      "\uD83D\uDE00",
+      ConfigFactory.parseString("d = \"\\uD83D\\uDE00\"").getString("d")
+    )
+  }
+
+  // From lightbend/config#890: Unicode decimal digits such as FULLWIDTH ZERO
+  // (U+FF10) and ARABIC-INDIC ZERO (U+0660) carry digit values, so on the JVM
+  // Integer.parseInt(digits, 16) used to accept them as hex digits and a
+  // backslash-u escape of fullwidth 0041 decoded to 'A' instead of failing.
+  @Test
+  def tokenizerNonAsciiDigitsInUnicodeEscapeAreParseError(): Unit = {
+    val e = intercept[ConfigException.Parse] {
+      ConfigFactory.parseString("a = \"\\u\uFF10\uFF10\uFF14\uFF11\"")
+    }
+    assertTrue(
+      "unexpected message: " + e.getMessage,
+      e.getMessage.contains(
+        "Malformed hex digits after \\u escape in string: '\uFF10\uFF10\uFF14\uFF11'"
+      )
+    )
+    val e2 = intercept[ConfigException.Parse] {
+      ConfigFactory.parseString("b = \"\\u\u0660\u0660\u0664\u0661\"")
+    }
+    assertTrue(
+      "unexpected message: " + e2.getMessage,
+      e2.getMessage.contains(
+        "Malformed hex digits after \\u escape in string: '\u0660\u0660\u0664\u0661'"
+      )
+    )
   }
 
   @Test
