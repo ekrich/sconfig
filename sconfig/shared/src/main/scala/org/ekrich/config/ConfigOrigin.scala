@@ -76,7 +76,11 @@ trait ConfigOrigin {
    * Often an empty list, but never null. The details of this are subject to
    * change, but at the moment comments that are immediately before an array
    * element or object field, with no blank line after the comment, "go with"
-   * that element or field.
+   * that element or field. sconfig keeps a detached comment block, one that a
+   * blank line separates from the element or field below it, only when
+   * `ConfigParseOptions.setKeepDetachedComments(true)` asks for it, and then
+   * also "goes with" it; the default drops the block, as `lightbend/config`
+   * does (see `docs/NEW_FEATURES.md`).
    *
    * @return
    *   any comments that seemed to "go with" this origin, empty list if none

@@ -26,7 +26,8 @@ object ConfigNumber {
       originalText: String
   ): ConfigNumber = {
     val asLong = number.toLong
-    if (asLong == number) newNumber(origin, asLong, originalText)
+    if (number < Long.MaxValue.toDouble && number > Long.MinValue.toDouble && asLong == number)
+      newNumber(origin, asLong, originalText)
     else new ConfigDouble(origin, number, originalText)
   }
 }
@@ -56,6 +57,9 @@ abstract class ConfigNumber(
       )
     l.toInt
   }
+
+  // a lossless long on this class; ConfigDouble overrides to range-check
+  private[impl] def longValueRangeChecked(path: String): Long = longValue
 
   protected def longValue: Long
 

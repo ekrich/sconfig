@@ -6,7 +6,9 @@ package org.ekrich.config.impl
 import java.{lang => jl}
 import java.io.ObjectStreamException
 import java.io.Serializable
+import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
+import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.ConfigValueType
 
 @SerialVersionUID(2L)
@@ -27,10 +29,48 @@ final class ConfigDouble(
 
   override def longValue: Long = value.toLong
 
+  // Double.toLong saturates, so a value beyond the long range must fail here
+  override def longValueRangeChecked(path: String): Long = {
+    val limit = Long.MaxValue.toDouble
+    if (value.isNaN || value >= limit || value < -limit || belowMinimumBeforeRounding)
+      throw new ConfigException.WrongType(
+        super.origin,
+        path,
+        "64-bit integer",
+        "out-of-range value " + value
+      )
+    else value.toLong
+  }
+
+  // An out-of-range decimal string can round to exactly -2^63. Only at
+  // that boundary do we need the original decimal spelling to disambiguate.
+  private def belowMinimumBeforeRounding: Boolean =
+    if (value == Long.MinValue.toDouble && originalText != null) {
+      try {
+        new java.math.BigDecimal(originalText).compareTo(
+          java.math.BigDecimal.valueOf(Long.MinValue)
+        ) < 0
+      } catch {
+        case _: NumberFormatException => false
+      }
+    } else false
+
   override def doubleValue: Double = value
 
   override def newCopy(origin: ConfigOrigin): AbstractConfigValue =
     new ConfigDouble(origin, value, originalText)
+
+  // no JSON number spelling exists for these, so quote them to keep the
+  // output valid JSON; reparsing preserves getDouble conversion
+  override def renderValue(
+      sb: jl.StringBuilder,
+      indent: Int,
+      atRoot: Boolean,
+      options: ConfigRenderOptions
+  ): Unit =
+    if (!hideEnvVariableValue(options) && (value.isNaN || value.isInfinite)) {
+      sb.append('"').append(value.toString).append('"')
+    } else super.renderValue(sb, indent, atRoot, options)
 
   // serialization all goes through SerializedConfigValue
   @throws[ObjectStreamException]

@@ -38,10 +38,17 @@ object ConfigBeanImpl {
    *   config to use
    * @param clazz
    *   class of the bean
+   * @param allowUnknownConfigKeys
+   *   if false, config keys that do not map to bean properties are a validation
+   *   error
    * @return
    *   the bean instance
    */
-  def createInternal[T](config: Config, clazz: Class[T]): T = {
+  def createInternal[T](
+      config: Config,
+      clazz: Class[T],
+      allowUnknownConfigKeys: Boolean
+  ): T = {
     if (config
           .asInstanceOf[SimpleConfig]
           .root
@@ -94,6 +101,21 @@ object ConfigBeanImpl {
       // Try to throw all validation issues at once (this does not comprehensively
       // find every issue, but it should find common ones).
       val problems = new ju.ArrayList[ConfigException.ValidationProblem]
+      if (!allowUnknownConfigKeys) {
+        val beanPropNames = new ju.HashSet[String]
+        beanProps.forEach(beanProp => beanPropNames.add(beanProp.getName))
+        originalNames.entrySet.forEach { nameEntry =>
+          val camelName = nameEntry.getKey
+          if (!beanPropNames.contains(camelName))
+            problems.add(
+              new ConfigException.ValidationProblem(
+                Path.newKey(nameEntry.getValue).render,
+                configProps.get(camelName).origin,
+                "Unknown config setting"
+              )
+            )
+        }
+      }
       beanProps.forEach { beanProp =>
         val setter: Method = beanProp.getWriteMethod
         val parameterClass: Class[?] = setter.getParameterTypes()(0)
@@ -139,7 +161,8 @@ object ConfigBeanImpl {
             parameterType,
             parameterClass,
             config,
-            configPropName
+            configPropName,
+            allowUnknownConfigKeys
           )
           setter.invoke(bean, unwrapped.asInstanceOf[AnyRef])
         }
@@ -182,7 +205,8 @@ object ConfigBeanImpl {
       parameterType: Type,
       parameterClass: Class[?],
       config: Config,
-      configPropName: String
+      configPropName: String,
+      allowUnknownConfigKeys: Boolean
   ): Any =
     if ((parameterClass == classOf[jl.Boolean]) ||
         (parameterClass == classOf[Boolean]))
@@ -209,7 +233,8 @@ object ConfigBeanImpl {
         parameterType,
         parameterClass,
         config,
-        configPropName
+        configPropName,
+        allowUnknownConfigKeys
       )
     else if (parameterClass == classOf[ju.Set[?]])
       getSetValue(
@@ -217,7 +242,8 @@ object ConfigBeanImpl {
         parameterType,
         parameterClass,
         config,
-        configPropName
+        configPropName,
+        allowUnknownConfigKeys
       )
     else if (parameterClass == classOf[ju.Map[?, ?]]) { // we could do better here, but right now we don't.
       val typeArgs = parameterType
@@ -243,7 +269,11 @@ object ConfigBeanImpl {
       // assigning to val and returning causes ClassCastException
       config.getEnum(getEnumAsClass(parameterClass), configPropName)
     } else if (hasAtLeastOneBeanProperty(parameterClass))
-      createInternal(config.getConfig(configPropName), parameterClass)
+      createInternal(
+        config.getConfig(configPropName),
+        parameterClass,
+        allowUnknownConfigKeys
+      )
     else {
       throw new ConfigException.BadBean(
         "Bean property " + configPropName + " of class " + beanClass.getName + " has unsupported type " + parameterType
@@ -263,7 +293,8 @@ object ConfigBeanImpl {
       parameterType: Type,
       parameterClass: Class[?],
       config: Config,
-      configPropName: String
+      configPropName: String,
+      allowUnknownConfigKeys: Boolean
   ) =
     new ju.HashSet(
       getListValue(
@@ -271,7 +302,8 @@ object ConfigBeanImpl {
         parameterType,
         parameterClass,
         config,
-        configPropName
+        configPropName,
+        allowUnknownConfigKeys
       )
     )
 
@@ -280,7 +312,8 @@ object ConfigBeanImpl {
       parameterType: Type,
       parameterClass: Class[?],
       config: Config,
-      configPropName: String
+      configPropName: String,
+      allowUnknownConfigKeys: Boolean
   ): ju.List[?] = {
     val elementType: Type =
       parameterType.asInstanceOf[ParameterizedType].getActualTypeArguments()(0)
@@ -313,7 +346,13 @@ object ConfigBeanImpl {
       val configList: ju.List[? <: Config] =
         config.getConfigList(configPropName)
       configList.forEach { listMember =>
-        beanList.add(createInternal(listMember, getTypeAsClass(elementType)))
+        beanList.add(
+          createInternal(
+            listMember,
+            getTypeAsClass(elementType),
+            allowUnknownConfigKeys
+          )
+        )
       }
       beanList
     } else

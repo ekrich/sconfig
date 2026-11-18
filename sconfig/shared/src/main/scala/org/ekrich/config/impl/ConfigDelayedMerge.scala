@@ -9,6 +9,7 @@ import org.ekrich.config.ConfigException
 import org.ekrich.config.ConfigOrigin
 import org.ekrich.config.ConfigRenderOptions
 import org.ekrich.config.impl.AbstractConfigValue._
+import org.ekrich.config.impl.ScalaOps._
 import org.ekrich.config.ConfigValueType
 
 /**
@@ -53,8 +54,12 @@ object ConfigDelayedMerge {
     while (!stopped && ends.hasNext) {
       val end = ends.next()
       // a substitution hidden by a value it cannot merge with is never
-      // evaluated (HOCON spec), so stop once merged ignores fallbacks
-      if (merged != null && merged.ignoresFallbacks) {
+      // evaluated (HOCON spec), so stop once merged ignores fallbacks. A value
+      // that cannot become an object hides the rest even while a substitution
+      // inside it is unresolved, its own references to the values below
+      // having been resolved by now
+      if (merged != null &&
+          (merged.ignoresFallbacks || cannotBecomeAnObject(merged))) {
         if (ConfigImpl.traceSubstitutionsEnabled)
           ConfigImpl.trace(
             newContext.depth,
@@ -159,6 +164,22 @@ object ConfigDelayedMerge {
     }
     ResolveResult.make(newContext, merged)
   }
+
+  // a list, or a concatenation of which a piece makes a list or a string
+  private def cannotBecomeAnObject(v: AbstractConfigValue): Boolean =
+    v match {
+      case _: SimpleConfigList    => true
+      case c: ConfigConcatenation =>
+        c.pieces.scalaOps.exists {
+          case _: SimpleConfigList => true
+          // whitespace between two objects is dropped
+          case s: ConfigString =>
+            s.wasQuoted || !s.unwrapped.forall(ConfigImplUtil.isWhitespace(_))
+          case _: Unmergeable | _: AbstractConfigObject => false
+          case _                                        => true
+        }
+      case _ => false
+    }
 
   // true when 'merged' holds every key of 'end' with a value that ignores
   // fallbacks, so merging 'end' underneath it would drop all of it
@@ -268,9 +289,17 @@ object ConfigDelayedMerge {
       }
     }
 
+    val renderedKey =
+      if (atKey == null) null
+      else if (options.getJson) ConfigImplUtil.renderJsonString(atKey)
+      else ConfigImplUtil.renderStringUnquotedIfPossible(atKey)
     val reversed = new ju.ArrayList[AbstractConfigValue]
     reversed.addAll(stack)
     ju.Collections.reverse(reversed)
+    // Repeated fields use the same separators as their containing object.
+    // A keyless merge keeps its diagnostic spelling instead.
+    val commaSeparated =
+      atKey == null || options.getJson || !options.getFormatted
     var i = 0
     reversed.forEach { v =>
       if (banner) {
@@ -287,20 +316,15 @@ object ConfigDelayedMerge {
         }
       }
       indentLine()
-      if (atKey != null) {
-        sb.append(ConfigImplUtil.renderJsonString(atKey))
-        if (options.getFormatted) sb.append(" : ") else sb.append(":")
-      }
+      if (renderedKey != null) v.renderWithRenderedKey(sb, renderedKey, options)
       v.renderValue(sb, indentVal, atRoot, options)
-      sb.append(",")
+      if (commaSeparated) sb.append(',')
       if (options.getFormatted) sb.append('\n')
     }
-    // chop comma or newline
-    sb.setLength(sb.length - 1)
-    if (options.getFormatted) {
-      sb.setLength(sb.length - 1) // also chop comma
-      sb.append("\n") // put a newline back
-    }
+    // The container supplies the separator after the final repeated field.
+    if (options.getFormatted) sb.setLength(sb.length - 1)
+    if (commaSeparated) sb.setLength(sb.length - 1)
+    if (atKey == null && options.getFormatted) sb.append('\n')
     if (banner) {
       indentLine()
       sb.append("# ) end of unresolved merge\n")
