@@ -392,6 +392,12 @@ class ConfParserTest extends TestUtils {
     lineNumberTest(6, "a : \"\"\"foo\nbar\nbaz\n\"\"\"\n\n}")
     //   end in the middle of triple-quoted string
     lineNumberTest(5, "a : \"\"\"foo\n\n\nbar\n")
+
+    // not from lightbend/config: these two pin ConfigParser's own line
+    // counter (advanceLineNumberBeforeValue there), which upstream does not
+    // test; revisit and drop them when upstream adds equivalent coverage
+    lineNumberTest(3, "a =\n  1\ninclude url(\"!!!\")")
+    lineNumberTest(4, "a =\n\n  1\ninclude url(\"!!!\")")
   }
 
   @Test
