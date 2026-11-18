@@ -8,8 +8,8 @@ import ScalaOps._
 
 final class ConfigNodeRoot private[impl] (
     _children: ju.Collection[AbstractConfigNode],
-    val origin: ConfigOrigin
-) extends ConfigNodeComplexValue(_children) {
+    _origin: ConfigOrigin
+) extends ConfigNodeComplexValue(_children, _origin) {
   override def newNode(
       nodes: ju.Collection[AbstractConfigNode]
   ): ConfigNodeComplexValue =
