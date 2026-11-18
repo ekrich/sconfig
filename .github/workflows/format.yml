@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Code is formatted
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout current branch (full)
         uses: actions/checkout@v7

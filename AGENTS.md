@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Guidance for coding agents working in this repository. Build tips for people are in
-[docs/DEVELOPER.md](docs/DEVELOPER.md).
+[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
 `sconfig` is a Scala port of [`lightbend/config`](https://github.com/lightbend/config) (HOCON)
 for the JVM, Scala.js and Scala Native, on Scala 2.12, 2.13 and 3. Features that
