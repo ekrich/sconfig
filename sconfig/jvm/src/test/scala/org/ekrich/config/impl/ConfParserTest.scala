@@ -428,6 +428,15 @@ class ConfParserTest extends TestUtils {
   }
 
   @Test
+  def dottedAppendCommentStaysOnLeafField(): Unit = {
+    val resolved = ConfigFactory.parseString("# two\nx.a += 2").resolve()
+    assertComments(Seq(" two"), resolved, "x.a")
+    assertComments(Seq(), resolved, "x.a", 0)
+    assertComments(Seq(), resolved, "x")
+    assertEquals(Seq(2), resolved.getIntList("x.a").asScala.toSeq)
+  }
+
+  @Test
   def trackCommentsForSingleField(): Unit = {
     // no comments
     val conf0 = parseConfig("""
