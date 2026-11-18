@@ -28,7 +28,8 @@ object ConfigParseOptions {
    * @return
    *   the default parse options
    */
-  def defaults = new ConfigParseOptions(null, null, true, null, null)
+  def defaults =
+    new ConfigParseOptions(null, null, true, null, null, false)
 }
 
 final class ConfigParseOptions private (
@@ -36,7 +37,8 @@ final class ConfigParseOptions private (
     private val _originDescription: String,
     private val _allowMissing: Boolean,
     private val _includer: ConfigIncluder,
-    private val _classLoader: ClassLoader
+    private val _classLoader: ClassLoader,
+    private val _keepDetachedComments: Boolean
 ) {
 
   @deprecated(
@@ -86,7 +88,8 @@ final class ConfigParseOptions private (
         _originDescription,
         _allowMissing,
         _includer,
-        _classLoader
+        _classLoader,
+        _keepDetachedComments
       )
 
   /**
@@ -133,7 +136,8 @@ final class ConfigParseOptions private (
         originDescription,
         _allowMissing,
         _includer,
-        _classLoader
+        _classLoader,
+        _keepDetachedComments
       )
   }
 
@@ -172,7 +176,8 @@ final class ConfigParseOptions private (
         _originDescription,
         allowMissing,
         _includer,
-        _classLoader
+        _classLoader,
+        _keepDetachedComments
       )
 
   /**
@@ -201,7 +206,8 @@ final class ConfigParseOptions private (
         _originDescription,
         _allowMissing,
         includer,
-        _classLoader
+        _classLoader,
+        _keepDetachedComments
       )
 
   /**
@@ -272,7 +278,8 @@ final class ConfigParseOptions private (
         _originDescription,
         _allowMissing,
         _includer,
-        loader
+        loader,
+        _keepDetachedComments
       )
 
   /**
@@ -289,4 +296,56 @@ final class ConfigParseOptions private (
     } else {
       _classLoader
     }
+
+  /**
+   * Set to keep *detached* comments: a comment block separated from the next
+   * object field or array element by a blank line. Off by default: the parser
+   * then drops the block exactly as `lightbend/config` does. This is an
+   * sconfig-only option, not in `lightbend/config`; see `docs/NEW_FEATURES.md`
+   * for the examples.
+   *
+   * With the flag on:
+   *
+   *   - comment origins change: `ConfigOrigin.comments` gains the kept blocks,
+   *     and a render with comments on prints them. The resolved values do not
+   *     change in the tested cases.
+   *   - order is kept within a block; across duplicate fields or elements the
+   *     merge policy decides, so a block can still be replaced or merged.
+   *   - a header outside a braced root is kept in the root origin but is not
+   *     rendered.
+   *   - a block before `include` attaches to the next local field, not to the
+   *     included file.
+   *   - a comment above a `+=` field is printed twice, above the delayed
+   *     assignment and above its element: an existing `+=` defect that
+   *     preservation exposes, pinned in `ConfigDefaultRenderingTest`.
+   *   - with `ConfigFormatOptions.setSimplifyNestedObjects(true)`, an object
+   *     that carries a kept comment is no longer compressed to a dotted path,
+   *     even when comments are not rendered.
+   *
+   * @param value
+   *   true to keep the comments, false to drop them as `lightbend/config` does
+   * @return
+   *   options with the flag set
+   */
+  def setKeepDetachedComments(value: Boolean): ConfigParseOptions =
+    if (_keepDetachedComments == value) this
+    else
+      new ConfigParseOptions(
+        _syntax,
+        _originDescription,
+        _allowMissing,
+        _includer,
+        _classLoader,
+        value
+      )
+
+  /**
+   * Gets the current "keep detached comments" flag.
+   *
+   * @return
+   *   whether a detached comment block, one separated from the next field or
+   *   element by a blank line, is kept
+   */
+  def getKeepDetachedComments: Boolean =
+    _keepDetachedComments
 }
