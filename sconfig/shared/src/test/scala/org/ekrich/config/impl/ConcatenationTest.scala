@@ -193,6 +193,12 @@ class ConcatenationTest extends TestUtilsShared {
   }
 
   @Test
+  def missingOptionalSubstitutionAfterArray(): Unit = {
+    val conf = parseConfig(""" a : [1] ${?absent} """).resolve()
+    assertEquals(Seq(1), conf.getIntList("a").asScala)
+  }
+
+  @Test
   def commentAfterArray(): Unit = {
     val conf = parseConfig("a : [1] # comment").resolve()
     assertEquals(Seq(1), conf.getIntList("a").asScala)
