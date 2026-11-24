@@ -99,6 +99,10 @@ trait ConfigDocument {
    * resolves substitutions, or reads environment variables, so it works the
    * same on every platform.
    *
+   * The formatted text is reparsed, so the new document has its own tree. If a
+   * formatter bug produced text that does not parse, a
+   * [[org.ekrich.config.ConfigException.BugOrBroken]] is thrown.
+   *
    * A field with a comment between its key and value is kept as written, apart
    * from the indentation of its first line, so the comment stays with the value
    * it describes.
