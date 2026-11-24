@@ -22,7 +22,7 @@ fi
 
 if [[ "$CHECK_MODIFIED_ONLY" == "1" ]]; then
   $SCALAFMT --check
-else 
+else
   $SCALAFMT "$@"
 fi
 
