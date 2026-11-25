@@ -49,6 +49,12 @@ test code (`src/test`) is in Scala, and may use Scala collections and other
 Scala library code. Upstream's tests are also in Scala, so they port with few
 changes.
 
+Put tests in `sconfig/shared/src/test` where possible, so they run on the JVM,
+Scala.js, and Scala Native. Use `sconfig/jvm/src/test` only for tests that need
+the JVM. If a test class has to stay JVM-only, name its shared counterpart
+after it with `Shared`, for example `ConfParserSharedTest` for
+`ConfParserTest`.
+
 ## Pull request requirements
 
 For a pull request to be considered, it has to:
