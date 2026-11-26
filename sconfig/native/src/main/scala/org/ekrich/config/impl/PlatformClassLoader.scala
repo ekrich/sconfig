@@ -7,5 +7,6 @@ import java.{util => ju}
  * To workaround missing implementations
  */
 class PlatformClassLoader(cl: ClassLoader) extends TraitClassLoader {
-  def getResources(name: String): ju.Enumeration[URL] = ???
+  def getResources(name: String): ju.Enumeration[URL] =
+    throw PlatformUnsupported("java.lang.ClassLoader.getResources")
 }

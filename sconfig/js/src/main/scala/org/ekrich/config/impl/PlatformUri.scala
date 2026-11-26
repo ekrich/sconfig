@@ -6,5 +6,6 @@ import java.net.{URI, URL}
  * To workaround missing implementations
  */
 class PlatformUri(uri: URI) extends TraitUri {
-  def toURL(): URL = ???
+  def toURL(): URL =
+    throw PlatformUnsupported("java.net.URI.toURL")
 }
